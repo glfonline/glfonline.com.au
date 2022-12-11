@@ -1,0 +1,6 @@
+.env
+app/styles/tailwind.css
+build
+public/build
+node_modules
+pnpm-lock.yaml
