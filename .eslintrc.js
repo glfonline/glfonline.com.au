@@ -5,9 +5,14 @@ const ERROR = 2;
 /** @type {import('eslint').Linter.Config} */
 module.exports = {
 	extends: ['@remix-run/eslint-config', '@remix-run/eslint-config/node'],
-	plugins: ['simple-import-sort'],
+	plugins: ['@ts-gql', 'simple-import-sort'],
 	rules: {
+		'@ts-gql/ts-gql': ERROR,
 		'@typescript-eslint/ban-ts-comment': OFF,
+		'@typescript-eslint/consistent-type-imports': [
+			ERROR,
+			{ disallowTypeAnnotations: false },
+		],
 		'@typescript-eslint/no-empty-function': OFF,
 		'@typescript-eslint/no-explicit-any': OFF,
 		'import/first': ERROR,
