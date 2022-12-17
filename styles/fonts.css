@@ -1,0 +1,63 @@
+/**
+ * @license
+ * MyFonts Webfont Build ID 3908791, 2020-05-31T21:47:23-0400
+ *
+ * The fonts listed in this notice are subject to the End User License
+ * Agreement(s) entered into by the website owner. All other parties are
+ * explicitly restricted from using the Licensed Webfonts(s).
+ *
+ * You may obtain a valid license at the URLs below.
+ *
+ * Webfont: CentGothWGL-Italic by Monotype
+ * URL: https://www.myfonts.com/fonts/mti/century-gothic/wgl-italic/
+ *
+ * Webfont: CentGothWGL by Monotype
+ * URL: https://www.myfonts.com/fonts/mti/century-gothic/wgl-regular/
+ *
+ * Webfont: CentGothWGL-Bold by Monotype
+ * URL: https://www.myfonts.com/fonts/mti/century-gothic/wgl-bold/
+ *
+ * Webfont: CentGothWGL-BdIt by Monotype
+ * URL: https://www.myfonts.com/fonts/mti/century-gothic/wgl-bold-italic/
+ *
+ *
+ * Webfonts copyright: Copyright The Monotype Corporation. All rights reserved. &amp;#x0022;Century Gothic&amp;#x0022; is a trademark of The Monotype Corporation in the United States and/or other countries.
+ *
+ * © 2020 MyFonts Inc
+*/
+
+/* @import must be at top of file, otherwise CSS will not work */
+@import url('//hello.myfonts.net/count/3ba4b7');
+
+@font-face {
+	font-family: 'Century Gothic';
+	font-display: swap;
+	font-style: normal;
+	font-weight: 400;
+	src: url('/fonts/CentGothWGL/font.woff2') format('woff2'),
+		url('/fonts/CentGothWGL/font.woff') format('woff');
+}
+@font-face {
+	font-family: 'Century Gothic';
+	font-display: swap;
+	font-style: italic;
+	font-weight: 700;
+	src: url('/fonts/CentGothWGL-BdIt/font.woff2') format('woff2'),
+		url('/fonts/CentGothWGL-BdIt/font.woff') format('woff');
+}
+@font-face {
+	font-family: 'Century Gothic';
+	font-display: swap;
+	font-style: italic;
+	font-weight: 400;
+	src: url('/fonts/CentGothWGL-Italic/font.woff2') format('woff2'),
+		url('/fonts/CentGothWGL-Italic/font.woff') format('woff');
+}
+@font-face {
+	font-family: 'Century Gothic';
+	font-display: swap;
+	font-style: normal;
+	font-weight: 700;
+	src: url('/fonts/CentGothWGL-Bold/font.woff2') format('woff2'),
+		url('/fonts/CentGothWGL-Bold/font.woff') format('woff');
+}

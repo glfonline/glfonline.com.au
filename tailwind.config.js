@@ -1,3 +1,4 @@
+const defaultTheme = require('tailwindcss/defaultTheme');
 const hexRgb = require('hex-rgb');
 
 const gray = {
@@ -69,6 +70,9 @@ module.exports = {
 				'primary-light': 'var(--brand-color-light)',
 				'primary-lighter': 'var(--brand-color-lighter)',
 			},
+			fontFamily: {
+        sans: ['Century Gothic', ...defaultTheme.fontFamily.sans],
+      },
 		},
 	},
 	plugins: [],
