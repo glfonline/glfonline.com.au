@@ -11,7 +11,6 @@ export function HorizontalLogo(props: React.SVGProps<SVGSVGElement>) {
 			strokeMiterlimit={2}
 			clipRule="evenodd"
 			viewBox="0 0 712 216"
-			className="h-10 text-gray-800"
 			{...props}
 		>
 			<path
