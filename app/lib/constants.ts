@@ -87,3 +87,63 @@ export const mainNavigation = [
 		url: '/contact',
 	},
 ];
+
+export const footerNavigation: Record<
+	'col1' | 'col2',
+	Array<{ id: string; label: string; slug: string }>
+> = {
+	col1: [
+		{
+			id: '66d0560b-9527-4e55-b183-cde82a06e947',
+			label: 'Shop Ladies',
+			slug: '/ladies',
+		},
+		{
+			id: '5ff251f9-677a-4c84-b320-d107a5ef4c11',
+			label: 'Shop Mens',
+			slug: '/mens',
+		},
+		{
+			id: '82aa6d67-48e7-4e37-883d-0e26600a5a2c',
+			label: 'About Us',
+			slug: '/about',
+		},
+		{
+			id: '28b16f49-7974-4572-b69a-d24565e2f4d7',
+			label: 'Contact',
+			slug: '/contact',
+		},
+		{
+			id: '447d4fd1-85cd-4fdf-b796-fffcdceba8e6',
+			label: 'Testimonials',
+			slug: '/testimonials',
+		},
+	],
+	col2: [
+		{
+			id: '5c5fa4a7-a230-46a2-87fd-d58cb2f2fd41',
+			label: 'FAQ',
+			slug: '/faq',
+		},
+		{
+			id: '5fa251f9-677a-4c84-b320-d107a5ef4c11',
+			label: 'Blog',
+			slug: '/blog',
+		},
+		{
+			id: 'f5f4363f-4993-4f68-91f2-e94e10029ee2',
+			label: 'Privacy Policy',
+			slug: '/privacy-policy',
+		},
+		{
+			id: '6ba45104-676b-4d9a-89c7-667a8c0e5e99',
+			label: 'Refund Policy',
+			slug: '/refund-policy',
+		},
+		{
+			id: '5fb251f9-677a-4c84-b320-d107a5ef4c11',
+			label: 'Terms & Conditions',
+			slug: '/terms-and-conditions',
+		},
+	],
+};
