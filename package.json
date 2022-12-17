@@ -22,6 +22,7 @@
 		"postinstall": "ts-gql build"
 	},
 	"dependencies": {
+		"@radix-ui/react-navigation-menu": "^1.1.1",
 		"@remix-run/node": "^1.8.2",
 		"@remix-run/react": "^1.8.2",
 		"@remix-run/vercel": "^1.8.2",
@@ -29,6 +30,7 @@
 		"@ts-gql/fetch": "^0.1.2",
 		"@ts-gql/tag": "^0.7.0",
 		"@vercel/node": "^2.8.0",
+		"clsx": "^1.2.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"zod": "^3.19.1"
