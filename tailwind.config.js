@@ -63,7 +63,7 @@ module.exports = {
 					'default-shadow': `${rgba(blue[400], 0.45)}`,
 					'pink': pink[600],
 					'pink-shadow': `${rgba(pink[400], 0.45)}`,
-					'blue': '#0c153c',
+					'blue': blue[900],
 					'blue-shadow': `${rgba(blue[700], 0.45)}`,
 				},
 				'primary': 'var(--brand-color)',
