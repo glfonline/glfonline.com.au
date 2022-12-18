@@ -31,7 +31,7 @@ export function Footer() {
 										{footerNavigation.col1.map((col) => (
 											<li key={col.id} className="mt-3 first:mt-0">
 												<Link
-													className="font-bold text-gray-700 transition duration-150 ease-in-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
+													className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
 													to={col.slug}
 												>
 													{col.label}
@@ -45,7 +45,7 @@ export function Footer() {
 										{footerNavigation.col2.map((col) => (
 											<li key={col.id} className="mt-3 first:mt-0">
 												<Link
-													className="font-bold text-gray-700 transition duration-150 ease-in-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
+													className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
 													to={col.slug}
 												>
 													{col.label}
@@ -61,7 +61,7 @@ export function Footer() {
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Address</dt>
 							<dd className="group flex">
-								<HouseIcon className="h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
+								<HouseIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<span className="ml-3">
 									Shop 2 Royal Bayside, 2 Horton Street, Port Macquarie 2444,
 									NSW, Australia
@@ -71,7 +71,7 @@ export function Footer() {
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Hours</dt>
 							<dd className="group flex">
-								<ClockIcon className="h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
+								<ClockIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<span className="ml-3">
 									Monday to Friday: 09:00 – 17:00, Saturday: 09:00 - 13:00,
 									Sunday: Closed
@@ -81,18 +81,18 @@ export function Footer() {
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Phone number</dt>
 							<dd className="group flex">
-								<PhoneIcon className="h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
+								<PhoneIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<div className="ml-3">
 									<a
 										href="tel:0431248847"
-										className="inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
+										className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
 									>
 										Chantale{/* */}: {/* */}0431 248 847
 									</a>{' '}
 									|{' '}
 									<a
 										href="tel:0401726598"
-										className="inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
+										className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
 									>
 										Gordon{/* */}: {/* */}0401 726 598
 									</a>
@@ -102,11 +102,11 @@ export function Footer() {
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Email</dt>
 							<dd className="group flex">
-								<MailIcon className="h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
+								<MailIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<span className="ml-3">
 									<a
 										href="mailto:info@glfonline.com.au"
-										className="text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
+										className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
 									>
 										info@glfonline.com.au
 									</a>
@@ -121,7 +121,7 @@ export function Footer() {
 							Website by{/* */}{' '}
 							<a
 								href="https://www.phirannodesigns.com.au"
-								className="font-bold transition duration-150 ease-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
+								className="hover:text-primary focus:text-primary font-bold transition duration-150 ease-out focus:underline focus:outline-none"
 							>
 								Phiranno Designs
 							</a>

@@ -36,11 +36,11 @@ function Hero() {
 							aria-hidden="true"
 							className="mt-6 flex h-3 w-10/12 overflow-hidden"
 						>
-							<div className="w-1/2 bg-brand-pink">
-								<div className="h-full -skew-x-12 transform bg-brand-pink" />
+							<div className="bg-brand-pink w-1/2">
+								<div className="bg-brand-pink h-full -skew-x-12 transform" />
 							</div>
-							<div className="w-1/2 bg-brand-blue">
-								<div className="h-full -skew-x-12 transform bg-brand-blue" />
+							<div className="bg-brand-blue w-1/2">
+								<div className="bg-brand-blue h-full -skew-x-12 transform" />
 							</div>
 						</div>
 						<p className="mt-6 text-gray-700">
@@ -186,7 +186,7 @@ function CollectionPromo() {
 								<span className="text-4xl">View ladies brands</span>
 							</h2>
 							<a
-								className="focus:shadow-outline-primary mt-4 inline-block border border-brand-pink bg-brand-pink px-8 py-2 text-sm font-bold uppercase tracking-wider transition duration-150 ease-in-out hover:border-white hover:bg-white hover:text-brand-pink focus:outline-none"
+								className="focus:shadow-outline-primary border-brand-pink bg-brand-pink hover:text-brand-pink mt-4 inline-block border px-8 py-2 text-sm font-bold uppercase tracking-wider transition duration-150 ease-in-out hover:border-white hover:bg-white focus:outline-none"
 								href="/ladies/"
 							>
 								Shop Ladies
@@ -321,7 +321,7 @@ function CollectionPromo() {
 								<span className="text-4xl">View mens brands</span>
 							</h2>
 							<a
-								className="focus:shadow-outline-primary mt-4 inline-block border border-brand-blue bg-brand-blue px-8 py-2 text-sm font-bold uppercase tracking-wider transition duration-150 ease-in-out hover:border-white hover:bg-white hover:text-brand-blue focus:outline-none"
+								className="focus:shadow-outline-primary border-brand-blue bg-brand-blue hover:text-brand-blue mt-4 inline-block border px-8 py-2 text-sm font-bold uppercase tracking-wider transition duration-150 ease-in-out hover:border-white hover:bg-white focus:outline-none"
 								href="/mens/"
 							>
 								Shop Mens
