@@ -1,6 +1,8 @@
 import { clsx } from 'clsx';
 import { forwardRef } from 'react';
 
+import { useFieldContext } from './field/context';
+
 export const TextInput = forwardRef<
 	HTMLInputElement,
 	React.InputHTMLAttributes<HTMLInputElement>
@@ -12,13 +14,19 @@ export const TextInput = forwardRef<
 	}: React.InputHTMLAttributes<HTMLInputElement>,
 	forwardedRef
 ) {
+	const [{ disabled, invalid }, a11yProps] = useFieldContext();
 	return (
 		<input
 			{...consumerProps}
+			{...a11yProps}
+			disabled={disabled}
 			ref={forwardedRef}
 			type="text"
 			className={clsx(
-				'block h-12 w-full border-gray-300 transition focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50',
+				'block h-12 w-full transition focus:ring focus:ring-opacity-50',
+				invalid
+					? 'border-red-300 focus:border-red-300 focus:ring-red-200'
+					: 'border-gray-300 focus:border-brand-300 focus:ring-brand-200',
 				className
 			)}
 		/>

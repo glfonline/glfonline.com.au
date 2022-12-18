@@ -4,6 +4,7 @@ specifiers:
   '@babel/core': ^7.20.5
   '@graphql-codegen/cli': ^2.16.1
   '@graphql-codegen/schema-ast': ^2.6.0
+  '@hookform/resolvers': ^2.9.10
   '@radix-ui/react-navigation-menu': ^1.1.1
   '@remix-run/dev': ^1.9.0
   '@remix-run/eslint-config': ^1.9.0
@@ -35,12 +36,14 @@ specifiers:
   prettier-plugin-tailwindcss: ^0.2.1
   react: ^18.2.0
   react-dom: ^18.2.0
+  react-hook-form: ^7.41.0
   tailwindcss: ^3.2.4
   ts-node: ^10.9.1
   typescript: ^4.9.4
   zod: ^3.20.2
 
 dependencies:
+  '@hookform/resolvers': 2.9.10_react-hook-form@7.41.0
   '@radix-ui/react-navigation-menu': 1.1.1_biqbaboplfbrettd7655fr4n2y
   '@remix-run/node': 1.9.0_biqbaboplfbrettd7655fr4n2y
   '@remix-run/react': 1.9.0_biqbaboplfbrettd7655fr4n2y
@@ -54,6 +57,7 @@ dependencies:
   emery: 1.4.1
   react: 18.2.0
   react-dom: 18.2.0_react@18.2.0
+  react-hook-form: 7.41.0_react@18.2.0
   zod: 3.20.2
 
 devDependencies:
@@ -2184,6 +2188,14 @@ packages:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
       graphql: 16.6.0
+
+  /@hookform/resolvers/2.9.10_react-hook-form@7.41.0:
+    resolution: {integrity: sha512-JIL1DgJIlH9yuxcNGtyhsWX/PgNltz+5Gr6+8SX9fhXc/hPbEIk6wPI82nhgvp3uUb6ZfAM5mqg/x7KR7NAb+A==}
+    peerDependencies:
+      react-hook-form: ^7.0.0
+    dependencies:
+      react-hook-form: 7.41.0_react@18.2.0
+    dev: false
 
   /@humanwhocodes/config-array/0.11.8:
     resolution: {integrity: sha512-UybHIJzJnR5Qc/MsD9Kr+RpO2h+/P1GhOwdiLPXK5TWk5sgTdu88bTD9UP+CKbPPh5Rni1u0GjAdYQLemG8g+g==}
@@ -8748,6 +8760,15 @@ packages:
       loose-envify: 1.4.0
       react: 18.2.0
       scheduler: 0.23.0
+
+  /react-hook-form/7.41.0_react@18.2.0:
+    resolution: {integrity: sha512-u1cHOXujr+AsNBoeCtcCuRwPh87mXAgKtXqd3qTCBgNFYzVZLXjYgLcynORpAgqhe24r5scucR8+6gfWaXBtHQ==}
+    engines: {node: '>=12.22.0'}
+    peerDependencies:
+      react: ^16.8.0 || ^17 || ^18
+    dependencies:
+      react: 18.2.0
+    dev: false
 
   /react-is/16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}

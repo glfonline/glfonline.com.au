@@ -1,30 +1,62 @@
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Link } from '@remix-run/react';
+import { Fragment } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+
+import { validateField } from '~/lib/form-field-error';
+
+import { Button } from './design-system/button';
+import { Checkbox } from './design-system/checkbox';
+import { Field, InlineField } from './design-system/field';
+import { Heading } from './design-system/heading';
 import { TextArea } from './design-system/text-area';
 import { TextInput } from './design-system/text-input';
+import { SplitBackground } from './split-background';
+
+const contactFormSchema = z.object({
+	'agree_to_privacy_policy': z
+		.boolean()
+		.refine((val) => val === true, 'You must agree to the privacy policy'),
+	'bot-field': z.string().optional(),
+	'first_name': z.string().min(1, 'First name is required'),
+	'last_name': z.string().min(1, 'Last name is required'),
+	'email': z.string().trim().min(1, 'Email is required').email('Invalid email'),
+	'phone_number': z
+		.string()
+		.min(1, 'Phone number is required')
+		.min(8, 'Invalid phone number'),
+	'subject': z.string().min(1, 'Subject is required'),
+	'message': z.string().min(1, 'Message is required'),
+});
+
+type ContactFormSchema = z.infer<typeof contactFormSchema>;
 
 export function ContactForm() {
+	const form = useForm<ContactFormSchema>({
+		resolver: zodResolver(contactFormSchema),
+	});
+	const handleSubmit = form.handleSubmit((formValues) => {
+		/** @todo Send form values to the server */
+		console.log(formValues);
+	});
 	return (
 		<article className="relative mx-auto max-w-7xl overflow-hidden bg-white">
 			<div
 				aria-hidden="true"
 				className="absolute inset-0 flex h-full w-full overflow-hidden"
 			>
-				<div className="bg-brand-pink w-1/2">
-					<div className="bg-brand-pink h-full -skew-x-12 transform" />
-				</div>
-				<div className="bg-brand-blue w-1/2">
-					<div className="bg-brand-blue h-full -skew-x-12 transform" />
-				</div>
+				<SplitBackground />
 			</div>
-			<div className="relative mx-auto max-w-xl bg-gray-50 px-4 py-12 sm:px-6 lg:my-12 lg:px-8">
+			<div className="relative mx-auto flex max-w-xl flex-col gap-12 bg-gray-50 px-4 py-12 sm:px-6 lg:my-12 lg:px-8">
 				<div className="text-center">
-					<h2 className="h2">Get in touch with our team</h2>
+					<Heading level="2">Get in touch with our team</Heading>
 				</div>
-				<div className="mt-12">
+				<div>
 					<form
-						action="/success/"
-						className="row-gap-6 sm:col-gap-8 grid grid-cols-1 sm:grid-cols-2"
-						method="POST"
+						className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 						name="contact_form"
+						onSubmit={handleSubmit}
 					>
 						<input type="hidden" name="form-name" defaultValue="contact" />
 						<div hidden>
@@ -32,152 +64,76 @@ export function ContactForm() {
 								Don’t fill this out: <input id="bot-field" name="bot-field" />
 							</label>
 						</div>
-						<div className="">
-							<label
-								htmlFor="first_name"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								First name
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<TextInput
-									type="text"
-									id="first_name"
-									name="first_name"
-									defaultValue=""
-									required
-								/>
-							</div>
-						</div>
-						<div className="">
-							<label
-								htmlFor="last_name"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								Last name
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<TextInput
-									type="text"
-									id="last_name"
-									name="last_name"
-									defaultValue=""
-									required
-								/>
-							</div>
-						</div>
+						<Field
+							label="First name"
+							{...validateField(form.formState.errors, 'first_name')}
+						>
+							<TextInput {...form.register('first_name')} />
+						</Field>
+						<Field
+							label="Last name"
+							{...validateField(form.formState.errors, 'last_name')}
+						>
+							<TextInput {...form.register('last_name')} />
+						</Field>
+						<Field
+							label="Email"
+							className="sm:col-span-2"
+							{...validateField(form.formState.errors, 'email')}
+						>
+							<TextInput {...form.register('email')} />
+						</Field>
+						<Field
+							label="Phone number"
+							className="sm:col-span-2"
+							{...validateField(form.formState.errors, 'phone_number')}
+						>
+							<TextInput {...form.register('phone_number')} />
+						</Field>
+						<Field
+							label="Subject"
+							className="sm:col-span-2"
+							{...validateField(form.formState.errors, 'subject')}
+						>
+							<TextInput {...form.register('subject')} />
+						</Field>
+						<Field
+							label="Message"
+							className="sm:col-span-2"
+							{...validateField(form.formState.errors, 'message')}
+						>
+							<TextArea {...form.register('message')} />
+						</Field>
+
 						<div className="sm:col-span-2">
-							<label
-								htmlFor="email"
-								className="block text-sm leading-5 text-gray-700"
+							<InlineField
+								label={<PrivacyPolicyLabel />}
+								{...validateField(
+									form.formState.errors,
+									'agree_to_privacy_policy'
+								)}
 							>
-								Email
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<TextInput
-									type="email"
-									id="email"
-									name="email"
-									defaultValue=""
-									required
-									pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
-								/>
-							</div>
+								<Checkbox {...form.register('agree_to_privacy_policy')} />
+							</InlineField>
 						</div>
-						<div className="sm:col-span-2">
-							<label
-								htmlFor="phone_number"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								Phone number
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<TextInput
-									type="tel"
-									id="phone_number"
-									name="phone_number"
-									defaultValue=""
-									required
-								/>
-							</div>
-						</div>
-						<div className="sm:col-span-2">
-							<label
-								htmlFor="subject"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								Subject
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<TextInput
-									type="text"
-									id="subject"
-									name="subject"
-									defaultValue=""
-									required
-								/>
-							</div>
-						</div>
-						<div className="sm:col-span-2">
-							<label
-								htmlFor="message"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								Message
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<TextArea
-									id="message"
-									name="message"
-									rows={4}
-									required
-									defaultValue={''}
-								/>
-							</div>
-						</div>
-						<div className="sm:col-span-2">
-							<div className="flex items-start">
-								<div className="flex-shrink-0">
-									<span
-										role="checkbox"
-										aria-checked="false"
-										tabIndex={0}
-										className=" focus:shadow-outline relative inline-block h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent bg-gray-200 transition duration-200 ease-in-out focus:outline-none"
-									>
-										<span className="sr-only">Agree to privacy policy</span>
-										<span
-											aria-hidden="true"
-											className="inline-block h-5 w-5 translate-x-0 transform rounded-full bg-white shadow transition duration-200 ease-in-out"
-										/>
-									</span>
-								</div>
-								<div id="signup" className="ml-3">
-									<p className="text-base leading-6 text-gray-600">
-										By selecting this, you agree to the{/* */}{' '}
-										<a
-											className="focus:shadow-outline-primary text-gray-700 underline focus:outline-none"
-											href="/privacy-policy/"
-										>
-											Privacy Policy
-										</a>
-										.
-									</p>
-								</div>
-							</div>
-						</div>
-						<div className="sm:col-span-2">
-							<span className="inline-flex w-full shadow-sm">
-								<button
-									type="submit"
-									className="focus:shadow-outline-primary inline-flex w-full items-center justify-center rounded-none border border-transparent bg-gray-800 px-6 py-3 text-base font-bold uppercase leading-6 tracking-wide text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:border-gray-900 focus:outline-none active:bg-gray-900"
-								>
-									Submit
-								</button>
-							</span>
-						</div>
+						<Button type="submit" variant="neutral" className="sm:col-span-2">
+							Submit
+						</Button>
 					</form>
 				</div>
 			</div>
 		</article>
+	);
+}
+
+function PrivacyPolicyLabel() {
+	return (
+		<Fragment>
+			By selecting this, you agree to the{' '}
+			<Link to="/privacy-policy/" className="underline">
+				Privacy Policy
+			</Link>
+			.
+		</Fragment>
 	);
 }

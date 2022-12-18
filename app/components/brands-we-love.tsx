@@ -1,5 +1,5 @@
 import { Link } from '@remix-run/react';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 
 import { brands } from '~/lib/constants';
 

@@ -1,4 +1,4 @@
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { Fragment } from 'react';
 
 import { BrandsWeLove } from '~/components/brands-we-love';
