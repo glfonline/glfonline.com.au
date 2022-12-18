@@ -1,5 +1,5 @@
-import { TextArea } from './text-area';
-import { TextInput } from './text-input';
+import { TextArea } from './design-system/text-area';
+import { TextInput } from './design-system/text-input';
 
 export function ContactForm() {
 	return (
@@ -8,11 +8,11 @@ export function ContactForm() {
 				aria-hidden="true"
 				className="absolute inset-0 flex h-full w-full overflow-hidden"
 			>
-				<div className="w-1/2 bg-brand-pink">
-					<div className="h-full -skew-x-12 transform bg-brand-pink" />
+				<div className="bg-brand-pink w-1/2">
+					<div className="bg-brand-pink h-full -skew-x-12 transform" />
 				</div>
-				<div className="w-1/2 bg-brand-blue">
-					<div className="h-full -skew-x-12 transform bg-brand-blue" />
+				<div className="bg-brand-blue w-1/2">
+					<div className="bg-brand-blue h-full -skew-x-12 transform" />
 				</div>
 			</div>
 			<div className="relative mx-auto max-w-xl bg-gray-50 px-4 py-12 sm:px-6 lg:my-12 lg:px-8">
