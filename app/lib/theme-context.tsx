@@ -1,6 +1,6 @@
 import { createContext, useContext } from 'react';
 
-type Theme = 'ladies' | 'mens' | 'neutral';
+export type Theme = 'ladies' | 'mens' | 'neutral';
 const ThemeContext = createContext<{ 'data-theme': Theme }>({
 	'data-theme': 'neutral',
 });
