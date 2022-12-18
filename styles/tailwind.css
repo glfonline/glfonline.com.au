@@ -86,6 +86,6 @@
 		--color-brand-900: var(--color-blue-900);
 
 		--color-brand-primary: var(--color-blue-900);
-		--color-brand-focus: var(--color-blue-900);
+		--color-brand-focus: var(--color-blue-800);
 	}
 }
