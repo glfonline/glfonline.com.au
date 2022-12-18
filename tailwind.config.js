@@ -74,7 +74,7 @@ module.exports = {
 				sans: ['Century Gothic', ...defaultTheme.fontFamily.sans],
 			},
 			ringColor: {
-				brand: withOpacity('--color-brand-focus'),
+				brand: withOpacity('--color-brand-focus-ring'),
 			},
 		},
 	},
