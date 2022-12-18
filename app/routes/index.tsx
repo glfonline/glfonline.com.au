@@ -2,6 +2,8 @@ import { Fragment } from 'react';
 
 import { BrandsWeLove } from '~/components/brands-we-love';
 import { ContactForm } from '~/components/contact-form';
+import { Map } from '~/components/map';
+import { NewsletterSignup } from '~/components/newsletter-signup';
 import { VerticalLogo } from '~/components/vectors/vertical-logo';
 
 export default function Index() {
@@ -328,139 +330,6 @@ function CollectionPromo() {
 					</div>
 				</div>
 			</div>
-		</article>
-	);
-}
-
-function NewsletterSignup() {
-	return (
-		<article className="mx-auto max-w-7xl bg-gray-100">
-			<div className="mx-auto max-w-xl px-4 py-12 text-left sm:px-6 lg:py-16 lg:px-8">
-				<h2 className="h2 text-center">Don't miss out, join the club</h2>
-				<span className="sr-only">Sign up for our newsletter</span>
-				<form
-					method="POST"
-					name="newsletter-signup-form"
-					target="_blank"
-					className="mt-8 w-full sm:flex"
-				>
-					<div className="grid w-full gap-6 sm:grid-cols-4">
-						<div className="sm:col-span-2">
-							<label
-								htmlFor="newsletter-first_name"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								First name
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<input
-									type="text"
-									id="newsletter-first_name"
-									name="newsletter-first_name"
-									defaultValue=""
-									required
-									className="form-input block w-full rounded-none px-4 py-3 transition duration-150 ease-in-out"
-								/>
-							</div>
-						</div>
-						<div className="sm:col-span-2">
-							<label
-								htmlFor="newsletter-last_name"
-								className="block text-sm leading-5 text-gray-700"
-							>
-								Last name
-							</label>
-							<div className="relative mt-1 shadow-sm">
-								<input
-									type="text"
-									id="newsletter-last_name"
-									name="newsletter-last_name"
-									defaultValue=""
-									required
-									className="form-input block w-full rounded-none px-4 py-3 transition duration-150 ease-in-out"
-								/>
-							</div>
-						</div>
-						<div className="sm:col-span-4 ">
-							<div className="sm:col-span-2">
-								<label
-									htmlFor="newsletter-email"
-									className="block text-sm leading-5 text-gray-700"
-								>
-									Email address
-								</label>
-								<div className="relative mt-1 shadow-sm">
-									<input
-										type="email"
-										id="newsletter-email"
-										name="newsletter-email"
-										defaultValue=""
-										required
-										pattern="^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x22([^\x0d\x22\x5c\x80-\xff]|\x5c[\x00-\x7f])*\x22))*\x40([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d)(\x2e([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b-\x5d\x7f-\xff]+|\x5b([^\x0d\x5b-\x5d\x80-\xff]|\x5c[\x00-\x7f])*\x5d))*(\.\w{2,})+$"
-										className="form-input block w-full rounded-none px-4 py-3 transition duration-150 ease-in-out"
-									/>
-								</div>
-							</div>
-						</div>
-						<button
-							type="submit"
-							className="focus:shadow-outline-primary relative inline-flex w-full items-center justify-center border border-transparent bg-gray-800 px-4 py-3 text-base font-bold uppercase leading-6 tracking-wide text-white transition duration-150 ease-in-out hover:bg-gray-700 focus:border-blue-400 focus:bg-gray-600 focus:outline-none active:bg-gray-900 disabled:cursor-wait disabled:opacity-50 sm:col-span-1 sm:col-span-4 sm:w-auto"
-						>
-							<span className="">Join</span>
-						</button>
-					</div>
-				</form>
-				<p className="prose mt-6 text-center">
-					* by clicking join, you agree to receive our newsletter as well as top
-					tips to improve your game
-				</p>
-			</div>
-		</article>
-	);
-}
-
-function Map() {
-	return (
-		<article className="relative mx-auto max-w-7xl overflow-hidden">
-			<iframe
-				src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d6808.96377872015!2d152.908439!3d-31.428397999999998!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x64a8efb0170dc7c7!2sGLF%20Online%20%2F%20GLF%20Golf%20%26%20Lifestyle!5e0!3m2!1sen!2sau!4v1671274957553!5m2!1sen!2sau"
-				title="Golf Ladies First Port Macquarie Location"
-				loading="lazy"
-				referrerPolicy="no-referrer-when-downgrade"
-				allowFullScreen
-				className="h-96 w-full border-none"
-			/>
-			{/* <div className="absolute inset-0 flex h-full w-full items-center justify-center">
-				<svg
-					height="2em"
-					width="2em"
-					style={{ animationDuration: '900ms' }}
-					className="__react-svg-spinner_circle"
-					role="img"
-					aria-labelledby="title desc"
-					viewBox="0 0 32 32"
-				>
-					<title id="title">Circle loading spinner</title>
-					<desc id="desc">Image of a partial circle indicating "loading."</desc>
-					<style
-						dangerouslySetInnerHTML={{
-							__html:
-								'\n      .__react-svg-spinner_circle{\n          transition-property: transform;\n          animation-name: __react-svg-spinner_infinite-spin;\n          animation-iteration-count: infinite;\n          animation-timing-function: linear;\n      }\n      @keyframes __react-svg-spinner_infinite-spin {\n          from {transform: rotate(0deg)}\n          to {transform: rotate(360deg)}\n      }\n    ',
-						}}
-					/>
-					<circle
-						role="presentation"
-						cx={16}
-						cy={16}
-						r="12.5"
-						stroke="var(--brand-color)"
-						fill="none"
-						strokeWidth={3}
-						strokeDasharray="43.982297150257104"
-						strokeLinecap="round"
-					/>
-				</svg>
-			</div> */}
 		</article>
 	);
 }
