@@ -1,0 +1,10 @@
+{
+	"editor.codeActionsOnSave": { "source.fixAll": true },
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.formatOnSave": true,
+	"eslint.packageManager": "pnpm",
+	"tailwindCSS.experimental.classRegex": [
+		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
+	],
+	"typescript.tsdk": "node_modules/typescript/lib"
+}
