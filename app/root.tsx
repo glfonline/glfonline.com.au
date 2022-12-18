@@ -9,6 +9,7 @@ import {
 } from '@remix-run/react';
 
 import { MainLayout } from './components/main-layout';
+import { ThemeProvider } from './lib/theme-context';
 import styles from './styles/tailwind.css';
 
 export const links: LinksFunction = () => {
@@ -31,9 +32,11 @@ export default function App() {
 				<Links />
 			</head>
 			<body className="flex h-full flex-col">
-				<MainLayout>
-					<Outlet />
-				</MainLayout>
+				<ThemeProvider>
+					<MainLayout>
+						<Outlet />
+					</MainLayout>
+				</ThemeProvider>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
