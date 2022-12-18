@@ -36,4 +36,4 @@ const headingLevelMap = {
 } as const;
 
 type NativeHeadingProps = React.HTMLAttributes<HTMLHeadingElement>;
-type HeadingProps = NativeHeadingProps & HeadingVariantProps;
+export type HeadingProps = NativeHeadingProps & HeadingVariantProps;

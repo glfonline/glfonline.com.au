@@ -3,7 +3,9 @@ import { Fragment } from 'react';
 
 import { BrandsWeLove } from '~/components/brands-we-love';
 import { ContactForm } from '~/components/contact-form';
-import { ButtonLink } from '~/components/design-system/button/button-link';
+import { ButtonLink } from '~/components/design-system/button';
+import { Heading } from '~/components/design-system/heading';
+import { getHeadingStyles } from '~/components/design-system/heading/get-heading-styles';
 import { Divider } from '~/components/divider';
 import { Map } from '~/components/map';
 import { NewsletterSignup } from '~/components/newsletter-signup';
@@ -31,7 +33,7 @@ function Hero() {
 			<div className="bg-white px-4 py-12 sm:px-6 lg:px-8">
 				<div className="flex flex-col gap-6 px-4 md:w-64">
 					<VerticalLogo className="mx-auto hidden w-full max-w-xs text-black md:block" />
-					<h1 className="text-2xl font-bold uppercase leading-tight">
+					<h1 className={getHeadingStyles({ level: '2' })}>
 						Top brand <br />
 						golf apparel <br />
 						and accessories for women <br />
@@ -117,9 +119,9 @@ function CollectionCard({
 				data-theme={theme}
 				className="relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t from-true-black/50 via-transparent p-8"
 			>
-				<h2 className="text-2xl font-bold uppercase leading-tight text-white">
+				<Heading level="2" color="light">
 					{heading}
-				</h2>
+				</Heading>
 				<p className="mx-auto flex w-full max-w-[10rem] flex-col items-stretch text-center">
 					<ButtonLink href={cta.href} variant="brand" size="small">
 						{cta.text}
