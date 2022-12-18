@@ -1,6 +1,6 @@
 import { CHANTALE_PHONE, socialLinks } from '~/lib/constants';
 
-import { ButtonLink } from './design-system/button/button-link';
+import { ButtonLink } from './design-system/button';
 import { CartIcon } from './vectors/cart-icon';
 import { SearchIcon } from './vectors/search-icon';
 
