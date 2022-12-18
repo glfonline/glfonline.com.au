@@ -5,23 +5,87 @@
 
 @layer base {
 	:root {
-		--brand-color: theme('colors.gray.900');
-		--brand-color-light: theme('colors.gray.700');
-		--brand-color-lighter: theme('colors.gray.500');
-		--shadow-color: theme('colors.brand.default-shadow');
+		/* Gray */
+		--color-gray-50: 251, 251, 251; /* #fbfbfb */
+		--color-gray-100: 247, 247, 247; /* #f7f7f7 */
+		--color-gray-200: 235, 235, 235; /* #ebebeb */
+		--color-gray-300: 220, 220, 220; /* #dcdcdc */
+		--color-gray-400: 178, 178, 178; /* #b2b2b2 */
+		--color-gray-500: 128, 128, 128; /* #808080 */
+		--color-gray-600: 99, 99, 99; /* #636363 */
+		--color-gray-700: 81, 81, 81; /* #515151 */
+		--color-gray-800: 63, 63, 63; /* #3f3f3f */
+		--color-gray-900: 46, 46, 46; /* #2e2e2e */
+
+		/* Pink */
+		--color-pink-50: 255, 244, 250; /* #fff4fa */
+		--color-pink-100: 255, 224, 241; /* #ffe0f1 */
+		--color-pink-200: 252, 199, 229; /* #fcc7e5 */
+		--color-pink-300: 250, 165, 211; /* #faa5d3 */
+		--color-pink-400: 247, 106, 175; /* #f76aaf */
+		--color-pink-500: 242, 48, 142; /* #f2308e */
+		--color-pink-600: 226, 0, 109; /* #e2006d */
+		--color-pink-700: 194, 12, 91; /* #c20c5b */
+		--color-pink-800: 153, 21, 75; /* #99154b */
+		--color-pink-900: 117, 26, 61; /* #751a3d */
+
+		/* Blue */
+		--color-blue-50: 235, 244, 255; /* #ebf4ff */
+		--color-blue-100: 226, 238, 255; /* #e2eeff */
+		--color-blue-200: 197, 219, 255; /* #c5dbff */
+		--color-blue-300: 164, 196, 254; /* #a4c4fe */
+		--color-blue-400: 116, 159, 252; /* #749ffc */
+		--color-blue-500: 63, 118, 248; /* #3f76f8 */
+		--color-blue-600: 33, 87, 235; /* #2157eb */
+		--color-blue-700: 22, 64, 189; /* #1640bd */
+		--color-blue-800: 18, 39, 117; /* #122775 */
+		--color-blue-900: 12, 21, 60; /* #0c153c */
+
+		/* Brand scale */
+		--color-brand-50: var(--color-gray-50);
+		--color-brand-100: var(--color-gray-100);
+		--color-brand-200: var(--color-gray-200);
+		--color-brand-300: var(--color-gray-300);
+		--color-brand-400: var(--color-gray-400);
+		--color-brand-500: var(--color-gray-500);
+		--color-brand-600: var(--color-gray-600);
+		--color-brand-700: var(--color-gray-700);
+		--color-brand-800: var(--color-gray-800);
+		--color-brand-900: var(--color-gray-900);
+
+		--color-brand-primary: var(--color-gray-900);
+		--color-brand-focus: var(--color-gray-900);
 	}
 
 	[data-theme='ladies'] {
-		--brand-color: theme('colors.pink.600');
-		--brand-color-light: theme('colors.pink.400');
-		--brand-color-lighter: theme('colors.pink.200');
-		--shadow-color: theme('colors.brand.pink-shadow');
+		--color-brand-50: var(--color-pink-50);
+		--color-brand-100: var(--color-pink-100);
+		--color-brand-200: var(--color-pink-200);
+		--color-brand-300: var(--color-pink-300);
+		--color-brand-400: var(--color-pink-400);
+		--color-brand-500: var(--color-pink-500);
+		--color-brand-600: var(--color-pink-600);
+		--color-brand-700: var(--color-pink-700);
+		--color-brand-800: var(--color-pink-800);
+		--color-brand-900: var(--color-pink-900);
+
+		--color-brand-primary: var(--color-pink-600);
+		--color-brand-focus: var(--color-pink-600);
 	}
 
 	[data-theme='mens'] {
-		--brand-color: theme('colors.blue.900');
-		--brand-color-light: theme('colors.blue.700');
-		--brand-color-lighter: theme('colors.blue.500');
-		--shadow-color: theme('colors.brand.blue-shadow');
+		--color-brand-50: var(--color-blue-50);
+		--color-brand-100: var(--color-blue-100);
+		--color-brand-200: var(--color-blue-200);
+		--color-brand-300: var(--color-blue-300);
+		--color-brand-400: var(--color-blue-400);
+		--color-brand-500: var(--color-blue-500);
+		--color-brand-600: var(--color-blue-600);
+		--color-brand-700: var(--color-blue-700);
+		--color-brand-800: var(--color-blue-800);
+		--color-brand-900: var(--color-blue-900);
+
+		--color-brand-primary: var(--color-blue-900);
+		--color-brand-focus: var(--color-blue-900);
 	}
 }
