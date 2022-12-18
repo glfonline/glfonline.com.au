@@ -1,6 +1,15 @@
 import { FacebookIcon } from '~/components/vectors/facebook-icon';
 import { InstagramIcon } from '~/components/vectors/instagram-icon';
 
+import corsicanGolf from '../images/brand-logos/corsican-golf.svg';
+import dailySports from '../images/brand-logos/daily-sports.svg';
+import gregNorman from '../images/brand-logos/greg-norman.svg';
+import ibkul from '../images/brand-logos/ibkul.png';
+import jamieSadock from '../images/brand-logos/jamie-sadock.svg';
+import nivo from '../images/brand-logos/nivo.svg';
+import sporteLeisure from '../images/brand-logos/sporte-leisure-logo.png';
+import travisMatthews from '../images/brand-logos/travis-matthews.svg';
+
 export const CHANTALE_PHONE = '0431 248 847';
 export const GORDON_PHONE = '0401 726 598';
 export const EMAIL_ADDRESS = 'info@glfonline.com.au';
@@ -147,3 +156,54 @@ export const footerNavigation: Record<
 		},
 	],
 };
+
+export const brands = [
+	{
+		label: 'IBKUL',
+		slug: '/ladies/collections/ibkul/',
+		icon: ibkul,
+		theme: 'ladies',
+	},
+	{
+		label: 'Travis Matthews',
+		slug: '/mens/collections/travis-mathew/',
+		icon: travisMatthews,
+		theme: 'mens',
+	},
+	{
+		label: 'Corsican Golf',
+		slug: '/ladies/collections/corsican-golf/',
+		icon: corsicanGolf,
+		theme: 'ladies',
+	},
+	{
+		label: 'Jamie Sadock',
+		slug: '/ladies/collections/jamie-sadock-brand/',
+		icon: jamieSadock,
+		theme: 'ladies',
+	},
+	{
+		label: 'Nivo',
+		slug: '/ladies/collections/nivo/',
+		icon: nivo,
+		theme: 'ladies',
+	},
+	{
+		label: 'Greg Norman',
+		slug: '/mens/collections/greg-norman/',
+		icon: gregNorman,
+		theme: 'mens',
+	},
+	{
+		label: 'Daily Sports',
+		slug: '/ladies/collections/daily-sports/',
+		icon: dailySports,
+		theme: 'ladies',
+	},
+	{
+		label: 'Sporte Leisure',
+		slug: '/ladies/collections/sporte-leisure/',
+		icon: sporteLeisure,
+		theme: 'ladies',
+	},
+];
