@@ -6,7 +6,7 @@ import { SearchIcon } from './vectors/search-icon';
 
 export function Header() {
 	return (
-		<header className="mx-auto w-full max-w-7xl">
+		<header className="sticky top-0 z-20 mx-auto w-full max-w-7xl bg-white">
 			<Topbar />
 			<MainNav />
 		</header>
@@ -15,24 +15,30 @@ export function Header() {
 
 function Topbar() {
 	return (
-		<div className="flex h-12 items-center gap-6 text-sm sm:px-6 lg:px-8">
+		<div className="hidden h-12 items-center gap-6 px-4 text-sm sm:flex sm:px-6 lg:px-8">
 			<span className="flex-1 font-bold uppercase">
 				Free delivery on all orders over $100 australia wide
 			</span>
-			<ButtonLink href={`tel:${CHANTALE_PHONE}`} size="small" variant="outline">
-				Phone: {CHANTALE_PHONE}
-			</ButtonLink>
-			<div className="inline-flex gap-3">
-				{socialLinks.map((link) => (
-					<a
-						key={link.url}
-						href={link.url}
-						className="inline-flex focus:outline-none focus:ring-2 focus:ring-brand"
-					>
-						<span className="sr-only">{link.name}</span>
-						<link.icon className="h-6 w-6" />
-					</a>
-				))}
+			<div className="hidden items-center gap-6 md:flex">
+				<ButtonLink
+					href={`tel:${CHANTALE_PHONE}`}
+					size="small"
+					variant="outline"
+				>
+					Phone: {CHANTALE_PHONE}
+				</ButtonLink>
+				<div className="inline-flex gap-3">
+					{socialLinks.map((link) => (
+						<a
+							key={link.url}
+							href={link.url}
+							className="inline-flex focus:outline-none focus:ring-2 focus:ring-brand"
+						>
+							<span className="sr-only">{link.name}</span>
+							<link.icon className="h-6 w-6" />
+						</a>
+					))}
+				</div>
 			</div>
 			<a
 				href="/cart"
