@@ -30,6 +30,7 @@
 		"@ts-gql/fetch": "^0.1.2",
 		"@ts-gql/tag": "^0.7.0",
 		"@vercel/node": "^2.8.1",
+		"class-variance-authority": "^0.4.0",
 		"clsx": "^1.2.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",

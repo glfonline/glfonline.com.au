@@ -1,6 +1,6 @@
 import { CHANTALE_PHONE, socialLinks } from '~/lib/constants';
 
-import { getButtonStyles } from './design-system/button/get-button-styles';
+import { ButtonLink } from './design-system/button/button-link';
 import { CartIcon } from './vectors/cart-icon';
 import { SearchIcon } from './vectors/search-icon';
 
@@ -19,12 +19,9 @@ function Topbar() {
 			<span className="flex-1 font-bold uppercase">
 				Free delivery on all orders over $100 australia wide
 			</span>
-			<a
-				href={`tel:${CHANTALE_PHONE}`}
-				className={getButtonStyles({ size: 'small', variant: 'outline' })}
-			>
+			<ButtonLink href={`tel:${CHANTALE_PHONE}`} size="small" variant="outline">
 				Phone: {CHANTALE_PHONE}
-			</a>
+			</ButtonLink>
 			<div className="inline-flex gap-3">
 				{socialLinks.map((link) => (
 					<a
