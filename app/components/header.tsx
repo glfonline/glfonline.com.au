@@ -1,5 +1,6 @@
 import { CHANTALE_PHONE, socialLinks } from '~/lib/constants';
 
+import { getButtonStyles } from './design-system/button/get-button-styles';
 import { CartIcon } from './vectors/cart-icon';
 import { SearchIcon } from './vectors/search-icon';
 
@@ -20,22 +21,29 @@ function Topbar() {
 			</span>
 			<a
 				href={`tel:${CHANTALE_PHONE}`}
-				className="border border-current px-3 py-1 font-bold uppercase"
+				className={getButtonStyles({ size: 'small', variant: 'outline' })}
 			>
 				Phone: {CHANTALE_PHONE}
 			</a>
-			<span className="flex gap-4">
+			<div className="inline-flex gap-3">
 				{socialLinks.map((link) => (
-					<a key={link.url} href={link.url}>
+					<a
+						key={link.url}
+						href={link.url}
+						className="inline-flex focus:outline-none focus:ring-2 focus:ring-brand"
+					>
 						<span className="sr-only">{link.name}</span>
 						<link.icon className="h-6 w-6" />
 					</a>
 				))}
-			</span>
-			<a href="/cart" className="flex items-center gap-1 uppercase">
+			</div>
+			<a
+				href="/cart"
+				className="inline-flex items-center gap-1 p-1 uppercase focus:outline-none focus:ring-2 focus:ring-brand"
+			>
 				<CartIcon className="h-5 w-5" />0 items
 			</a>
-			<button>
+			<button className="p-1 focus:outline-none focus:ring-2 focus:ring-brand">
 				<SearchIcon className="h-5 w-5" />
 			</button>
 		</div>
