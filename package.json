@@ -3,7 +3,7 @@
 	"private": true,
 	"sideEffects": false,
 	"scripts": {
-		"build": "npm run build:css && build:remix",
+		"build": "pnpm run build:css && pnpm run build:remix",
 		"build:css": "tailwindcss -m -i ./styles/tailwind.css -o app/styles/tailwind.css",
 		"build:remix": "remix build",
 		"check": "pnpm run check:format && pnpm run check:lint && pnpm run check:types",
