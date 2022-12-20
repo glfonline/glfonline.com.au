@@ -1,6 +1,13 @@
 import { Link } from '@remix-run/react';
+import { Fragment } from 'react';
 
-import { footerNavigation } from '~/lib/constants';
+import {
+	CONTACT_NUMBERS,
+	EMAIL_ADDRESS,
+	footerNavigation,
+	HOURS,
+	STREET_ADDRESS,
+} from '~/lib/constants';
 
 import { ClockIcon } from './vectors/clock-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';
@@ -63,8 +70,7 @@ export function Footer() {
 							<dd className="group flex">
 								<HouseIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<span className="ml-3">
-									Shop 2 Royal Bayside, 2 Horton Street, Port Macquarie 2444,
-									NSW, Australia
+									{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia
 								</span>
 							</dd>
 						</div>
@@ -73,8 +79,12 @@ export function Footer() {
 							<dd className="group flex">
 								<ClockIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<span className="ml-3">
-									Monday to Friday: 09:00 – 17:00, Saturday: 09:00 - 13:00,
-									Sunday: Closed
+									{Object.entries(HOURS).map(([key, value], index) => (
+										<Fragment key={key}>
+											{key}: {value}
+											{Object.entries(HOURS).length - 1 !== index && ', '}
+										</Fragment>
+									))}
 								</span>
 							</dd>
 						</div>
@@ -83,19 +93,16 @@ export function Footer() {
 							<dd className="group flex">
 								<PhoneIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<div className="ml-3">
-									<a
-										href="tel:0431248847"
-										className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
-									>
-										Chantale{/* */}: {/* */}0431 248 847
-									</a>{' '}
-									|{' '}
-									<a
-										href="tel:0401726598"
-										className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
-									>
-										Gordon{/* */}: {/* */}0401 726 598
-									</a>
+									{CONTACT_NUMBERS.map(({ name, phone }, index) => (
+										<a
+											key={name}
+											href={`tel:${phone}`}
+											className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+										>
+											{name}: {phone}
+											{CONTACT_NUMBERS.length - 1 !== index && ' | '}
+										</a>
+									))}
 								</div>
 							</dd>
 						</div>
@@ -105,10 +112,10 @@ export function Footer() {
 								<MailIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
 								<span className="ml-3">
 									<a
-										href="mailto:info@glfonline.com.au"
+										href={`mailto:${EMAIL_ADDRESS}`}
 										className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
 									>
-										info@glfonline.com.au
+										{EMAIL_ADDRESS}
 									</a>
 								</span>
 							</dd>
@@ -118,12 +125,12 @@ export function Footer() {
 				<div className="mt-8 border-t border-gray-200 bg-white">
 					<div className="mx-auto py-6 text-center md:px-6">
 						<p className="text-center text-base leading-6 text-gray-700">
-							Website by{/* */}{' '}
+							Website by{' '}
 							<a
-								href="https://www.phirannodesigns.com.au"
+								href="https://www.lukebennett.com.au/"
 								className="hover:text-primary focus:text-primary font-bold transition duration-150 ease-out focus:underline focus:outline-none"
 							>
-								Phiranno Designs
+								Luke Bennett
 							</a>
 						</p>
 					</div>

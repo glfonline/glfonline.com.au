@@ -13,10 +13,25 @@ import travisMatthews from '../images/brand-logos/travis-matthews.svg';
 export const CHANTALE_PHONE = '0431 248 847';
 export const GORDON_PHONE = '0401 726 598';
 export const EMAIL_ADDRESS = 'info@glfonline.com.au';
+export const CONTACT_NUMBERS = [
+	{
+		name: 'Chantale',
+		phone: CHANTALE_PHONE,
+	},
+	{
+		name: 'Gordon',
+		phone: GORDON_PHONE,
+	},
+];
 export const ADDRESS = 'Shop 2 Royal Bayside, 2 Horton Street';
 export const FACEBOOK_URL = 'https://www.facebook.com/GLFONLINE.COM.AU';
 export const INSTAGRAM_URL = 'https://www.instagram.com/glf.online';
-
+export const STREET_ADDRESS = 'Shop 2 Royal Bayside, 2 Horton Street';
+export const HOURS = {
+	'Monday to Friday': '09:00 – 17:00',
+	'Saturday': '09:00 - 13:00',
+	'Sunday': 'Closed',
+};
 export const socialLinks = [
 	{
 		name: 'Facebook',
