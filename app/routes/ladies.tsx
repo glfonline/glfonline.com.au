@@ -1,10 +1,10 @@
 import { CollectionCard } from '~/components/collection-card';
-import { mensCollections } from '~/lib/constants';
+import { ladiesCollections } from '~/lib/constants';
 
-export default function MensCollectionsPage() {
+export default function LadiesCollectionsPage() {
 	return (
 		<div className="grid gap-4 lg:grid-cols-5">
-			{mensCollections.map((collection) => (
+			{ladiesCollections.map((collection) => (
 				<CollectionCard
 					key={collection.cta.href}
 					span={collection.span}

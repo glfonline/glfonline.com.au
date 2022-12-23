@@ -459,81 +459,150 @@ export const brands = [
 
 export const mensCollections = [
 	{
-		name: 'Greg Norman',
-		span: '5',
+		cta: {
+			text: 'Shop Greg Norman',
+			href: '/mens/collections/greg-norman',
+		},
 		image: {
 			src: 'https://www.glfonline.com.au/static/dcff829c90c28fb4787c9f18ede480ea/6833b/card-greg-norman.webp',
 			objectPosition: 'top',
 			alt: 'Greg Norman',
 		},
-		cta: {
-			text: 'Shop Greg Norman',
-			href: '/mens/collections/greg-norman',
-		},
+		span: '5',
 	},
 	{
-		name: 'Travis Matthews',
-		span: '2',
+		cta: {
+			text: 'Shop Travis Matthews',
+			href: '/mens/collections/travis-mathew',
+		},
 		image: {
 			src: 'https://www.glfonline.com.au/static/67b69078bdea3a894faa4c2c9976244c/e4875/card-travis-matthews.webp',
 			objectPosition: 'top',
 			alt: 'Travis Matthews',
 		},
-		cta: {
-			text: 'Shop Travis Matthews',
-			href: '/mens/collections/travis-mathew',
-		},
+		span: '2',
 	},
 	{
-		name: 'Bermuda Sands',
-		span: '3',
+		cta: {
+			text: 'Shop Bermuda Sands',
+			href: '/mens/collections/bermuda-sands-brand',
+		},
 		image: {
 			src: 'https://www.glfonline.com.au/static/08c5407d8a6743e1602f153a2a5e14c8/8764e/card-bermuda-sands.webp',
 			objectPosition: 'right',
 			alt: 'Bermuda Sands',
 		},
-		cta: {
-			text: 'Shop Bermuda Sands',
-			href: '/mens/collections/bermuda-sands-brand',
-		},
+		span: '3',
 	},
 	{
-		name: 'IBKUL',
-		span: '5',
+		cta: {
+			text: 'Shop IBKUL',
+			href: '/mens/collections/ibkul',
+		},
 		image: {
 			src: 'https://www.glfonline.com.au/static/f27adb43fea0d9b9d5807f29b2bd9645/aee5b/ibkul-men2.webp',
 			objectPosition: 'top',
 			alt: 'IBKUL',
 		},
-		cta: {
-			text: 'Shop IBKUL',
-			href: '/mens/collections/ibkul',
-		},
+		span: '5',
 	},
 	{
-		name: 'Sporte Leisure',
-		span: '3',
+		cta: {
+			text: 'Shop Sporte Leisure',
+			href: '/mens/collections/sporte-leisure',
+		},
 		image: {
 			src: 'https://www.glfonline.com.au/static/d6a7473878e37d3984459330e676d1ab/5ba9d/sporte-leisure.webp',
 			objectPosition: 'top',
 			alt: 'Sporte Leisure',
 		},
-		cta: {
-			text: 'Shop Sporte Leisure',
-			href: '/mens/collections/sporte-leisure',
-		},
+		span: '3',
 	},
 	{
-		name: 'Evoke Headwear',
-		span: '2',
+		cta: {
+			text: 'Shop Evoke Headwear',
+			href: '/mens/collections/evoke-headwear',
+		},
 		image: {
 			src: 'https://www.glfonline.com.au/static/cdfc2a29edbcc61d9099c3804a77a359/b0751/card-evoke-headwear.webp',
 			objectPosition: 'top',
 			alt: 'Evoke Headwear',
 		},
+		span: '2',
+	},
+] as const;
+
+export const ladiesCollections = [
+	{
 		cta: {
-			text: 'Shop Evoke Headwear',
-			href: '/mens/collections/evoke-headwear',
+			text: 'Shop Greg Norman',
+			href: '/ladies/collections/greg-norman',
 		},
+		image: {
+			src: 'https://www.glfonline.com.au/static/522a25df897960443a2c205a62201ca0/e170b/greg-norman-ladies.webp',
+			objectPosition: 'top',
+			alt: 'Greg Norman',
+		},
+		span: '5',
+	},
+	{
+		cta: {
+			text: 'Shop Bermuda Sands',
+			href: '/ladies/collections/bermuda-sands-brand',
+		},
+		image: {
+			src: 'https://www.glfonline.com.au/static/6c11b129251e205bb6a35d708df4a764/e4875/bermuda-sands-ladies.webp',
+			objectPosition: 'top',
+			alt: 'Bermuda Sands',
+		},
+		span: '2',
+	},
+	{
+		cta: {
+			text: 'Shop Nivo',
+			href: '/ladies/collections/nivo',
+		},
+		image: {
+			src: 'https://www.glfonline.com.au/static/356b5951eb404aa1e268351570224623/20e40/card-nivo2.webp',
+			objectPosition: 'top',
+			alt: 'Nivo',
+		},
+		span: '3',
+	},
+	{
+		cta: {
+			text: 'Shop Corsican Golf',
+			href: '/ladies/collections/corsican-golf',
+		},
+		image: {
+			src: 'https://www.glfonline.com.au/static/54ab932a8948f0556bc96a1a513c8574/6833b/card-corsican-golf.webp',
+			objectPosition: 'top',
+			alt: 'Corsican Golf',
+		},
+		span: '5',
+	},
+	{
+		cta: {
+			text: 'Shop Daily Sports',
+			href: '/ladies/collections/daily-sports',
+		},
+		image: {
+			src: 'https://www.glfonline.com.au/static/1acebffc775edc2e38ee203c93cc492f/b5e5f/daily-sports.webp',
+			objectPosition: 'top',
+			alt: 'Daily Sports',
+		},
+		span: '3',
+	},
+	{
+		cta: {
+			text: 'Shop Jamie Sadock',
+			href: '/ladies/collections/jamie-sadock-brand',
+		},
+		image: {
+			src: 'https://www.glfonline.com.au/static/7eaae5580cfc59c51fedebd57a9c4a4b/e4875/jamie-sadock.webp',
+			objectPosition: 'top',
+			alt: 'Jamie Sadock',
+		},
+		span: '2',
 	},
 ] as const;
