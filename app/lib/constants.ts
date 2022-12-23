@@ -456,3 +456,84 @@ export const brands = [
 		theme: 'ladies',
 	},
 ];
+
+export const mensCollections = [
+	{
+		name: 'Greg Norman',
+		span: '5',
+		image: {
+			src: 'https://www.glfonline.com.au/static/dcff829c90c28fb4787c9f18ede480ea/6833b/card-greg-norman.webp',
+			objectPosition: 'top',
+			alt: 'Greg Norman',
+		},
+		cta: {
+			text: 'Shop Greg Norman',
+			href: '/mens/collections/greg-norman',
+		},
+	},
+	{
+		name: 'Travis Matthews',
+		span: '2',
+		image: {
+			src: 'https://www.glfonline.com.au/static/67b69078bdea3a894faa4c2c9976244c/e4875/card-travis-matthews.webp',
+			objectPosition: 'top',
+			alt: 'Travis Matthews',
+		},
+		cta: {
+			text: 'Shop Travis Matthews',
+			href: '/mens/collections/travis-mathew',
+		},
+	},
+	{
+		name: 'Bermuda Sands',
+		span: '3',
+		image: {
+			src: 'https://www.glfonline.com.au/static/08c5407d8a6743e1602f153a2a5e14c8/8764e/card-bermuda-sands.webp',
+			objectPosition: 'right',
+			alt: 'Bermuda Sands',
+		},
+		cta: {
+			text: 'Shop Bermuda Sands',
+			href: '/mens/collections/bermuda-sands-brand',
+		},
+	},
+	{
+		name: 'IBKUL',
+		span: '5',
+		image: {
+			src: 'https://www.glfonline.com.au/static/f27adb43fea0d9b9d5807f29b2bd9645/aee5b/ibkul-men2.webp',
+			objectPosition: 'top',
+			alt: 'IBKUL',
+		},
+		cta: {
+			text: 'Shop IBKUL',
+			href: '/mens/collections/ibkul',
+		},
+	},
+	{
+		name: 'Sporte Leisure',
+		span: '3',
+		image: {
+			src: 'https://www.glfonline.com.au/static/d6a7473878e37d3984459330e676d1ab/5ba9d/sporte-leisure.webp',
+			objectPosition: 'top',
+			alt: 'Sporte Leisure',
+		},
+		cta: {
+			text: 'Shop Sporte Leisure',
+			href: '/mens/collections/sporte-leisure',
+		},
+	},
+	{
+		name: 'Evoke Headwear',
+		span: '2',
+		image: {
+			src: 'https://www.glfonline.com.au/static/cdfc2a29edbcc61d9099c3804a77a359/b0751/card-evoke-headwear.webp',
+			objectPosition: 'top',
+			alt: 'Evoke Headwear',
+		},
+		cta: {
+			text: 'Shop Evoke Headwear',
+			href: '/mens/collections/evoke-headwear',
+		},
+	},
+] as const;

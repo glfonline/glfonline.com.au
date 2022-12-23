@@ -1,12 +1,12 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 
 export const getButtonStyles = cva(
-	'inline-flex items-center font-bold justify-center uppercase border focus:outline-none focus:ring-2 transition duration-300',
+	'inline-flex items-center font-bold justify-center uppercase border focus:outline-none focus:ring-2 transition duration-300 whitespace-nowrap',
 	{
 		variants: {
 			variant: {
 				outline: [
-					'bg-transparent border-black text-black',
+					'bg-white border-black text-black',
 					'hover:bg-gray-900 hover:text-white',
 					'focus:ring-brand focus:ring-offset-2',
 				],
