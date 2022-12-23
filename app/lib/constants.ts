@@ -47,68 +47,302 @@ export const socialLinks = [
 
 export const mainNavigation = [
 	{
-		name: 'Ladies',
-		url: '/ladies',
+		label: 'Ladies',
+		theme: 'ladies',
+		slug: '/ladies/',
 		children: [
 			{
-				name: 'Shop Ladies',
-				url: '/ladies',
+				label: 'Shop Ladies',
+				slug: '/ladies/',
 			},
 			{
-				name: 'Apparel',
-				url: '/ladies/apparel',
+				label: 'Apparel',
+				children: [
+					[
+						{
+							label: 'All',
+							slug: '/ladies/collections/apparel/',
+						},
+						{
+							label: 'Capris',
+							slug: '/ladies/collections/capris/',
+						},
+						{
+							label: 'Dress',
+							slug: '/ladies/collections/dress/',
+						},
+						{
+							label: 'Gloves',
+							slug: '/ladies/collections/gloves/',
+						},
+						{
+							label: 'Headwear',
+							slug: '/ladies/collections/headwear/',
+						},
+						{
+							label: 'Outerwear',
+							slug: '/ladies/collections/wind-rain/',
+						},
+					],
+					[
+						{
+							label: 'Pants',
+							slug: '/ladies/collections/pants/',
+						},
+						{
+							label: 'Shirts',
+							slug: '/ladies/collections/shirts/',
+						},
+						{
+							label: 'Shoes & Socks',
+							slug: '/ladies/collections/shoes-socks/',
+						},
+						{
+							label: 'Shorts',
+							slug: '/ladies/collections/shorts/',
+						},
+						{
+							label: 'Skirts & Skorts',
+							slug: '/ladies/collections/skirts-skorts/',
+						},
+					],
+				],
 			},
 			{
-				name: 'Brands',
-				url: '/ladies/brands',
+				label: 'Brands',
+				children: [
+					[
+						{
+							label: 'Abacus',
+							slug: '/ladies/collections/abacus/',
+						},
+						{
+							label: 'Bermuda Sands',
+							slug: '/ladies/collections/bermuda-sands-brand/',
+						},
+						{
+							label: 'Corsican Golf',
+							slug: '/ladies/collections/corsican-golf/',
+						},
+						{
+							label: 'Daily Sports',
+							slug: '/ladies/collections/daily-sports/',
+						},
+						{
+							label: "Daphne's Headcovers",
+							slug: '/ladies/collections/daphnes-headcovers-brand/',
+						},
+						{
+							label: 'Evoke Headwear',
+							slug: '/ladies/collections/evoke-headwear/',
+						},
+						{
+							label: 'Glove It',
+							slug: '/ladies/collections/glove-it-brand/',
+						},
+						{
+							label: 'Greg Norman',
+							slug: '/ladies/collections/greg-norman/',
+						},
+						{
+							label: 'IBKUL',
+							slug: '/ladies/collections/ibkul/',
+						},
+						{
+							label: 'Jamie Sadock',
+							slug: '/ladies/collections/jamie-sadock-brand/',
+						},
+					],
+					[
+						{
+							label: 'Navika',
+							slug: '/ladies/collections/navika-brand/',
+						},
+						{
+							label: 'Mega Cool Sunshawls',
+							slug: '/ladies/collections/mega-cool-sunshawls/',
+						},
+						{
+							label: 'Nivo',
+							slug: '/ladies/collections/nivo/',
+						},
+						{
+							label: 'Other Suppliers',
+							slug: '/ladies/collections/other-suppliers-brand/',
+						},
+						{
+							label: 'ProQuip',
+							slug: '/ladies/collections/proquip-brand/',
+						},
+						{
+							label: 'Radicool',
+							slug: '/ladies/collections/radicool/',
+						},
+						{
+							label: 'Red Belly Active',
+							slug: '/ladies/collections/red-belly-active/',
+						},
+						{
+							label: 'Skechers Shoes',
+							slug: '/ladies/collections/skechers-shoes/',
+						},
+						{
+							label: 'Sporte Leisure',
+							slug: '/ladies/collections/sporte-leisure/',
+						},
+						{
+							label: 'Wow! Socks',
+							slug: '/ladies/collections/wow-socks/',
+						},
+					],
+				],
 			},
 			{
-				name: 'Accessories',
-				url: '/ladies/accessories',
+				label: 'Accessories',
+				slug: '/ladies/collections/accessories/',
 			},
 			{
-				name: 'Sale',
-				url: '/ladies/sale',
+				label: 'Sale',
+				slug: '/ladies/collections/clearance-items/',
 			},
 			{
-				name: 'Gift',
-				url: '/ladies/gift',
-			},
-			{
-				name: 'Vouchers',
-				url: '/ladies/vouchers',
+				label: 'Gift Vouchers',
+				slug: '/ladies/collections/gift-certificate/',
 			},
 		],
 	},
 	{
-		name: 'Mens',
-		url: '/mens',
+		label: 'Mens',
+		slug: '/mens/',
+		theme: 'mens',
 		children: [
 			{
-				name: 'Shirts',
-				url: '/mens/shirts',
+				label: 'Shop Mens',
+				slug: '/mens/',
 			},
 			{
-				name: 'Pants',
-				url: '/mens/pants',
+				label: 'Apparel',
+				children: [
+					[
+						{
+							label: 'All',
+							slug: '/mens/collections/apparel/',
+						},
+						{
+							label: 'Gloves',
+							slug: '/mens/collections/gloves/',
+						},
+						{
+							label: 'Headwear',
+							slug: '/mens/collections/headwear/',
+						},
+						{
+							label: 'Outerwear',
+							slug: '/mens/collections/wind-rain/',
+						},
+					],
+					[
+						{
+							label: 'Pants',
+							slug: '/mens/collections/pants/',
+						},
+						{
+							label: 'Shirts',
+							slug: '/mens/collections/shirts/',
+						},
+						{
+							label: 'Shoes & Socks',
+							slug: '/mens/collections/shoes-socks/',
+						},
+						{
+							label: 'Shorts',
+							slug: '/mens/collections/shorts/',
+						},
+					],
+				],
+			},
+			{
+				label: 'Brands',
+				children: [
+					[
+						{
+							label: 'Bermuda Sands',
+							slug: '/mens/collections/bermuda-sands-brand/',
+						},
+						{
+							label: 'Dwyers & Co.',
+							slug: '/mens/collections/dwyers-co/',
+						},
+						{
+							label: 'Evoke Headwear',
+							slug: '/mens/collections/evoke-headwear/',
+						},
+						{
+							label: 'Greg Norman',
+							slug: '/mens/collections/greg-norman/',
+						},
+						{
+							label: 'IBKUL',
+							slug: '/mens/collections/ibkul/',
+						},
+					],
+					[
+						{
+							label: 'Jamie Sadock',
+							slug: '/mens/collections/jamie-sadock-brand/',
+						},
+						{
+							label: 'Other Suppliers',
+							slug: '/mens/collections/other-suppliers-brand/',
+						},
+						{
+							label: 'ProQuip',
+							slug: '/mens/collections/proquip-brand/',
+						},
+						{
+							label: 'Skechers Shoes',
+							slug: '/mens/collections/skechers-shoes/',
+						},
+						{
+							label: 'Sporte Leisure',
+							slug: '/mens/collections/sporte-leisure/',
+						},
+						{
+							label: 'Travis Mathew',
+							slug: '/mens/collections/travis-mathew/',
+						},
+					],
+				],
+			},
+			{
+				label: 'Accessories',
+				slug: '/mens/collections/accessories/',
+			},
+			{
+				label: 'Sale',
+				slug: '/mens/collections/clearance-items/',
+			},
+			{
+				label: 'Gift Vouchers',
+				slug: '/mens/collections/gift-certificate/',
 			},
 		],
 	},
 	{
-		name: 'Home',
-		url: '/',
+		label: 'Home',
+		slug: '/',
 	},
 	{
-		name: 'FAQ',
-		url: '/faq',
+		label: 'FAQ',
+		slug: '/faq/',
 	},
 	{
-		name: 'Blog',
-		url: '/blog',
+		label: 'Blog',
+		slug: '/blog/',
 	},
 	{
-		name: 'Contact',
-		url: '/contact',
+		label: 'Contact',
+		slug: '/contact/',
 	},
 ];
 

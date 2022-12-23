@@ -54,6 +54,7 @@
 		--color-brand-900: var(--color-gray-900);
 
 		--color-brand-primary: var(--color-gray-900);
+		--color-brand-primary-light: var(--color-gray-800);
 		--color-brand-focus-ring: var(--color-gray-900);
 	}
 
@@ -70,6 +71,7 @@
 		--color-brand-900: var(--color-pink-900);
 
 		--color-brand-primary: var(--color-pink-600);
+		--color-brand-primary-light: var(--color-pink-500);
 		--color-brand-focus-ring: var(--color-pink-400);
 	}
 
@@ -86,6 +88,7 @@
 		--color-brand-900: var(--color-blue-900);
 
 		--color-brand-primary: var(--color-blue-900);
+		--color-brand-primary-light: var(--color-blue-800);
 		--color-brand-focus-ring: var(--color-blue-600);
 	}
 }

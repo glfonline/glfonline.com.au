@@ -56,6 +56,7 @@ module.exports = {
 				},
 				'brand': {
 					primary: withOpacity('--color-brand-primary'),
+					light: withOpacity('--color-brand-primary-light'),
 					50: withOpacity('--color-brand-50'),
 					100: withOpacity('--color-brand-100'),
 					200: withOpacity('--color-brand-200'),

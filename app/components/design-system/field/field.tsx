@@ -16,7 +16,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 		id: idProp,
 		label,
 		message,
-		tone = 'neutral',
+		tone = 'critical',
 		...consumerProps
 	},
 	forwardedRef

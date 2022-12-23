@@ -1,10 +1,11 @@
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Link } from '@remix-run/react';
+import { json } from '@remix-run/node';
+import { Form, Link } from '@remix-run/react';
 import { Fragment } from 'react';
-import { useForm } from 'react-hook-form';
+import { createCustomIssues, parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
-import { validateField } from '~/lib/form-field-error';
+import { CONTACT_FORM_VALUE, INTENT } from '~/lib/actions';
+import type { FormResponse } from '~/types';
 
 import { Button } from './design-system/button';
 import { Checkbox } from './design-system/checkbox';
@@ -14,32 +15,56 @@ import { TextArea } from './design-system/text-area';
 import { TextInput } from './design-system/text-input';
 import { SplitBackground } from './split-background';
 
-const contactFormSchema = z.object({
-	'agree_to_privacy_policy': z
-		.boolean()
+export async function contactFormAction(formData: FormData) {
+	const data = parseForm(ContactFormSchema, formData);
+
+	const issues = createCustomIssues(ContactFormSchema);
+
+	console.log('Validating...');
+	// Simulate slower database/network connection
+	await new Promise((r) => setTimeout(r, 1000));
+
+	// In reality you would make a real database check here or capture a
+	// constraint error from user insertion
+	if (data.email === 'exists@test.invalid') {
+		// Add an issue the email field. This generates a ZodCustomIssue
+		issues.email('Account already exists with ' + data.email, {
+			anything: 'Any extra params you want to pass to ZodCustomIssue',
+		});
+	}
+
+	// Respond with the issues if we have any
+	if (issues.hasIssues()) {
+		return json<FormResponse>(
+			{ ok: false, serverIssues: issues.toArray() },
+			{ status: 400 }
+		);
+	}
+
+	console.log('Form ok. Saving...');
+
+	return json<FormResponse>({ ok: true });
+}
+
+export const ContactFormSchema = z.object({
+	agree_to_privacy_policy: z
+		.string()
+		.transform(Boolean)
 		.refine((val) => val === true, 'You must agree to the privacy policy'),
-	'bot-field': z.string().optional(),
-	'first_name': z.string().min(1, 'First name is required'),
-	'last_name': z.string().min(1, 'Last name is required'),
-	'email': z.string().trim().min(1, 'Email is required').email('Invalid email'),
-	'phone_number': z
+	first_name: z.string().min(1, 'First name is required'),
+	last_name: z.string().min(1, 'Last name is required'),
+	email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
+	phone_number: z
 		.string()
 		.min(1, 'Phone number is required')
 		.min(8, 'Invalid phone number'),
-	'subject': z.string().min(1, 'Subject is required'),
-	'message': z.string().min(1, 'Message is required'),
+	subject: z.string().min(1, 'Subject is required'),
+	message: z.string().min(1, 'Message is required'),
 });
 
-type ContactFormSchema = z.infer<typeof contactFormSchema>;
-
 export function ContactForm() {
-	const form = useForm<ContactFormSchema>({
-		resolver: zodResolver(contactFormSchema),
-	});
-	const handleSubmit = form.handleSubmit((formValues) => {
-		/** @todo Send form values to the server */
-		console.log(formValues);
-	});
+	const form = useZorm('contact_form', ContactFormSchema);
+
 	return (
 		<article className="relative mx-auto max-w-7xl overflow-hidden bg-white">
 			<div
@@ -53,73 +78,68 @@ export function ContactForm() {
 					<Heading level="2">Get in touch with our team</Heading>
 				</div>
 				<div>
-					<form
+					<Form
+						ref={form.ref}
 						className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 						name="contact_form"
-						onSubmit={handleSubmit}
+						method="post"
 					>
-						<input type="hidden" name="form-name" defaultValue="contact" />
-						<div hidden>
-							<label htmlFor="bot-field">
-								Don’t fill this out: <input id="bot-field" name="bot-field" />
-							</label>
-						</div>
 						<Field
 							label="First name"
-							{...validateField(form.formState.errors, 'first_name')}
+							message={form.errors.first_name()?.message}
 						>
-							<TextInput {...form.register('first_name')} />
+							<TextInput name={form.fields.first_name()} />
 						</Field>
-						<Field
-							label="Last name"
-							{...validateField(form.formState.errors, 'last_name')}
-						>
-							<TextInput {...form.register('last_name')} />
+						<Field label="Last name" message={form.errors.last_name()?.message}>
+							<TextInput name={form.fields.last_name()} />
 						</Field>
 						<Field
 							label="Email"
+							message={form.errors.email()?.message}
 							className="sm:col-span-2"
-							{...validateField(form.formState.errors, 'email')}
 						>
-							<TextInput {...form.register('email')} />
+							<TextInput name={form.fields.email()} />
 						</Field>
 						<Field
 							label="Phone number"
+							message={form.errors.phone_number()?.message}
 							className="sm:col-span-2"
-							{...validateField(form.formState.errors, 'phone_number')}
 						>
-							<TextInput {...form.register('phone_number')} />
+							<TextInput name={form.fields.phone_number()} />
 						</Field>
 						<Field
 							label="Subject"
+							message={form.errors.subject()?.message}
 							className="sm:col-span-2"
-							{...validateField(form.formState.errors, 'subject')}
 						>
-							<TextInput {...form.register('subject')} />
+							<TextInput name={form.fields.subject()} />
 						</Field>
 						<Field
 							label="Message"
+							message={form.errors.message()?.message}
 							className="sm:col-span-2"
-							{...validateField(form.formState.errors, 'message')}
 						>
-							<TextArea {...form.register('message')} />
+							<TextArea name={form.fields.message()} />
 						</Field>
 
 						<div className="sm:col-span-2">
 							<InlineField
 								label={<PrivacyPolicyLabel />}
-								{...validateField(
-									form.formState.errors,
-									'agree_to_privacy_policy'
-								)}
+								message={form.errors.agree_to_privacy_policy()?.message}
 							>
-								<Checkbox {...form.register('agree_to_privacy_policy')} />
+								<Checkbox name={form.fields.agree_to_privacy_policy()} />
 							</InlineField>
 						</div>
-						<Button type="submit" variant="neutral" className="sm:col-span-2">
+						<Button
+							type="submit"
+							variant="neutral"
+							className="sm:col-span-2"
+							name={INTENT}
+							value={CONTACT_FORM_VALUE}
+						>
 							Submit
 						</Button>
-					</form>
+					</Form>
 				</div>
 			</div>
 		</article>
