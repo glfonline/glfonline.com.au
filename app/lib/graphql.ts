@@ -1,6 +1,10 @@
 import type { OperationData } from '@ts-gql/tag/no-transform';
 import { gql } from '@ts-gql/tag/no-transform';
 
+/**
+ * Queries
+ */
+
 export const SINGLE_PRODUCT_QUERY = gql`
 	query singleProductQuery($handle: String!) {
 		productByHandle(handle: $handle) {
@@ -67,6 +71,41 @@ export const PRODUCTS_QUERY = gql`
 	}
 ` as import('../../__generated__/ts-gql/productsQuery').type;
 export type ProductsQueryType = OperationData<typeof PRODUCTS_QUERY>;
+
+export const COLLECTION_QUERY = gql`
+	query collectionQuery($collectionHandle: String) {
+		collection(handle: $collectionHandle) {
+			id
+			products(first: 30, sortKey: BEST_SELLING) {
+				edges {
+					node {
+						id
+						availableForSale
+						compareAtPriceRange {
+							minVariantPrice {
+								amount
+								currencyCode
+							}
+						}
+						description
+						featuredImage {
+							id
+							altText
+							url
+						}
+						handle
+						tags
+						title
+					}
+				}
+			}
+		}
+	}
+` as import('../../__generated__/ts-gql/collectionQuery').type;
+
+/**
+ * Mutations
+ */
 
 export const CREATE_CHECKOUT_URL_MUTATION = gql`
 	mutation createCheckoutUrlMutation($input: CheckoutCreateInput!) {
