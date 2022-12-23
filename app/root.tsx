@@ -13,7 +13,10 @@ import { ThemeProvider } from './lib/theme-context';
 import styles from './styles/tailwind.css';
 
 export const links: LinksFunction = () => {
-	return [{ rel: 'stylesheet', href: styles }];
+	return [
+		{ rel: 'stylesheet', href: styles },
+		{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+	];
 };
 
 export const meta: MetaFunction = () => {
