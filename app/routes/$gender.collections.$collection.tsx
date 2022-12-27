@@ -167,18 +167,22 @@ function ProductCard({
 			)}
 			href={`/${gender}/products/${handle}`}
 		>
-			<img
-				alt={featuredImage?.url ?? title}
-				className="h-64 w-full transform object-contain duration-500 ease-in-out group-hover:scale-110 group-focus:scale-110"
-				src={featuredImage?.url}
-			/>
-			<h3 className="line-clamp-2">{title}</h3>
-			<p className="text-black">
-				<small>{price.currencyCode}</small>{' '}
-				<span className="font-bold">
-					{formatMoney(price.amount, price.currencyCode)}
-				</span>
-			</p>
+			<span className="overflow-hidden">
+				<img
+					alt={featuredImage?.url ?? title}
+					className="h-64 w-full transform object-contain duration-500 ease-in-out group-hover:scale-110 group-focus:scale-110"
+					src={featuredImage?.url}
+				/>
+			</span>
+			<span className="flex flex-col gap-3 px-6">
+				<h3 className="line-clamp-2">{title}</h3>
+				<p className="text-black">
+					<small>{price.currencyCode}</small>{' '}
+					<span className="font-bold">
+						{formatMoney(price.amount, price.currencyCode)}
+					</span>
+				</p>
+			</span>
 		</a>
 	);
 }
