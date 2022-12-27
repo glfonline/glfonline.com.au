@@ -35,7 +35,7 @@ function Hero() {
 			<div className="bg-white px-4 py-12 sm:px-6 md:w-80 lg:px-8">
 				<div className="flex flex-col gap-6 px-4">
 					<VerticalLogo className="mx-auto hidden w-full max-w-xs text-black md:block" />
-					<h1 className={getHeadingStyles({ level: '2' })}>
+					<h1 className={getHeadingStyles({ size: '2' })}>
 						Top brand <br />
 						golf apparel <br />
 						and accessories for women <br />
@@ -108,7 +108,7 @@ function CollectionCard({
 	theme: Theme;
 }) {
 	return (
-		<div className="relative aspect-square">
+		<div className="aspect-square relative">
 			<img
 				src={image.src}
 				alt={image.alt ?? ''}
@@ -121,7 +121,7 @@ function CollectionCard({
 				data-theme={theme}
 				className="relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t from-true-black/50 via-transparent p-8"
 			>
-				<Heading level="2" color="light">
+				<Heading size="2" color="light">
 					{heading}
 				</Heading>
 				<p className="mx-auto flex w-full max-w-[10rem] flex-col items-stretch text-center">

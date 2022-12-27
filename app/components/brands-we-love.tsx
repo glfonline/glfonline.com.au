@@ -9,7 +9,7 @@ export function BrandsWeLove() {
 	return (
 		<article className="bg-white">
 			<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-				<Heading level="2">Shop brands we love</Heading>
+				<Heading size="2">Shop brands we love</Heading>
 				<div className="mt-6 grid grid-cols-2 gap-4 lg:mt-8 lg:grid-cols-4">
 					{brands.map((brand) => (
 						<Link

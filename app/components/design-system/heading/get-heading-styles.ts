@@ -2,8 +2,12 @@ import { type VariantProps, cva } from 'class-variance-authority';
 
 export const getHeadingStyles = cva('', {
 	variants: {
-		level: {
-			'2': 'text-2xl font-bold uppercase leading-tight',
+		size: {
+			'2': 'text-2xl uppercase leading-tight',
+		},
+		weight: {
+			normal: 'font-normal',
+			bold: 'font-bold',
 		},
 		color: {
 			dark: 'text-black',
@@ -13,6 +17,7 @@ export const getHeadingStyles = cva('', {
 	},
 	defaultVariants: {
 		color: 'dark',
+		weight: 'bold',
 	},
 });
 

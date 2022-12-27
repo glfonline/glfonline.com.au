@@ -75,7 +75,7 @@ export function ContactForm() {
 			</div>
 			<div className="relative mx-auto flex max-w-xl flex-col gap-12 bg-gray-50 px-4 py-12 sm:px-6 lg:my-12 lg:px-8">
 				<div className="text-center">
-					<Heading level="2">Get in touch with our team</Heading>
+					<Heading size="2">Get in touch with our team</Heading>
 				</div>
 				<div>
 					<Form

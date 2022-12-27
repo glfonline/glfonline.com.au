@@ -84,7 +84,7 @@ function Hero({
 				/>
 			)}
 			<span className="isolate bg-true-black/75 py-2 px-6">
-				<Heading level="2" color="light" className="isolate">
+				<Heading size="2" color="light" className="isolate">
 					{title}
 				</Heading>
 			</span>

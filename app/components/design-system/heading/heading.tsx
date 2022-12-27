@@ -9,19 +9,27 @@ import {
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
 	function Heading(
-		{ children, className, color, level, ...consumerProps },
+		{
+			children,
+			className,
+			color,
+			headingElement,
+			size,
+			weight,
+			...consumerProps
+		},
 		forwardedRef
 	) {
-		assert(isDefined(level), 'Heading level must be defined');
-		const HeadingLevel = headingLevelMap[level];
+		assert(isDefined(size), 'Heading level must be defined');
+		const HeadingElement = headingElement || headingLevelMap[size];
 		return (
-			<HeadingLevel
+			<HeadingElement
 				{...consumerProps}
 				ref={forwardedRef}
-				className={getHeadingStyles({ className, color, level })}
+				className={getHeadingStyles({ className, color, size, weight })}
 			>
 				{children}
-			</HeadingLevel>
+			</HeadingElement>
 		);
 	}
 );
@@ -35,5 +43,11 @@ const headingLevelMap = {
 	'6': 'h6',
 } as const;
 
+type HeadingLevel = keyof typeof headingLevelMap;
+type HeadingElement = typeof headingLevelMap[HeadingLevel];
+
 type NativeHeadingProps = React.HTMLAttributes<HTMLHeadingElement>;
-export type HeadingProps = NativeHeadingProps & HeadingVariantProps;
+export type HeadingProps = NativeHeadingProps &
+	HeadingVariantProps & {
+		headingElement?: HeadingElement;
+	};

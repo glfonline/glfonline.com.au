@@ -54,7 +54,7 @@ export function NewsletterSignup() {
 	return (
 		<article className="mx-auto max-w-7xl bg-gray-100">
 			<div className="mx-auto max-w-xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
-				<Heading level="2" className="text-center">
+				<Heading size="2" className="text-center">
 					Don't miss out, join the club
 				</Heading>
 				<span className="sr-only">Sign up for our newsletter</span>
