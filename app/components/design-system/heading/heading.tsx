@@ -1,5 +1,5 @@
 import { assert } from 'emery/assertions';
-import { isString } from 'emery/guards';
+import { isDefined } from 'emery/guards';
 import { forwardRef } from 'react';
 
 import {
@@ -12,7 +12,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
 		{ children, className, color, level, ...consumerProps },
 		forwardedRef
 	) {
-		assert(isString(level), 'Heading level must be a string');
+		assert(isDefined(level), 'Heading level must be defined');
 		const HeadingLevel = headingLevelMap[level];
 		return (
 			<HeadingLevel
