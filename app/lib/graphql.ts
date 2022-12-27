@@ -76,6 +76,12 @@ export const COLLECTION_QUERY = gql`
 	query collectionQuery($collectionHandle: String) {
 		collection(handle: $collectionHandle) {
 			id
+			title
+			image {
+				id
+				altText
+				url
+			}
 			products(first: 30, sortKey: BEST_SELLING) {
 				edges {
 					node {
