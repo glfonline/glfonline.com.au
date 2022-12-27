@@ -1,11 +1,9 @@
-const defaultFormatter = new Intl.NumberFormat('en-AU', {
-	style: 'currency',
-	currency: 'AUD',
-});
+const formatter = (currency: string) =>
+	new Intl.NumberFormat('en-AU', {
+		style: 'currency',
+		currency,
+	});
 
-export function formatMoney(
-	dollars: number,
-	formatter?: Intl.NumberFormat
-): string {
-	return (formatter || defaultFormatter).format(dollars);
+export function formatMoney(dollars: number, currency: string = 'AUD'): string {
+	return formatter(currency).format(dollars);
 }
