@@ -1,4 +1,3 @@
-import type { OperationData } from '@ts-gql/tag/no-transform';
 import { gql } from '@ts-gql/tag/no-transform';
 
 /**
@@ -6,7 +5,7 @@ import { gql } from '@ts-gql/tag/no-transform';
  */
 
 export const SINGLE_PRODUCT_QUERY = gql`
-	query singleProductQuery($handle: String!) {
+	query SINGLE_PRODUCT_QUERY($handle: String!) {
 		productByHandle(handle: $handle) {
 			id
 			title
@@ -37,11 +36,10 @@ export const SINGLE_PRODUCT_QUERY = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/singleProductQuery').type;
-export type SingleProductQueryType = OperationData<typeof SINGLE_PRODUCT_QUERY>;
+` as import('../../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;
 
 export const PRODUCTS_QUERY = gql`
-	query productsQuery($first: Int = 6) {
+	query PRODUCTS_QUERY($first: Int = 6) {
 		products(first: $first) {
 			edges {
 				node {
@@ -69,11 +67,10 @@ export const PRODUCTS_QUERY = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/productsQuery').type;
-export type ProductsQueryType = OperationData<typeof PRODUCTS_QUERY>;
+` as import('../../__generated__/ts-gql/PRODUCTS_QUERY').type;
 
 export const COLLECTION_QUERY = gql`
-	query collectionQuery($collectionHandle: String) {
+	query COLLECTION_QUERY($collectionHandle: String) {
 		collection(handle: $collectionHandle) {
 			id
 			title
@@ -107,14 +104,14 @@ export const COLLECTION_QUERY = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/collectionQuery').type;
+` as import('../../__generated__/ts-gql/COLLECTION_QUERY').type;
 
 /**
  * Mutations
  */
 
 export const CREATE_CHECKOUT_URL_MUTATION = gql`
-	mutation createCheckoutUrlMutation($input: CheckoutCreateInput!) {
+	mutation CREATE_CHECKOUT_URL_MUTATION($input: CheckoutCreateInput!) {
 		checkoutCreate(input: $input) {
 			checkout {
 				id
@@ -122,7 +119,4 @@ export const CREATE_CHECKOUT_URL_MUTATION = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/createCheckoutUrlMutation').type;
-export type CreateCheckoutUrlMutationType = OperationData<
-	typeof CREATE_CHECKOUT_URL_MUTATION
->;
+` as import('../../__generated__/ts-gql/CREATE_CHECKOUT_URL_MUTATION').type;
