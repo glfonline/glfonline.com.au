@@ -7,6 +7,7 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from '@remix-run/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { MainLayout } from './components/main-layout';
 import { ThemeProvider } from './lib/theme-context';
@@ -27,6 +28,8 @@ export const meta: MetaFunction = () => {
 	};
 };
 
+const queryClient = new QueryClient();
+
 export default function App() {
 	return (
 		<html lang="en" className="h-full">
@@ -35,11 +38,13 @@ export default function App() {
 				<Links />
 			</head>
 			<body className="relative flex h-full flex-col">
-				<ThemeProvider>
-					<MainLayout>
-						<Outlet />
-					</MainLayout>
-				</ThemeProvider>
+				<QueryClientProvider client={queryClient}>
+					<ThemeProvider>
+						<MainLayout>
+							<Outlet />
+						</MainLayout>
+					</ThemeProvider>
+				</QueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
