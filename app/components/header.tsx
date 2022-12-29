@@ -8,7 +8,6 @@ import {
 } from '@radix-ui/react-navigation-menu';
 import { Link } from '@remix-run/react';
 import { clsx } from 'clsx';
-import { useRef } from 'react';
 import useMeasure from 'react-use-measure';
 
 import { CHANTALE_PHONE, mainNavigation, socialLinks } from '~/lib/constants';

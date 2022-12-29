@@ -108,7 +108,7 @@ function CollectionCard({
 	theme: Theme;
 }) {
 	return (
-		<div className="aspect-square relative">
+		<div className="relative aspect-square">
 			<img
 				src={image.src}
 				alt={image.alt ?? ''}

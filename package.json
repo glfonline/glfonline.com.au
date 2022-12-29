@@ -22,6 +22,7 @@
 		"postinstall": "ts-gql build"
 	},
 	"dependencies": {
+		"@headlessui/react": "^1.7.7",
 		"@radix-ui/react-navigation-menu": "^1.1.1",
 		"@remix-run/node": "^1.9.0",
 		"@remix-run/react": "^1.9.0",

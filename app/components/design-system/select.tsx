@@ -33,8 +33,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
 		return (
 			<span className="relative">
-				<span className="pointer-events-none absolute inset-y-0 right-2 flex items-center text-gray-400">
-					<ChevronUpDownIcon className="h-5 w-5" />
+				<span className="pointer-events-none absolute inset-y-0 right-2 flex items-center">
+					<ChevronUpDownIcon className="h-5 w-5 text-gray-500" />
 				</span>
 				<select
 					{...consumerProps}
@@ -49,7 +49,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 						className
 					)}
 				>
-					{!(value || defaultValue) || placeholder ? (
+					{!value || !defaultValue || placeholder ? (
 						<option value="" disabled>
 							{placeholder}
 						</option>

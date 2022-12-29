@@ -6,31 +6,68 @@ import { gql } from '@ts-gql/tag/no-transform';
 
 export const SINGLE_PRODUCT_QUERY = gql`
 	query SINGLE_PRODUCT_QUERY($handle: String!) {
-		productByHandle(handle: $handle) {
+		product(handle: $handle) {
 			id
-			title
 			description
-			updatedAt
-			tags
+			descriptionHtml
+			images(first: 20) {
+				pageInfo {
+					hasNextPage
+					hasPreviousPage
+				}
+				edges {
+					node {
+						id
+						url
+						altText
+						width
+						height
+					}
+				}
+			}
+			options {
+				id
+				name
+				values
+			}
 			priceRange {
 				minVariantPrice {
 					amount
 					currencyCode
 				}
 			}
-			images(first: 1) {
-				edges {
-					node {
-						id
-						altText
-						transformedSrc
-					}
+			tags
+			title
+			updatedAt
+			variants(first: 250) {
+				pageInfo {
+					hasNextPage
+					hasPreviousPage
 				}
-			}
-			variants(first: 1) {
 				edges {
 					node {
 						id
+						title
+						sku
+						image {
+							id
+							altText
+							url
+						}
+						availableForSale
+						requiresShipping
+						selectedOptions {
+							name
+							value
+						}
+						priceV2 {
+							amount
+							currencyCode
+						}
+						compareAtPriceV2 {
+							amount
+							currencyCode
+						}
 					}
 				}
 			}

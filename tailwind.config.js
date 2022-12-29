@@ -79,6 +79,9 @@ module.exports = {
 					DEFAULT: withOpacity('--color-brand-focus-ring'),
 				},
 			},
+			width: {
+        'square-diagonal': (Math.sqrt(2) * 100).toFixed(2) + '%',
+      },
 		},
 	},
 	plugins: [
