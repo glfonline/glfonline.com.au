@@ -1,25 +1,32 @@
 import { Tab } from '@headlessui/react';
 import { type ActionArgs, type DataFunctionArgs, json } from '@remix-run/node';
-import { Form, useLoaderData } from '@remix-run/react';
+import {
+	Form,
+	useActionData,
+	useLoaderData,
+	useSearchParams,
+	useTransition,
+} from '@remix-run/react';
 import { type OperationData } from '@ts-gql/tag/no-transform';
 import { clsx } from 'clsx';
+import { useZorm } from 'react-zorm';
 import { z } from 'zod';
 
 import { Button } from '~/components/design-system/button';
 import { getHeadingStyles, Heading } from '~/components/design-system/heading';
 import { DiagonalBanner } from '~/components/diagonal-banner';
+import { addToCart, getSession } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { SINGLE_PRODUCT_QUERY } from '~/lib/graphql';
 import { shopifyClient } from '~/lib/shopify-client';
-import type { CheckoutCreateInput } from '~/types';
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),
 	gender: z.enum(['ladies', 'mens']),
 });
 
-const VariantSchema = z.object({
-	variantId: z.string().min(1),
+const CartSchema = z.object({
+	variantId: z.string({ required_error: 'Please select an option' }).min(1),
 });
 
 export async function loader({ params }: DataFunctionArgs) {
@@ -30,14 +37,17 @@ export async function loader({ params }: DataFunctionArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
-	const formData = await request.formData();
-	const { variantId } = VariantSchema.parse(
+	const [formData, session] = await Promise.all([
+		request.formData(),
+		getSession(request),
+	]);
+	const { variantId } = CartSchema.parse(
 		Object.fromEntries(formData.entries())
 	);
-	const checkoutCreateInput: CheckoutCreateInput = {
-		input: { lineItems: [{ quantity: 1, variantId }] },
-	};
-	return json(checkoutCreateInput);
+	let cart = await session.getCart();
+	cart = addToCart(cart, variantId, 1);
+	await session.setCart(cart);
+	return json({ cart });
 }
 
 export default function ProductPage() {
@@ -47,6 +57,17 @@ export default function ProductPage() {
 	const isOnSale = product.variants.edges.some(
 		({ node: { compareAtPriceV2 } }) => compareAtPriceV2
 	);
+
+	const [searchParams] = useSearchParams();
+	searchParams.sort();
+
+	const form = useZorm('cart_form', CartSchema);
+
+	const transition = useTransition();
+
+	let buttonText = 'Add to cart';
+	if (transition.state === 'submitting') buttonText = 'Adding...';
+	if (transition.state === 'loading') buttonText = 'Added!';
 
 	return (
 		<div data-theme={gender} className="bg-white">
@@ -75,7 +96,12 @@ export default function ProductPage() {
 							</p>
 						</div>
 
-						<Form method="post" className="flex flex-col gap-6">
+						<Form
+							ref={form.ref}
+							method="post"
+							replace
+							className="flex flex-col gap-6"
+						>
 							<div>
 								<fieldset className="flex flex-col gap-3">
 									<div className="flex items-center justify-between">
@@ -99,7 +125,7 @@ export default function ProductPage() {
 												<input
 													id={node.id}
 													type="radio"
-													name="option"
+													name={form.fields.variantId()}
 													value={node.id}
 													className="sr-only"
 													disabled={!node.availableForSale}
@@ -111,8 +137,8 @@ export default function ProductPage() {
 														node.availableForSale
 															? 'cursor-pointer focus:outline-none'
 															: 'cursor-not-allowed opacity-25',
-														'[:checked+&]:ring-2 [:checked+&]:ring-brand-500 [:checked+&]:ring-offset-2',
-														'[:focus+&]:border-transparent [:focus+&]:bg-brand-primary [:focus+&]:text-white [:focus+&]:hover:bg-brand-light'
+														'[:focus+&]:ring-2 [:focus+&]:ring-brand-500 [:focus+&]:ring-offset-2',
+														'[:checked+&]:border-transparent [:checked+&]:bg-brand-primary [:checked+&]:text-white [:checked+&]:hover:bg-brand-light'
 													)}
 												>
 													{node.title}
@@ -124,7 +150,7 @@ export default function ProductPage() {
 							</div>
 
 							<Button variant="neutral" type="submit">
-								Add to cart
+								{form.errors.variantId()?.message || buttonText}
 							</Button>
 						</Form>
 
@@ -167,11 +193,11 @@ function ImageGallery({
 					{images.map(({ node }) => (
 						<Tab
 							key={node.id}
-							className="relative flex h-24 cursor-pointer items-center justify-center rounded-md bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-brand focus:ring-opacity-50 focus:ring-offset-4"
+							className="relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-brand focus:ring-opacity-50 focus:ring-offset-4"
 						>
 							{({ selected }) => (
 								<>
-									<span className="absolute inset-0 overflow-hidden rounded-md">
+									<span className="absolute inset-0 overflow-hidden">
 										<img
 											src={node.url}
 											alt={node.altText ?? ''}
@@ -181,7 +207,7 @@ function ImageGallery({
 									<span
 										className={clsx(
 											selected ? 'ring-brand-primary' : 'ring-transparent',
-											'pointer-events-none absolute inset-0 rounded-md ring-2'
+											'pointer-events-none absolute inset-0 ring-1'
 										)}
 										aria-hidden="true"
 									/>
