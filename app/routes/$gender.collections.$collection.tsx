@@ -22,7 +22,7 @@ export async function loader({ params }: DataFunctionArgs) {
 	const { collection } = await shopifyClient(COLLECTION_QUERY, {
 		collectionHandle,
 	});
-	if (!collection) throw new Error('Collection not found');
+	if (!collection) throw json('Collection not found', { status: 404 });
 	return json({ collection, gender });
 }
 
