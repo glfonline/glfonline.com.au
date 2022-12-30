@@ -149,7 +149,11 @@ export default function ProductPage() {
 								</fieldset>
 							</div>
 
-							<Button variant="neutral" type="submit">
+							<Button
+								variant="neutral"
+								type="submit"
+								disabled={!product.availableForSale}
+							>
 								{form.errors.variantId()?.message || buttonText}
 							</Button>
 						</Form>

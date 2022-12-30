@@ -8,6 +8,7 @@ export const SINGLE_PRODUCT_QUERY = gql`
 	query SINGLE_PRODUCT_QUERY($handle: String!) {
 		product(handle: $handle) {
 			id
+			availableForSale
 			description
 			descriptionHtml
 			images(first: 20) {
