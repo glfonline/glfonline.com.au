@@ -1,0 +1,25 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"pipeline": {
+		"build": {
+			"outputs": ["dist/**", "public/dist/**"],
+			"dependsOn": ["^build"]
+		},
+		"@glfonline/web#build": {
+			"dependsOn": ["^build"],
+			"env": ["ACCESS_TOKEN", "API_URL", "ENCRYPTION_KEY", "NODE_ENV"],
+			"outputs": ["api/index.js", "api/build/**", "public/build/**"]
+		},
+		"check:types": {
+			"dependsOn": ["^build"],
+			"outputs": []
+		},
+		"dev": {
+			"cache": false
+		},
+		"lint": {
+			"dependsOn": ["^build"],
+			"outputs": []
+		}
+	}
+}

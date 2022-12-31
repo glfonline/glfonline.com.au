@@ -1,0 +1,11 @@
+{
+	"$schema": "https://json.schemastore.org/tsconfig",
+	"display": "Remix",
+	"extends": "./base.json",
+	"compilerOptions": {
+		"jsx": "react-jsx",
+		"resolveJsonModule": true
+	},
+	"exclude": ["node_modules"],
+	"include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"]
+}

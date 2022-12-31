@@ -1,0 +1,11 @@
+__generated__
+.cache
+.env
+.output
+.vercel
+api/index.js
+api/index.js.map
+app/styles/tailwind.css
+build/
+node_modules
+public/build
