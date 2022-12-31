@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { CollectionCard } from '~/components/collection-card';
 import { ladiesCollections, mensCollections } from '~/lib/constants';
 
-const genderSchema = z.object({
-	gender: z.enum(['ladies', 'mens']),
+const themeSchema = z.object({
+	theme: z.enum(['ladies', 'mens']),
 });
 
 const collections = {
@@ -15,8 +15,8 @@ const collections = {
 };
 
 export async function loader({ params }: DataFunctionArgs) {
-	const { gender } = genderSchema.parse(params);
-	return json({ collection: collections[gender] });
+	const { theme } = themeSchema.parse(params);
+	return json({ collection: collections[theme] });
 }
 
 export default function CollectionsPage() {

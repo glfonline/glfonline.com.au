@@ -2,7 +2,6 @@ import { Tab } from '@headlessui/react';
 import { type ActionArgs, type DataFunctionArgs, json } from '@remix-run/node';
 import {
 	Form,
-	useActionData,
 	useLoaderData,
 	useSearchParams,
 	useTransition,
@@ -22,7 +21,7 @@ import { shopifyClient } from '~/lib/shopify-client';
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),
-	gender: z.enum(['ladies', 'mens']),
+	theme: z.enum(['ladies', 'mens']),
 });
 
 const CartSchema = z.object({
@@ -30,10 +29,10 @@ const CartSchema = z.object({
 });
 
 export async function loader({ params }: DataFunctionArgs) {
-	const { handle, gender } = ProductSchema.parse(params);
+	const { handle, theme } = ProductSchema.parse(params);
 	const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, { handle });
 	if (!product) throw json('Product not found', { status: 404 });
-	return json({ product, gender });
+	return json({ product, theme });
 }
 
 export async function action({ request }: ActionArgs) {
@@ -51,7 +50,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export default function ProductPage() {
-	const { gender, product } = useLoaderData<typeof loader>();
+	const { theme, product } = useLoaderData<typeof loader>();
 
 	// Check if product is on sale
 	const isOnSale = product.variants.edges.some(
@@ -70,7 +69,7 @@ export default function ProductPage() {
 	if (transition.state === 'loading') buttonText = 'Added!';
 
 	return (
-		<div data-theme={gender} className="bg-white">
+		<div data-theme={theme} className="bg-white">
 			<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
 				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
 					<ImageGallery

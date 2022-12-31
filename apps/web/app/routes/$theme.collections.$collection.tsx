@@ -13,24 +13,24 @@ import { shopifyClient } from '~/lib/shopify-client';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
-	gender: z.enum(['ladies', 'mens']),
+	theme: z.enum(['ladies', 'mens']),
 });
 
 export async function loader({ params }: DataFunctionArgs) {
-	const { collection: collectionHandle, gender } =
+	const { collection: collectionHandle, theme } =
 		CollectionSchema.parse(params);
 	const { collection } = await shopifyClient(COLLECTION_QUERY, {
 		collectionHandle,
 	});
 	if (!collection) throw json('Collection not found', { status: 404 });
-	return json({ collection, gender });
+	return json({ collection, theme });
 }
 
 export default function CollectionPage() {
-	const { collection, gender } = useLoaderData<typeof loader>();
+	const { collection, theme } = useLoaderData<typeof loader>();
 
 	return (
-		<div data-theme={gender} className="flex flex-col gap-12 py-9">
+		<div data-theme={theme} className="flex flex-col gap-12 py-9">
 			<Hero
 				title={collection.title}
 				image={{
@@ -47,7 +47,7 @@ export default function CollectionPage() {
 								url: node.featuredImage?.url ?? '',
 								altText: node.featuredImage?.altText ?? '',
 							}}
-							gender={gender}
+							theme={theme}
 							handle={node.handle}
 							price={{
 								amount: node.compareAtPriceRange.minVariantPrice.amount ?? 0,
@@ -141,13 +141,13 @@ function CollectionFilters() {
 }
 
 function ProductCard({
-	gender,
+	theme,
 	handle,
 	featuredImage,
 	title,
 	price,
 }: {
-	gender: string;
+	theme: string;
 	handle: string;
 	featuredImage: Maybe<{
 		url: string;
@@ -165,7 +165,7 @@ function ProductCard({
 				'group relative mx-auto flex w-full max-w-sm flex-col gap-3 py-6 transition duration-150 ease-in-out',
 				'focus:border-brand-300 focus:ring-brand-400 focus:z-10 focus:outline-none focus:ring focus:ring-offset-2'
 			)}
-			href={`/${gender}/products/${handle}`}
+			href={`/${theme}/products/${handle}`}
 		>
 			<span className="overflow-hidden">
 				<img
