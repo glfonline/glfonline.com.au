@@ -1,6 +1,10 @@
-import { type DataFunctionArgs, json } from '@remix-run/node';
+import {
+	type DataFunctionArgs,
+	type MetaFunction,
+	json,
+} from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
-import clsx from 'clsx';
+import { clsx } from 'clsx';
 import { type Maybe } from 'graphql/jsutils/Maybe';
 import { z } from 'zod';
 
@@ -10,6 +14,7 @@ import { Select } from '~/components/design-system/select';
 import { formatMoney } from '~/lib/format-money';
 import { COLLECTION_QUERY } from '~/lib/graphql';
 import { shopifyClient } from '~/lib/shopify-client';
+import { getSeoMeta } from '~/seo';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
@@ -25,6 +30,14 @@ export async function loader({ params }: DataFunctionArgs) {
 	if (!collection) throw json('Collection not found', { status: 404 });
 	return json({ collection, theme });
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const seoMeta = getSeoMeta({
+		title: `Shop ${data.collection.title}`,
+	});
+
+	return { ...seoMeta };
+};
 
 export default function CollectionPage() {
 	const { collection, theme } = useLoaderData<typeof loader>();

@@ -1,5 +1,10 @@
 import { Tab } from '@headlessui/react';
-import { type ActionArgs, type DataFunctionArgs, json } from '@remix-run/node';
+import {
+	type ActionArgs,
+	type DataFunctionArgs,
+	type MetaFunction,
+	json,
+} from '@remix-run/node';
 import {
 	Form,
 	useLoaderData,
@@ -18,6 +23,7 @@ import { addToCart, getSession } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { SINGLE_PRODUCT_QUERY } from '~/lib/graphql';
 import { shopifyClient } from '~/lib/shopify-client';
+import { getSeoMeta } from '~/seo';
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),
@@ -48,6 +54,15 @@ export async function action({ request }: ActionArgs) {
 	await session.setCart(cart);
 	return json({ cart });
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const seoMeta = getSeoMeta({
+		title: data.product.title,
+		description: data.product.description,
+	});
+
+	return { ...seoMeta };
+};
 
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
