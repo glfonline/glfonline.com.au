@@ -1,0 +1,19 @@
+{
+	"extends": "@glfonline/tsconfig/remix.json",
+	"include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx"],
+	"compilerOptions": {
+		"allowJs": true,
+		"baseUrl": ".",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"lib": ["DOM", "DOM.Iterable", "ES2019"],
+		"moduleResolution": "node",
+		"noEmit": true,
+		"paths": { "~/*": ["./app/*"] },
+		"resolveJsonModule": true,
+		"strict": true,
+		"target": "ES2019"
+	}
+}
