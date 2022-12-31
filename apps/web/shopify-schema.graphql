@@ -23,6 +23,11 @@ directive @inContext(
 	country: CountryCode
 
 	"""
+	The language code for context. For example, `EN`.
+	"""
+	language: LanguageCode
+
+	"""
 	The identifier of the customer's preferred location.
 	"""
 	preferredLocationId: ID
@@ -53,22 +58,22 @@ type AppliedGiftCard implements Node {
 	"""
 	The amount that was taken from the gift card by applying it.
 	"""
-	amountUsed: Money! @deprecated(reason: "Use `amountUsedV2` instead.")
+	amountUsed: MoneyV2!
 
 	"""
 	The amount that was taken from the gift card by applying it.
 	"""
-	amountUsedV2: MoneyV2!
+	amountUsedV2: MoneyV2! @deprecated(reason: "Use `amountUsed` instead.")
 
 	"""
 	The amount left on the gift card.
 	"""
-	balance: Money! @deprecated(reason: "Use `balanceV2` instead.")
+	balance: MoneyV2!
 
 	"""
 	The amount left on the gift card.
 	"""
-	balanceV2: MoneyV2!
+	balanceV2: MoneyV2! @deprecated(reason: "Use `balance` instead.")
 
 	"""
 	A globally-unique identifier.
@@ -176,27 +181,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable {
 	"""
 	The image associated with the article.
 	"""
-	image(
-		"""
-		Crops the image according to the specified region. This argument is deprecated: Use `Image.url(transform: { crop:})` instead.
-		"""
-		crop: CropRegion
-
-		"""
-		Image height in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxHeight:})` instead.
-		"""
-		maxHeight: Int
-
-		"""
-		Image width in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxWidth:})` instead.
-		"""
-		maxWidth: Int
-
-		"""
-		Image size multiplier for high-resolution retina displays. Must be between 1 and 3. This argument is deprecated: Use `Image.url(transform: { scale:})` instead.
-		"""
-		scale: Int = 1
-	): Image
+	image: Image
 
 	"""
 	Returns a metafield found by namespace and key.
@@ -213,43 +198,13 @@ type Article implements HasMetafields & Node & OnlineStorePublishable {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The URL used for viewing the resource on the shop's Online Store. Returns `null` if the resource is currently not published to the Online Store sales channel.
@@ -275,11 +230,6 @@ type Article implements HasMetafields & Node & OnlineStorePublishable {
 	The article’s name.
 	"""
 	title: String!
-
-	"""
-	The url pointing to the article accessible from the web.
-	"""
-	url: URL! @deprecated(reason: "Use `onlineStoreUrl` instead.")
 }
 
 """
@@ -318,6 +268,11 @@ type ArticleConnection {
 	A list of edges.
 	"""
 	edges: [ArticleEdge!]!
+
+	"""
+	A list of the nodes contained in ArticleEdge.
+	"""
+	nodes: [Article!]!
 
 	"""
 	Information to aid in pagination.
@@ -527,43 +482,13 @@ type Blog implements HasMetafields & Node & OnlineStorePublishable {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The URL used for viewing the resource on the shop's Online Store. Returns `null` if the resource is currently not published to the Online Store sales channel.
@@ -579,11 +504,6 @@ type Blog implements HasMetafields & Node & OnlineStorePublishable {
 	The blogs’s title.
 	"""
 	title: String!
-
-	"""
-	The url pointing to the blog accessible from the web.
-	"""
-	url: URL! @deprecated(reason: "Use `onlineStoreUrl` instead.")
 }
 
 "An auto-generated type for paginating through multiple Blogs.\n"
@@ -592,6 +512,11 @@ type BlogConnection {
 	A list of edges.
 	"""
 	edges: [BlogEdge!]!
+
+	"""
+	A list of the nodes contained in BlogEdge.
+	"""
+	nodes: [Blog!]!
 
 	"""
 	Information to aid in pagination.
@@ -635,6 +560,65 @@ enum BlogSortKeys {
 	TITLE
 }
 
+"The store's branding configuration.\n"
+type Brand {
+	"""
+	The colors of the store's brand.
+	"""
+	colors: BrandColors!
+
+	"""
+	The store's cover image.
+	"""
+	coverImage: MediaImage
+
+	"""
+	The store's default logo.
+	"""
+	logo: MediaImage
+
+	"""
+	The store's short description.
+	"""
+	shortDescription: String
+
+	"""
+	The store's slogan.
+	"""
+	slogan: String
+
+	"""
+	The store's preferred logo for square UI elements.
+	"""
+	squareLogo: MediaImage
+}
+
+"A group of related colors for the shop's brand.\n"
+type BrandColorGroup {
+	"""
+	The background color.
+	"""
+	background: Color
+
+	"""
+	The foreground color.
+	"""
+	foreground: Color
+}
+
+"The colors of the shop's brand.\n"
+type BrandColors {
+	"""
+	The shop's primary brand colors.
+	"""
+	primary: [BrandColorGroup!]!
+
+	"""
+	The shop's secondary brand colors.
+	"""
+	secondary: [BrandColorGroup!]!
+}
+
 """
 Card brand, such as Visa or Mastercard, which can be used for payments.
 """
@@ -673,6 +657,16 @@ enum CardBrand {
 "A cart represents the merchandise that a buyer intends to purchase,\nand the estimated cost associated with the cart. Learn how to\n[interact with a cart](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nduring a customer's session.\n"
 type Cart implements Node {
 	"""
+	An attribute associated with the cart.
+	"""
+	attribute(
+		"""
+		The key of the attribute.
+		"""
+		key: String!
+	): Attribute
+
+	"""
 	The attributes associated with the cart. Attributes are represented as key-value pairs.
 	"""
 	attributes: [Attribute!]!
@@ -688,9 +682,47 @@ type Cart implements Node {
 	checkoutUrl: URL!
 
 	"""
+	The estimated costs that the buyer will pay at checkout. The costs are subject to change and changes will be reflected at checkout. The `cost` field uses the `buyerIdentity` field to determine [international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).
+	"""
+	cost: CartCost!
+
+	"""
 	The date and time when the cart was created.
 	"""
 	createdAt: DateTime!
+
+	"The delivery groups available for the cart, based on the buyer identity default\ndelivery address preference or the default address of the logged-in customer.\n"
+	deliveryGroups(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+
+		"""
+		Reverse the order of the underlying list.
+		"""
+		reverse: Boolean = false
+	): CartDeliveryGroupConnection!
+
+	"""
+	The discounts that have been applied to the entire cart.
+	"""
+	discountAllocations: [CartDiscountAllocation!]!
 
 	"The case-insensitive discount codes that the customer added at checkout.\n"
 	discountCodes: [CartDiscountCode!]!
@@ -737,6 +769,11 @@ type Cart implements Node {
 	A note that is associated with the cart. For example, the note can be a personalized message to the buyer.
 	"""
 	note: String
+
+	"""
+	The total number of items in the cart.
+	"""
+	totalQuantity: Int!
 
 	"""
 	The date and time when the cart was updated.
@@ -788,6 +825,9 @@ type CartBuyerIdentity {
 	"""
 	customer: Customer
 
+	"An ordered set of delivery addresses tied to the buyer that is interacting with the cart.\nThe rank of the preferences is determined by the order of the addresses in the array. Preferences\ncan be used to populate relevant fields in the checkout flow.\n"
+	deliveryAddressPreferences: [DeliveryAddress!]!
+
 	"""
 	The email address of the buyer that is interacting with the cart.
 	"""
@@ -810,6 +850,9 @@ input CartBuyerIdentityInput {
 	The access token used to identify the customer associated with the cart.
 	"""
 	customerAccessToken: String
+
+	"An ordered set of delivery addresses tied to the buyer that is interacting with the cart.\nThe rank of the preferences is determined by the order of the addresses in the array. Preferences\ncan be used to populate relevant fields in the checkout flow.\n"
+	deliveryAddressPreferences: [DeliveryAddressInput!]
 
 	"""
 	The email address of the buyer that is interacting with the cart.
@@ -852,6 +895,54 @@ type CartCodeDiscountAllocation implements CartDiscountAllocation {
 	discountedAmount: MoneyV2!
 }
 
+"The costs that the buyer will pay at checkout.\nThe cart cost uses [`CartBuyerIdentity`](https://shopify.dev/api/storefront/reference/cart/cartbuyeridentity) to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\n"
+type CartCost {
+	"""
+	The estimated amount, before taxes and discounts, for the customer to pay at checkout. The checkout charge amount doesn't include any deferred payments that'll be paid at a later date. If the cart has no deferred payments, then the checkout charge amount is equivalent to `subtotalAmount`.
+	"""
+	checkoutChargeAmount: MoneyV2!
+
+	"""
+	The amount, before taxes and cart-level discounts, for the customer to pay.
+	"""
+	subtotalAmount: MoneyV2!
+
+	"""
+	Whether the subtotal amount is estimated.
+	"""
+	subtotalAmountEstimated: Boolean!
+
+	"""
+	The total amount for the customer to pay.
+	"""
+	totalAmount: MoneyV2!
+
+	"""
+	Whether the total amount is estimated.
+	"""
+	totalAmountEstimated: Boolean!
+
+	"""
+	The duty amount for the customer to pay at checkout.
+	"""
+	totalDutyAmount: MoneyV2
+
+	"""
+	Whether the total duty amount is estimated.
+	"""
+	totalDutyAmountEstimated: Boolean!
+
+	"""
+	The tax amount for the customer to pay at checkout.
+	"""
+	totalTaxAmount: MoneyV2
+
+	"""
+	Whether the total tax amount is estimated.
+	"""
+	totalTaxAmountEstimated: Boolean!
+}
+
 """
 Return type for `cartCreate` mutation.
 """
@@ -865,6 +956,142 @@ type CartCreatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+}
+
+"""
+The discounts automatically applied to the cart line based on prerequisites that have been met.
+"""
+type CartCustomDiscountAllocation implements CartDiscountAllocation {
+	"""
+	The discounted amount that has been applied to the cart line.
+	"""
+	discountedAmount: MoneyV2!
+
+	"""
+	The title of the allocated discount.
+	"""
+	title: String!
+}
+
+"""
+Information about the options available for one or more line items to be delivered to a specific address.
+"""
+type CartDeliveryGroup {
+	"""
+	A list of cart lines for the delivery group.
+	"""
+	cartLines(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+
+		"""
+		Reverse the order of the underlying list.
+		"""
+		reverse: Boolean = false
+	): CartLineConnection!
+
+	"""
+	The destination address for the delivery group.
+	"""
+	deliveryAddress: MailingAddress!
+
+	"""
+	The delivery options available for the delivery group.
+	"""
+	deliveryOptions: [CartDeliveryOption!]!
+
+	"""
+	The ID for the delivery group.
+	"""
+	id: ID!
+
+	"""
+	The selected delivery option for the delivery group.
+	"""
+	selectedDeliveryOption: CartDeliveryOption
+}
+
+"An auto-generated type for paginating through multiple CartDeliveryGroups.\n"
+type CartDeliveryGroupConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [CartDeliveryGroupEdge!]!
+
+	"""
+	A list of the nodes contained in CartDeliveryGroupEdge.
+	"""
+	nodes: [CartDeliveryGroup!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one CartDeliveryGroup and a cursor during pagination.\n"
+type CartDeliveryGroupEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of CartDeliveryGroupEdge.
+	"""
+	node: CartDeliveryGroup!
+}
+
+"""
+Information about a delivery option.
+"""
+type CartDeliveryOption {
+	"""
+	The code of the delivery option.
+	"""
+	code: String
+
+	"""
+	The method for the delivery option.
+	"""
+	deliveryMethodType: DeliveryMethodType!
+
+	"""
+	The description of the delivery option.
+	"""
+	description: String
+
+	"""
+	The estimated cost for the delivery option.
+	"""
+	estimatedCost: MoneyV2!
+
+	"""
+	The unique identifier of the delivery option.
+	"""
+	handle: String!
+
+	"""
+	The title of the delivery option.
+	"""
+	title: String
 }
 
 """
@@ -940,6 +1167,11 @@ enum CartErrorCode {
 "The estimated costs that the buyer will pay at checkout.\nThe estimated cost uses\n[`CartBuyerIdentity`](https://shopify.dev/api/storefront/reference/cart/cartbuyeridentity)\nto determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\n"
 type CartEstimatedCost {
 	"""
+	The estimated amount, before taxes and discounts, for the customer to pay at checkout. The checkout charge amount doesn't include any deferred payments that'll be paid at a later date. If the cart has no deferred payments, then the checkout charge amount is equivalent to`subtotal_amount`.
+	"""
+	checkoutChargeAmount: MoneyV2!
+
+	"""
 	The estimated amount, before taxes and discounts, for the customer to pay.
 	"""
 	subtotalAmount: MoneyV2!
@@ -991,9 +1223,24 @@ Represents information about the merchandise in the cart.
 """
 type CartLine implements Node {
 	"""
+	An attribute associated with the cart line.
+	"""
+	attribute(
+		"""
+		The key of the attribute.
+		"""
+		key: String!
+	): Attribute
+
+	"""
 	The attributes associated with the cart line. Attributes are represented as key-value pairs.
 	"""
 	attributes: [Attribute!]!
+
+	"""
+	The cost of the merchandise that the buyer will pay for at checkout. The costs are subject to change and changes will be reflected at checkout.
+	"""
+	cost: CartLineCost!
 
 	"""
 	The discounts that have been applied to the cart line.
@@ -1035,9 +1282,39 @@ type CartLineConnection {
 	edges: [CartLineEdge!]!
 
 	"""
+	A list of the nodes contained in CartLineEdge.
+	"""
+	nodes: [CartLine!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
+}
+
+"""
+The cost of the merchandise line that the buyer will pay at checkout.
+"""
+type CartLineCost {
+	"""
+	The amount of the merchandise line.
+	"""
+	amountPerQuantity: MoneyV2!
+
+	"""
+	The compare at amount of the merchandise line.
+	"""
+	compareAtAmountPerQuantity: MoneyV2
+
+	"""
+	The cost of the merchandise line before line-level discounts.
+	"""
+	subtotalAmount: MoneyV2!
+
+	"""
+	The total cost of the merchandise line.
+	"""
+	totalAmount: MoneyV2!
 }
 
 "An auto-generated type which holds one CartLine and a cursor during pagination.\n"
@@ -1057,6 +1334,16 @@ type CartLineEdge {
 The estimated cost of the merchandise line that the buyer will pay at checkout.
 """
 type CartLineEstimatedCost {
+	"""
+	The amount of the merchandise line.
+	"""
+	amount: MoneyV2!
+
+	"""
+	The compare at amount of the merchandise line.
+	"""
+	compareAtAmount: MoneyV2
+
 	"""
 	The estimated cost of the merchandise line before discounts.
 	"""
@@ -1183,6 +1470,34 @@ type CartNoteUpdatePayload {
 	userErrors: [CartUserError!]!
 }
 
+"The input fields for updating the selected delivery options for a delivery group.\n"
+input CartSelectedDeliveryOptionInput {
+	"""
+	The ID of the cart delivery group.
+	"""
+	deliveryGroupId: ID!
+
+	"""
+	The handle of the selected delivery option.
+	"""
+	deliveryOptionHandle: String!
+}
+
+"""
+Return type for `cartSelectedDeliveryOptionsUpdate` mutation.
+"""
+type CartSelectedDeliveryOptionsUpdatePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+}
+
 """
 Represents an error that happens during execution of a cart mutation.
 """
@@ -1239,14 +1554,6 @@ type Checkout implements Node {
 	A list of extra information that is added to the checkout.
 	"""
 	customAttributes: [Attribute!]!
-
-	"""
-	The customer associated with the checkout.
-	"""
-	customer: Customer
-		@deprecated(
-			reason: "This field will always return null. If you have an authentication token for the customer, you can use the `customer` field on the query root to retrieve it."
-		)
 
 	"""
 	Discounts that have been applied on the checkout.
@@ -1339,14 +1646,14 @@ type Checkout implements Node {
 	orderStatusUrl: URL
 
 	"""
-	The amount left to be paid. This is equal to the cost of the line items, taxes and shipping minus discounts and gift cards.
+	The amount left to be paid. This is equal to the cost of the line items, taxes, and shipping, minus discounts and gift cards.
 	"""
-	paymentDue: Money! @deprecated(reason: "Use `paymentDueV2` instead.")
+	paymentDue: MoneyV2!
 
 	"""
 	The amount left to be paid. This is equal to the cost of the line items, duties, taxes, and shipping, minus discounts and gift cards.
 	"""
-	paymentDueV2: MoneyV2!
+	paymentDueV2: MoneyV2! @deprecated(reason: "Use `paymentDue` instead.")
 
 	"Whether or not the Checkout is ready and can be completed. Checkouts may\nhave asynchronous operations that can take time to finish. If you want\nto complete a checkout or ensure all the fields are populated and up to\ndate, polling is required until the value is true.\n"
 	ready: Boolean!
@@ -1370,14 +1677,14 @@ type Checkout implements Node {
 	shippingLine: ShippingRate
 
 	"""
-	Price of the checkout before shipping and taxes.
+	The price at checkout before shipping and taxes.
 	"""
-	subtotalPrice: Money! @deprecated(reason: "Use `subtotalPriceV2` instead.")
+	subtotalPrice: MoneyV2!
 
 	"""
 	The price at checkout before duties, shipping, and taxes.
 	"""
-	subtotalPriceV2: MoneyV2!
+	subtotalPriceV2: MoneyV2! @deprecated(reason: "Use `subtotalPrice` instead.")
 
 	"""
 	Whether the checkout is tax exempt.
@@ -1395,24 +1702,24 @@ type Checkout implements Node {
 	totalDuties: MoneyV2
 
 	"""
-	The sum of all the prices of all the items in the checkout, taxes and discounts included.
+	The sum of all the prices of all the items in the checkout, including taxes and duties.
 	"""
-	totalPrice: Money! @deprecated(reason: "Use `totalPriceV2` instead.")
+	totalPrice: MoneyV2!
 
 	"""
-	The sum of all the prices of all the items in the checkout, including duties, taxes, and discounts.
+	The sum of all the prices of all the items in the checkout, including taxes and duties.
 	"""
-	totalPriceV2: MoneyV2!
-
-	"""
-	The sum of all the taxes applied to the line items and shipping lines in the checkout.
-	"""
-	totalTax: Money! @deprecated(reason: "Use `totalTaxV2` instead.")
+	totalPriceV2: MoneyV2! @deprecated(reason: "Use `totalPrice` instead.")
 
 	"""
 	The sum of all the taxes applied to the line items and shipping lines in the checkout.
 	"""
-	totalTaxV2: MoneyV2!
+	totalTax: MoneyV2!
+
+	"""
+	The sum of all the taxes applied to the line items and shipping lines in the checkout.
+	"""
+	totalTaxV2: MoneyV2! @deprecated(reason: "Use `totalTax` instead.")
 
 	"""
 	The date and time when the checkout was last updated.
@@ -1423,45 +1730,6 @@ type Checkout implements Node {
 	The url pointing to the checkout accessible from the web.
 	"""
 	webUrl: URL!
-}
-
-"""
-Specifies the fields required to update a checkout's attributes.
-"""
-input CheckoutAttributesUpdateInput {
-	"Allows setting partial addresses on a Checkout, skipping the full validation of attributes.\nThe required attributes are city, province, and country.\nFull validation of the addresses is still done at completion time. Defaults to `false` with\neach operation.\n"
-	allowPartialAddresses: Boolean = false
-
-	"""
-	A list of extra information that is added to the checkout.
-	"""
-	customAttributes: [AttributeInput!]
-
-	"""
-	The text of an optional note that a shop owner can attach to the checkout.
-	"""
-	note: String
-}
-
-"""
-Return type for `checkoutAttributesUpdate` mutation.
-"""
-type CheckoutAttributesUpdatePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -1543,87 +1811,9 @@ type CheckoutCompleteFreePayload {
 }
 
 """
-Return type for `checkoutCompleteWithCreditCard` mutation.
-"""
-type CheckoutCompleteWithCreditCardPayload {
-	"""
-	The checkout on which the payment was applied.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	A representation of the attempted payment.
-	"""
-	payment: Payment
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
 Return type for `checkoutCompleteWithCreditCardV2` mutation.
 """
 type CheckoutCompleteWithCreditCardV2Payload {
-	"""
-	The checkout on which the payment was applied.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	A representation of the attempted payment.
-	"""
-	payment: Payment
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutCompleteWithTokenizedPayment` mutation.
-"""
-type CheckoutCompleteWithTokenizedPaymentPayload {
-	"""
-	The checkout on which the payment was applied.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	A representation of the attempted payment.
-	"""
-	payment: Payment
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutCompleteWithTokenizedPaymentV2` mutation.
-"""
-type CheckoutCompleteWithTokenizedPaymentV2Payload {
 	"""
 	The checkout on which the payment was applied.
 	"""
@@ -1705,14 +1895,6 @@ input CheckoutCreateInput {
 	note: String
 
 	"""
-	The three-letter currency code of one of the shop's enabled presentment currencies.
-	Including this field creates a checkout in the specified currency. By default, new
-	checkouts are created in the shop's primary currency.
-	 This argument is deprecated: Use the `buyerIdentity.countryCode` field instead.
-	"""
-	presentmentCurrencyCode: CurrencyCode
-
-	"""
 	The shipping address to where the line items will be shipped.
 	"""
 	shippingAddress: MailingAddressInput
@@ -1745,26 +1927,6 @@ type CheckoutCreatePayload {
 }
 
 """
-Return type for `checkoutCustomerAssociate` mutation.
-"""
-type CheckoutCustomerAssociatePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
-
-	"""
-	The associated customer object.
-	"""
-	customer: Customer
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-}
-
-"""
 Return type for `checkoutCustomerAssociateV2` mutation.
 """
 type CheckoutCustomerAssociateV2Payload {
@@ -1791,27 +1953,6 @@ type CheckoutCustomerAssociateV2Payload {
 }
 
 """
-Return type for `checkoutCustomerDisassociate` mutation.
-"""
-type CheckoutCustomerDisassociatePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
 Return type for `checkoutCustomerDisassociateV2` mutation.
 """
 type CheckoutCustomerDisassociateV2Payload {
@@ -1819,27 +1960,6 @@ type CheckoutCustomerDisassociateV2Payload {
 	The updated checkout object.
 	"""
 	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutDiscountCodeApply` mutation.
-"""
-type CheckoutDiscountCodeApplyPayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
 
 	"""
 	The list of errors that occurred from executing the mutation.
@@ -1882,27 +2002,6 @@ type CheckoutDiscountCodeRemovePayload {
 	The updated checkout object.
 	"""
 	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutEmailUpdate` mutation.
-"""
-type CheckoutEmailUpdatePayload {
-	"""
-	The checkout object with the updated email.
-	"""
-	checkout: Checkout!
 
 	"""
 	The list of errors that occurred from executing the mutation.
@@ -1970,6 +2069,11 @@ enum CheckoutErrorCode {
 	Discount already applied.
 	"""
 	DISCOUNT_ALREADY_APPLIED
+
+	"""
+	Discount code isn't working right now. Please contact us for help.
+	"""
+	DISCOUNT_CODE_APPLICATION_FAILED
 
 	"""
 	Discount disabled.
@@ -2163,48 +2267,6 @@ enum CheckoutErrorCode {
 }
 
 """
-Return type for `checkoutGiftCardApply` mutation.
-"""
-type CheckoutGiftCardApplyPayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutGiftCardRemove` mutation.
-"""
-type CheckoutGiftCardRemovePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
 Return type for `checkoutGiftCardRemoveV2` mutation.
 """
 type CheckoutGiftCardRemoveV2Payload {
@@ -2292,6 +2354,11 @@ type CheckoutLineItemConnection {
 	A list of edges.
 	"""
 	edges: [CheckoutLineItemEdge!]!
+
+	"""
+	A list of the nodes contained in CheckoutLineItemEdge.
+	"""
+	nodes: [CheckoutLineItem!]!
 
 	"""
 	Information to aid in pagination.
@@ -2436,27 +2503,6 @@ type CheckoutLineItemsUpdatePayload {
 }
 
 """
-Return type for `checkoutShippingAddressUpdate` mutation.
-"""
-type CheckoutShippingAddressUpdatePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
 Return type for `checkoutShippingAddressUpdateV2` mutation.
 """
 type CheckoutShippingAddressUpdateV2Payload {
@@ -2548,27 +2594,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable {
 	"""
 	Image associated with the collection.
 	"""
-	image(
-		"""
-		Crops the image according to the specified region. This argument is deprecated: Use `Image.url(transform: { crop:})` instead.
-		"""
-		crop: CropRegion
-
-		"""
-		Image height in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxHeight:})` instead.
-		"""
-		maxHeight: Int
-
-		"""
-		Image width in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxWidth:})` instead.
-		"""
-		maxWidth: Int
-
-		"""
-		Image size multiplier for high-resolution retina displays. Must be between 1 and 3. This argument is deprecated: Use `Image.url(transform: { scale:})` instead.
-		"""
-		scale: Int = 1
-	): Image
+	image: Image
 
 	"""
 	Returns a metafield found by namespace and key.
@@ -2585,43 +2611,13 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The URL used for viewing the resource on the shop's Online Store. Returns `null` if the resource is currently not published to the Online Store sales channel.
@@ -2669,6 +2665,11 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable {
 	): ProductConnection!
 
 	"""
+	The collection's SEO information.
+	"""
+	seo: SEO!
+
+	"""
 	The collection’s name. Limit of 255 characters.
 	"""
 	title: String!
@@ -2685,6 +2686,11 @@ type CollectionConnection {
 	A list of edges.
 	"""
 	edges: [CollectionEdge!]!
+
+	"""
+	A list of the nodes contained in CollectionEdge.
+	"""
+	nodes: [Collection!]!
 
 	"""
 	Information to aid in pagination.
@@ -2727,6 +2733,9 @@ enum CollectionSortKeys {
 	"""
 	UPDATED_AT
 }
+
+"A string containing a hexadecimal representation of a color.\n\nFor example, \"#6A8D48\".\n"
+scalar Color
 
 """
 A comment on an article.
@@ -2781,6 +2790,11 @@ type CommentConnection {
 	edges: [CommentEdge!]!
 
 	"""
+	A list of the nodes contained in CommentEdge.
+	"""
+	nodes: [Comment!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -2803,6 +2817,11 @@ type CommentEdge {
 A country.
 """
 type Country {
+	"""
+	The languages available for the country.
+	"""
+	availableLanguages: [Language!]!
+
 	"""
 	The currency of the country.
 	"""
@@ -4098,34 +4117,6 @@ type CreditCard {
 }
 
 "Specifies the fields required to complete a checkout with\na Shopify vaulted credit card payment.\n"
-input CreditCardPaymentInput {
-	"""
-	The amount of the payment.
-	"""
-	amount: Money!
-
-	"""
-	The billing address for the payment.
-	"""
-	billingAddress: MailingAddressInput!
-
-	"""
-	A unique client generated key used to avoid duplicate charges. When a duplicate payment is found, the original is returned instead of creating a new one. For more information, refer to [Idempotent requests](https://shopify.dev/api/usage/idempotent-requests).
-	"""
-	idempotencyKey: String!
-
-	"""
-	Executes the payment in test mode if possible. Defaults to `false`.
-	"""
-	test: Boolean = false
-
-	"""
-	The ID returned by Shopify's Card Vault.
-	"""
-	vaultId: String!
-}
-
-"Specifies the fields required to complete a checkout with\na Shopify vaulted credit card payment.\n"
 input CreditCardPaymentInputV2 {
 	"""
 	The billing address for the payment.
@@ -4862,6 +4853,11 @@ enum CurrencyCode {
 		)
 
 	"""
+	Sao Tome And Principe Dobra (STN).
+	"""
+	STN
+
+	"""
 	Syrian Pound (SYP).
 	"""
 	SYP
@@ -4940,6 +4936,11 @@ enum CurrencyCode {
 	Uzbekistan som (UZS).
 	"""
 	UZS
+
+	"""
+	Venezuelan Bolivares (VED).
+	"""
+	VED
 
 	"""
 	Venezuelan Bolivares (VEF).
@@ -5104,43 +5105,18 @@ type Customer implements HasMetafields {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+	"""
+	The number of orders that the customer has made at the store in their lifetime.
+	"""
+	numberOfOrders: UnsignedInt64!
 
 	"""
 	The orders associated with the customer.
@@ -5741,6 +5717,54 @@ scalar DateTime
 scalar Decimal
 
 """
+A delivery address of the buyer that is interacting with the cart.
+"""
+union DeliveryAddress = MailingAddress
+
+"The input fields for delivery address preferences.\n"
+input DeliveryAddressInput {
+	"""
+	A delivery address preference of a buyer that is interacting with the cart.
+	"""
+	deliveryAddress: MailingAddressInput
+}
+
+"""
+List of different delivery method types.
+"""
+enum DeliveryMethodType {
+	"""
+	Local Delivery.
+	"""
+	LOCAL
+
+	"""
+	None.
+	"""
+	NONE
+
+	"""
+	Shipping to a Pickup Point.
+	"""
+	PICKUP_POINT
+
+	"""
+	Local Pickup.
+	"""
+	PICK_UP
+
+	"""
+	Retail.
+	"""
+	RETAIL
+
+	"""
+	Shipping.
+	"""
+	SHIPPING
+}
+
+"""
 Digital wallet, such as Apple Pay, which can be used for accelerated checkouts.
 """
 enum DigitalWallet {
@@ -5827,6 +5851,11 @@ type DiscountApplicationConnection {
 	A list of edges.
 	"""
 	edges: [DiscountApplicationEdge!]!
+
+	"""
+	A list of the nodes contained in DiscountApplicationEdge.
+	"""
+	nodes: [DiscountApplication!]!
 
 	"""
 	Information to aid in pagination.
@@ -5956,6 +5985,11 @@ type ExternalVideo implements Media & Node {
 	alt: String
 
 	"""
+	The embed URL of the video for the respective host.
+	"""
+	embedUrl: URL!
+
+	"""
 	The URL.
 	"""
 	embeddedUrl: URL! @deprecated(reason: "Use `originUrl` instead.")
@@ -5974,6 +6008,11 @@ type ExternalVideo implements Media & Node {
 	The media content type.
 	"""
 	mediaContentType: MediaContentType!
+
+	"""
+	The origin URL of the video on the respective host.
+	"""
+	originUrl: URL!
 
 	"""
 	The preview image for the media.
@@ -6008,6 +6047,11 @@ type Filter {
 
 "The type of data that the filter group represents.\n\nFor more information, refer to [Filter products in a collection with the Storefront API]\n(https://shopify.dev/custom-storefronts/products-collections/filter-products).\n"
 enum FilterType {
+	"""
+	A boolean value.
+	"""
+	BOOLEAN
+
 	"""
 	A list of selectable values.
 	"""
@@ -6113,6 +6157,11 @@ type FulfillmentLineItemConnection {
 	edges: [FulfillmentLineItemEdge!]!
 
 	"""
+	A list of the nodes contained in FulfillmentLineItemEdge.
+	"""
+	nodes: [FulfillmentLineItem!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -6142,6 +6191,41 @@ type FulfillmentTrackingInfo {
 
 	"""
 	The URL to track the fulfillment.
+	"""
+	url: URL
+}
+
+"""
+The generic file resource lets you manage files in a merchant’s store. Generic files include any file that doesn’t fit into a designated type such as image or video. Example: PDF, JSON.
+"""
+type GenericFile implements Node {
+	"""
+	A word or phrase to indicate the contents of a file.
+	"""
+	alt: String
+
+	"""
+	A globally-unique identifier.
+	"""
+	id: ID!
+
+	"""
+	The MIME type of the file.
+	"""
+	mimeType: String
+
+	"""
+	The size of the original file in bytes.
+	"""
+	originalFileSize: Int
+
+	"""
+	The preview image for the file.
+	"""
+	previewImage: Image
+
+	"""
+	The URL of the file.
 	"""
 	url: URL
 }
@@ -6183,43 +6267,28 @@ interface HasMetafields {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
+}
 
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
+"""
+Identifies a metafield on an owner resource by namespace and key.
+"""
+input HasMetafieldsIdentifier {
+	"""
+	The identifier for the metafield.
+	"""
+	key: String!
 
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+	"""
+	A container for a set of metafields.
+	"""
+	namespace: String!
 }
 
 """
@@ -6299,6 +6368,11 @@ type ImageConnection {
 	edges: [ImageEdge!]!
 
 	"""
+	A list of the nodes contained in ImageEdge.
+	"""
+	nodes: [Image!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -6359,6 +6433,716 @@ input ImageTransformInput {
 scalar JSON
 
 """
+A language.
+"""
+type Language {
+	"""
+	The name of the language in the language itself. If the language uses capitalization, it is capitalized for a mid-sentence position.
+	"""
+	endonymName: String!
+
+	"""
+	The ISO code.
+	"""
+	isoCode: LanguageCode!
+
+	"""
+	The name of the language in the current language.
+	"""
+	name: String!
+}
+
+"""
+ISO 639-1 language codes supported by Shopify.
+"""
+enum LanguageCode {
+	"""
+	Afrikaans.
+	"""
+	AF
+
+	"""
+	Akan.
+	"""
+	AK
+
+	"""
+	Amharic.
+	"""
+	AM
+
+	"""
+	Arabic.
+	"""
+	AR
+
+	"""
+	Assamese.
+	"""
+	AS
+
+	"""
+	Azerbaijani.
+	"""
+	AZ
+
+	"""
+	Belarusian.
+	"""
+	BE
+
+	"""
+	Bulgarian.
+	"""
+	BG
+
+	"""
+	Bambara.
+	"""
+	BM
+
+	"""
+	Bangla.
+	"""
+	BN
+
+	"""
+	Tibetan.
+	"""
+	BO
+
+	"""
+	Breton.
+	"""
+	BR
+
+	"""
+	Bosnian.
+	"""
+	BS
+
+	"""
+	Catalan.
+	"""
+	CA
+
+	"""
+	Chechen.
+	"""
+	CE
+
+	"""
+	Czech.
+	"""
+	CS
+
+	"""
+	Church Slavic.
+	"""
+	CU
+
+	"""
+	Welsh.
+	"""
+	CY
+
+	"""
+	Danish.
+	"""
+	DA
+
+	"""
+	German.
+	"""
+	DE
+
+	"""
+	Dzongkha.
+	"""
+	DZ
+
+	"""
+	Ewe.
+	"""
+	EE
+
+	"""
+	Greek.
+	"""
+	EL
+
+	"""
+	English.
+	"""
+	EN
+
+	"""
+	Esperanto.
+	"""
+	EO
+
+	"""
+	Spanish.
+	"""
+	ES
+
+	"""
+	Estonian.
+	"""
+	ET
+
+	"""
+	Basque.
+	"""
+	EU
+
+	"""
+	Persian.
+	"""
+	FA
+
+	"""
+	Fulah.
+	"""
+	FF
+
+	"""
+	Finnish.
+	"""
+	FI
+
+	"""
+	Faroese.
+	"""
+	FO
+
+	"""
+	French.
+	"""
+	FR
+
+	"""
+	Western Frisian.
+	"""
+	FY
+
+	"""
+	Irish.
+	"""
+	GA
+
+	"""
+	Scottish Gaelic.
+	"""
+	GD
+
+	"""
+	Galician.
+	"""
+	GL
+
+	"""
+	Gujarati.
+	"""
+	GU
+
+	"""
+	Manx.
+	"""
+	GV
+
+	"""
+	Hausa.
+	"""
+	HA
+
+	"""
+	Hebrew.
+	"""
+	HE
+
+	"""
+	Hindi.
+	"""
+	HI
+
+	"""
+	Croatian.
+	"""
+	HR
+
+	"""
+	Hungarian.
+	"""
+	HU
+
+	"""
+	Armenian.
+	"""
+	HY
+
+	"""
+	Interlingua.
+	"""
+	IA
+
+	"""
+	Indonesian.
+	"""
+	ID
+
+	"""
+	Igbo.
+	"""
+	IG
+
+	"""
+	Sichuan Yi.
+	"""
+	II
+
+	"""
+	Icelandic.
+	"""
+	IS
+
+	"""
+	Italian.
+	"""
+	IT
+
+	"""
+	Japanese.
+	"""
+	JA
+
+	"""
+	Javanese.
+	"""
+	JV
+
+	"""
+	Georgian.
+	"""
+	KA
+
+	"""
+	Kikuyu.
+	"""
+	KI
+
+	"""
+	Kazakh.
+	"""
+	KK
+
+	"""
+	Kalaallisut.
+	"""
+	KL
+
+	"""
+	Khmer.
+	"""
+	KM
+
+	"""
+	Kannada.
+	"""
+	KN
+
+	"""
+	Korean.
+	"""
+	KO
+
+	"""
+	Kashmiri.
+	"""
+	KS
+
+	"""
+	Kurdish.
+	"""
+	KU
+
+	"""
+	Cornish.
+	"""
+	KW
+
+	"""
+	Kyrgyz.
+	"""
+	KY
+
+	"""
+	Luxembourgish.
+	"""
+	LB
+
+	"""
+	Ganda.
+	"""
+	LG
+
+	"""
+	Lingala.
+	"""
+	LN
+
+	"""
+	Lao.
+	"""
+	LO
+
+	"""
+	Lithuanian.
+	"""
+	LT
+
+	"""
+	Luba-Katanga.
+	"""
+	LU
+
+	"""
+	Latvian.
+	"""
+	LV
+
+	"""
+	Malagasy.
+	"""
+	MG
+
+	"""
+	Māori.
+	"""
+	MI
+
+	"""
+	Macedonian.
+	"""
+	MK
+
+	"""
+	Malayalam.
+	"""
+	ML
+
+	"""
+	Mongolian.
+	"""
+	MN
+
+	"""
+	Marathi.
+	"""
+	MR
+
+	"""
+	Malay.
+	"""
+	MS
+
+	"""
+	Maltese.
+	"""
+	MT
+
+	"""
+	Burmese.
+	"""
+	MY
+
+	"""
+	Norwegian (Bokmål).
+	"""
+	NB
+
+	"""
+	North Ndebele.
+	"""
+	ND
+
+	"""
+	Nepali.
+	"""
+	NE
+
+	"""
+	Dutch.
+	"""
+	NL
+
+	"""
+	Norwegian Nynorsk.
+	"""
+	NN
+
+	"""
+	Norwegian.
+	"""
+	NO
+
+	"""
+	Oromo.
+	"""
+	OM
+
+	"""
+	Odia.
+	"""
+	OR
+
+	"""
+	Ossetic.
+	"""
+	OS
+
+	"""
+	Punjabi.
+	"""
+	PA
+
+	"""
+	Polish.
+	"""
+	PL
+
+	"""
+	Pashto.
+	"""
+	PS
+
+	"""
+	Portuguese.
+	"""
+	PT
+
+	"""
+	Portuguese (Brazil).
+	"""
+	PT_BR
+
+	"""
+	Portuguese (Portugal).
+	"""
+	PT_PT
+
+	"""
+	Quechua.
+	"""
+	QU
+
+	"""
+	Romansh.
+	"""
+	RM
+
+	"""
+	Rundi.
+	"""
+	RN
+
+	"""
+	Romanian.
+	"""
+	RO
+
+	"""
+	Russian.
+	"""
+	RU
+
+	"""
+	Kinyarwanda.
+	"""
+	RW
+
+	"""
+	Sindhi.
+	"""
+	SD
+
+	"""
+	Northern Sami.
+	"""
+	SE
+
+	"""
+	Sango.
+	"""
+	SG
+
+	"""
+	Sinhala.
+	"""
+	SI
+
+	"""
+	Slovak.
+	"""
+	SK
+
+	"""
+	Slovenian.
+	"""
+	SL
+
+	"""
+	Shona.
+	"""
+	SN
+
+	"""
+	Somali.
+	"""
+	SO
+
+	"""
+	Albanian.
+	"""
+	SQ
+
+	"""
+	Serbian.
+	"""
+	SR
+
+	"""
+	Sundanese.
+	"""
+	SU
+
+	"""
+	Swedish.
+	"""
+	SV
+
+	"""
+	Swahili.
+	"""
+	SW
+
+	"""
+	Tamil.
+	"""
+	TA
+
+	"""
+	Telugu.
+	"""
+	TE
+
+	"""
+	Tajik.
+	"""
+	TG
+
+	"""
+	Thai.
+	"""
+	TH
+
+	"""
+	Tigrinya.
+	"""
+	TI
+
+	"""
+	Turkmen.
+	"""
+	TK
+
+	"""
+	Tongan.
+	"""
+	TO
+
+	"""
+	Turkish.
+	"""
+	TR
+
+	"""
+	Tatar.
+	"""
+	TT
+
+	"""
+	Uyghur.
+	"""
+	UG
+
+	"""
+	Ukrainian.
+	"""
+	UK
+
+	"""
+	Urdu.
+	"""
+	UR
+
+	"""
+	Uzbek.
+	"""
+	UZ
+
+	"""
+	Vietnamese.
+	"""
+	VI
+
+	"""
+	Volapük.
+	"""
+	VO
+
+	"""
+	Wolof.
+	"""
+	WO
+
+	"""
+	Xhosa.
+	"""
+	XH
+
+	"""
+	Yiddish.
+	"""
+	YI
+
+	"""
+	Yoruba.
+	"""
+	YO
+
+	"""
+	Chinese.
+	"""
+	ZH
+
+	"""
+	Chinese (Simplified).
+	"""
+	ZH_CN
+
+	"""
+	Chinese (Traditional).
+	"""
+	ZH_TW
+
+	"""
+	Zulu.
+	"""
+	ZU
+}
+
+"""
 Information about the localized experiences configured for the shop.
 """
 type Localization {
@@ -6368,9 +7152,19 @@ type Localization {
 	availableCountries: [Country!]!
 
 	"""
+	The list of languages available for the active country.
+	"""
+	availableLanguages: [Language!]!
+
+	"""
 	The country of the active localized experience. Use the `@inContext` directive to change this value.
 	"""
 	country: Country!
+
+	"""
+	The language of the active localized experience. Use the `@inContext` directive to change this value.
+	"""
+	language: Language!
 }
 
 """
@@ -6460,6 +7254,11 @@ type LocationConnection {
 	A list of edges.
 	"""
 	edges: [LocationEdge!]!
+
+	"""
+	A list of the nodes contained in LocationEdge.
+	"""
+	nodes: [Location!]!
 
 	"""
 	Information to aid in pagination.
@@ -6605,6 +7404,11 @@ type MailingAddressConnection {
 	edges: [MailingAddressEdge!]!
 
 	"""
+	A list of the nodes contained in MailingAddressEdge.
+	"""
+	nodes: [MailingAddress!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -6729,6 +7533,11 @@ type MediaConnection {
 	edges: [MediaEdge!]!
 
 	"""
+	A list of the nodes contained in MediaEdge.
+	"""
+	nodes: [Media!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -6817,6 +7626,132 @@ type MediaImage implements Media & Node {
 	previewImage: Image
 }
 
+"A menu used for navigation within a storefront.\n"
+type Menu implements Node {
+	"""
+	The menu's handle.
+	"""
+	handle: String!
+
+	"""
+	A globally-unique identifier.
+	"""
+	id: ID!
+
+	"""
+	The menu's child items.
+	"""
+	items: [MenuItem!]!
+
+	"""
+	The count of items on the menu.
+	"""
+	itemsCount: Int!
+
+	"""
+	The menu's title.
+	"""
+	title: String!
+}
+
+"A menu item within a parent menu.\n"
+type MenuItem implements Node {
+	"""
+	A globally-unique identifier.
+	"""
+	id: ID!
+
+	"""
+	The menu item's child items.
+	"""
+	items: [MenuItem!]!
+
+	"""
+	The ID of the linked resource.
+	"""
+	resourceId: ID
+
+	"""
+	The menu item's tags to filter a collection.
+	"""
+	tags: [String!]!
+
+	"""
+	The menu item's title.
+	"""
+	title: String!
+
+	"""
+	The menu item's type.
+	"""
+	type: MenuItemType!
+
+	"""
+	The menu item's URL.
+	"""
+	url: URL
+}
+
+"""
+A menu item type.
+"""
+enum MenuItemType {
+	"""
+	An article link.
+	"""
+	ARTICLE
+
+	"""
+	A blog link.
+	"""
+	BLOG
+
+	"""
+	A catalog link.
+	"""
+	CATALOG
+
+	"""
+	A collection link.
+	"""
+	COLLECTION
+
+	"""
+	A collection link.
+	"""
+	COLLECTIONS
+
+	"""
+	A frontpage link.
+	"""
+	FRONTPAGE
+
+	"""
+	An http link.
+	"""
+	HTTP
+
+	"""
+	A page link.
+	"""
+	PAGE
+
+	"""
+	A product link.
+	"""
+	PRODUCT
+
+	"""
+	A search link.
+	"""
+	SEARCH
+
+	"""
+	A shop policy link.
+	"""
+	SHOP_POLICY
+}
+
 """
 The merchandise to be purchased at checkout.
 """
@@ -6859,6 +7794,31 @@ type Metafield implements Node {
 	"""
 	reference: MetafieldReference
 
+	"""
+	A list of reference objects if the metafield's type is a resource reference list.
+	"""
+	references(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+	): MetafieldReferenceConnection
+
 	"The type name of the metafield.\nSee the list of [supported types](https://shopify.dev/apps/metafields/definitions/types).\n"
 	type: String!
 
@@ -6871,40 +7831,6 @@ type Metafield implements Node {
 	The value of a metafield.
 	"""
 	value: String!
-
-	"""
-	Represents the metafield value type.
-	"""
-	valueType: MetafieldValueType!
-		@deprecated(
-			reason: "`valueType` is deprecated and replaced by `type` in API version 2021-07."
-		)
-}
-
-"An auto-generated type for paginating through multiple Metafields.\n"
-type MetafieldConnection {
-	"""
-	A list of edges.
-	"""
-	edges: [MetafieldEdge!]!
-
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-}
-
-"An auto-generated type which holds one Metafield and a cursor during pagination.\n"
-type MetafieldEdge {
-	"""
-	A cursor for use in pagination.
-	"""
-	cursor: String!
-
-	"""
-	The item at the end of MetafieldEdge.
-	"""
-	node: Metafield!
 }
 
 "A filter used to view a subset of products in a collection matching a specific metafield value.\n\nOnly the following metafield types are currently supported:\n- `number_integer`\n- `number_decimal`\n- `single_line_text_field`\n- `boolean` as of 2022-04.\n"
@@ -6940,31 +7866,44 @@ union MetafieldParentResource =
 	| Shop
 
 "Returns the resource which is being referred to by a metafield.\n"
-union MetafieldReference = MediaImage | Page | Product | ProductVariant
+union MetafieldReference =
+	  Collection
+	| GenericFile
+	| MediaImage
+	| Page
+	| Product
+	| ProductVariant
+	| Video
 
-"""
-Metafield value types.
-"""
-enum MetafieldValueType {
+"An auto-generated type for paginating through multiple MetafieldReferences.\n"
+type MetafieldReferenceConnection {
 	"""
-	A boolean metafield.
+	A list of edges.
 	"""
-	BOOLEAN
-
-	"""
-	An integer metafield.
-	"""
-	INTEGER
-
-	"""
-	A json string metafield.
-	"""
-	JSON_STRING
+	edges: [MetafieldReferenceEdge!]!
 
 	"""
-	A string metafield.
+	A list of the nodes contained in MetafieldReferenceEdge.
 	"""
-	STRING
+	nodes: [MetafieldReference!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one MetafieldReference and a cursor during pagination.\n"
+type MetafieldReferenceEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of MetafieldReferenceEdge.
+	"""
+	node: MetafieldReference!
 }
 
 """
@@ -7023,11 +7962,6 @@ type Model3dSource {
 }
 
 """
-A monetary value string without a currency symbol or code. Example value: `"100.57"`.
-"""
-scalar Money
-
-"""
 Specifies the fields for a monetary value with currency.
 """
 input MoneyInput {
@@ -7053,32 +7987,6 @@ type MoneyV2 {
 	Currency of the money.
 	"""
 	currencyCode: CurrencyCode!
-}
-
-"An auto-generated type for paginating through multiple MoneyV2s.\n"
-type MoneyV2Connection {
-	"""
-	A list of edges.
-	"""
-	edges: [MoneyV2Edge!]!
-
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-}
-
-"An auto-generated type which holds one MoneyV2 and a cursor during pagination.\n"
-type MoneyV2Edge {
-	"""
-	A cursor for use in pagination.
-	"""
-	cursor: String!
-
-	"""
-	The item at the end of MoneyV2Edge.
-	"""
-	node: MoneyV2!
 }
 
 """
@@ -7195,20 +8103,19 @@ type Mutation {
 	): CartNoteUpdatePayload
 
 	"""
-	Updates the attributes of a checkout if `allowPartialAddresses` is `true`.
+	Update the selected delivery options for a delivery group.
 	"""
-	checkoutAttributesUpdate(
+	cartSelectedDeliveryOptionsUpdate(
 		"""
-		The ID of the checkout.
+		The ID of the cart.
 		"""
-		checkoutId: ID!
+		cartId: ID!
 
 		"""
-		The fields used to update a checkout's attributes.
+		The selected delivery options.
 		"""
-		input: CheckoutAttributesUpdateInput!
-	): CheckoutAttributesUpdatePayload
-		@deprecated(reason: "Use `checkoutAttributesUpdateV2` instead.")
+		selectedDeliveryOptions: [CartSelectedDeliveryOptionInput!]!
+	): CartSelectedDeliveryOptionsUpdatePayload
 
 	"""
 	Updates the attributes of a checkout if `allowPartialAddresses` is `true`.
@@ -7236,22 +8143,6 @@ type Mutation {
 	): CheckoutCompleteFreePayload
 
 	"""
-	Completes a checkout using a credit card token from Shopify's Vault.
-	"""
-	checkoutCompleteWithCreditCard(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The credit card info to apply as a payment.
-		"""
-		payment: CreditCardPaymentInput!
-	): CheckoutCompleteWithCreditCardPayload
-		@deprecated(reason: "Use `checkoutCompleteWithCreditCardV2` instead.")
-
-	"""
 	Completes a checkout using a credit card token from Shopify's card vault. Before you can complete checkouts using CheckoutCompleteWithCreditCardV2, you need to  [_request payment processing_](https://shopify.dev/apps/channels/getting-started#request-payment-processing).
 	"""
 	checkoutCompleteWithCreditCardV2(
@@ -7265,38 +8156,6 @@ type Mutation {
 		"""
 		payment: CreditCardPaymentInputV2!
 	): CheckoutCompleteWithCreditCardV2Payload
-
-	"""
-	Completes a checkout with a tokenized payment.
-	"""
-	checkoutCompleteWithTokenizedPayment(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The info to apply as a tokenized payment.
-		"""
-		payment: TokenizedPaymentInput!
-	): CheckoutCompleteWithTokenizedPaymentPayload
-		@deprecated(reason: "Use `checkoutCompleteWithTokenizedPaymentV2` instead.")
-
-	"""
-	Completes a checkout with a tokenized payment.
-	"""
-	checkoutCompleteWithTokenizedPaymentV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The info to apply as a tokenized payment.
-		"""
-		payment: TokenizedPaymentInputV2!
-	): CheckoutCompleteWithTokenizedPaymentV2Payload
-		@deprecated(reason: "Use `checkoutCompleteWithTokenizedPaymentV3` instead.")
 
 	"""
 	Completes a checkout with a tokenized payment.
@@ -7331,22 +8190,6 @@ type Mutation {
 	"""
 	Associates a customer to the checkout.
 	"""
-	checkoutCustomerAssociate(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The customer access token of the customer to associate.
-		"""
-		customerAccessToken: String!
-	): CheckoutCustomerAssociatePayload
-		@deprecated(reason: "Use `checkoutCustomerAssociateV2` instead.")
-
-	"""
-	Associates a customer to the checkout.
-	"""
 	checkoutCustomerAssociateV2(
 		"""
 		The ID of the checkout.
@@ -7362,39 +8205,12 @@ type Mutation {
 	"""
 	Disassociates the current checkout customer from the checkout.
 	"""
-	checkoutCustomerDisassociate(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-	): CheckoutCustomerDisassociatePayload
-		@deprecated(reason: "Use `checkoutCustomerDisassociateV2` instead.")
-
-	"""
-	Disassociates the current checkout customer from the checkout.
-	"""
 	checkoutCustomerDisassociateV2(
 		"""
 		The ID of the checkout.
 		"""
 		checkoutId: ID!
 	): CheckoutCustomerDisassociateV2Payload
-
-	"""
-	Applies a discount to an existing checkout using a discount code.
-	"""
-	checkoutDiscountCodeApply(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The discount code to apply to the checkout.
-		"""
-		discountCode: String!
-	): CheckoutDiscountCodeApplyPayload
-		@deprecated(reason: "Use `checkoutDiscountCodeApplyV2` instead.")
 
 	"""
 	Applies a discount to an existing checkout using a discount code.
@@ -7424,22 +8240,6 @@ type Mutation {
 	"""
 	Updates the email on an existing checkout.
 	"""
-	checkoutEmailUpdate(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The email to update the checkout with.
-		"""
-		email: String!
-	): CheckoutEmailUpdatePayload
-		@deprecated(reason: "Use `checkoutEmailUpdateV2` instead.")
-
-	"""
-	Updates the email on an existing checkout.
-	"""
 	checkoutEmailUpdateV2(
 		"""
 		The ID of the checkout.
@@ -7451,38 +8251,6 @@ type Mutation {
 		"""
 		email: String!
 	): CheckoutEmailUpdateV2Payload
-
-	"""
-	Applies a gift card to an existing checkout using a gift card code. This will replace all currently applied gift cards.
-	"""
-	checkoutGiftCardApply(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The code of the gift card to apply on the checkout.
-		"""
-		giftCardCode: String!
-	): CheckoutGiftCardApplyPayload
-		@deprecated(reason: "Use `checkoutGiftCardsAppend` instead.")
-
-	"""
-	Removes an applied gift card from the checkout.
-	"""
-	checkoutGiftCardRemove(
-		"""
-		The ID of the Applied Gift Card to remove from the Checkout.
-		"""
-		appliedGiftCardId: ID!
-
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-	): CheckoutGiftCardRemovePayload
-		@deprecated(reason: "Use `checkoutGiftCardRemoveV2` instead.")
 
 	"""
 	Removes an applied gift card from the checkout.
@@ -7573,22 +8341,6 @@ type Mutation {
 		"""
 		lineItems: [CheckoutLineItemUpdateInput!]!
 	): CheckoutLineItemsUpdatePayload
-
-	"""
-	Updates the shipping address of an existing checkout.
-	"""
-	checkoutShippingAddressUpdate(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The shipping address to where the line items will be shipped.
-		"""
-		shippingAddress: MailingAddressInput!
-	): CheckoutShippingAddressUpdatePayload
-		@deprecated(reason: "Use `checkoutShippingAddressUpdateV2` instead.")
 
 	"""
 	Updates the shipping address of an existing checkout.
@@ -7976,43 +8728,13 @@ type Order implements HasMetafields & Node {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"Unique identifier for the order that appears on the order.\nFor example, _#1000_ or _Store1001.\n"
 	name: String!
@@ -8056,12 +8778,12 @@ type Order implements HasMetafields & Node {
 	"""
 	Price of the order before shipping and taxes.
 	"""
-	subtotalPrice: Money @deprecated(reason: "Use `subtotalPriceV2` instead.")
+	subtotalPrice: MoneyV2
 
 	"""
 	Price of the order before duties, shipping and taxes.
 	"""
-	subtotalPriceV2: MoneyV2
+	subtotalPriceV2: MoneyV2 @deprecated(reason: "Use `subtotalPrice` instead.")
 
 	"""
 	List of the order’s successful fulfillments.
@@ -8074,45 +8796,45 @@ type Order implements HasMetafields & Node {
 	): [Fulfillment!]
 
 	"""
-	The sum of all the prices of all the items in the order, taxes and discounts included (must be positive).
+	The sum of all the prices of all the items in the order, duties, taxes and discounts included (must be positive).
 	"""
-	totalPrice: Money! @deprecated(reason: "Use `totalPriceV2` instead.")
+	totalPrice: MoneyV2!
 
 	"""
 	The sum of all the prices of all the items in the order, duties, taxes and discounts included (must be positive).
 	"""
-	totalPriceV2: MoneyV2!
+	totalPriceV2: MoneyV2! @deprecated(reason: "Use `totalPrice` instead.")
 
 	"""
 	The total amount that has been refunded.
 	"""
-	totalRefunded: Money! @deprecated(reason: "Use `totalRefundedV2` instead.")
+	totalRefunded: MoneyV2!
 
 	"""
 	The total amount that has been refunded.
 	"""
-	totalRefundedV2: MoneyV2!
+	totalRefundedV2: MoneyV2! @deprecated(reason: "Use `totalRefunded` instead.")
 
 	"""
 	The total cost of shipping.
 	"""
-	totalShippingPrice: Money!
-		@deprecated(reason: "Use `totalShippingPriceV2` instead.")
+	totalShippingPrice: MoneyV2!
 
 	"""
 	The total cost of shipping.
 	"""
 	totalShippingPriceV2: MoneyV2!
+		@deprecated(reason: "Use `totalShippingPrice` instead.")
 
 	"""
 	The total cost of taxes.
 	"""
-	totalTax: Money @deprecated(reason: "Use `totalTaxV2` instead.")
+	totalTax: MoneyV2
 
 	"""
 	The total cost of taxes.
 	"""
-	totalTaxV2: MoneyV2
+	totalTaxV2: MoneyV2 @deprecated(reason: "Use `totalTax` instead.")
 }
 
 """
@@ -8153,9 +8875,19 @@ type OrderConnection {
 	edges: [OrderEdge!]!
 
 	"""
+	A list of the nodes contained in OrderEdge.
+	"""
+	nodes: [Order!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
+
+	"""
+	The total count of Orders.
+	"""
+	totalCount: UnsignedInt64!
 }
 
 "An auto-generated type which holds one Order and a cursor during pagination.\n"
@@ -8314,6 +9046,11 @@ type OrderLineItemConnection {
 	edges: [OrderLineItemEdge!]!
 
 	"""
+	A list of the nodes contained in OrderLineItemEdge.
+	"""
+	nodes: [OrderLineItem!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -8399,43 +9136,13 @@ type Page implements HasMetafields & Node & OnlineStorePublishable {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The URL used for viewing the resource on the shop's Online Store. Returns `null` if the resource is currently not published to the Online Store sales channel.
@@ -8456,11 +9163,6 @@ type Page implements HasMetafields & Node & OnlineStorePublishable {
 	The timestamp of the latest page update.
 	"""
 	updatedAt: DateTime!
-
-	"""
-	The url pointing to the page accessible from the web.
-	"""
-	url: URL! @deprecated(reason: "Use `onlineStoreUrl` instead.")
 }
 
 "An auto-generated type for paginating through multiple Pages.\n"
@@ -8469,6 +9171,11 @@ type PageConnection {
 	A list of edges.
 	"""
 	edges: [PageEdge!]!
+
+	"""
+	A list of the nodes contained in PageEdge.
+	"""
+	nodes: [Page!]!
 
 	"""
 	Information to aid in pagination.
@@ -8492,6 +9199,11 @@ type PageEdge {
 "Returns information about pagination in a connection, in accordance with the\n[Relay specification](https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo).\n"
 type PageInfo {
 	"""
+	The cursor corresponding to the last node in edges.
+	"""
+	endCursor: String
+
+	"""
 	Whether there are more pages to fetch following the current page.
 	"""
 	hasNextPage: Boolean!
@@ -8500,6 +9212,11 @@ type PageInfo {
 	Whether there are any pages prior to the current page.
 	"""
 	hasPreviousPage: Boolean!
+
+	"""
+	The cursor corresponding to the first node in edges.
+	"""
+	startCursor: String
 }
 
 """
@@ -8532,12 +9249,12 @@ type Payment implements Node {
 	"""
 	The amount of the payment.
 	"""
-	amount: Money! @deprecated(reason: "Use `amountV2` instead.")
+	amount: MoneyV2!
 
 	"""
 	The amount of the payment.
 	"""
-	amountV2: MoneyV2!
+	amountV2: MoneyV2! @deprecated(reason: "Use `amount` instead.")
 
 	"""
 	The billing address for the payment.
@@ -8779,11 +9496,6 @@ type Product implements HasMetafields & Node & OnlineStorePublishable {
 		before: String
 
 		"""
-		Crops the image according to the specified region. This argument is deprecated: Use `Image.url(transform: { crop:})` instead.
-		"""
-		crop: CropRegion
-
-		"""
 		Returns up to the first `n` elements from the list.
 		"""
 		first: Int
@@ -8794,30 +9506,20 @@ type Product implements HasMetafields & Node & OnlineStorePublishable {
 		last: Int
 
 		"""
-		Image height in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxHeight:})` instead.
-		"""
-		maxHeight: Int
-
-		"""
-		Image width in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxWidth:})` instead.
-		"""
-		maxWidth: Int
-
-		"""
 		Reverse the order of the underlying list.
 		"""
 		reverse: Boolean = false
-
-		"""
-		Image size multiplier for high-resolution retina displays. Must be between 1 and 3. This argument is deprecated: Use `Image.url(transform: { scale:})` instead.
-		"""
-		scale: Int = 1
 
 		"""
 		Sort the underlying list by the given key.
 		"""
 		sortKey: ProductImageSortKeys = POSITION
 	): ImageConnection!
+
+	"""
+	Whether the product is a gift card.
+	"""
+	isGiftCard: Boolean!
 
 	"""
 	The media associated with the product.
@@ -8869,43 +9571,13 @@ type Product implements HasMetafields & Node & OnlineStorePublishable {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The URL used for viewing the resource on the shop's Online Store. Returns `null` if the resource is currently not published to the Online Store sales channel.
@@ -8921,42 +9593,6 @@ type Product implements HasMetafields & Node & OnlineStorePublishable {
 		"""
 		first: Int
 	): [ProductOption!]!
-
-	"""
-	List of price ranges in the presentment currencies for this shop.
-	"""
-	presentmentPriceRanges(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Specifies the presentment currencies to return a price range in.
-		"""
-		presentmentCurrencies: [CurrencyCode!]
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): ProductPriceRangeConnection!
-		@deprecated(reason: "Use `@inContext` instead.")
 
 	"""
 	The price range.
@@ -9134,6 +9770,11 @@ type ProductConnection {
 	filters: [Filter!]!
 
 	"""
+	A list of the nodes contained in ProductEdge.
+	"""
+	nodes: [Product!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -9266,32 +9907,6 @@ type ProductPriceRange {
 	minVariantPrice: MoneyV2!
 }
 
-"An auto-generated type for paginating through multiple ProductPriceRanges.\n"
-type ProductPriceRangeConnection {
-	"""
-	A list of edges.
-	"""
-	edges: [ProductPriceRangeEdge!]!
-
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-}
-
-"An auto-generated type which holds one ProductPriceRange and a cursor during pagination.\n"
-type ProductPriceRangeEdge {
-	"""
-	A cursor for use in pagination.
-	"""
-	cursor: String!
-
-	"""
-	The item at the end of ProductPriceRangeEdge.
-	"""
-	node: ProductPriceRange!
-}
-
 """
 The set of valid sort keys for the Product query.
 """
@@ -9345,11 +9960,6 @@ A product variant represents a different version of a product, such as differing
 """
 type ProductVariant implements HasMetafields & Node {
 	"""
-	Indicates if the product variant is in stock.
-	"""
-	available: Boolean @deprecated(reason: "Use `availableForSale` instead.")
-
-	"""
 	Indicates if the product variant is available for sale.
 	"""
 	availableForSale: Boolean!
@@ -9362,12 +9972,12 @@ type ProductVariant implements HasMetafields & Node {
 	"""
 	The compare at price of the variant. This can be used to mark a variant as on sale, when `compareAtPrice` is higher than `price`.
 	"""
-	compareAtPrice: Money @deprecated(reason: "Use `compareAtPriceV2` instead.")
+	compareAtPrice: MoneyV2
 
 	"""
 	The compare at price of the variant. This can be used to mark a variant as on sale, when `compareAtPriceV2` is higher than `priceV2`.
 	"""
-	compareAtPriceV2: MoneyV2
+	compareAtPriceV2: MoneyV2 @deprecated(reason: "Use `compareAtPrice` instead.")
 
 	"""
 	Whether a product is out of stock but still available for purchase (used for backorders).
@@ -9380,27 +9990,7 @@ type ProductVariant implements HasMetafields & Node {
 	id: ID!
 
 	"Image associated with the product variant. This field falls back to the product image if no image is available.\n"
-	image(
-		"""
-		Crops the image according to the specified region. This argument is deprecated: Use `Image.url(transform: { crop:})` instead.
-		"""
-		crop: CropRegion
-
-		"""
-		Image height in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxHeight:})` instead.
-		"""
-		maxHeight: Int
-
-		"""
-		Image width in pixels between 1 and 2048. This argument is deprecated: Use `Image.url(transform: { maxWidth:})` instead.
-		"""
-		maxWidth: Int
-
-		"""
-		Image size multiplier for high-resolution retina displays. Must be between 1 and 3. This argument is deprecated: Use `Image.url(transform: { scale:})` instead.
-		"""
-		scale: Int = 1
-	): Image
+	image: Image
 
 	"""
 	Returns a metafield found by namespace and key.
@@ -9417,124 +10007,23 @@ type ProductVariant implements HasMetafields & Node {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
-
-	"""
-	List of prices and compare-at prices in the presentment currencies for this shop.
-	"""
-	presentmentPrices(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		The presentment currencies prices should return in.
-		"""
-		presentmentCurrencies: [CurrencyCode!]
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): ProductVariantPricePairConnection!
-		@deprecated(reason: "Use `@inContext` instead.")
-
-	"""
-	List of unit prices in the presentment currencies for this shop.
-	"""
-	presentmentUnitPrices(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Specify the currencies in which to return presentment unit prices.
-		"""
-		presentmentCurrencies: [CurrencyCode!]
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MoneyV2Connection! @deprecated(reason: "Use `@inContext` instead.")
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The product variant’s price.
 	"""
-	price: Money! @deprecated(reason: "Use `priceV2` instead.")
+	price: MoneyV2!
 
 	"""
 	The product variant’s price.
 	"""
-	priceV2: MoneyV2!
+	priceV2: MoneyV2! @deprecated(reason: "Use `price` instead.")
 
 	"""
 	The product object that the product variant belongs to.
@@ -9655,6 +10144,11 @@ type ProductVariantConnection {
 	edges: [ProductVariantEdge!]!
 
 	"""
+	A list of the nodes contained in ProductVariantEdge.
+	"""
+	nodes: [ProductVariant!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -9671,45 +10165,6 @@ type ProductVariantEdge {
 	The item at the end of ProductVariantEdge.
 	"""
 	node: ProductVariant!
-}
-
-"The compare-at price and price of a variant sharing a currency.\n"
-type ProductVariantPricePair {
-	"""
-	The compare-at price of the variant with associated currency.
-	"""
-	compareAtPrice: MoneyV2
-
-	"""
-	The price of the variant with associated currency.
-	"""
-	price: MoneyV2!
-}
-
-"An auto-generated type for paginating through multiple ProductVariantPricePairs.\n"
-type ProductVariantPricePairConnection {
-	"""
-	A list of edges.
-	"""
-	edges: [ProductVariantPricePairEdge!]!
-
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-}
-
-"An auto-generated type which holds one ProductVariantPricePair and a cursor during pagination.\n"
-type ProductVariantPricePairEdge {
-	"""
-	A cursor for use in pagination.
-	"""
-	cursor: String!
-
-	"""
-	The item at the end of ProductVariantPricePairEdge.
-	"""
-	node: ProductVariantPricePair!
 }
 
 """
@@ -9970,6 +10425,16 @@ type QueryRoot {
 	): LocationConnection!
 
 	"""
+	A storefront menu.
+	"""
+	menu(
+		"""
+		Returns a storefront menu by the specified handle.
+		"""
+		handle: String!
+	): Menu
+
+	"""
 	Returns a specific node by ID.
 	"""
 	node(
@@ -10150,6 +10615,36 @@ type QueryRoot {
 	The shop associated with the storefront access token.
 	"""
 	shop: Shop!
+
+	"""
+	A list of redirects for a shop.
+	"""
+	urlRedirects(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+
+		"""
+		Reverse the order of the underlying list.
+		"""
+		reverse: Boolean = false
+	): UrlRedirectConnection!
 }
 
 """
@@ -10173,11 +10668,6 @@ type ScriptDiscountApplication implements DiscountApplication {
 	The method by which the discount's value is allocated to its entitled items.
 	"""
 	allocationMethod: DiscountApplicationAllocationMethod!
-
-	"""
-	The description of the application as defined by the Script.
-	"""
-	description: String! @deprecated(reason: "Use `title` instead.")
 
 	"""
 	Which lines of targetType that the discount is allocated over.
@@ -10233,6 +10723,11 @@ Represents how products and variants can be sold and purchased.
 """
 type SellingPlan {
 	"""
+	The initial payment due for the purchase.
+	"""
+	checkoutCharge: SellingPlanCheckoutCharge!
+
+	"""
 	The description of the selling plan.
 	"""
 	description: String
@@ -10268,9 +10763,19 @@ Represents an association between a variant and a selling plan. Selling plan all
 """
 type SellingPlanAllocation {
 	"""
+	The checkout charge amount due for the purchase.
+	"""
+	checkoutChargeAmount: MoneyV2!
+
+	"""
 	A list of price adjustments, with a maximum of two. When there are two, the first price adjustment goes into effect at the time of purchase, while the second one starts after a certain number of orders. A price adjustment represents how a selling plan affects pricing when a variant is purchased with a selling plan. Prices display in the customer's currency if the shop is configured for it.
 	"""
 	priceAdjustments: [SellingPlanAllocationPriceAdjustment!]!
+
+	"""
+	The remaining balance charge amount due for the purchase.
+	"""
+	remainingBalanceChargeAmount: MoneyV2!
 
 	"""
 	A representation of how products and variants can be sold and purchased. For example, an individual selling plan could be '6 weeks of prepaid granola, delivered weekly'.
@@ -10284,6 +10789,11 @@ type SellingPlanAllocationConnection {
 	A list of edges.
 	"""
 	edges: [SellingPlanAllocationEdge!]!
+
+	"""
+	A list of the nodes contained in SellingPlanAllocationEdge.
+	"""
+	nodes: [SellingPlanAllocation!]!
 
 	"""
 	Information to aid in pagination.
@@ -10329,12 +10839,64 @@ type SellingPlanAllocationPriceAdjustment {
 	unitPrice: MoneyV2
 }
 
+"""
+The initial payment due for the purchase.
+"""
+type SellingPlanCheckoutCharge {
+	"""
+	The charge type for the checkout charge.
+	"""
+	type: SellingPlanCheckoutChargeType!
+
+	"""
+	The charge value for the checkout charge.
+	"""
+	value: SellingPlanCheckoutChargeValue!
+}
+
+"""
+The percentage value of the price used for checkout charge.
+"""
+type SellingPlanCheckoutChargePercentageValue {
+	"""
+	The percentage value of the price used for checkout charge.
+	"""
+	percentage: Float!
+}
+
+"""
+The checkout charge when the full amount isn't charged at checkout.
+"""
+enum SellingPlanCheckoutChargeType {
+	"""
+	The checkout charge is a percentage of the product or variant price.
+	"""
+	PERCENTAGE
+
+	"""
+	The checkout charge is a fixed price amount.
+	"""
+	PRICE
+}
+
+"""
+The portion of the price to be charged at checkout.
+"""
+union SellingPlanCheckoutChargeValue =
+	  MoneyV2
+	| SellingPlanCheckoutChargePercentageValue
+
 "An auto-generated type for paginating through multiple SellingPlans.\n"
 type SellingPlanConnection {
 	"""
 	A list of edges.
 	"""
 	edges: [SellingPlanEdge!]!
+
+	"""
+	A list of the nodes contained in SellingPlanEdge.
+	"""
+	nodes: [SellingPlan!]!
 
 	"""
 	Information to aid in pagination.
@@ -10433,6 +10995,11 @@ type SellingPlanGroupConnection {
 	edges: [SellingPlanGroupEdge!]!
 
 	"""
+	A list of the nodes contained in SellingPlanGroupEdge.
+	"""
+	nodes: [SellingPlanGroup!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -10528,12 +11095,12 @@ type ShippingRate {
 	"""
 	Price of this shipping rate.
 	"""
-	price: Money! @deprecated(reason: "Use `priceV2` instead.")
+	price: MoneyV2!
 
 	"""
 	Price of this shipping rate.
 	"""
-	priceV2: MoneyV2!
+	priceV2: MoneyV2! @deprecated(reason: "Use `price` instead.")
 
 	"""
 	Title of this shipping rate.
@@ -10544,143 +11111,21 @@ type ShippingRate {
 """
 Shop represents a collection of the general settings and information about the shop.
 """
-type Shop implements HasMetafields {
+type Shop implements HasMetafields & Node {
 	"""
-	List of the shop' articles.
+	The shop's branding configuration.
 	"""
-	articles(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"Supported filter parameters:\n - `author`\n - `blog_title`\n - `created_at`\n - `tag`\n - `tag_not`\n - `updated_at`\n\nSee the detailed [search syntax](https://shopify.dev/api/usage/search-syntax)\nfor more information about using filters.\n"
-		query: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-
-		"""
-		Sort the underlying list by the given key.
-		"""
-		sortKey: ArticleSortKeys = ID
-	): ArticleConnection! @deprecated(reason: "Use `QueryRoot.articles` instead.")
-
-	"""
-	List of the shop' blogs.
-	"""
-	blogs(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"Supported filter parameters:\n - `created_at`\n - `handle`\n - `title`\n - `updated_at`\n\nSee the detailed [search syntax](https://shopify.dev/api/usage/search-syntax)\nfor more information about using filters.\n"
-		query: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-
-		"""
-		Sort the underlying list by the given key.
-		"""
-		sortKey: BlogSortKeys = ID
-	): BlogConnection! @deprecated(reason: "Use `QueryRoot.blogs` instead.")
-
-	"""
-	Find a collection by its handle.
-	"""
-	collectionByHandle(
-		"""
-		The handle of the collection.
-		"""
-		handle: String!
-	): Collection
-		@deprecated(reason: "Use `QueryRoot.collectionByHandle` instead.")
-
-	"""
-	List of the shop’s collections.
-	"""
-	collections(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"Supported filter parameters:\n - `collection_type`\n - `title`\n - `updated_at`\n\nSee the detailed [search syntax](https://shopify.dev/api/usage/search-syntax)\nfor more information about using filters.\n"
-		query: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-
-		"""
-		Sort the underlying list by the given key.
-		"""
-		sortKey: CollectionSortKeys = ID
-	): CollectionConnection!
-		@deprecated(reason: "Use `QueryRoot.collections` instead.")
-
-	"""
-	The three-letter code for the currency that the shop accepts.
-	"""
-	currencyCode: CurrencyCode!
-		@deprecated(reason: "Use `paymentSettings` instead.")
+	brand: Brand
 
 	"""
 	A description of the shop.
 	"""
 	description: String
+
+	"""
+	A globally-unique identifier.
+	"""
+	id: ID!
 
 	"""
 	Returns a metafield found by namespace and key.
@@ -10697,43 +11142,13 @@ type Shop implements HasMetafields {
 		namespace: String!
 	): Metafield
 
-	"""
-	A paginated list of metafields associated with the resource.
-	"""
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
 	metafields(
 		"""
-		Returns the elements that come after the specified cursor.
+		The list of metafields to retrieve by namespace and key.
 		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Container for a set of metafields.
-		"""
-		namespace: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): MetafieldConnection!
-		@deprecated(
-			reason: "As of 2022-07, the paginated `metafields` field has been repurposed to require a list of metafield identifiers.\n"
-		)
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	A string representing the way currency is formatted when the currency isn’t specified.
@@ -10761,74 +11176,6 @@ type Shop implements HasMetafields {
 	privacyPolicy: ShopPolicy
 
 	"""
-	Find a product by its handle.
-	"""
-	productByHandle(
-		"""
-		A unique string that identifies the product. Handles are automatically generated based on the product's title, and are always lowercase. Whitespace and special characters are replaced with a hyphen: `-`. If there are multiple consecutive whitespace or special characters, then they're replaced with a single hyphen. Whitespace or special characters at the beginning are removed. If a duplicate product title is used, then the handle is auto-incremented by one. For example, if you had two products called `Potion`, then their handles would be `potion` and `potion-1`. After a product has been created, changing the product title doesn't update the handle.
-		"""
-		handle: String!
-	): Product @deprecated(reason: "Use `QueryRoot.productByHandle` instead.")
-
-	"A list of tags that have been added to products.\nAdditional access scope required: unauthenticated_read_product_tags.\n"
-	productTags(
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int!
-	): StringConnection!
-		@deprecated(reason: "Use `QueryRoot.productTags` instead.")
-
-	"""
-	List of the shop’s product types.
-	"""
-	productTypes(
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int!
-	): StringConnection!
-		@deprecated(reason: "Use `QueryRoot.productTypes` instead.")
-
-	"""
-	List of the shop’s products.
-	"""
-	products(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"Supported filter parameters:\n - `available_for_sale`\n - `created_at`\n - `product_type`\n - `tag`\n - `tag_not`\n - `title`\n - `updated_at`\n - `variants.price`\n - `vendor`\n\nSee the detailed [search syntax](https://shopify.dev/api/usage/search-syntax)\nfor more information about using filters.\n"
-		query: String
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-
-		"""
-		Sort the underlying list by the given key.
-		"""
-		sortKey: ProductSortKeys = ID
-	): ProductConnection! @deprecated(reason: "Use `QueryRoot.products` instead.")
-
-	"""
 	The shop’s refund policy.
 	"""
 	refundPolicy: ShopPolicy
@@ -10842,12 +11189,6 @@ type Shop implements HasMetafields {
 	Countries that the shop ships to.
 	"""
 	shipsToCountries: [CountryCode!]!
-
-	"""
-	The shop’s Shopify Payments account id.
-	"""
-	shopifyPaymentsAccountId: String
-		@deprecated(reason: "Use `paymentSettings` instead.")
 
 	"""
 	The shop’s subscription policy.
@@ -10944,6 +11285,11 @@ type StoreAvailabilityConnection {
 	edges: [StoreAvailabilityEdge!]!
 
 	"""
+	A list of the nodes contained in StoreAvailabilityEdge.
+	"""
+	nodes: [StoreAvailability!]!
+
+	"""
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
@@ -10986,82 +11332,6 @@ type StringEdge {
 	The item at the end of StringEdge.
 	"""
 	node: String!
-}
-
-"Specifies the fields required to complete a checkout with\na tokenized payment.\n"
-input TokenizedPaymentInput {
-	"""
-	The amount of the payment.
-	"""
-	amount: Money!
-
-	"""
-	The billing address for the payment.
-	"""
-	billingAddress: MailingAddressInput!
-
-	"""
-	A unique client generated key used to avoid duplicate charges. When a duplicate payment is found, the original is returned instead of creating a new one. For more information, refer to [Idempotent requests](https://shopify.dev/api/usage/idempotent-requests).
-	"""
-	idempotencyKey: String!
-
-	"""
-	Public Hash Key used for AndroidPay payments only.
-	"""
-	identifier: String
-
-	"""
-	A simple string or JSON containing the required payment data for the tokenized payment.
-	"""
-	paymentData: String!
-
-	"""
-	Executes the payment in test mode if possible. Defaults to `false`.
-	"""
-	test: Boolean = false
-
-	"""
-	The type of payment token.
-	"""
-	type: String!
-}
-
-"Specifies the fields required to complete a checkout with\na tokenized payment.\n"
-input TokenizedPaymentInputV2 {
-	"""
-	The billing address for the payment.
-	"""
-	billingAddress: MailingAddressInput!
-
-	"""
-	A unique client generated key used to avoid duplicate charges. When a duplicate payment is found, the original is returned instead of creating a new one. For more information, refer to [Idempotent requests](https://shopify.dev/api/usage/idempotent-requests).
-	"""
-	idempotencyKey: String!
-
-	"""
-	Public Hash Key used for AndroidPay payments only.
-	"""
-	identifier: String
-
-	"""
-	The amount and currency of the payment.
-	"""
-	paymentAmount: MoneyInput!
-
-	"""
-	A simple string or JSON containing the required payment data for the tokenized payment.
-	"""
-	paymentData: String!
-
-	"""
-	Whether to execute the payment in test mode, if possible. Test mode is not supported in production stores. Defaults to `false`.
-	"""
-	test: Boolean = false
-
-	"""
-	The type of payment token.
-	"""
-	type: String!
 }
 
 "Specifies the fields required to complete a checkout with\na tokenized payment.\n"
@@ -11109,12 +11379,12 @@ type Transaction {
 	"""
 	The amount of money that the transaction was for.
 	"""
-	amount: Money! @deprecated(reason: "Use `amountV2` instead.")
+	amount: MoneyV2!
 
 	"""
 	The amount of money that the transaction was for.
 	"""
-	amountV2: MoneyV2!
+	amountV2: MoneyV2! @deprecated(reason: "Use `amount` instead.")
 
 	"""
 	The kind of the transaction.
@@ -11319,6 +11589,60 @@ enum UnitSystem {
 	Metric system of weights and measures.
 	"""
 	METRIC_SYSTEM
+}
+
+"An unsigned 64-bit integer. Represents whole numeric values between 0 and 2^64 - 1 encoded as a string of base-10 digits.\n\nExample value: `\"50\"`.\n"
+scalar UnsignedInt64
+
+"""
+A redirect on the online store.
+"""
+type UrlRedirect implements Node {
+	"""
+	The ID of the URL redirect.
+	"""
+	id: ID!
+
+	"""
+	The old path to be redirected from. When the user visits this path, they'll be redirected to the target location.
+	"""
+	path: String!
+
+	"""
+	The target location where the user will be redirected to.
+	"""
+	target: String!
+}
+
+"An auto-generated type for paginating through multiple UrlRedirects.\n"
+type UrlRedirectConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [UrlRedirectEdge!]!
+
+	"""
+	A list of the nodes contained in UrlRedirectEdge.
+	"""
+	nodes: [UrlRedirect!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one UrlRedirect and a cursor during pagination.\n"
+type UrlRedirectEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of UrlRedirectEdge.
+	"""
+	node: UrlRedirect!
 }
 
 """

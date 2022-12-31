@@ -77,6 +77,7 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
 					}
 				}
 			}
+			tags
 			title
 		}
 	}
@@ -245,6 +246,33 @@ export const CREATE_CHECKOUT_URL_MUTATION = gql`
 		checkoutCreate(input: $input) {
 			checkout {
 				id
+				lineItems {
+					edges {
+						node {
+							id
+							quantity
+							title
+							unitPrice {
+								amount
+								currencyCode
+							}
+							variant {
+								id
+								availableForSale
+								image {
+									id
+									altText
+									url
+								}
+								title
+							}
+						}
+					}
+				}
+				subtotalPrice {
+					amount
+					currencyCode
+				}
 				webUrl
 			}
 		}
