@@ -9,12 +9,17 @@ import {
 } from '@remix-run/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+import { getSeo } from '~/seo';
+
 import { MainLayout } from './components/main-layout';
 import { ThemeProvider } from './lib/theme-context';
 import styles from './styles/tailwind.css';
 
+const [seoMeta, seoLinks] = getSeo();
+
 export const links: LinksFunction = () => {
 	return [
+		...seoLinks,
 		{ rel: 'stylesheet', href: styles },
 		{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
 	];
@@ -22,8 +27,8 @@ export const links: LinksFunction = () => {
 
 export const meta: MetaFunction = () => {
 	return {
+		...seoMeta,
 		charset: 'utf-8',
-		title: 'New Remix App',
 		viewport: 'width=device-width,initial-scale=1',
 	};
 };

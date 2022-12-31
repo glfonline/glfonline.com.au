@@ -40,6 +40,7 @@
 		"react-dom": "^18.2.0",
 		"react-use-measure": "^2.1.1",
 		"react-zorm": "^0.6.1",
+		"remix-seo": "^0.1.0",
 		"zod": "^3.20.2"
 	},
 	"devDependencies": {
