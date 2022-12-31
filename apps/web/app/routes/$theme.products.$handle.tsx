@@ -52,7 +52,7 @@ export async function action({ request }: ActionArgs) {
 	let cart = await session.getCart();
 	cart = addToCart(cart, variantId, 1);
 	await session.setCart(cart);
-	return json({ cart });
+	return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

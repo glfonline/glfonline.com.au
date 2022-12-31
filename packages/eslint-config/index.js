@@ -26,6 +26,7 @@ module.exports = {
 		'import/newline-after-import': ERROR,
 		'import/no-duplicates': ERROR,
 		'import/no-extraneous-dependencies': ERROR,
+		'jsx-a11y/no-redundant-roles': OFF,
 		'prefer-const': WARN,
 		'react/no-unescaped-entities': OFF,
 		'simple-import-sort/exports': ERROR,
