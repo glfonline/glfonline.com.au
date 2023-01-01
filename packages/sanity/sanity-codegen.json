@@ -1,0 +1,11 @@
+{
+	"schema": "${API_URL}",
+	"generates": {
+		"./sanity-schema.graphql": {
+			"plugins": ["schema-ast"]
+		}
+	},
+	"hooks": {
+		"afterAllFileWrite": ["prettier --write"]
+	}
+}
