@@ -1,29 +1,33 @@
 import { defineField } from 'sanity';
 
 export const collectionCardItem = defineField({
-	name: 'collectionCardItem',
+	name: 'collectionCard.item',
 	type: 'object',
 	title: 'Collection Card Item',
 	fields: [
 		defineField({
-			name: 'link',
+			name: 'href',
 			type: 'string',
-			title: 'URL',
+			title: 'Link',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
-			name: 'linkText',
+			name: 'label',
 			type: 'string',
 			title: 'Link Text',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'image',
 			type: 'imageWithAlt',
 			title: 'Image',
+			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'span',
 			type: 'string',
-			title: 'span',
+			title: 'Column Span',
+			description: 'How many columns should this item span?',
 			options: {
 				list: [
 					{ title: '2/5', value: '2' },
@@ -33,11 +37,13 @@ export const collectionCardItem = defineField({
 				layout: 'radio',
 				direction: 'horizontal',
 			},
+			validation: (Rule) => Rule.required(),
+			initialValue: '5',
 		}),
 	],
 	preview: {
 		select: {
-			title: 'linkText',
+			title: 'label',
 			media: 'image',
 		},
 		prepare({ title, media }) {

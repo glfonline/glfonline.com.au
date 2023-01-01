@@ -1,4 +1,4 @@
-import { GET_ALL_THEME_PAGES } from '@glfonline/sanity';
+import { GET_THEME_PAGE } from '@glfonline/sanity';
 import {
 	type DataFunctionArgs,
 	type MetaFunction,
@@ -17,7 +17,7 @@ const ThemeSchema = z.object({
 });
 
 const CollectionSchema = z.object({
-	collectionCard: z
+	collectionCards: z
 		.object({
 			_key: z.string(),
 			span: z.enum(['2', '3', '5']),
@@ -48,19 +48,16 @@ const CollectionSchema = z.object({
 					path: z.string(),
 				}),
 			}),
-			linkText: z.string(),
-			link: z.string(),
+			href: z.string(),
+			label: z.string(),
 		})
 		.array(),
 });
 
 export async function loader({ params }: DataFunctionArgs) {
 	const { theme } = ThemeSchema.parse(params);
-	const { allThemePage } = await sanityClient(GET_ALL_THEME_PAGES);
-
-	const collection = CollectionSchema.parse(
-		allThemePage.find((page) => page.theme === theme)
-	);
+	const { ThemePage } = await sanityClient(GET_THEME_PAGE, { id: theme });
+	const collection = CollectionSchema.parse(ThemePage);
 
 	return json({ collection });
 }
@@ -78,7 +75,7 @@ export default function CollectionsPage() {
 
 	return (
 		<div className="grid gap-4 lg:grid-cols-5">
-			{collection.collectionCard?.map((collection) => (
+			{collection.collectionCards.map((collection) => (
 				<CollectionCard
 					key={collection._key}
 					span={collection.span}
@@ -98,8 +95,8 @@ export default function CollectionsPage() {
 						objectPosition: 'top',
 					}}
 					cta={{
-						text: collection.linkText,
-						href: collection.link,
+						text: collection.label,
+						href: collection.href,
 					}}
 				/>
 			))}

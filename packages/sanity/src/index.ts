@@ -4,15 +4,15 @@ import { gql } from '@ts-gql/tag/no-transform';
  * Queries
  */
 
-export const GET_ALL_THEME_PAGES = gql`
-	query GET_ALL_THEME_PAGES {
-		allThemePage {
+export const GET_THEME_PAGE = gql`
+	query GET_THEME_PAGE($id: ID!) {
+		ThemePage(id: $id) {
 			_id
 			theme
-			collectionCard {
+			collectionCards {
 				_key
-				link
-				linkText
+				href
+				label
 				image {
 					asset {
 						_id
@@ -36,4 +36,35 @@ export const GET_ALL_THEME_PAGES = gql`
 			}
 		}
 	}
-` as import('../__generated__/ts-gql/GET_ALL_THEME_PAGES').type;
+` as import('../__generated__/ts-gql/GET_THEME_PAGE').type;
+
+export const GET_FAQS_PAGES = gql`
+	query GET_FAQS_PAGES($id: ID!) {
+		FaqPage(id: $id) {
+			_id
+			heroImage {
+				asset {
+					_id
+					altText
+					path
+				}
+				crop {
+					top
+					bottom
+					left
+					right
+				}
+				hotspot {
+					x
+					y
+					height
+					width
+				}
+			}
+			faqs {
+				answerRaw
+				question
+			}
+		}
+	}
+` as import('../__generated__/ts-gql/GET_FAQS_PAGES').type;

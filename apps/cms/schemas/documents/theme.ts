@@ -17,18 +17,16 @@ export const themePage = defineField({
 				layout: 'radio',
 				direction: 'horizontal',
 			},
+			validation: (Rule) => Rule.required(),
+			readOnly: true,
+			hidden: true,
 		}),
 		defineField({
-			name: 'collectionCard',
+			name: 'collectionCards',
 			type: 'array',
-			title: 'Collection Card',
-			of: [
-				defineField({
-					name: 'collectionCardItem',
-					title: 'Collection Card Item',
-					type: 'collectionCardItem',
-				}),
-			],
+			title: 'Collection Cards',
+			of: [{ type: 'collectionCard.item' }],
+			validation: (Rule) => Rule.required(),
 		}),
 	],
 });

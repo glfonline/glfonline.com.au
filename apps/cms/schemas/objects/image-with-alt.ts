@@ -12,4 +12,5 @@ export const imageWithAlt = defineField({
 			title: 'Alternative text',
 		}),
 	],
+	validation: (Rule) => Rule.required(),
 });
