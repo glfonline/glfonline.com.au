@@ -10,6 +10,7 @@
 		"check:lint": "turbo run lint",
 		"check:types": "turbo run check:types",
 		"dev": "turbo run dev --parallel",
+		"dev:cms": "turbo run dev --filter=./packages/* --filter=@glfonline/cms",
 		"dev:web": "turbo run dev --filter=./packages/* --filter=@glfonline/web",
 		"fix": "pnpm fix:format && pnpm fix:lint",
 		"fix:format": "pnpm prettier . --cache --write",

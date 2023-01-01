@@ -15,9 +15,6 @@
 		"dev:css": "tailwindcss -w -i ./styles/tailwind.css -o app/styles/tailwind.css",
 		"dev:remix": "remix dev",
 		"dev:ts-gql": "ts-gql watch",
-		"fix": "pnpm fix:format && pnpm fix:lint",
-		"fix:format": "pnpm prettier . --cache --write",
-		"fix:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint . --fix",
 		"generate": "DOTENV_CONFIG_PATH=./.env graphql-codegen -r dotenv/config --config shopify-codegen.json",
 		"postinstall": "ts-gql build",
 		"lint": "TIMING=1 eslint \"./**/*.ts*\""
