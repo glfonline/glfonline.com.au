@@ -132,16 +132,17 @@ export const SINGLE_PRODUCT_QUERY = gql`
 					node {
 						id
 						availableForSale
-						compareAtPriceV2 {
+						compareAtPrice {
 							amount
 							currencyCode
 						}
+						currentlyNotInStock
 						image {
 							id
 							altText
 							url
 						}
-						priceV2 {
+						price {
 							amount
 							currencyCode
 						}

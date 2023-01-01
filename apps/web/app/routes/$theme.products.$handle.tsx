@@ -5,14 +5,10 @@ import {
 	type MetaFunction,
 	json,
 } from '@remix-run/node';
-import {
-	Form,
-	useLoaderData,
-	useSearchParams,
-	useTransition,
-} from '@remix-run/react';
+import { Form, useLoaderData, useTransition } from '@remix-run/react';
 import { type OperationData } from '@ts-gql/tag/no-transform';
 import { clsx } from 'clsx';
+import { useState } from 'react';
 import { useZorm } from 'react-zorm';
 import { z } from 'zod';
 
@@ -67,13 +63,17 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 
-	// Check if product is on sale
-	const isOnSale = product.variants.edges.some(
-		({ node: { compareAtPriceV2 } }) => compareAtPriceV2
+	const [variant, setVariant] = useState(
+		product.variants.edges.find(
+			({ node: { availableForSale } }) => availableForSale
+		)
 	);
 
-	const [searchParams] = useSearchParams();
-	searchParams.sort();
+	const isOnSale = product.variants.edges.some(
+		({ node: { compareAtPrice, price } }) =>
+			compareAtPrice &&
+			parseFloat(price.amount) < parseFloat(compareAtPrice.amount)
+	);
 
 	const form = useZorm('cart_form', CartSchema);
 
@@ -101,11 +101,11 @@ export default function ProductPage() {
 							<h2 className="sr-only">Product information</h2>
 							<p className={getHeadingStyles({ size: '2' })}>
 								{formatMoney(
-									product.priceRange.minVariantPrice.amount,
-									product.priceRange.minVariantPrice.currencyCode
+									variant?.node.price.amount,
+									variant?.node.price.currencyCode
 								)}{' '}
 								<small className="font-normal">
-									{product.priceRange.minVariantPrice.currencyCode}
+									{variant?.node.price.currencyCode}
 								</small>
 							</p>
 						</div>
@@ -139,8 +139,16 @@ export default function ProductPage() {
 												<input
 													id={node.id}
 													type="radio"
+													onChange={(event) => {
+														setVariant(
+															product.variants.edges.find(
+																({ node }) => node.id === event.target.value
+															)
+														);
+													}}
 													name={form.fields.variantId()}
 													value={node.id}
+													checked={variant?.node.id === node.id}
 													className="sr-only"
 													disabled={!node.availableForSale}
 												/>
