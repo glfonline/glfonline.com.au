@@ -43,7 +43,6 @@ const FaqSchema = z.object({
 
 export async function loader() {
 	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, { id: 'faqs' });
-	console.log('📄', FaqPage);
 	const faqPage = FaqSchema.parse(FaqPage);
 
 	return json({ faqPage });
@@ -75,17 +74,14 @@ export default function FaqPage() {
 						Frequently asked questions
 					</Heading>
 					<dl className="flex flex-col gap-6 divide-y divide-gray-200">
-						{faqPage.faqs.map((faq) => {
-							console.log(faq);
-							return (
-								<div key={faq.question} className="prose mx-auto pt-6">
-									<dt className="font-bold">{faq.question}</dt>
-									<dd className="mt-2 text-base text-gray-500">
-										<PortableText value={faq.answerRaw} />
-									</dd>
-								</div>
-							);
-						})}
+						{faqPage.faqs.map((faq) => (
+							<div key={faq.question} className="prose mx-auto pt-6">
+								<dt className="font-bold">{faq.question}</dt>
+								<dd className="mt-2 text-base text-gray-500">
+									<PortableText value={faq.answerRaw} />
+								</dd>
+							</div>
+						))}
 					</dl>
 				</div>
 			</div>
