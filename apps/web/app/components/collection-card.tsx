@@ -2,11 +2,7 @@ import { clsx } from 'clsx';
 
 import { ButtonLink } from './design-system/button';
 
-export function CollectionCard({
-	cta,
-	image,
-	span = '5',
-}: {
+export type CollectionCardProps = {
 	cta: { text: string; href: string };
 	image: {
 		src: string;
@@ -14,7 +10,13 @@ export function CollectionCard({
 		objectPosition?: keyof typeof objectPositionMap;
 	};
 	span?: keyof typeof spanMap;
-}) {
+};
+
+export function CollectionCard({
+	cta,
+	image,
+	span = '5',
+}: CollectionCardProps) {
 	return (
 		<div className={clsx('relative flex h-96', spanMap[span])}>
 			<img

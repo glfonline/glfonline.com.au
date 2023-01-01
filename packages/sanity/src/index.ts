@@ -15,6 +15,7 @@ export const GET_ALL_THEME_PAGES = gql`
 				linkText
 				image {
 					asset {
+						_id
 						altText
 						path
 					}
