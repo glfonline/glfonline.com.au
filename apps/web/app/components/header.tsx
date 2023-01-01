@@ -6,11 +6,12 @@ import {
 	Root as RadixMenuRoot,
 	Trigger as RadixMenuTrigger,
 } from '@radix-ui/react-navigation-menu';
-import { Link } from '@remix-run/react';
+import { Link, useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
 import useMeasure from 'react-use-measure';
 
 import { CHANTALE_PHONE, mainNavigation, socialLinks } from '~/lib/constants';
+import { type loader } from '~/root';
 
 import { ButtonLink } from './design-system/button';
 import { CartIcon } from './vectors/cart-icon';
@@ -29,6 +30,7 @@ export function Header() {
 }
 
 function Topbar() {
+	const { cartCount } = useLoaderData<typeof loader>();
 	return (
 		<div className="hidden h-12 items-center gap-6 px-4 text-sm sm:flex sm:px-6 lg:px-8">
 			<span className="flex-1 font-bold uppercase">
@@ -59,7 +61,8 @@ function Topbar() {
 				href="/cart"
 				className="focus:ring-brand inline-flex items-center gap-1 p-1 uppercase focus:outline-none focus:ring-2"
 			>
-				<CartIcon className="h-5 w-5" />0 items
+				<CartIcon className="h-5 w-5" />
+				{cartCount} items
 			</a>
 			<button className="focus:ring-brand p-1 focus:outline-none focus:ring-2">
 				<SearchIcon className="h-5 w-5" />

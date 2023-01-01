@@ -1,4 +1,5 @@
-import type { LinksFunction, MetaFunction } from '@remix-run/node';
+import type { LinksFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
+import { json } from '@remix-run/node';
 import {
 	Links,
 	LiveReload,
@@ -7,11 +8,12 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from '@remix-run/react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import { getSeo } from '~/seo';
 
 import { MainLayout } from './components/main-layout';
+import { getSession } from './lib/cart';
+import { getCartInfo } from './lib/get-cart-info';
 import { ThemeProvider } from './lib/theme-context';
 import styles from './styles/tailwind.css';
 
@@ -33,7 +35,11 @@ export const meta: MetaFunction = () => {
 	};
 };
 
-const queryClient = new QueryClient();
+export async function loader({ request }: LoaderArgs) {
+	const session = await getSession(request);
+	const cart = await session.getCart();
+	return json({ cartCount: cart.length });
+}
 
 export default function App() {
 	return (
@@ -43,13 +49,11 @@ export default function App() {
 				<Links />
 			</head>
 			<body className="relative flex h-full flex-col">
-				<QueryClientProvider client={queryClient}>
-					<ThemeProvider>
-						<MainLayout>
-							<Outlet />
-						</MainLayout>
-					</ThemeProvider>
-				</QueryClientProvider>
+				<ThemeProvider>
+					<MainLayout>
+						<Outlet />
+					</MainLayout>
+				</ThemeProvider>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
