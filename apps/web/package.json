@@ -10,7 +10,7 @@
 		"check": "pnpm run check:format && pnpm run check:lint && pnpm run check:types",
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
-		"check:types": "tsc -b",
+		"check:types": "tsc --noEmit",
 		"dev": "concurrently \"pnpm run dev:css\" \"pnpm run dev:ts-gql\" \"pnpm run dev:remix\"",
 		"dev:css": "tailwindcss -w -i ./styles/tailwind.css -o app/styles/tailwind.css",
 		"dev:remix": "remix dev",
