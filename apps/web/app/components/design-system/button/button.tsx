@@ -1,21 +1,51 @@
-import { forwardRef } from 'react';
+import { forwardRef, useCallback, useRef } from 'react';
 
+import { mergeRefs } from '~/lib/merge-refs';
+
+import { Spinner } from '../spinner';
 import type { ButtonVariantProps } from './get-button-styles';
 import { getButtonStyles } from './get-button-styles';
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	function Button(
-		{ className, children, size, type = 'button', variant, ...consumerProps },
+		{
+			children,
+			className,
+			isLoading,
+			onClick,
+			size,
+			type = 'button',
+			variant,
+			...consumerProps
+		},
 		forwardedRef
 	) {
+		const internalRef = useRef<HTMLButtonElement>(null);
+		const handleOnClick = useCallback(
+			(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+				internalRef.current?.focus();
+				if (isLoading) return;
+				onClick?.(event);
+			},
+			[isLoading, onClick]
+		);
+
 		return (
 			<button
 				{...consumerProps}
-				ref={forwardedRef}
+				className={getButtonStyles({ className, isLoading, size, variant })}
+				onClick={handleOnClick}
+				ref={mergeRefs(internalRef, forwardedRef)}
 				type={type}
-				className={getButtonStyles({ className, size, variant })}
 			>
 				{children}
+				<span aria-live="assertive">
+					{isLoading && (
+						<span aria-label="Loading">
+							<Spinner />
+						</span>
+					)}
+				</span>
 			</button>
 		);
 	}

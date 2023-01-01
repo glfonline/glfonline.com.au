@@ -21,4 +21,5 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
 );
 
 type NativeAnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement>;
-export type ButtonLinkProps = NativeAnchorProps & ButtonVariantProps;
+export type ButtonLinkProps = NativeAnchorProps &
+	Omit<ButtonVariantProps, 'isLoading'>;
