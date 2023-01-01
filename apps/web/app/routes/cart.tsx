@@ -1,15 +1,30 @@
 import {
 	CheckIcon,
+	ChevronLeftIcon,
+	ChevronRightIcon,
 	ClockIcon,
-	QuestionMarkCircleIcon,
 	XMarkIcon,
 } from '@heroicons/react/20/solid';
-import { type LoaderArgs, json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import {
+	type ActionArgs,
+	type LoaderArgs,
+	json,
+	redirect,
+} from '@remix-run/node';
+import {
+	Form,
+	Link,
+	useFetcher,
+	useLoaderData,
+	useTransition,
+} from '@remix-run/react';
+import { clsx } from 'clsx';
+import { z } from 'zod';
 
-import { Button } from '~/components/design-system/button';
+import { Button, ButtonLink } from '~/components/design-system/button';
 import { Heading } from '~/components/design-system/heading';
-import { getSession } from '~/lib/cart';
+import { INTENT } from '~/lib/actions';
+import { getSession, removeCartItem, updateCartItem } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { getCartInfo } from '~/lib/get-cart-info';
 
@@ -23,13 +38,102 @@ export async function loader({ request }: LoaderArgs) {
 	);
 }
 
+const CHECKOUT_ACTION = 'checkout';
+const CheckoutScheme = z.object({
+	webUrl: z.string().min(1),
+});
+
+const DECREMENT_ACTION = 'decrement';
+const INCREMENT_ACTION = 'increment';
+const QuantityScheme = z.object({
+	variantId: z.string().min(1),
+	quantity: z.coerce.number(),
+});
+
+const REMOVE_ACTION = 'remove';
+const RemoveScheme = z.object({
+	variantId: z.string().min(1),
+});
+
+export async function action({ request }: ActionArgs) {
+	const [formData, session] = await Promise.all([
+		request.formData(),
+		getSession(request),
+	]);
+	const intent = formData.get(INTENT);
+
+	switch (intent) {
+		case CHECKOUT_ACTION: {
+			const { webUrl } = CheckoutScheme.parse(
+				Object.fromEntries(formData.entries())
+			);
+			return redirect(webUrl);
+		}
+
+		case INCREMENT_ACTION:
+		case DECREMENT_ACTION: {
+			const { quantity, variantId } = QuantityScheme.parse(
+				Object.fromEntries(formData.entries())
+			);
+			const cart = await session.getCart();
+			const newCart = updateCartItem(cart, variantId, quantity);
+			await session.setCart(newCart);
+			return json(
+				{},
+				{ headers: { 'Set-Cookie': await session.commitSession() } }
+			);
+		}
+
+		case REMOVE_ACTION: {
+			const { variantId } = RemoveScheme.parse(
+				Object.fromEntries(formData.entries())
+			);
+			const cart = await session.getCart();
+			const newCart = removeCartItem(cart, variantId);
+			await session.setCart(newCart);
+			return json(
+				{},
+				{ headers: { 'Set-Cookie': await session.commitSession() } }
+			);
+		}
+
+		default: {
+			throw new Error('Unexpected action');
+		}
+	}
+}
+
 export default function CartPage() {
 	const { cartInfo } = useLoaderData<typeof loader>();
+	const transition = useTransition();
+
+	if (!cartInfo?.lineItems.edges.length) {
+		return (
+			<div className="bg-white">
+				<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 text-center sm:px-6 lg:max-w-7xl lg:px-8">
+					<div className="flex flex-col gap-6">
+						<Heading size="2" headingElement="h1">
+							Shopping Cart
+						</Heading>
+						<h2>Your cart is currently empty.</h2>
+						<span>
+							<ButtonLink href="/" variant="neutral">
+								Continue shopping
+							</ButtonLink>
+						</span>
+					</div>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="bg-white">
 			<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
-				<Heading size="2">Shopping Cart</Heading>
-				<form className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
+				<Heading size="2" headingElement="h1">
+					Shopping Cart
+				</Heading>
+				<div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
 					<section aria-labelledby="cart-heading" className="lg:col-span-7">
 						<h2 id="cart-heading" className="sr-only">
 							Items in your shopping cart
@@ -39,205 +143,223 @@ export default function CartPage() {
 							role="list"
 							className="divide-y divide-gray-200 border-t border-b border-gray-200"
 						>
-							{cartInfo.map((cartItem) => (
-								<li key={cartItem.id} className="flex py-6 sm:py-10">
-									<div className="flex-shrink-0">
-										<img
-											src={cartItem.image?.url}
-											alt={cartItem.image?.altText ?? ''}
-											className="h-24 w-24 rounded-md object-cover object-center sm:h-48 sm:w-48"
-										/>
-									</div>
-
-									<div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
-										<div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
-											<div>
-												<div className="flex justify-between">
-													<h3 className="text-sm">
-														<a
-															href={cartItem.product.handle}
-															className="font-medium text-gray-700 hover:text-gray-800"
-														>
-															{cartItem.title}
-														</a>
-													</h3>
-												</div>
-												<div className="mt-1 flex text-sm">
-													{/* <p className="text-gray-500">{product.color}</p> */}
-													{/* {product.size ? (
-														<p className="ml-4 border-l border-gray-200 pl-4 text-gray-500">
-															{product.size}
-														</p>
-													) : null} */}
-												</div>
-												<p className="mt-1 text-sm font-medium text-gray-900">
-													{formatMoney(
-														cartItem.priceV2.amount,
-														cartItem.priceV2.currencyCode
-													)}
-												</p>
-											</div>
-
-											<div className="mt-4 sm:mt-0 sm:pr-9">
-												<label htmlFor={cartItem.id} className="sr-only">
-													Quantity, {cartItem.title}
-												</label>
-												<select
-													id={cartItem.id}
-													name={cartItem.id}
-													className="max-w-full rounded-md border border-gray-300 py-1.5 text-left text-base font-medium leading-5 text-gray-700 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
-												>
-													<option value={1}>1</option>
-													<option value={2}>2</option>
-													<option value={3}>3</option>
-													<option value={4}>4</option>
-													<option value={5}>5</option>
-													<option value={6}>6</option>
-													<option value={7}>7</option>
-													<option value={8}>8</option>
-												</select>
-
-												<div className="absolute top-0 right-0">
-													<button
-														type="button"
-														className="-m-2 inline-flex p-2 text-gray-400 hover:text-gray-500"
-													>
-														<span className="sr-only">Remove</span>
-														<XMarkIcon className="h-5 w-5" aria-hidden="true" />
-													</button>
-												</div>
-											</div>
+							{cartInfo?.lineItems.edges.map(({ node }) => {
+								const theme = node.variant?.product.tags
+									.map((tag) => tag.toLocaleLowerCase())
+									.includes('ladies')
+									? 'ladies'
+									: 'mens';
+								return (
+									<li
+										key={node.id}
+										data-theme={theme}
+										className="flex py-6 sm:py-10"
+									>
+										<div className="flex-shrink-0">
+											<img
+												src={node.variant?.image?.url}
+												alt={node.variant?.image?.altText ?? ''}
+												className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
+											/>
 										</div>
 
-										<p className="mt-4 flex space-x-2 text-sm text-gray-700">
-											{cartItem.product.availableForSale ? (
-												<CheckIcon
-													className="h-5 w-5 flex-shrink-0 text-green-500"
-													aria-hidden="true"
-												/>
-											) : (
-												<ClockIcon
-													className="h-5 w-5 flex-shrink-0 text-gray-300"
-													aria-hidden="true"
-												/>
-											)}
+										<div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
+											<div className="relative pr-9 sm:grid sm:grid-cols-2 sm:gap-x-6 sm:pr-0">
+												<div>
+													<div className="flex justify-between">
+														<h3 className="text-sm">
+															<Link
+																to={`/${theme}/products/${node.variant?.product.handle}`}
+																className="text-gray-700 hover:text-gray-800"
+															>
+																{node.title}
+															</Link>
+														</h3>
+													</div>
+													<div className="mt-1 flex text-sm">
+														<p className="text-gray-500">
+															{node.variant?.title}
+														</p>
+													</div>
+													<p className="mt-1 text-sm text-gray-900">
+														{formatMoney(
+															node.variant?.price.amount,
+															node.variant?.price.currencyCode
+														)}
+													</p>
+												</div>
 
-											<span>
-												{cartItem.product.availableForSale ? 'In stock' : null}
-											</span>
-										</p>
-									</div>
-								</li>
-							))}
+												<div className="mt-4 sm:mt-0 sm:pr-9">
+													<QuantityPicker
+														quantity={node.quantity}
+														quantityAvailable={
+															node.variant?.quantityAvailable as number
+														}
+														variantId={node.variant?.id as string}
+													/>
+
+													<RemoveFromCart
+														variantId={node.variant?.id as string}
+													/>
+												</div>
+											</div>
+
+											<p className="mt-4 flex space-x-2 text-sm text-gray-700">
+												{node.variant?.currentlyNotInStock ? (
+													<ClockIcon
+														className="h-5 w-5 flex-shrink-0 text-gray-300"
+														aria-hidden="true"
+													/>
+												) : (
+													<CheckIcon
+														className="h-5 w-5 flex-shrink-0 text-green-500"
+														aria-hidden="true"
+													/>
+												)}
+
+												<span>
+													{node.variant?.currentlyNotInStock
+														? 'Out of stock'
+														: 'In stock'}
+												</span>
+											</p>
+										</div>
+									</li>
+								);
+							})}
 						</ul>
 					</section>
 
 					{/* Order summary */}
-					<section
+					<Form
+						method="post"
 						aria-labelledby="summary-heading"
-						className="mt-16 flex flex-col gap-6 rounded-lg bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
+						className="mt-16 flex flex-col gap-6 bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
 					>
-						<h2
-							id="summary-heading"
-							className="text-lg font-medium text-gray-900"
-						>
+						<h2 id="summary-heading" className="text-lg text-gray-900">
 							Order summary
 						</h2>
 
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
-								<dd className="text-sm font-medium text-gray-900">$99.00</dd>
-							</div>
-							<div className="flex items-center justify-between border-t border-gray-200 pt-4">
-								<dt className="flex items-center text-sm text-gray-600">
-									<span>Shipping estimate</span>
-									<a
-										href="#"
-										className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500"
-									>
-										<span className="sr-only">
-											Learn more about how shipping is calculated
-										</span>
-										<QuestionMarkCircleIcon
-											className="h-5 w-5"
-											aria-hidden="true"
-										/>
-									</a>
-								</dt>
-								<dd className="text-sm font-medium text-gray-900">$5.00</dd>
-							</div>
-							<div className="flex items-center justify-between border-t border-gray-200 pt-4">
-								<dt className="flex text-sm text-gray-600">
-									<span>Tax estimate</span>
-									<a
-										href="#"
-										className="ml-2 flex-shrink-0 text-gray-400 hover:text-gray-500"
-									>
-										<span className="sr-only">
-											Learn more about how tax is calculated
-										</span>
-										<QuestionMarkCircleIcon
-											className="h-5 w-5"
-											aria-hidden="true"
-										/>
-									</a>
-								</dt>
-								<dd className="text-sm font-medium text-gray-900">$8.32</dd>
-							</div>
-							<div className="flex items-center justify-between border-t border-gray-200 pt-4">
-								<dt className="text-base font-medium text-gray-900">
-									Order total
-								</dt>
-								<dd className="text-base font-medium text-gray-900">$112.32</dd>
+								<dd className="text-sm text-gray-900">
+									{formatMoney(
+										cartInfo?.subtotalPrice.amount,
+										cartInfo?.subtotalPrice.currencyCode
+									)}
+								</dd>
 							</div>
 						</dl>
 
-						<Button type="submit" variant="neutral">
+						<p className="text-sm text-gray-600">
+							Taxes and shipping are calculated at checkout
+						</p>
+
+						<input type="hidden" name="webUrl" value={cartInfo?.webUrl} />
+
+						<Button
+							type="submit"
+							variant="neutral"
+							name={INTENT}
+							value={CHECKOUT_ACTION}
+							disabled={transition.state !== 'idle'}
+						>
 							Checkout
 						</Button>
-					</section>
-				</form>
+					</Form>
+				</div>
 			</div>
 		</div>
 	);
 }
 
-const products = [
-	{
-		id: 1,
-		name: 'Basic Tee',
-		href: '#',
-		price: '$32.00',
-		color: 'Sienna',
-		inStock: true,
-		size: 'Large',
-		imageSrc:
-			'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-01.jpg',
-		imageAlt: "Front of men's Basic Tee in sienna.",
-	},
-	{
-		id: 2,
-		name: 'Basic Tee',
-		href: '#',
-		price: '$32.00',
-		color: 'Black',
-		inStock: false,
-		leadTime: '3–4 weeks',
-		size: 'Large',
-		imageSrc:
-			'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-02.jpg',
-		imageAlt: "Front of men's Basic Tee in black.",
-	},
-	{
-		id: 3,
-		name: 'Nomad Tumbler',
-		href: '#',
-		price: '$35.00',
-		color: 'White',
-		inStock: true,
-		imageSrc:
-			'https://tailwindui.com/img/ecommerce-images/shopping-cart-page-01-product-03.jpg',
-		imageAlt: 'Insulated bottle with white base and black snap lid.',
-	},
-];
+function QuantityPicker({
+	variantId,
+	quantity,
+	quantityAvailable,
+}: {
+	variantId: string;
+	quantity: number;
+	quantityAvailable: number;
+}) {
+	const fetcher = useFetcher();
+
+	return (
+		<div className="flex flex-col items-start gap-2">
+			<span className="text-sm text-gray-700 hover:text-gray-800">
+				Quantity
+			</span>
+			<span className="isolate inline-flex shadow-sm">
+				<fetcher.Form method="post" replace>
+					<input type="hidden" name="variantId" value={variantId} />
+					<input type="hidden" name="quantity" value={quantity - 1} />
+					<button
+						name={INTENT}
+						value={DECREMENT_ACTION}
+						type="submit"
+						className={clsx(
+							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
+							'hover:bg-gray-50',
+							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
+							'disabled:opacity-50',
+							fetcher.state === 'loading' && 'opacity-50'
+						)}
+						disabled={quantity <= 1}
+					>
+						<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+					</button>
+				</fetcher.Form>
+				<span
+					className={clsx(
+						fetcher.state === 'loading' && 'opacity-50',
+						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700'
+					)}
+				>
+					{quantity}
+				</span>
+				<fetcher.Form method="post" replace>
+					<input type="hidden" name="variantId" value={variantId} />
+					<input type="hidden" name="quantity" value={quantity + 1} />
+					<button
+						name={INTENT}
+						value={INCREMENT_ACTION}
+						type="submit"
+						className={clsx(
+							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
+							'hover:bg-gray-50',
+							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
+							'disabled:opacity-50',
+							fetcher.state === 'loading' && 'opacity-50'
+						)}
+						disabled={quantity + 1 >= quantityAvailable}
+					>
+						<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+					</button>
+				</fetcher.Form>
+			</span>
+		</div>
+	);
+}
+
+function RemoveFromCart({ variantId }: { variantId: string }) {
+	const fetcher = useFetcher();
+
+	return (
+		<fetcher.Form method="post" replace className="absolute top-0 right-0">
+			<input type="hidden" name="variantId" value={variantId} />
+			<button
+				name={INTENT}
+				value={REMOVE_ACTION}
+				type="submit"
+				className={clsx(
+					'-m-2 inline-flex bg-white p-2 text-gray-400',
+					'focus:ring-brand-primary hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
+				)}
+			>
+				<span className="sr-only">Remove</span>
+				<XMarkIcon className="h-5 w-5" aria-hidden="true" />
+			</button>
+		</fetcher.Form>
+	);
+}

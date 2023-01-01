@@ -241,29 +241,36 @@ export const GET_PRODUCT_VARIANTS_QUERY = gql`
  * Mutations
  */
 
-export const CREATE_CHECKOUT_URL_MUTATION = gql`
-	mutation CREATE_CHECKOUT_URL_MUTATION($input: CheckoutCreateInput!) {
+export const CREATE_CHECKOUT_MUTATION = gql`
+	mutation CREATE_CHECKOUT_MUTATION($input: CheckoutCreateInput!) {
 		checkoutCreate(input: $input) {
 			checkout {
 				id
-				lineItems {
+				lineItems(first: 250) {
 					edges {
 						node {
 							id
 							quantity
 							title
-							unitPrice {
-								amount
-								currencyCode
-							}
 							variant {
 								id
 								availableForSale
+								currentlyNotInStock
 								image {
 									id
 									altText
 									url
 								}
+								price {
+									amount
+									currencyCode
+								}
+								product {
+									id
+									handle
+									tags
+								}
+								quantityAvailable
 								title
 							}
 						}
@@ -277,4 +284,4 @@ export const CREATE_CHECKOUT_URL_MUTATION = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/CREATE_CHECKOUT_URL_MUTATION').type;
+` as import('../../__generated__/ts-gql/CREATE_CHECKOUT_MUTATION').type;
