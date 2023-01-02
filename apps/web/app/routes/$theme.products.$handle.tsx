@@ -102,15 +102,17 @@ export default function ProductPage() {
 								{product.title}
 							</Heading>
 							<h2 className="sr-only">Product information</h2>
-							<p className={getHeadingStyles({ size: '2' })}>
-								{formatMoney(
-									variant?.node.price.amount,
-									variant?.node.price.currencyCode
-								)}{' '}
-								<small className="font-normal">
-									{variant?.node.price.currencyCode}
-								</small>
-							</p>
+							{variant?.node.price && (
+								<p className={getHeadingStyles({ size: '2' })}>
+									{formatMoney(
+										variant.node.price.amount,
+										variant.node.price.currencyCode
+									)}{' '}
+									<small className="font-normal">
+										{variant.node.price.currencyCode}
+									</small>
+								</p>
+							)}
 						</div>
 
 						<Form
@@ -183,7 +185,9 @@ export default function ProductPage() {
 								type="submit"
 								disabled={!product.availableForSale}
 							>
-								{form.errors.variantId()?.message || buttonText}
+								{product.availableForSale
+									? form.errors.variantId()?.message || buttonText
+									: 'Sold Out'}
 							</Button>
 						</Form>
 
