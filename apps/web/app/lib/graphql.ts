@@ -120,6 +120,7 @@ export const SINGLE_PRODUCT_QUERY = gql`
 					currencyCode
 				}
 			}
+			productType
 			tags
 			title
 			updatedAt
@@ -156,6 +157,7 @@ export const SINGLE_PRODUCT_QUERY = gql`
 					}
 				}
 			}
+			vendor
 		}
 	}
 ` as import('../../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;

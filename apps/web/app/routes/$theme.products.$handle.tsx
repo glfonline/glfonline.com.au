@@ -17,6 +17,7 @@ import { getHeadingStyles, Heading } from '~/components/design-system/heading';
 import { DiagonalBanner } from '~/components/diagonal-banner';
 import { addToCart, getSession } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
+import { getSizingChart } from '~/lib/get-sizing-chart';
 import { SINGLE_PRODUCT_QUERY } from '~/lib/graphql';
 import { shopifyClient } from '~/lib/shopify-client';
 import { getSeoMeta } from '~/seo';
@@ -83,6 +84,8 @@ export default function ProductPage() {
 	if (transition.state === 'submitting') buttonText = 'Adding...';
 	if (transition.state === 'loading') buttonText = 'Added!';
 
+	const sizingChart = getSizingChart(product);
+
 	return (
 		<div data-theme={theme} className="bg-white">
 			<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -122,12 +125,16 @@ export default function ProductPage() {
 										<legend className="text-sm font-bold text-gray-900">
 											Options
 										</legend>
-										<a
-											href="#"
-											className="text-brand-primary hover:text-brand-light text-sm underline"
-										>
-											See sizing chart
-										</a>
+										{sizingChart && (
+											<a
+												href={sizingChart.href}
+												className="text-brand-primary hover:text-brand-light text-sm underline"
+											>
+												{`See ${
+													sizingChart.useSizing ? 'USA ' : ''
+												}sizing chart`}
+											</a>
+										)}
 									</div>
 									<div className="flex flex-wrap gap-3">
 										{product.variants.edges.map(({ node }) => (
