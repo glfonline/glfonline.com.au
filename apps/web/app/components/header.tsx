@@ -76,12 +76,12 @@ function MainNav() {
 
 	return (
 		<nav className="border-t bg-white sm:top-12 lg:border-none">
-			<div className="flex w-full justify-between">
+			<div className="relative flex w-full justify-between overflow-y-auto">
 				<Link
 					ref={ref}
 					className={clsx(
-						'flex items-center px-4 py-2',
-						'sm:pl-6 lg:flex-1 lg:border-t lg:pl-8',
+						'sticky left-0 z-10 flex items-center bg-white px-4 py-2',
+						'sm:pl-6 lg:-mr-px lg:flex-1 lg:border-t lg:border-r lg:pl-8',
 						'focus:bg-gray-100 focus:outline-none'
 					)}
 					to="/"
