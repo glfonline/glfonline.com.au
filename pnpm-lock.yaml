@@ -67,7 +67,6 @@ importers:
       '@tailwindcss/forms': ^0.5.3
       '@tailwindcss/line-clamp': ^0.4.2
       '@tailwindcss/typography': ^0.5.8
-      '@tanstack/react-query': ^4.20.4
       '@ts-gql/compiler': ^0.16.1
       '@ts-gql/eslint-plugin': ^0.8.4
       '@ts-gql/fetch': ^0.1.2
@@ -108,7 +107,6 @@ importers:
       '@remix-run/react': 1.9.0_biqbaboplfbrettd7655fr4n2y
       '@remix-run/vercel': 1.9.0_mxrefjdspwvyqbawerlfcfvdxa
       '@sanity/image-url': 1.0.1
-      '@tanstack/react-query': 4.20.4_biqbaboplfbrettd7655fr4n2y
       '@ts-gql/compiler': 0.16.1_graphql@16.6.0
       '@ts-gql/fetch': 0.1.2_graphql@16.6.0
       '@ts-gql/tag': 0.7.0_graphql@16.6.0
@@ -3763,28 +3761,6 @@ packages:
       postcss-selector-parser: 6.0.10
       tailwindcss: 3.2.4_ra2vnoek4vhbzktaezawwqbin4
     dev: true
-
-  /@tanstack/query-core/4.20.4:
-    resolution: {integrity: sha512-lhLtGVNJDsJ/DyZXrLzekDEywQqRVykgBqTmkv0La32a/RleILXy6JMLBb7UmS3QCatg/F/0N9/5b0i5j6IKcA==}
-    dev: false
-
-  /@tanstack/react-query/4.20.4_biqbaboplfbrettd7655fr4n2y:
-    resolution: {integrity: sha512-SJRxx13k/csb9lXAJfycgVA1N/yU/h3bvRNWP0+aHMfMjmbyX82FdoAcckDBbOdEyAupvb0byelNHNeypCFSyA==}
-    peerDependencies:
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-native: '*'
-    peerDependenciesMeta:
-      react-dom:
-        optional: true
-      react-native:
-        optional: true
-    dependencies:
-      '@tanstack/query-core': 4.20.4
-      react: 18.2.0
-      react-dom: 18.2.0_react@18.2.0
-      use-sync-external-store: 1.2.0_react@18.2.0
-    dev: false
 
   /@tanstack/react-virtual/3.0.0-beta.29_react@18.2.0:
     resolution: {integrity: sha512-Vwjh/h9J4W6qtlQ7nPmhT6bXueS4mDMXJxJM2lRU6KPGwlWezKp/3NI4ZLAgDqZIxDOkeXq9iERsNxyB7MKHNg==}
