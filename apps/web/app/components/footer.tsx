@@ -28,39 +28,27 @@ export function Footer() {
 						>
 							<div className="text-primary">
 								<span className="sr-only">GLF Online</span>
-								<HorizontalLogo className="h-16" />
+								<HorizontalLogo className="h-16 w-auto" />
 							</div>
 						</Link>
 						<nav className="mt-6 w-full flex-1 text-base leading-6 md:ml-12 md:mt-0">
 							<div className="grid w-full grid-cols-2 justify-center">
-								<div className="flex md:justify-center">
-									<ul>
-										{footerNavigation.col1.map((col) => (
-											<li key={col.id} className="mt-3 first:mt-0">
-												<Link
-													className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
-													to={col.slug}
-												>
-													{col.label}
-												</Link>
-											</li>
-										))}
-									</ul>
-								</div>
-								<div className="flex md:justify-center">
-									<ul>
-										{footerNavigation.col2.map((col) => (
-											<li key={col.id} className="mt-3 first:mt-0">
-												<Link
-													className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
-													to={col.slug}
-												>
-													{col.label}
-												</Link>
-											</li>
-										))}
-									</ul>
-								</div>
+								{footerNavigation.map((col, index) => (
+									<div key={index} className="flex md:justify-center">
+										<ul>
+											{col.map((col) => (
+												<li key={col.href} className="mt-3 first:mt-0">
+													<Link
+														className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
+														to={col.href}
+													>
+														{col.label}
+													</Link>
+												</li>
+											))}
+										</ul>
+									</div>
+								))}
 							</div>
 						</nav>
 					</div>

@@ -14,8 +14,8 @@ export function BrandsWeLove() {
 					{brands.map((brand) => (
 						<Link
 							data-theme={brand.theme}
-							key={brand.slug}
-							to={brand.slug}
+							key={brand.href}
+							to={brand.href}
 							className={clsx(
 								'relative col-span-1 flex justify-center rounded px-8 py-8 transition duration-150 ease-in-out',
 								'hover:bg-brand-100',

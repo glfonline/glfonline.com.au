@@ -8,12 +8,14 @@ import {
 } from '@radix-ui/react-navigation-menu';
 import { Link, useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
+import { useState } from 'react';
 import useMeasure from 'react-use-measure';
 
 import { CHANTALE_PHONE, mainNavigation, socialLinks } from '~/lib/constants';
 import { type loader } from '~/root';
 
 import { ButtonLink } from './design-system/button';
+import { MobileMenu } from './mobile-menu';
 import { CartIcon } from './vectors/cart-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 import { MenuIcon } from './vectors/menu-icon';
@@ -47,11 +49,11 @@ function Topbar() {
 				<div className="inline-flex gap-3">
 					{socialLinks.map((link) => (
 						<a
-							key={link.url}
-							href={link.url}
+							key={link.href}
+							href={link.href}
 							className="focus:ring-brand inline-flex focus:outline-none focus:ring-2"
 						>
-							<span className="sr-only">{link.name}</span>
+							<span className="sr-only">{link.label}</span>
 							<link.icon className="h-6 w-6" />
 						</a>
 					))}
@@ -73,10 +75,12 @@ function Topbar() {
 
 function MainNav() {
 	const [ref, { width }] = useMeasure();
+	const [sidebarOpen, setSidebarOpen] = useState(false);
+	const toggleSidebar = () => setSidebarOpen((open) => !open);
 
 	return (
 		<nav className="border-t bg-white sm:top-12 lg:border-none">
-			<div className="relative flex w-full justify-between overflow-y-auto">
+			<div className="flex w-full justify-between">
 				<Link
 					ref={ref}
 					className={clsx(
@@ -94,6 +98,7 @@ function MainNav() {
 				<div className="flex items-center justify-center pr-3 lg:hidden">
 					<button
 						type="button"
+						onClick={toggleSidebar}
 						className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-200 focus:text-gray-700 focus:outline-none"
 					>
 						<span className="sr-only">Open menu</span>
@@ -106,12 +111,12 @@ function MainNav() {
 							{mainNavigation.map((navItem, index) => (
 								<RadixMenuItem
 									key={index}
-									value={navItem.slug}
+									value={navItem.href}
 									className="flex"
 								>
 									<RadixMenuTrigger asChild>
 										<Link
-											to={navItem.slug}
+											to={navItem.href!}
 											data-theme={navItem.theme}
 											className={clsx(
 												'group inline-flex w-40 flex-1 items-center justify-center space-x-1 border-0 border-t border-l border-solid bg-white text-sm font-bold uppercase leading-6 tracking-widest transition duration-150 ease-in-out',
@@ -147,17 +152,17 @@ function MainNav() {
 											<ul
 												data-theme={navItem.theme}
 												className={clsx(
-													'absolute inset-x-0 bottom-0 -mt-px translate-y-full',
+													'absolute inset-x-0 bottom-0 z-10 -mt-px translate-y-full',
 													'bg-brand-primary flex h-9 flex-wrap items-center px-4 text-white sm:px-6 lg:px-8'
 												)}
 												style={{ marginLeft: -width }}
 											>
 												{navItem.children.map((item, idx) => (
 													<li key={idx}>
-														{item.slug && (
-															<RadixMenuLink asChild>
+														{item.map((item, i) => (
+															<RadixMenuLink asChild key={i}>
 																<Link
-																	to={item.slug}
+																	to={item.href!}
 																	className={clsx(
 																		'inline-block rounded px-2 py-1 text-sm font-bold uppercase tracking-wider',
 																		'hover:bg-brand-light',
@@ -167,7 +172,7 @@ function MainNav() {
 																	{item.label}
 																</Link>
 															</RadixMenuLink>
-														)}
+														))}
 													</li>
 												))}
 											</ul>
@@ -179,6 +184,7 @@ function MainNav() {
 					</RadixMenuRoot>
 				</div>
 			</div>
+			<MobileMenu sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 		</nav>
 	);
 }
