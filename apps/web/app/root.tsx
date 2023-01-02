@@ -13,8 +13,6 @@ import { getSeo } from '~/seo';
 
 import { MainLayout } from './components/main-layout';
 import { getSession } from './lib/cart';
-import { getCartInfo } from './lib/get-cart-info';
-import { ThemeProvider } from './lib/theme-context';
 import styles from './styles/tailwind.css';
 
 const [seoMeta, seoLinks] = getSeo();
@@ -49,11 +47,9 @@ export default function App() {
 				<Links />
 			</head>
 			<body className="relative flex h-full flex-col">
-				<ThemeProvider>
-					<MainLayout>
-						<Outlet />
-					</MainLayout>
-				</ThemeProvider>
+				<MainLayout>
+					<Outlet />
+				</MainLayout>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
