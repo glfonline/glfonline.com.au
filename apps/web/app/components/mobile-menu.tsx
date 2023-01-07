@@ -1,34 +1,23 @@
-import { Dialog, Disclosure, Transition } from '@headlessui/react';
-import { XMarkIcon } from '@heroicons/react/24/outline';
-import { useLocation } from '@remix-run/react';
+import { Dialog, Disclosure, Tab, Transition } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/20/solid';
+import { NavLink } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { Fragment } from 'react';
 
-import {
-	type NavItem as NavItemProps,
-	mainNavigation,
-	socialLinks,
-} from '~/lib/constants';
+import { mainNavigation, socialLinks } from '~/lib/constants';
 
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
-import { HorizontalLogo } from './vectors/horizontal-logo';
 
 export function MobileMenu({
-	sidebarOpen,
-	setSidebarOpen,
+	open,
+	setOpen,
 }: {
-	sidebarOpen: boolean;
-	setSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	open: boolean;
+	setOpen: (open: boolean) => void;
 }) {
-	const location = useLocation();
-
 	return (
-		<Transition.Root show={sidebarOpen} as={Fragment}>
-			<Dialog
-				as="div"
-				className="relative z-40 lg:hidden"
-				onClose={setSidebarOpen}
-			>
+		<Transition.Root show={open} as={Fragment}>
+			<Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>
 				<Transition.Child
 					as={Fragment}
 					enter="transition-opacity ease-linear duration-300"
@@ -38,70 +27,139 @@ export function MobileMenu({
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div className="bg-true-black/50 fixed inset-0" />
+					<div className="fixed inset-0 bg-black bg-opacity-25" />
 				</Transition.Child>
 
-				<div className="fixed inset-0 z-40 flex justify-end">
-					<div className="w-14 flex-shrink-0" aria-hidden="true">
-						{/* Force sidebar to shrink to fit close icon */}
-					</div>
+				<div className="fixed inset-0 z-40 flex">
 					<Transition.Child
 						as={Fragment}
 						enter="transition ease-in-out duration-300 transform"
-						enterFrom="translate-x-full"
+						enterFrom="-translate-x-full"
 						enterTo="translate-x-0"
 						leave="transition ease-in-out duration-300 transform"
 						leaveFrom="translate-x-0"
-						leaveTo="translate-x-full"
+						leaveTo="-translate-x-full"
 					>
-						<Dialog.Panel className="relative flex w-full max-w-xs flex-1 flex-col bg-white focus:outline-none">
-							<Transition.Child
-								as={Fragment}
-								enter="ease-in-out duration-300"
-								enterFrom="opacity-0"
-								enterTo="opacity-100"
-								leave="ease-in-out duration-300"
-								leaveFrom="opacity-100"
-								leaveTo="opacity-0"
-							>
-								<div className="absolute top-0 left-0 -ml-12 pt-2">
-									<button
-										type="button"
-										className={clsx(
-											'ml-1 flex h-10 w-10 items-center justify-center rounded-full transition-colors',
-											'focus:bg-true-black/75 hover:bg-true-black/75 focus:outline-none focus:ring-2 focus:ring-white/25'
-										)}
-										onClick={() => setSidebarOpen(false)}
-									>
-										<span className="sr-only">Close sidebar</span>
-										<XMarkIcon
-											className="h-6 w-6 text-white"
-											aria-hidden="true"
-										/>
-									</button>
-								</div>
-							</Transition.Child>
-							<div className="h-0 flex-1 overflow-y-auto pt-5 pb-4">
-								<div className="flex flex-shrink-0 items-center px-4">
-									<HorizontalLogo className="h-8 w-auto" />
-								</div>
-								<nav aria-label="Sidebar" className="mt-5">
-									<ul role="list" className="space-y-1 px-2">
-										{mainNavigation.map((navItem, index) => (
-											<NavItem
-												key={index}
-												pathname={location.pathname}
-												label={navItem.label}
-												href={navItem.href}
-												{...(navItem.children
-													? { children: navItem.children }
-													: undefined)}
-											/>
-										))}
-									</ul>
-								</nav>
+						<Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white shadow-xl">
+							<div className="flex px-4 pt-5 pb-2">
+								<button
+									type="button"
+									className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
+									onClick={() => setOpen(false)}
+								>
+									<span className="sr-only">Close menu</span>
+									<XMarkIcon className="h-6 w-6" aria-hidden="true" />
+								</button>
 							</div>
-							<div className="flex flex-shrink-0 justify-between border-t border-gray-200 p-4">
+
+							{/* NavLinks */}
+							<Tab.Group as="div" className="mt-2">
+								<div className="border-b border-gray-200">
+									<Tab.List className="-mb-px flex space-x-8 px-4">
+										{mainNavigation.categories.map((category) => (
+											<Tab
+												key={category.label}
+												data-theme={category.theme}
+												className={({ selected }) =>
+													clsx(
+														selected
+															? 'border-brand-primary text-brand-primary'
+															: 'border-transparent text-gray-900',
+														'flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-base font-bold uppercase'
+													)
+												}
+											>
+												{category.label}
+											</Tab>
+										))}
+									</Tab.List>
+								</div>
+								<Tab.Panels as={Fragment}>
+									{mainNavigation.categories.map((category) => (
+										<Tab.Panel
+											key={category.label}
+											className="flex flex-col gap-6 p-4"
+										>
+											<div className="grid">
+												<div
+													key={category.featured.label}
+													className="group relative text-sm"
+												>
+													<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+														<img
+															src={category.featured.image.src}
+															alt={category.featured.image.alt}
+															className="object-cover object-center"
+														/>
+													</div>
+													<NavLink
+														to={category.featured.href}
+														className="mt-6 block font-bold uppercase text-gray-900"
+													>
+														<span
+															className="absolute inset-0 z-10"
+															aria-hidden="true"
+														/>
+														{category.featured.label}
+													</NavLink>
+													<p aria-hidden="true" className="mt-1">
+														Shop now
+													</p>
+												</div>
+											</div>
+											{category.sections.map((section) => (
+												<Disclosure key={section.label}>
+													<Disclosure.Button
+														// id={`${category.id}-${section.id}-heading-mobile`}
+														className="flex justify-between gap-1 font-bold uppercase text-gray-900"
+													>
+														{section.label}
+														<ChevronDownIcon className="h-5 w-5" />
+													</Disclosure.Button>
+													<Disclosure.Panel
+														as="ul"
+														role="list"
+														// aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
+														className="flex flex-col space-y-6"
+													>
+														{section.items.map((item, index) => (
+															<Fragment key={index}>
+																{item.map(({ label, href }) => (
+																	<li key={label} className="flow-root">
+																		<NavLink
+																			to={href}
+																			className="-m-2 block p-2 text-gray-500"
+																		>
+																			{label}
+																		</NavLink>
+																	</li>
+																))}
+															</Fragment>
+														))}
+													</Disclosure.Panel>
+												</Disclosure>
+											))}
+										</Tab.Panel>
+									))}
+								</Tab.Panels>
+							</Tab.Group>
+
+							{/* More Nav Links */}
+							<div className="space-y-6 border-t border-gray-200 py-6 px-4">
+								{mainNavigation.pages.map((page) => (
+									<div key={page.label} className="flow-root">
+										<NavLink
+											to={page.href}
+											className="-m-2 block p-2 font-bold uppercase text-gray-900"
+										>
+											{page.label}
+										</NavLink>
+									</div>
+								))}
+							</div>
+
+							{/* Social Links */}
+							<div className="mt-auto flex flex-shrink-0 justify-between border-t border-gray-200 p-4">
 								<div className="text-gray-500">&copy; GLF Online 2023</div>
 								<div className="flex gap-4">
 									{socialLinks.map((link) => (
@@ -121,54 +179,5 @@ export function MobileMenu({
 				</div>
 			</Dialog>
 		</Transition.Root>
-	);
-}
-
-function NavItem({
-	children,
-	href,
-	pathname,
-	label,
-}: NavItemProps & { pathname: string }) {
-	if (children) {
-		return (
-			<Disclosure as="li">
-				<Disclosure.Button
-					className={clsx(
-						href === pathname
-							? 'bg-gray-100 text-gray-900'
-							: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-						'group flex w-full items-center justify-between gap-2 rounded-md px-2 py-2 text-base uppercase'
-					)}
-				>
-					{label}
-					<ChevronDownIcon className="h-5 w-5" />
-				</Disclosure.Button>
-				<Disclosure.Panel className="text-gray-500">
-					{children.map((child, index) => (
-						<Fragment key={index}>
-							{child.map((item, index) => (
-								<NavItem key={index} pathname={pathname} {...item} />
-							))}
-						</Fragment>
-					))}
-				</Disclosure.Panel>
-			</Disclosure>
-		);
-	}
-	return (
-		<li>
-			<a
-				href={href}
-				className={clsx(
-					href === pathname
-						? 'bg-gray-100 text-gray-900'
-						: 'text-gray-600 hover:bg-gray-50 hover:text-gray-900',
-					'group flex items-center justify-between gap-2 rounded-md px-2 py-2 text-base uppercase'
-				)}
-			>
-				{label}
-			</a>
-		</li>
 	);
 }

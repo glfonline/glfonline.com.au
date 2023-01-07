@@ -1,190 +1,283 @@
+import { Popover, Transition } from '@headlessui/react';
+import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import {
-	Content as RadixMenuContent,
-	Item as RadixMenuItem,
-	Link as RadixMenuLink,
-	List as RadixMenuList,
-	Root as RadixMenuRoot,
-	Trigger as RadixMenuTrigger,
-} from '@radix-ui/react-navigation-menu';
-import { Link, useLoaderData } from '@remix-run/react';
+	Bars3Icon,
+	MagnifyingGlassIcon,
+	ShoppingCartIcon,
+} from '@heroicons/react/24/outline';
+import { NavLink, useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
-import { useState } from 'react';
-import useMeasure from 'react-use-measure';
+import { Fragment, useState } from 'react';
 
 import { CHANTALE_PHONE, mainNavigation, socialLinks } from '~/lib/constants';
-import { type loader } from '~/root';
+import type { loader } from '~/root';
 
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
-import { CartIcon } from './vectors/cart-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';
-import { MenuIcon } from './vectors/menu-icon';
-import { SearchIcon } from './vectors/search-icon';
 
 export function Header() {
-	return (
-		<header className="sticky top-0 z-20 mx-auto w-full max-w-7xl bg-white">
-			<Topbar />
-			<MainNav />
-			<div className="h-px shadow" />
-		</header>
-	);
-}
+	const [open, setOpen] = useState(false);
 
-function Topbar() {
-	const { cartCount } = useLoaderData<typeof loader>();
 	return (
-		<div className="hidden h-12 items-center gap-6 px-4 text-sm sm:flex sm:px-6 lg:px-8">
-			<span className="flex-1 font-bold uppercase">
-				Free delivery on all orders over $100 Australia wide
-			</span>
-			<div className="hidden items-center gap-6 md:flex">
-				<ButtonLink
-					href={`tel:${CHANTALE_PHONE}`}
-					size="small"
-					variant="outline"
-				>
-					Phone: {CHANTALE_PHONE}
-				</ButtonLink>
-				<div className="inline-flex gap-3">
-					{socialLinks.map((link) => (
-						<a
-							key={link.href}
-							href={link.href}
-							className="focus:ring-brand inline-flex focus:outline-none focus:ring-2"
-						>
-							<span className="sr-only">{link.label}</span>
-							<link.icon className="h-6 w-6" />
-						</a>
-					))}
-				</div>
-			</div>
-			<a
-				href="/cart"
-				className="focus:ring-brand inline-flex items-center gap-1 p-1 uppercase focus:outline-none focus:ring-2"
-			>
-				<CartIcon className="h-5 w-5" />
-				{cartCount} items
-			</a>
-			<button className="focus:ring-brand p-1 focus:outline-none focus:ring-2">
-				<SearchIcon className="h-5 w-5" />
-			</button>
+		<div className="sticky top-0 z-20 bg-white">
+			<MobileMenu open={open} setOpen={setOpen} />
+			<header className="relative">
+				<nav aria-label="Top">
+					<TopNav />
+					<MainNav setOpen={setOpen} />
+				</nav>
+			</header>
 		</div>
 	);
 }
 
-function MainNav() {
-	const [ref, { width }] = useMeasure();
-	const [sidebarOpen, setSidebarOpen] = useState(false);
-	const toggleSidebar = () => setSidebarOpen((open) => !open);
-
+function TopNav() {
 	return (
-		<nav className="border-t bg-white sm:top-12 lg:border-none">
-			<div className="flex w-full justify-between">
-				<Link
-					ref={ref}
-					className={clsx(
-						'sticky left-0 z-10 flex items-center bg-white px-4 py-2',
-						'sm:pl-6 lg:-mr-px lg:flex-1 lg:border-t lg:border-r lg:pl-8',
-						'focus:bg-gray-100 focus:outline-none'
-					)}
-					to="/"
-				>
-					<h1 className="flex items-center">
-						<span className="sr-only">GLF Online</span>
-						<HorizontalLogo className="h-10 text-gray-800" />
-					</h1>
-				</Link>
-				<div className="flex items-center justify-center pr-3 lg:hidden">
-					<button
-						type="button"
-						onClick={toggleSidebar}
-						className="inline-flex items-center justify-center rounded-md p-2 text-gray-600 transition duration-150 ease-in-out hover:bg-gray-100 hover:text-gray-700 focus:bg-gray-200 focus:text-gray-700 focus:outline-none"
+		<div className="bg-white">
+			<div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+				<p className="flex-1 text-center text-sm font-bold uppercase lg:flex-none">
+					Get free delivery on orders over $100
+				</p>
+
+				<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:gap-6">
+					<ButtonLink
+						href={`tel:${CHANTALE_PHONE}`}
+						size="small"
+						variant="outline"
 					>
-						<span className="sr-only">Open menu</span>
-						<MenuIcon className="h-6 w-6" />
-					</button>
-				</div>
-				<div className="hidden flex-1 lg:flex">
-					<RadixMenuRoot className="flex flex-1 space-x-12 [&>*]:flex">
-						<RadixMenuList className="ml-auto flex divide-x border-l">
-							{mainNavigation.map((navItem, index) => (
-								<RadixMenuItem
-									key={index}
-									value={navItem.href}
-									className="flex"
-								>
-									<RadixMenuTrigger asChild>
-										<Link
-											to={navItem.href!}
-											data-theme={navItem.theme}
-											className={clsx(
-												'group inline-flex w-40 flex-1 items-center justify-center space-x-1 border-0 border-t border-l border-solid bg-white text-sm font-bold uppercase leading-6 tracking-widest transition duration-150 ease-in-out',
-												'first:border-l-0',
-												'hover:bg-brand-primary hover:text-white',
-												'focus:bg-brand-primary focus:text-white focus:outline-none',
-												'aria-expanded:bg-brand-primary aria-expanded:text-white'
-											)}
-										>
-											<span className="inline-block pl-2">{navItem.label}</span>
-											{navItem.children && (
-												<svg
-													className={clsx(
-														'h-5 w-5 text-gray-600 transition duration-150 ease-in-out',
-														navItem.theme
-															? 'group-hover:text-white group-focus:text-white group-aria-expanded:text-white'
-															: 'group-hover:text-gray-300 group-focus:text-gray-300'
-													)}
-													viewBox="0 0 20 20"
-													fill="currentColor"
-												>
-													<path
-														fillRule="evenodd"
-														d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-														clipRule="evenodd"
-													/>
-												</svg>
-											)}
-										</Link>
-									</RadixMenuTrigger>
-									<RadixMenuContent>
-										{navItem.children && (
-											<ul
-												data-theme={navItem.theme}
-												className={clsx(
-													'absolute inset-x-0 bottom-0 z-10 -mt-px translate-y-full',
-													'bg-brand-primary flex h-9 flex-wrap items-center px-4 text-white sm:px-6 lg:px-8'
-												)}
-												style={{ marginLeft: -width }}
-											>
-												{navItem.children.map((item, idx) => (
-													<li key={idx}>
-														{item.map((item, i) => (
-															<RadixMenuLink asChild key={i}>
-																<Link
-																	to={item.href!}
-																	className={clsx(
-																		'inline-block rounded px-2 py-1 text-sm font-bold uppercase tracking-wider',
-																		'hover:bg-brand-light',
-																		'focus:outline-none focus:ring'
-																	)}
-																>
-																	{item.label}
-																</Link>
-															</RadixMenuLink>
-														))}
-													</li>
-												))}
-											</ul>
-										)}
-									</RadixMenuContent>
-								</RadixMenuItem>
-							))}
-						</RadixMenuList>
-					</RadixMenuRoot>
+						Phone: {CHANTALE_PHONE}
+					</ButtonLink>
+					<div className="inline-flex gap-3">
+						{socialLinks.map((link) => (
+							<a
+								key={link.href}
+								href={link.href}
+								className="focus:ring-brand inline-flex focus:outline-none focus:ring-2"
+							>
+								<span className="sr-only">{link.label}</span>
+								<link.icon className="h-6 w-6" />
+							</a>
+						))}
+					</div>
 				</div>
 			</div>
-			<MobileMenu sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-		</nav>
+		</div>
+	);
+}
+
+function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
+	const { cartCount } = useLoaderData<typeof loader>();
+	return (
+		<div className="bg-white">
+			<div className="mx-auto max-w-7xl border-y border-gray-200">
+				<div className="flex h-14 items-center justify-between">
+					{/* Logo (lg+) */}
+					<NavLink
+						to="/"
+						className="hidden h-full items-center lg:flex lg:px-8 xl:w-80"
+					>
+						<span className="sr-only">GLF Online</span>
+						<HorizontalLogo className="h-8 w-auto" />
+					</NavLink>
+
+					{/* Mega menus */}
+					<MegaMenu />
+
+					{/* Mobile menu and search (lg-) */}
+					<div className="flex items-center px-4 sm:px-6 lg:hidden">
+						<button
+							type="button"
+							className="-ml-2 rounded-md bg-white p-2 text-gray-400"
+							onClick={() => setOpen(true)}
+						>
+							<span className="sr-only">Open menu</span>
+							<Bars3Icon className="h-6 w-6" aria-hidden="true" />
+						</button>
+
+						{/* Search */}
+						<NavLink
+							to="/search"
+							className="ml-2 p-2 text-gray-400 hover:text-gray-500"
+						>
+							<span className="sr-only">Search</span>
+							<MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
+						</NavLink>
+					</div>
+
+					{/* Logo (lg-) */}
+					<NavLink to="/" className="lg:hidden">
+						<span className="sr-only">GLF Online</span>
+						<HorizontalLogo className="h-8 w-auto" />
+					</NavLink>
+
+					<div className="flex h-full items-center justify-end px-4 sm:px-6 lg:px-8">
+						<div className="flex items-center gap-8 lg:ml-8">
+							<div className="flex">
+								<div className="hidden lg:flex">
+									<NavLink
+										to="/search"
+										className="-m-2 p-2 text-gray-400 hover:text-gray-500"
+									>
+										<span className="sr-only">Search</span>
+										<MagnifyingGlassIcon
+											className="h-6 w-6"
+											aria-hidden="true"
+										/>
+									</NavLink>
+								</div>
+							</div>
+
+							<div className="flow-root">
+								<NavLink
+									to="/cart"
+									className="group -m-2 flex items-center gap-2 p-2"
+								>
+									<ShoppingCartIcon
+										className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+										aria-hidden="true"
+									/>
+									<span className="text-sm text-gray-700 group-hover:text-gray-800">
+										{cartCount}
+									</span>
+									<span className="sr-only">items in cart, view bag</span>
+								</NavLink>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
+}
+
+function MegaMenu() {
+	const navItemClasses = [
+		'relative flex flex-1 items-center justify-center gap-1 px-4 text-center text-sm font-bold uppercase transition-colors duration-200 ease-out',
+		'hover:bg-brand-primary hover:text-white',
+		'focus:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary',
+	];
+
+	return (
+		<Popover.Group className="hidden h-full lg:flex lg:flex-1">
+			<div className="grid h-full w-full auto-cols-fr grid-flow-col justify-center divide-x divide-gray-200 border-l border-gray-200">
+				{mainNavigation.categories.map((category, index) => (
+					<Popover key={index} data-theme={category.theme} className="flex">
+						{({ open }) => (
+							<Fragment>
+								<Popover.Button
+									className={clsx(
+										open && 'bg-brand-primary text-white',
+										navItemClasses
+									)}
+								>
+									{category.label}
+									<ChevronDownIcon className="-mr-5 h-5 w-5" />
+								</Popover.Button>
+
+								<Transition
+									as={Fragment}
+									enter="transition ease-out duration-200"
+									enterFrom="opacity-0"
+									enterTo="opacity-100"
+									leave="transition ease-in duration-150"
+									leaveFrom="opacity-100"
+									leaveTo="opacity-0"
+								>
+									<Popover.Panel className="absolute inset-x-0 top-full text-gray-500 sm:text-sm">
+										{/**
+										 * Presentational element used to render the bottom
+										 * shadow, if we put the shadow on the actual panel it
+										 * pokes out the top, so we use this shorter element
+										 * to hide the top of the shadow.
+										 */}
+										<div
+											className="absolute inset-0 top-1/2 bg-white shadow"
+											aria-hidden="true"
+										/>
+
+										<div className="relative bg-white">
+											<div className="mx-auto max-w-7xl px-8">
+												<div className="grid grid-cols-3 gap-y-10 gap-x-8 py-12">
+													<div className="col-start-3 grid">
+														<div
+															key={category.featured.href}
+															className="group relative flex flex-col gap-6 text-base sm:text-sm"
+														>
+															<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+																<img
+																	src={category.featured.image.src}
+																	alt={category.featured.image.alt}
+																	className="object-cover object-center"
+																/>
+															</div>
+															<div>
+																<Popover.Button
+																	as={NavLink}
+																	to={category.featured.href}
+																	className="block font-bold uppercase text-gray-900"
+																>
+																	<span
+																		className="absolute inset-0 z-10"
+																		aria-hidden="true"
+																	/>
+																	{category.featured.label}
+																</Popover.Button>
+																<p aria-hidden="true" className="mt-1">
+																	Shop now
+																</p>
+															</div>
+														</div>
+													</div>
+													<div className="col-span-2 row-start-1 grid grid-cols-3 gap-y-10 gap-x-8 text-sm">
+														{category.sections.map((section, sectionIdx) => (
+															<div key={sectionIdx}>
+																<p
+																	// id={`${section.label}-heading`}
+																	className="font-bold uppercase text-gray-900"
+																>
+																	{section.label}
+																</p>
+																<div className="grid auto-cols-fr grid-flow-col gap-4">
+																	{section.items.map((item, itemIdx) => (
+																		<ul
+																			key={itemIdx}
+																			role="list"
+																			// aria-labelledby={`${section.label}-heading`}
+																			className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+																		>
+																			{item.map(({ label, href }) => (
+																				<li key={label} className="flex">
+																					<Popover.Button
+																						as={NavLink}
+																						to={href}
+																						className="hover:text-gray-800"
+																					>
+																						{label}
+																					</Popover.Button>
+																				</li>
+																			))}
+																		</ul>
+																	))}
+																</div>
+															</div>
+														))}
+													</div>
+												</div>
+											</div>
+										</div>
+									</Popover.Panel>
+								</Transition>
+							</Fragment>
+						)}
+					</Popover>
+				))}
+				{mainNavigation.pages.map((page, index) => (
+					<NavLink key={index} to={page.href} className={clsx(navItemClasses)}>
+						{page.label}
+					</NavLink>
+				))}
+			</div>
+		</Popover.Group>
 	);
 }
