@@ -7,8 +7,8 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 	return (
 		<Fragment>
 			<Header />
-			<main className="w-full flex-1 bg-white">
-				<div className="mx-auto w-full max-w-7xl">{children}</div>
+			<main className="mx-auto w-full max-w-7xl flex-1 bg-white">
+				{children}
 			</main>
 			<Footer />
 		</Fragment>
