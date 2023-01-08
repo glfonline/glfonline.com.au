@@ -32,7 +32,15 @@ export const HOURS = {
 	Saturday: '09:00 - 13:00',
 	Sunday: 'Closed',
 };
-export const socialLinks = [
+
+export type NavItem = {
+	label: string;
+	href: string;
+};
+
+export const socialLinks: Array<
+	NavItem & { icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element }
+> = [
 	{
 		label: 'Facebook',
 		href: FACEBOOK_URL,
@@ -45,319 +53,329 @@ export const socialLinks = [
 	},
 ];
 
-export type NavItem = {
-	label: string;
-	href?: string;
-	theme?: string;
-	children?: NavItem[][];
+export type MainNavigation = {
+	categories: Array<{
+		label: string;
+		theme: string;
+		featured: NavItem & { image: { src: string; alt: string } };
+		sections: Array<{
+			label: string;
+			items: Array<Array<NavItem>>;
+		}>;
+	}>;
+	pages: Array<NavItem>;
 };
 
-export const mainNavigation = [
-	{
-		label: 'Ladies',
-		theme: 'ladies',
-		href: '/ladies/',
-		children: [
-			[
-				{
-					label: 'Shop Ladies',
-					href: '/ladies/',
+export const mainNavigation: MainNavigation = {
+	categories: [
+		{
+			label: 'Ladies',
+			theme: 'ladies',
+			featured: {
+				label: 'Shop Ladies',
+				href: '/ladies',
+				image: {
+					src: 'https://www.glfonline.com.au/static/86a73985e91fcc1fe7c049709fb6d8ba/e170b/shop-ladies.webp',
+					alt: '',
 				},
+			},
+			sections: [
 				{
 					label: 'Apparel',
-					children: [
+					items: [
 						[
 							{
 								label: 'All',
-								href: '/ladies/collections/apparel/',
+								href: '/ladies/collections/apparel',
 							},
 							{
 								label: 'Capris',
-								href: '/ladies/collections/capris/',
+								href: '/ladies/collections/capris',
 							},
 							{
 								label: 'Dress',
-								href: '/ladies/collections/dress/',
+								href: '/ladies/collections/dress',
 							},
 							{
 								label: 'Gloves',
-								href: '/ladies/collections/gloves/',
+								href: '/ladies/collections/gloves',
 							},
 							{
 								label: 'Headwear',
-								href: '/ladies/collections/headwear/',
+								href: '/ladies/collections/headwear',
 							},
 							{
 								label: 'Outerwear',
-								href: '/ladies/collections/wind-rain/',
+								href: '/ladies/collections/wind-rain',
 							},
-						],
-						[
 							{
 								label: 'Pants',
-								href: '/ladies/collections/pants/',
+								href: '/ladies/collections/pants',
 							},
 							{
 								label: 'Shirts',
-								href: '/ladies/collections/shirts/',
+								href: '/ladies/collections/shirts',
 							},
 							{
 								label: 'Shoes & Socks',
-								href: '/ladies/collections/shoes-socks/',
+								href: '/ladies/collections/shoes-socks',
 							},
 							{
 								label: 'Shorts',
-								href: '/ladies/collections/shorts/',
+								href: '/ladies/collections/shorts',
 							},
 							{
 								label: 'Skirts & Skorts',
-								href: '/ladies/collections/skirts-skorts/',
+								href: '/ladies/collections/skirts-skorts',
 							},
 						],
 					],
 				},
 				{
 					label: 'Brands',
-					children: [
+					items: [
 						[
 							{
 								label: 'Abacus',
-								href: '/ladies/collections/abacus/',
+								href: '/ladies/collections/abacus',
 							},
 							{
 								label: 'Bermuda Sands',
-								href: '/ladies/collections/bermuda-sands-brand/',
+								href: '/ladies/collections/bermuda-sands-brand',
 							},
 							{
 								label: 'Corsican Golf',
-								href: '/ladies/collections/corsican-golf/',
+								href: '/ladies/collections/corsican-golf',
 							},
 							{
 								label: 'Daily Sports',
-								href: '/ladies/collections/daily-sports/',
+								href: '/ladies/collections/daily-sports',
 							},
 							{
 								label: "Daphne's Headcovers",
-								href: '/ladies/collections/daphnes-headcovers-brand/',
+								href: '/ladies/collections/daphnes-headcovers-brand',
 							},
 							{
 								label: 'Evoke Headwear',
-								href: '/ladies/collections/evoke-headwear/',
+								href: '/ladies/collections/evoke-headwear',
 							},
 							{
 								label: 'Glove It',
-								href: '/ladies/collections/glove-it-brand/',
+								href: '/ladies/collections/glove-it-brand',
 							},
 							{
 								label: 'Greg Norman',
-								href: '/ladies/collections/greg-norman/',
+								href: '/ladies/collections/greg-norman',
 							},
 							{
 								label: 'IBKUL',
-								href: '/ladies/collections/ibkul/',
+								href: '/ladies/collections/ibkul',
 							},
 							{
 								label: 'Jamie Sadock',
-								href: '/ladies/collections/jamie-sadock-brand/',
+								href: '/ladies/collections/jamie-sadock-brand',
 							},
 						],
 						[
 							{
 								label: 'Navika',
-								href: '/ladies/collections/navika-brand/',
+								href: '/ladies/collections/navika-brand',
 							},
 							{
 								label: 'Mega Cool Sunshawls',
-								href: '/ladies/collections/mega-cool-sunshawls/',
+								href: '/ladies/collections/mega-cool-sunshawls',
 							},
 							{
 								label: 'Nivo',
-								href: '/ladies/collections/nivo/',
+								href: '/ladies/collections/nivo',
 							},
 							{
 								label: 'Other Suppliers',
-								href: '/ladies/collections/other-suppliers-brand/',
+								href: '/ladies/collections/other-suppliers-brand',
 							},
 							{
 								label: 'ProQuip',
-								href: '/ladies/collections/proquip-brand/',
+								href: '/ladies/collections/proquip-brand',
 							},
 							{
 								label: 'Radicool',
-								href: '/ladies/collections/radicool/',
+								href: '/ladies/collections/radicool',
 							},
 							{
 								label: 'Red Belly Active',
-								href: '/ladies/collections/red-belly-active/',
+								href: '/ladies/collections/red-belly-active',
 							},
 							{
 								label: 'Skechers Shoes',
-								href: '/ladies/collections/skechers-shoes/',
+								href: '/ladies/collections/skechers-shoes',
 							},
 							{
 								label: 'Sporte Leisure',
-								href: '/ladies/collections/sporte-leisure/',
+								href: '/ladies/collections/sporte-leisure',
 							},
 							{
 								label: 'Wow! Socks',
-								href: '/ladies/collections/wow-socks/',
+								href: '/ladies/collections/wow-socks',
 							},
 						],
 					],
 				},
 				{
-					label: 'Accessories',
-					href: '/ladies/collections/accessories/',
-				},
-				{
-					label: 'Sale',
-					href: '/ladies/collections/clearance-items/',
-				},
-				{
-					label: 'Gift Vouchers',
-					href: '/ladies/collections/gift-certificate/',
+					label: 'Other',
+					items: [
+						[
+							{
+								label: 'Accessories',
+								href: '/ladies/collections/accessories',
+							},
+							{
+								label: 'Sale',
+								href: '/ladies/collections/clearance-items',
+							},
+							{
+								label: 'Gift Vouchers',
+								href: '/ladies/collections/gift-certificate',
+							},
+						],
+					],
 				},
 			],
-		],
-	},
-	{
-		label: 'Mens',
-		href: '/mens/',
-		theme: 'mens',
-		children: [
-			[
-				{
-					label: 'Shop Mens',
-					href: '/mens/',
+		},
+		{
+			label: 'Mens',
+			theme: 'mens',
+			featured: {
+				label: 'Shop Mens',
+				href: '/mens',
+				image: {
+					src: 'https://www.glfonline.com.au/static/0af901e0928cb1055b22dbf5fca664e5/e170b/shop-mens.webp',
+					alt: '',
 				},
+			},
+			sections: [
 				{
 					label: 'Apparel',
-					children: [
+					items: [
 						[
 							{
 								label: 'All',
-								href: '/mens/collections/apparel/',
+								href: '/mens/collections/apparel',
 							},
 							{
 								label: 'Gloves',
-								href: '/mens/collections/gloves/',
+								href: '/mens/collections/gloves',
 							},
 							{
 								label: 'Headwear',
-								href: '/mens/collections/headwear/',
+								href: '/mens/collections/headwear',
 							},
 							{
 								label: 'Outerwear',
-								href: '/mens/collections/wind-rain/',
+								href: '/mens/collections/wind-rain',
 							},
-						],
-						[
 							{
 								label: 'Pants',
-								href: '/mens/collections/pants/',
+								href: '/mens/collections/pants',
 							},
 							{
 								label: 'Shirts',
-								href: '/mens/collections/shirts/',
+								href: '/mens/collections/shirts',
 							},
 							{
 								label: 'Shoes & Socks',
-								href: '/mens/collections/shoes-socks/',
+								href: '/mens/collections/shoes-socks',
 							},
 							{
 								label: 'Shorts',
-								href: '/mens/collections/shorts/',
+								href: '/mens/collections/shorts',
 							},
 						],
 					],
 				},
 				{
 					label: 'Brands',
-					children: [
+					items: [
 						[
 							{
 								label: 'Bermuda Sands',
-								href: '/mens/collections/bermuda-sands-brand/',
+								href: '/mens/collections/bermuda-sands-brand',
 							},
 							{
 								label: 'Dwyers & Co.',
-								href: '/mens/collections/dwyers-co/',
+								href: '/mens/collections/dwyers-co',
 							},
 							{
 								label: 'Evoke Headwear',
-								href: '/mens/collections/evoke-headwear/',
+								href: '/mens/collections/evoke-headwear',
 							},
 							{
 								label: 'Greg Norman',
-								href: '/mens/collections/greg-norman/',
+								href: '/mens/collections/greg-norman',
 							},
 							{
 								label: 'IBKUL',
-								href: '/mens/collections/ibkul/',
+								href: '/mens/collections/ibkul',
 							},
 						],
 						[
 							{
 								label: 'Jamie Sadock',
-								href: '/mens/collections/jamie-sadock-brand/',
+								href: '/mens/collections/jamie-sadock-brand',
 							},
 							{
 								label: 'Other Suppliers',
-								href: '/mens/collections/other-suppliers-brand/',
+								href: '/mens/collections/other-suppliers-brand',
 							},
 							{
 								label: 'ProQuip',
-								href: '/mens/collections/proquip-brand/',
+								href: '/mens/collections/proquip-brand',
 							},
 							{
 								label: 'Skechers Shoes',
-								href: '/mens/collections/skechers-shoes/',
+								href: '/mens/collections/skechers-shoes',
 							},
 							{
 								label: 'Sporte Leisure',
-								href: '/mens/collections/sporte-leisure/',
+								href: '/mens/collections/sporte-leisure',
 							},
 							{
 								label: 'Travis Mathew',
-								href: '/mens/collections/travis-mathew/',
+								href: '/mens/collections/travis-mathew',
 							},
 						],
 					],
 				},
 				{
-					label: 'Accessories',
-					href: '/mens/collections/accessories/',
-				},
-				{
-					label: 'Sale',
-					href: '/mens/collections/clearance-items/',
-				},
-				{
-					label: 'Gift Vouchers',
-					href: '/mens/collections/gift-certificate/',
+					label: 'Other',
+					items: [
+						[
+							{
+								label: 'Accessories',
+								href: '/mens/collections/accessories',
+							},
+							{
+								label: 'Sale',
+								href: '/mens/collections/clearance-items',
+							},
+							{
+								label: 'Gift Vouchers',
+								href: '/mens/collections/gift-certificate',
+							},
+						],
+					],
 				},
 			],
-		],
-	},
-	{
-		label: 'Home',
-		href: '/',
-	},
-	{
-		label: 'FAQ',
-		href: '/faq/',
-	},
-	{
-		label: 'Blog',
-		href: '/blog/',
-	},
-	{
-		label: 'Contact',
-		href: '/contact/',
-	},
-] satisfies NavItem[];
+		},
+	],
+	pages: [
+		{ label: 'Home', href: '/' },
+		{ label: 'FAQ', href: '/faq' },
+		{ label: 'Blog', href: '/blog' },
+		{ label: 'Contact', href: '/contact' },
+	],
+};
 
-export const footerNavigation: Array<Array<{ label: string; href: string }>> = [
+export const footerNavigation: Array<Array<NavItem>> = [
 	[
 		{
 			label: 'Shop Ladies',
@@ -404,7 +422,12 @@ export const footerNavigation: Array<Array<{ label: string; href: string }>> = [
 	],
 ];
 
-export const brands = [
+export const brands: Array<
+	NavItem & {
+		icon: string;
+		theme: 'ladies' | 'mens';
+	}
+> = [
 	{
 		label: 'IBKUL',
 		href: '/ladies/collections/ibkul/',
@@ -453,9 +476,4 @@ export const brands = [
 		icon: sporteLeisure,
 		theme: 'ladies',
 	},
-] satisfies Array<{
-	label: string;
-	href: string;
-	icon: string;
-	theme: 'ladies' | 'mens';
-}>;
+];

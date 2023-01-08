@@ -81,13 +81,6 @@ function CollectionPromo() {
 				}}
 				theme="mens"
 			/>
-			{/* <div className="relative aspect-square">
-				<img
-					src="https://www.glfonline.com.au/static/0af901e0928cb1055b22dbf5fca664e5/e170b/shop-mens.webp"
-					alt=""
-					className="absolute inset-0 h-full w-full object-cover"
-				/>
-			</div> */}
 		</div>
 	);
 }

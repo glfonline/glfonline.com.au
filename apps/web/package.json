@@ -22,7 +22,6 @@
 		"@headlessui/react": "^1.7.7",
 		"@heroicons/react": "^2.0.13",
 		"@portabletext/react": "^2.0.0",
-		"@radix-ui/react-navigation-menu": "^1.1.1",
 		"@remix-run/node": "^1.9.0",
 		"@remix-run/react": "^1.9.0",
 		"@remix-run/vercel": "^1.9.0",
@@ -33,7 +32,6 @@
 		"emery": "^1.4.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
-		"react-use-measure": "^2.1.1",
 		"react-zorm": "^0.6.1",
 		"remix-seo": "^0.1.0",
 		"zod": "^3.20.2"
