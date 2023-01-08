@@ -2,7 +2,7 @@ import { Dialog, Disclosure, Tab, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { NavLink } from '@remix-run/react';
 import { clsx } from 'clsx';
-import { Fragment } from 'react';
+import { Fragment, useEffect } from 'react';
 
 import { mainNavigation, socialLinks } from '~/lib/constants';
 
@@ -15,6 +15,14 @@ export function MobileMenu({
 	open: boolean;
 	setOpen: (open: boolean) => void;
 }) {
+	useEffect(() => {
+		if (open) {
+			const onClose = () => setOpen(false);
+			document.addEventListener('click', onClose);
+			return () => document.removeEventListener('click', onClose);
+		}
+	}, [open, setOpen]);
+
 	return (
 		<Transition.Root show={open} as={Fragment}>
 			<Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>
