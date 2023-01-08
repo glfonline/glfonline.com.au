@@ -84,6 +84,10 @@ export default function ProductPage() {
 
 	const sizingChart = getSizingChart(product);
 
+	const hasNoVariants = product.variants.edges.some(
+		({ node }) => node.title === 'Default Title'
+	);
+
 	return (
 		<div data-theme={theme} className="bg-white">
 			<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -118,64 +122,60 @@ export default function ProductPage() {
 							replace
 							className="flex flex-col gap-6"
 						>
-							<div>
-								<fieldset className="flex flex-col gap-3">
-									<div className="flex items-center justify-between">
-										<legend className="text-sm font-bold text-gray-900">
-											Options
-										</legend>
-										{sizingChart && (
-											<a
-												href={sizingChart.href}
-												className="text-brand-primary hover:text-brand-light text-sm underline"
+							<fieldset
+								className={clsx(
+									hasNoVariants ? 'sr-only' : 'flex flex-col gap-3'
+								)}
+							>
+								<div className="flex items-center justify-between">
+									<legend className="text-sm font-bold text-gray-900">
+										Options
+									</legend>
+									{sizingChart && (
+										<a
+											href={sizingChart.href}
+											className="text-brand-primary hover:text-brand-light text-sm underline"
+										>
+											{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
+										</a>
+									)}
+								</div>
+								<div className="flex flex-wrap gap-3">
+									{product.variants.edges.map(({ node }) => (
+										<label key={node.id} htmlFor={node.id} className="relative">
+											<input
+												id={node.id}
+												type="radio"
+												onChange={(event) => {
+													setVariant(
+														product.variants.edges.find(
+															({ node }) => node.id === event.target.value
+														)
+													);
+												}}
+												name={form.fields.variantId()}
+												value={node.id}
+												checked={variant?.node.id === node.id}
+												className="sr-only"
+												disabled={!node.availableForSale}
+											/>
+											<span
+												className={clsx(
+													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
+													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
+													node.availableForSale
+														? 'cursor-pointer focus:outline-none'
+														: 'cursor-not-allowed opacity-25',
+													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
+													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white'
+												)}
 											>
-												{`See ${
-													sizingChart.useSizing ? 'USA ' : ''
-												}sizing chart`}
-											</a>
-										)}
-									</div>
-									<div className="flex flex-wrap gap-3">
-										{product.variants.edges.map(({ node }) => (
-											<label
-												key={node.id}
-												htmlFor={node.id}
-												className="relative"
-											>
-												<input
-													id={node.id}
-													type="radio"
-													onChange={(event) => {
-														setVariant(
-															product.variants.edges.find(
-																({ node }) => node.id === event.target.value
-															)
-														);
-													}}
-													name={form.fields.variantId()}
-													value={node.id}
-													checked={variant?.node.id === node.id}
-													className="sr-only"
-													disabled={!node.availableForSale}
-												/>
-												<span
-													className={clsx(
-														'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
-														'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-														node.availableForSale
-															? 'cursor-pointer focus:outline-none'
-															: 'cursor-not-allowed opacity-25',
-														'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
-														'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white'
-													)}
-												>
-													{node.title}
-												</span>
-											</label>
-										))}
-									</div>
-								</fieldset>
-							</div>
+												{node.title}
+											</span>
+										</label>
+									))}
+								</div>
+							</fieldset>
 
 							<Button
 								variant="neutral"
