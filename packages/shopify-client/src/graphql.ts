@@ -188,7 +188,7 @@ export const PRODUCTS_QUERY = gql`
 ` as import('../__generated__/ts-gql/PRODUCTS_QUERY').type;
 
 export const COLLECTION_QUERY = gql`
-	query COLLECTION_QUERY($collectionHandle: String) {
+	query COLLECTION_QUERY($after: String, $collectionHandle: String) {
 		collection(handle: $collectionHandle) {
 			id
 			title
@@ -197,7 +197,16 @@ export const COLLECTION_QUERY = gql`
 				altText
 				url
 			}
-			products(first: 32, sortKey: BEST_SELLING, filters: { available: true }) {
+			products(
+				after: $after
+				first: 250
+				sortKey: BEST_SELLING
+				filters: { available: true }
+			) {
+				pageInfo {
+					endCursor
+					hasNextPage
+				}
 				edges {
 					node {
 						id

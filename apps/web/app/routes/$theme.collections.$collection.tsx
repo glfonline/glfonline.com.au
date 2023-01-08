@@ -15,44 +15,118 @@ import { formatMoney } from '~/lib/format-money';
 import { getSeoMeta } from '~/seo';
 import type { Maybe } from '~/types';
 
+type Products = NonNullable<
+	typeof COLLECTION_QUERY['___type']['result']['collection']
+>['products']['edges'];
+
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
 	theme: z.enum(['ladies', 'mens']),
 });
 
+async function getProductsFromCollectionByTag({
+	collectionHandle,
+	theme,
+	itemsPerPage = 32,
+}: {
+	collectionHandle: string;
+	theme: string;
+	itemsPerPage?: number;
+}) {
+	let products: Products = [];
+	let title = '';
+	let image:
+		| {
+				altText: string;
+				url: string;
+		  }
+		| undefined;
+	async function getProductsFromQuery() {
+		let newCursor: Maybe<string>;
+		async function getNextProds(cursor: string | null) {
+			try {
+				const { collection } = await shopifyClient(COLLECTION_QUERY, {
+					collectionHandle,
+					after: cursor,
+				});
+
+				if (!collection) throw json('Collection not found', { status: 404 });
+
+				products = [
+					...products,
+					...(collection?.products.edges.filter(({ node }) =>
+						node.tags
+							.map((tag) => tag.toLocaleLowerCase())
+							.includes(theme.toLocaleLowerCase())
+					) ?? []),
+				];
+
+				if (
+					products.length < itemsPerPage &&
+					collection?.products.pageInfo.hasNextPage
+				) {
+					newCursor = collection?.products.pageInfo.endCursor;
+					await getNextProds(newCursor);
+				}
+
+				if (!title) title = collection?.title ?? '';
+				if (!image)
+					image = {
+						altText: collection?.image?.altText ?? '',
+						url: collection?.image?.url ?? '',
+					};
+			} catch (error) {
+				/** @todo */
+				console.error(error);
+			}
+		}
+
+		await getNextProds(null);
+	}
+
+	await getProductsFromQuery();
+
+	return {
+		products: products.slice(0, itemsPerPage),
+		title,
+		image,
+	};
+}
+
 export async function loader({ params }: DataFunctionArgs) {
 	const { collection: collectionHandle, theme } =
 		CollectionSchema.parse(params);
-	const { collection } = await shopifyClient(COLLECTION_QUERY, {
+	const { image, products, title } = await getProductsFromCollectionByTag({
 		collectionHandle,
+		theme,
 	});
-	if (!collection) throw json('Collection not found', { status: 404 });
-	return json({ collection, theme });
+
+	return json({ image, products, theme, title });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
-		title: `Shop ${data.collection.title}`,
+		title: `Shop ${data.title}`,
 	});
 
 	return { ...seoMeta };
 };
 
 export default function CollectionPage() {
-	const { collection, theme } = useLoaderData<typeof loader>();
+	const { image, products, theme, title } = useLoaderData<typeof loader>();
 
 	return (
 		<div data-theme={theme} className="flex flex-col gap-12 py-9">
 			<Hero
-				title={collection.title}
+				title={title}
 				image={{
-					url: collection.image?.url ?? '',
-					alt: collection.image?.altText ?? '',
+					url: image?.url ?? '',
+					alt: image?.altText ?? '',
 				}}
 			/>
 			<CollectionFilters />
 			<ul className="grid gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
-				{collection.products.edges?.map(({ node }) => (
+				{products.map(({ node }) => (
 					<li key={node.id}>
 						<ProductCard
 							featuredImage={{
