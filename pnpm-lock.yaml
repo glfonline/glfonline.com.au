@@ -49,7 +49,7 @@ importers:
     specifiers:
       '@babel/core': ^7.20.5
       '@glfonline/eslint-config': 0.0.0
-      '@glfonline/sanity': 0.0.0
+      '@glfonline/sanity-client': 0.0.0
       '@glfonline/tsconfig': 0.0.0
       '@graphql-codegen/cli': ^2.16.1
       '@graphql-codegen/schema-ast': ^2.6.0
@@ -98,7 +98,7 @@ importers:
       typescript: ^4.9.4
       zod: ^3.20.2
     dependencies:
-      '@glfonline/sanity': link:../../packages/sanity
+      '@glfonline/sanity-client': link:../../packages/sanity-client
       '@headlessui/react': 1.7.7_biqbaboplfbrettd7655fr4n2y
       '@heroicons/react': 2.0.13_react@18.2.0
       '@portabletext/react': 2.0.0_react@18.2.0
@@ -175,7 +175,7 @@ importers:
       react: 18.2.0
       typescript: 4.9.4
 
-  packages/sanity:
+  packages/sanity-client:
     specifiers:
       '@babel/core': ^7.20.5
       '@glfonline/eslint-config': 0.0.0

@@ -20,7 +20,7 @@
 		"lint": "TIMING=1 eslint \"./**/*.ts*\""
 	},
 	"dependencies": {
-		"@glfonline/sanity": "0.0.0",
+		"@glfonline/sanity-client": "0.0.0",
 		"@headlessui/react": "^1.7.7",
 		"@heroicons/react": "^2.0.13",
 		"@portabletext/react": "^2.0.0",
