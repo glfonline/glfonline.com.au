@@ -14,3 +14,5 @@ export type FormResponse = {
 	 */
 	serverIssues?: ZodIssue[];
 };
+
+export type Theme = 'ladies' | 'mens';
