@@ -229,7 +229,7 @@ function MegaMenu() {
 															</div>
 														</div>
 													</div>
-													<div className="col-span-2 row-start-1 grid grid-cols-3 gap-y-10 gap-x-8 text-sm">
+													<div className="col-span-2 row-start-1 grid grid-cols-[1fr_2fr_1fr] gap-y-10 gap-x-8 text-sm">
 														{category.sections.map((section, sectionIdx) => (
 															<div key={sectionIdx}>
 																<p
@@ -238,7 +238,7 @@ function MegaMenu() {
 																>
 																	{section.label}
 																</p>
-																<div className="grid auto-cols-fr grid-flow-col gap-4">
+																<div className="grid grid-cols-2 gap-y-10 gap-x-8">
 																	{section.items.map((item, itemIdx) => (
 																		<ul
 																			key={itemIdx}
