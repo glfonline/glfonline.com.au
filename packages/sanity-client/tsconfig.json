@@ -1,5 +1,5 @@
 {
 	"extends": "@glfonline/tsconfig/dom.json",
-	"include": [".", "../../apps/web/app/lib/sanity-client.ts"],
-	"exclude": ["dist", "build", "node_modules"]
+	"include": ["src"],
+	"exclude": ["__generated__", "build", "dist", "node_modules"]
 }

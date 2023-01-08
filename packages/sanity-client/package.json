@@ -6,7 +6,6 @@
 	"main": "src/index.ts",
 	"types": "src/index.ts",
 	"scripts": {
-		"check:types": "tsc --noEmit",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
 		"dev": "ts-gql watch",
 		"generate": "graphql-codegen --config sanity-codegen.json",
