@@ -223,13 +223,20 @@ export const COLLECTION_QUERY = gql`
 							url
 						}
 						handle
+						options {
+							id
+							name
+							values
+						}
 						priceRange {
 							minVariantPrice {
 								amount
 							}
 						}
+						productType
 						tags
 						title
+						vendor
 					}
 				}
 			}
