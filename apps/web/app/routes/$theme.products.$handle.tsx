@@ -1,3 +1,4 @@
+import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
 import {
 	type ActionArgs,
@@ -18,8 +19,6 @@ import { DiagonalBanner } from '~/components/diagonal-banner';
 import { addToCart, getSession } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { getSizingChart } from '~/lib/get-sizing-chart';
-import { SINGLE_PRODUCT_QUERY } from '~/lib/graphql';
-import { shopifyClient } from '~/lib/shopify-client';
 import { getSeoMeta } from '~/seo';
 
 const ProductSchema = z.object({
