@@ -11,6 +11,7 @@ import {
 
 import { getSeo } from '~/seo';
 
+import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { getSession } from './lib/cart';
 import styles from './styles/tailwind.css';
@@ -47,6 +48,7 @@ export default function App() {
 				<Links />
 			</head>
 			<body className="relative flex h-full flex-col">
+				<LoadingProgress />
 				<MainLayout>
 					<Outlet />
 				</MainLayout>
