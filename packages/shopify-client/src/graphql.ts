@@ -33,7 +33,6 @@ export const PRODUCT_CONNECTION_PRODUCTS = gql`
 				priceRange {
 					minVariantPrice {
 						amount
-						currencyCode
 					}
 				}
 				title
@@ -62,7 +61,6 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
 		}
 		priceV2 {
 			amount
-			currencyCode
 		}
 		product {
 			id
@@ -117,7 +115,6 @@ export const SINGLE_PRODUCT_QUERY = gql`
 			priceRange {
 				minVariantPrice {
 					amount
-					currencyCode
 				}
 			}
 			productType
@@ -135,7 +132,6 @@ export const SINGLE_PRODUCT_QUERY = gql`
 						availableForSale
 						compareAtPrice {
 							amount
-							currencyCode
 						}
 						currentlyNotInStock
 						image {
@@ -145,7 +141,6 @@ export const SINGLE_PRODUCT_QUERY = gql`
 						}
 						price {
 							amount
-							currencyCode
 						}
 						requiresShipping
 						selectedOptions {
@@ -182,7 +177,6 @@ export const PRODUCTS_QUERY = gql`
 					priceRange {
 						minVariantPrice {
 							amount
-							currencyCode
 						}
 					}
 					tags
@@ -211,7 +205,6 @@ export const COLLECTION_QUERY = gql`
 						compareAtPriceRange {
 							minVariantPrice {
 								amount
-								currencyCode
 							}
 						}
 						description
@@ -266,7 +259,6 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 								}
 								price {
 									amount
-									currencyCode
 								}
 								product {
 									id
@@ -281,7 +273,6 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 				}
 				subtotalPrice {
 					amount
-					currencyCode
 				}
 				webUrl
 			}

@@ -63,9 +63,7 @@ export default function CollectionPage() {
 							handle={node.handle}
 							price={{
 								amount: node.compareAtPriceRange.minVariantPrice.amount ?? 0,
-								currencyCode:
-									node.compareAtPriceRange.minVariantPrice.currencyCode ??
-									'AUD',
+								currencyCode: 'AUD',
 							}}
 							title={node.title}
 						/>
