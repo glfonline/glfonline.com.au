@@ -86,40 +86,13 @@ export function MobileMenu({
 									{mainNavigation.categories.map((category) => (
 										<Tab.Panel
 											key={category.label}
-											className="flex flex-col gap-6 p-4"
+											className="flex flex-col gap-1 px-4 pt-6"
 										>
-											<div className="grid">
-												<div
-													key={category.featured.label}
-													className="group relative text-sm"
-												>
-													<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-														<img
-															src={category.featured.image.src}
-															alt={category.featured.image.alt}
-															className="object-cover object-center"
-														/>
-													</div>
-													<NavLink
-														to={category.featured.href}
-														className="mt-6 block font-bold uppercase text-gray-900"
-													>
-														<span
-															className="absolute inset-0 z-10"
-															aria-hidden="true"
-														/>
-														{category.featured.label}
-													</NavLink>
-													<p aria-hidden="true" className="mt-1">
-														Shop now
-													</p>
-												</div>
-											</div>
 											{category.sections.map((section) => (
 												<Disclosure key={section.label}>
 													<Disclosure.Button
 														// id={`${category.id}-${section.id}-heading-mobile`}
-														className="flex justify-between gap-1 font-bold uppercase text-gray-900"
+														className="relative flex items-center justify-between gap-1 rounded-md p-2 font-bold uppercase text-gray-900 hover:bg-gray-50 focus:z-10 focus:bg-gray-100"
 													>
 														{section.label}
 														<ChevronDownIcon className="h-5 w-5" />
@@ -128,7 +101,7 @@ export function MobileMenu({
 														as="ul"
 														role="list"
 														// aria-labelledby={`${category.id}-${section.id}-heading-mobile`}
-														className="flex flex-col space-y-6"
+														className="flex flex-col gap-1"
 													>
 														{section.items.map((item, index) => (
 															<Fragment key={index}>
@@ -136,7 +109,7 @@ export function MobileMenu({
 																	<li key={label} className="flow-root">
 																		<NavLink
 																			to={href}
-																			className="-m-2 block p-2 text-gray-500"
+																			className="relative block rounded-md p-2 text-gray-500 hover:bg-gray-50 focus:z-10 focus:bg-gray-100"
 																		>
 																			{label}
 																		</NavLink>
@@ -153,12 +126,12 @@ export function MobileMenu({
 							</Tab.Group>
 
 							{/* More Nav Links */}
-							<div className="space-y-6 border-t border-gray-200 py-6 px-4">
+							<div className="flex flex-col gap-1 border-gray-200 px-4 pt-1 pb-6">
 								{mainNavigation.pages.map((page) => (
 									<div key={page.label} className="flow-root">
 										<NavLink
 											to={page.href}
-											className="-m-2 block p-2 font-bold uppercase text-gray-900"
+											className="block p-2 font-bold uppercase text-gray-900"
 										>
 											{page.label}
 										</NavLink>
