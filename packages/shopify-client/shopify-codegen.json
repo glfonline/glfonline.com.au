@@ -1,0 +1,17 @@
+{
+	"schema": {
+		"${API_URL}": {
+			"headers": {
+				"X-Shopify-Storefront-Access-Token": "${ACCESS_TOKEN}"
+			}
+		}
+	},
+	"generates": {
+		"./shopify-schema.graphql": {
+			"plugins": ["schema-ast"]
+		}
+	},
+	"hooks": {
+		"afterAllFileWrite": ["prettier --write"]
+	}
+}
