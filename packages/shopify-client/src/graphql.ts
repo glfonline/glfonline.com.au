@@ -214,6 +214,11 @@ export const COLLECTION_QUERY = gql`
 							url
 						}
 						handle
+						priceRange {
+							minVariantPrice {
+								amount
+							}
+						}
 						tags
 						title
 					}
