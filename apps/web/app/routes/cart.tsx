@@ -176,11 +176,13 @@ export default function CartPage() {
 															</Link>
 														</h3>
 													</div>
-													<div className="mt-1 flex text-sm">
-														<p className="text-gray-500">
-															{node.variant?.title}
-														</p>
-													</div>
+													{node.variant?.title !== 'Default Title' && (
+														<div className="mt-1 flex text-sm">
+															<p className="text-gray-500">
+																{node.variant?.title}
+															</p>
+														</div>
+													)}
 													<p className="mt-1 text-sm text-gray-900">
 														{formatMoney(node.variant?.price.amount, 'AUD')}
 													</p>
@@ -277,6 +279,7 @@ function QuantityPicker({
 	quantity: number;
 	quantityAvailable: number;
 }) {
+	console.log(quantityAvailable);
 	const fetcher = useFetcher();
 
 	return (
