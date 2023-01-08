@@ -197,7 +197,7 @@ export const COLLECTION_QUERY = gql`
 				altText
 				url
 			}
-			products(first: 30, sortKey: BEST_SELLING) {
+			products(first: 32, sortKey: BEST_SELLING, filters: { available: true }) {
 				edges {
 					node {
 						id
