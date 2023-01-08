@@ -1,11 +1,10 @@
-import { GET_FAQS_PAGES } from '@glfonline/sanity';
+import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
 import { Heading } from '~/components/design-system/heading';
 import { PortableText } from '~/lib/portable-text';
-import { sanityClient } from '~/lib/sanity-client';
 import { urlFor } from '~/lib/sanity-image';
 
 const FaqSchema = z.object({

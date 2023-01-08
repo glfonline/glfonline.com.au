@@ -1,3 +1,4 @@
+import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
 import {
 	type ActionArgs,
@@ -6,7 +7,6 @@ import {
 	json,
 } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
-import { type OperationData } from '@ts-gql/tag/no-transform';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import { useZorm } from 'react-zorm';
@@ -18,8 +18,6 @@ import { DiagonalBanner } from '~/components/diagonal-banner';
 import { addToCart, getSession } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { getSizingChart } from '~/lib/get-sizing-chart';
-import { SINGLE_PRODUCT_QUERY } from '~/lib/graphql';
-import { shopifyClient } from '~/lib/shopify-client';
 import { getSeoMeta } from '~/seo';
 
 const ProductSchema = z.object({
@@ -91,7 +89,11 @@ export default function ProductPage() {
 			<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
 				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
 					<ImageGallery
-						images={product.images.edges as Images}
+						images={product.images.edges.map(
+							({ node: { id, altText, url, height, width } }) => ({
+								node: { id, altText, url, height, width },
+							})
+						)}
 						isOnSale={isOnSale}
 					/>
 
@@ -104,13 +106,8 @@ export default function ProductPage() {
 							<h2 className="sr-only">Product information</h2>
 							{variant?.node.price && (
 								<p className={getHeadingStyles({ size: '2' })}>
-									{formatMoney(
-										variant.node.price.amount,
-										variant.node.price.currencyCode
-									)}{' '}
-									<small className="font-normal">
-										{variant.node.price.currencyCode}
-									</small>
+									{formatMoney(variant.node.price.amount, 'AUD')}{' '}
+									<small className="font-normal">{'AUD'}</small>
 								</p>
 							)}
 						</div>
@@ -207,15 +204,19 @@ export default function ProductPage() {
 	);
 }
 
-type Images = NonNullable<
-	OperationData<typeof SINGLE_PRODUCT_QUERY>['product']
->['images']['edges'];
-
 function ImageGallery({
 	images,
 	isOnSale,
 }: {
-	images: Images;
+	images: Array<{
+		node: {
+			id: string | null;
+			altText: string | null;
+			url: any;
+			height: number | null;
+			width: number | null;
+		};
+	}>;
 	isOnSale: boolean;
 }) {
 	return (

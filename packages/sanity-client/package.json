@@ -1,6 +1,7 @@
 {
-	"name": "@glfonline/sanity",
+	"name": "@glfonline/sanity-client",
 	"version": "0.0.0",
+	"private": true,
 	"license": "MIT",
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
@@ -9,13 +10,14 @@
 		"dist/**"
 	],
 	"scripts": {
-		"build": "tsup",
-		"check:types": "tsc --noEmit",
+		"build": "pnpm run build:ts-gql && pnpm run build:tsup",
+		"build:ts-gql": "ts-gql build",
+		"build:tsup": "tsup",
 		"clean": "rm -rf .turbo && rm -rf node_modules && rm -rf dist",
 		"dev": "concurrently \"pnpm run dev:ts-gql\" \"pnpm run dev:tsup\"",
 		"dev:ts-gql": "ts-gql watch",
 		"dev:tsup": "tsup --watch",
-		"generate": "DOTENV_CONFIG_PATH=./.env graphql-codegen -r dotenv/config --config sanity-codegen.json",
+		"generate": "graphql-codegen --config codegen.json",
 		"postinstall": "ts-gql build",
 		"lint": "TIMING=1 eslint \"src/**/*.ts*\""
 	},
@@ -32,7 +34,6 @@
 		"@graphql-codegen/schema-ast": "^2.6.0",
 		"@types/node": "18.11.13",
 		"concurrently": "^7.6.0",
-		"dotenv-cli": "^6.0.0",
 		"eslint": "^8.30.0",
 		"graphql": "^16.6.0",
 		"ts-node": "^10.9.1",
@@ -42,6 +43,6 @@
 	"ts-gql": {
 		"addTypenames": false,
 		"mode": "no-transform",
-		"schema": "./sanity-schema.graphql"
+		"schema": "./schema.graphql"
 	}
 }

@@ -10,7 +10,7 @@ import { Divider } from '~/components/divider';
 import { Map } from '~/components/map';
 import { NewsletterSignup } from '~/components/newsletter-signup';
 import { VerticalLogo } from '~/components/vectors/vertical-logo';
-import type { Theme } from '~/lib/theme-context';
+import { type Theme } from '~/types';
 
 export { action } from '../lib/actions';
 
@@ -31,7 +31,7 @@ export default function Index() {
 
 function Hero() {
 	return (
-		<div className="mx-auto flex w-full max-w-7xl flex-col-reverse gap-4 md:flex-row">
+		<div className="mx-auto flex w-full max-w-7xl flex-col-reverse md:flex-row">
 			<div className="bg-white px-4 py-12 sm:px-6 md:w-80 lg:px-8">
 				<div className="flex flex-col gap-6 px-4">
 					<VerticalLogo className="mx-auto hidden w-full max-w-xs text-black md:block" />

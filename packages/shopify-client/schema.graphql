@@ -6245,7 +6245,7 @@ input GeoCoordinateInput {
 	longitude: Float!
 }
 
-"A string containing HTML code. Refer to the [HTML spec](https://html.spec.whatwg.org/#elements-3) for a\ncomplete list of HTML elements.\n\nExample value: `\"<p>Grey cotton knit sweater.</p>\"`.\n"
+"A string containing HTML code. Refer to the [HTML spec](https://html.spec.whatwg.org/#elements-3) for a\ncomplete list of HTML elements.\n\nExample value: `\"<p>Grey cotton knit sweater.</p>\"`\n"
 scalar HTML
 
 """

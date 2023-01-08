@@ -1,4 +1,4 @@
-import { GET_THEME_PAGE } from '@glfonline/sanity';
+import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
 import {
 	type DataFunctionArgs,
 	type MetaFunction,
@@ -8,7 +8,6 @@ import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
 import { CollectionCard } from '~/components/collection-card';
-import { sanityClient } from '~/lib/sanity-client';
 import { urlFor } from '~/lib/sanity-image';
 import { getSeoMeta } from '~/seo';
 

@@ -182,10 +182,7 @@ export default function CartPage() {
 														</p>
 													</div>
 													<p className="mt-1 text-sm text-gray-900">
-														{formatMoney(
-															node.variant?.price.amount,
-															node.variant?.price.currencyCode
-														)}
+														{formatMoney(node.variant?.price.amount, 'AUD')}
 													</p>
 												</div>
 
@@ -244,10 +241,7 @@ export default function CartPage() {
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
 								<dd className="text-sm text-gray-900">
-									{formatMoney(
-										cartInfo?.subtotalPrice.amount,
-										cartInfo?.subtotalPrice.currencyCode
-									)}
+									{formatMoney(cartInfo?.subtotalPrice.amount, 'AUD')}
 								</dd>
 							</div>
 						</dl>

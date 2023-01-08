@@ -1,6 +1,9 @@
+import {
+	CREATE_CHECKOUT_MUTATION,
+	shopifyClient,
+} from '@glfonline/shopify-client';
+
 import { type CartItem } from './cart';
-import { CREATE_CHECKOUT_MUTATION } from './graphql';
-import { shopifyClient } from './shopify-client';
 
 export async function getCartInfo(items: CartItem[]) {
 	const json = await shopifyClient(CREATE_CHECKOUT_MUTATION, {

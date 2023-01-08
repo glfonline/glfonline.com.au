@@ -1,3 +1,4 @@
+import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import {
 	type DataFunctionArgs,
 	type MetaFunction,
@@ -5,16 +6,14 @@ import {
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
-import { type Maybe } from 'graphql/jsutils/Maybe';
 import { z } from 'zod';
 
 import { Field } from '~/components/design-system/field';
 import { Heading } from '~/components/design-system/heading';
 import { Select } from '~/components/design-system/select';
 import { formatMoney } from '~/lib/format-money';
-import { COLLECTION_QUERY } from '~/lib/graphql';
-import { shopifyClient } from '~/lib/shopify-client';
 import { getSeoMeta } from '~/seo';
+import type { Maybe } from '~/types';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
@@ -64,9 +63,7 @@ export default function CollectionPage() {
 							handle={node.handle}
 							price={{
 								amount: node.compareAtPriceRange.minVariantPrice.amount ?? 0,
-								currencyCode:
-									node.compareAtPriceRange.minVariantPrice.currencyCode ??
-									'AUD',
+								currencyCode: 'AUD',
 							}}
 							title={node.title}
 						/>

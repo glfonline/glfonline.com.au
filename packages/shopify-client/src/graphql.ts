@@ -33,7 +33,6 @@ export const PRODUCT_CONNECTION_PRODUCTS = gql`
 				priceRange {
 					minVariantPrice {
 						amount
-						currencyCode
 					}
 				}
 				title
@@ -48,7 +47,7 @@ export const PRODUCT_CONNECTION_PRODUCTS = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/PRODUCT_CONNECTION_PRODUCTS').type;
+` as import('../__generated__/ts-gql/PRODUCT_CONNECTION_PRODUCTS').type;
 
 export const PRODUCT_VARIANT_PRODUCTS = gql`
 	fragment PRODUCT_VARIANT_PRODUCTS on ProductVariant {
@@ -62,7 +61,6 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
 		}
 		priceV2 {
 			amount
-			currencyCode
 		}
 		product {
 			id
@@ -81,7 +79,7 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
 			title
 		}
 	}
-` as import('../../__generated__/ts-gql/PRODUCT_VARIANT_PRODUCTS').type;
+` as import('../__generated__/ts-gql/PRODUCT_VARIANT_PRODUCTS').type;
 
 /**
  * Queries
@@ -117,7 +115,6 @@ export const SINGLE_PRODUCT_QUERY = gql`
 			priceRange {
 				minVariantPrice {
 					amount
-					currencyCode
 				}
 			}
 			productType
@@ -135,7 +132,6 @@ export const SINGLE_PRODUCT_QUERY = gql`
 						availableForSale
 						compareAtPrice {
 							amount
-							currencyCode
 						}
 						currentlyNotInStock
 						image {
@@ -145,7 +141,6 @@ export const SINGLE_PRODUCT_QUERY = gql`
 						}
 						price {
 							amount
-							currencyCode
 						}
 						requiresShipping
 						selectedOptions {
@@ -160,7 +155,7 @@ export const SINGLE_PRODUCT_QUERY = gql`
 			vendor
 		}
 	}
-` as import('../../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;
+` as import('../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;
 
 export const PRODUCTS_QUERY = gql`
 	query PRODUCTS_QUERY($first: Int = 6) {
@@ -182,7 +177,6 @@ export const PRODUCTS_QUERY = gql`
 					priceRange {
 						minVariantPrice {
 							amount
-							currencyCode
 						}
 					}
 					tags
@@ -191,7 +185,7 @@ export const PRODUCTS_QUERY = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/PRODUCTS_QUERY').type;
+` as import('../__generated__/ts-gql/PRODUCTS_QUERY').type;
 
 export const COLLECTION_QUERY = gql`
 	query COLLECTION_QUERY($collectionHandle: String) {
@@ -211,7 +205,6 @@ export const COLLECTION_QUERY = gql`
 						compareAtPriceRange {
 							minVariantPrice {
 								amount
-								currencyCode
 							}
 						}
 						description
@@ -228,7 +221,7 @@ export const COLLECTION_QUERY = gql`
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/COLLECTION_QUERY').type;
+` as import('../__generated__/ts-gql/COLLECTION_QUERY').type;
 
 export const GET_PRODUCT_VARIANTS_QUERY = gql`
 	query GET_PRODUCT_VARIANTS_QUERY($ids: [ID!]!) {
@@ -238,7 +231,7 @@ export const GET_PRODUCT_VARIANTS_QUERY = gql`
 		}
 	}
 	${PRODUCT_VARIANT_PRODUCTS}
-` as import('../../__generated__/ts-gql/GET_PRODUCT_VARIANTS_QUERY').type;
+` as import('../__generated__/ts-gql/GET_PRODUCT_VARIANTS_QUERY').type;
 
 /**
  * Mutations
@@ -266,7 +259,6 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 								}
 								price {
 									amount
-									currencyCode
 								}
 								product {
 									id
@@ -281,10 +273,9 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 				}
 				subtotalPrice {
 					amount
-					currencyCode
 				}
 				webUrl
 			}
 		}
 	}
-` as import('../../__generated__/ts-gql/CREATE_CHECKOUT_MUTATION').type;
+` as import('../__generated__/ts-gql/CREATE_CHECKOUT_MUTATION').type;

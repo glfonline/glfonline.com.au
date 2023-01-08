@@ -1,26 +1,19 @@
 import { type Fetcher, GraphQLErrorResult } from '@ts-gql/fetch';
 import { type DocumentNode, print } from 'graphql';
-import { z } from 'zod';
 
-const envSchema = z.object({
-	API_URL: z.string().min(1),
-	ACCESS_TOKEN: z.string().min(1),
-});
+const API_URL =
+	'https://golfladiesfirst.myshopify.com/api/2022-10/graphql.json';
+const ACCESS_TOKEN = '2288cabae0640a8f47933d6ed4116607';
 
-const env = envSchema.parse({
-	API_URL: process.env.API_URL,
-	ACCESS_TOKEN: process.env.ACCESS_TOKEN,
-});
-
-export const shopifyClient: Fetcher = ((
+export const shopifyClient: Fetcher = (
 	operation: DocumentNode,
 	variables?: Record<string, unknown>
 ) => {
-	return fetch(env.API_URL, {
+	return fetch(API_URL, {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',
-			'X-Shopify-Storefront-Access-Token': env.ACCESS_TOKEN,
+			'X-Shopify-Storefront-Access-Token': ACCESS_TOKEN,
 		},
 		body: JSON.stringify({
 			query: print(operation),
@@ -34,4 +27,4 @@ export const shopifyClient: Fetcher = ((
 			}
 			return data.data;
 		});
-}) as any;
+};

@@ -1,7 +1,0 @@
-__generated__
-.env
-api
-app/styles/tailwind.css
-build
-node_modules
-public/build
