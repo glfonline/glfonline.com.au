@@ -9,14 +9,16 @@
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "turbo run lint",
 		"check:types": "turbo run check:types",
+		"clean": "pnpm run -r \"clean\" && rm -rf node_modules",
 		"dev": "turbo run dev --parallel",
 		"dev:cms": "turbo run dev --filter=./packages/* --filter=@glfonline/cms",
 		"dev:web": "turbo run dev --filter=./packages/* --filter=@glfonline/web",
 		"fix": "pnpm fix:format && pnpm fix:lint",
 		"fix:format": "pnpm prettier . --cache --write",
 		"fix:lint": "turbo run lint -- --fix",
+		"fresh": "pnpm run clean && pnpm install",
 		"preinstall": "npx only-allow pnpm",
-		"postinstall": "manypkg check",
+		"postinstall": "manypkg check && pnpm build:packages",
 		"lint": "turbo run lint"
 	},
 	"dependencies": {
