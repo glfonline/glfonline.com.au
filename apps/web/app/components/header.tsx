@@ -14,6 +14,7 @@ import type { loader } from '~/root';
 
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
+import { SearchDialog } from './search-dialog';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 
 export function Header() {
@@ -68,8 +69,12 @@ function TopNav() {
 
 function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 	const { cartCount } = useLoaderData<typeof loader>();
+	const [isSearchOpen, setSearchOpen] = useState(false);
+	const toggleSearch = () => setSearchOpen((prev) => !prev);
+
 	return (
 		<div className="bg-white">
+			<SearchDialog isSearchOpen={isSearchOpen} setSearchOpen={setSearchOpen} />
 			<div className="mx-auto max-w-7xl border-y border-gray-200">
 				<div className="flex h-14 items-center justify-between">
 					{/* Logo (lg+) */}
@@ -96,13 +101,13 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						</button>
 
 						{/* Search */}
-						<NavLink
-							to="/search"
+						<button
+							onClick={toggleSearch}
 							className="ml-2 p-2 text-gray-400 hover:text-gray-500"
 						>
 							<span className="sr-only">Search</span>
 							<MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
-						</NavLink>
+						</button>
 					</div>
 
 					{/* Logo (lg-) */}
@@ -115,8 +120,8 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						<div className="flex items-center gap-8 lg:ml-8">
 							<div className="flex">
 								<div className="hidden lg:flex">
-									<NavLink
-										to="/search"
+									<button
+										onClick={toggleSearch}
 										className="-m-2 p-2 text-gray-400 hover:text-gray-500"
 									>
 										<span className="sr-only">Search</span>
@@ -124,7 +129,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 											className="h-6 w-6"
 											aria-hidden="true"
 										/>
-									</NavLink>
+									</button>
 								</div>
 							</div>
 
