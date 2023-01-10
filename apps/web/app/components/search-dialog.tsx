@@ -17,11 +17,9 @@ export function SearchDialog({
 	isSearchOpen: boolean;
 	setSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-	const [query, setQuery] = useState('');
-	const { data, isLoading, isFetching, isPreviousData, status } =
-		useProduct(query);
-
 	const navigate = useNavigate();
+	const [query, setQuery] = useState('');
+	const { data, isLoading, isPreviousData } = useProduct(query);
 
 	return (
 		<Transition.Root
