@@ -8,6 +8,9 @@ import {
 	Scripts,
 	ScrollRestoration,
 } from '@remix-run/react';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 
 import { getSeo } from '~/seo';
 
@@ -40,6 +43,11 @@ export async function loader({ request }: LoaderArgs) {
 	return json({ cartCount: cart.length });
 }
 
+const queryClient = new QueryClient();
+const persister = createSyncStoragePersister({
+	storage: typeof window !== 'undefined' ? window.localStorage : undefined,
+});
+
 export default function App() {
 	return (
 		<html lang="en" className="h-full">
@@ -49,9 +57,14 @@ export default function App() {
 			</head>
 			<body className="relative flex h-full flex-col">
 				<LoadingProgress />
-				<MainLayout>
-					<Outlet />
-				</MainLayout>
+				<PersistQueryClientProvider
+					client={queryClient}
+					persistOptions={{ persister }}
+				>
+					<MainLayout>
+						<Outlet />
+					</MainLayout>
+				</PersistQueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />

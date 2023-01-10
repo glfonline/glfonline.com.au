@@ -1,12 +1,11 @@
-import { clsx } from 'clsx';
-
 export function Spinner(props: React.SVGProps<SVGSVGElement>) {
+	const { className = 'h-5 w-5 animate-spin text-white' } = props;
 	return (
 		<svg
 			{...props}
 			xmlns="http://www.w3.org/2000/svg"
 			fill="none"
-			className={clsx('h-5 w-5 animate-spin text-white', props.className)}
+			className={className}
 			viewBox="0 0 24 24"
 		>
 			<circle
