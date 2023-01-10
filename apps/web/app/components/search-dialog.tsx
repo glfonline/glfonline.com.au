@@ -6,6 +6,8 @@ import { NavLink, useNavigate } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 
+import { makeProductHref } from '~/lib/make-product-href';
+import { makeProductImage } from '~/lib/make-product-image';
 import { type Product, useProduct } from '~/lib/use-products';
 
 import { Spinner } from './design-system/spinner';
@@ -135,7 +137,10 @@ function SearchResults({
 									className="flex flex-auto items-center gap-3"
 								>
 									<img
-										src={makeProductImage({ product, width: imageWidth })}
+										src={makeProductImage({
+											image: product.image,
+											width: imageWidth,
+										})}
 										alt=""
 										className="aspect-square w-11 bg-white object-contain"
 										height={imageWidth}
@@ -176,31 +181,4 @@ function SearchResults({
 	}
 
 	return null;
-}
-
-function makeProductHref(product: Product) {
-	const theme = product.tags
-		.map((tag) => tag.toLocaleLowerCase())
-		.includes('ladies')
-		? 'ladies'
-		: 'mens';
-	return `/${theme}/products/${product.handle}`;
-}
-
-function makeProductImage({
-	product,
-	width,
-}: {
-	product: Product;
-	width?: number;
-}) {
-	try {
-		const image = new URL(product.image);
-		if (width) {
-			image.searchParams.set('width', String(width * 2));
-		}
-		return image.href;
-	} catch (error) {
-		return product.image;
-	}
 }
