@@ -11,6 +11,7 @@
 		"check:lint": "turbo run lint",
 		"check:types": "turbo run check:types",
 		"clean": "pnpm run -r \"clean\" && rm -rf node_modules",
+		"deploy:cms": "stale-dep && pnpm --filter @glfonline/cms run deploy && turbo run generate",
 		"dev": "stale-dep && turbo run dev",
 		"dev:cms": "stale-dep && turbo run dev --filter=./packages/* --filter=@glfonline/cms",
 		"dev:web": "stale-dep && turbo run dev --filter=./packages/* --filter=@glfonline/web",

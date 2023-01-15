@@ -17,6 +17,79 @@ Field references one or more documents
 """
 directive @reference on FIELD_DEFINITION
 
+type AboutItem {
+	_key: String
+	_type: String
+	aboutImage: ImageWithAlt
+	contentRaw: JSON
+	subheading: String
+}
+
+input AboutItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	aboutImage: ImageWithAltFilter
+	subheading: StringFilter
+}
+
+input AboutItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	aboutImage: ImageWithAltSorting
+	subheading: SortOrder
+}
+
+type AboutPage implements Document {
+	"""
+	Date the document was created
+	"""
+	_createdAt: DateTime
+
+	"""
+	Document ID
+	"""
+	_id: ID
+	_key: String
+
+	"""
+	Current document revision
+	"""
+	_rev: String
+
+	"""
+	Document type
+	"""
+	_type: String
+
+	"""
+	Date the document was last modified
+	"""
+	_updatedAt: DateTime
+	sections: [AboutItem]
+}
+
+input AboutPageFilter {
+	"""
+	Apply filters on document level
+	"""
+	_: Sanity_DocumentFilter
+	_createdAt: DatetimeFilter
+	_id: IDFilter
+	_key: StringFilter
+	_rev: StringFilter
+	_type: StringFilter
+	_updatedAt: DatetimeFilter
+}
+
+input AboutPageSorting {
+	_createdAt: SortOrder
+	_id: SortOrder
+	_key: SortOrder
+	_rev: SortOrder
+	_type: SortOrder
+	_updatedAt: SortOrder
+}
+
 type Block {
 	_key: String
 	_type: String
@@ -444,6 +517,12 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 scalar JSON
 
 type RootQuery {
+	AboutPage(
+		"""
+		AboutPage document ID
+		"""
+		id: ID!
+	): AboutPage
 	Document(
 		"""
 		Document document ID
@@ -480,6 +559,19 @@ type RootQuery {
 		"""
 		id: ID!
 	): ThemePage
+	allAboutPage(
+		"""
+		Max documents to return
+		"""
+		limit: Int
+
+		"""
+		Offset at which to start returning documents from
+		"""
+		offset: Int
+		sort: [AboutPageSorting!]
+		where: AboutPageFilter
+	): [AboutPage!]!
 	allDocument(
 		"""
 		Max documents to return

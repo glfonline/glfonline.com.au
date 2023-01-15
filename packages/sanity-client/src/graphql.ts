@@ -30,6 +30,22 @@ export const IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT = gql`
  * Queries
  */
 
+export const ABOUT_PAGE_QUERY = gql`
+	query ABOUT_PAGE_QUERY($id: ID! = "testimonials") {
+		AboutPage(id: $id) {
+			sections {
+				_key
+				aboutImage {
+					...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+				}
+				contentRaw
+				subheading
+			}
+		}
+	}
+	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
+` as import('../__generated__/ts-gql/ABOUT_PAGE_QUERY').type;
+
 export const TESTIMONIALS_PAGE_QUERY = gql`
 	query TESTIMONIALS_PAGE_QUERY($id: ID! = "testimonials") {
 		TestimonialsPage(id: $id) {

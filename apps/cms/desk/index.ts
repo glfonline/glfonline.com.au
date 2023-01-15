@@ -3,6 +3,7 @@
  */
 import type { ListItemBuilder, StructureResolver } from 'sanity/desk';
 
+import { aboutPage } from './about';
 import { faqPage } from './faq';
 import { ladiesPage } from './ladies';
 import { mensPage } from './mens';
@@ -28,12 +29,9 @@ const hiddenDocTypes = (listItem: ListItemBuilder) => {
 		return false;
 	}
 
-	return ![
-		//
-		'themePage',
-		'faqPage',
-		'testimonialsPage',
-	].includes(id);
+	return !['aboutPage', 'faqPage', 'testimonialsPage', 'themePage'].includes(
+		id
+	);
 };
 
 export const structure: StructureResolver = (S, context) =>
@@ -45,5 +43,6 @@ export const structure: StructureResolver = (S, context) =>
 			S.divider(),
 			faqPage(S, context),
 			testimonialsPage(S, context),
+			aboutPage(S, context),
 			...S.documentTypeListItems().filter(hiddenDocTypes),
 		]);
