@@ -1,4 +1,4 @@
 {
 	"root": true,
-	"extends": ["@glfonline/eslint-config", "@sanity/eslint-config-studio"]
+	"extends": ["@glfonline/eslint-config"]
 }

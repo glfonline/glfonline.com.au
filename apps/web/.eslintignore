@@ -1,0 +1,7 @@
+.cache
+.turbo
+api
+node_modules
+tsconfig.tsbuildinfo
+app/styles/tailwind.css
+public/build

@@ -16,7 +16,7 @@ import { getSeoMeta } from '~/seo';
 import type { Maybe } from '~/types';
 
 type Products = NonNullable<
-	typeof COLLECTION_QUERY['___type']['result']['collection']
+	(typeof COLLECTION_QUERY)['___type']['result']['collection']
 >['products']['edges'];
 
 const CollectionSchema = z.object({
