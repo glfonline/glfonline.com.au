@@ -7,7 +7,7 @@
 		}
 	},
 	"generates": {
-		"./shopify-schema.graphql": {
+		"./schema.graphql": {
 			"plugins": ["schema-ast"]
 		}
 	},
