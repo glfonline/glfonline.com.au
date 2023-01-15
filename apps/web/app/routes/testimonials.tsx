@@ -20,7 +20,7 @@ export default function TestimonialsPage() {
 
 function Testimonials() {
 	return (
-		<ul className="grid gap-10 md:grid-cols-2">
+		<ul className="grid grid-flow-row-dense gap-10 md:grid-cols-2">
 			{testimonials.map(({ id, author, quote, image }) =>
 				image ? (
 					<li
