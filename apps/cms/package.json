@@ -8,8 +8,9 @@
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
 		"check:types": "tsc --noEmit",
-		"deploy": "sanity deploy",
-		"deploy-graphql": "sanity graphql deploy",
+		"deploy": "pnpm run deploy:studio && pnpm run deploy:graphql",
+		"deploy:studio": "sanity deploy",
+		"deploy:graphql": "sanity graphql deploy",
 		"dev": "sanity dev",
 		"lint": "TIMING=1 eslint \"./**/*.{js,ts,jsx,tsx}\"",
 		"start": "sanity start"

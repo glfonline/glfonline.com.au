@@ -1,17 +1,63 @@
+import {
+	sanityClient,
+	TESTIMONIALS_PAGE_QUERY,
+} from '@glfonline/sanity-client';
+import { json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
+import { z } from 'zod';
+
 import { Hero } from '~/components/hero';
 import { Map } from '~/components/map';
 import { NewsletterSignup } from '~/components/newsletter-signup';
+import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
+import { PortableText } from '~/lib/portable-text';
+import { urlFor } from '~/lib/sanity-image';
+
+const TestimonialsSchema = z.object({
+	heroImage: imageWithAltSchema,
+	testimonials: z
+		.object({
+			_key: z.string(),
+			author: z.string().min(1),
+			quoteRaw: z.any(),
+			testimonialImage: z.nullable(imageWithAltSchema),
+		})
+		.array(),
+});
+
+export async function loader() {
+	const { TestimonialsPage } = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
+		id: 'testimonials',
+	});
+	const { testimonials, heroImage } =
+		TestimonialsSchema.parse(TestimonialsPage);
+	return json({ heroImage, testimonials });
+}
 
 export default function TestimonialsPage() {
+	const { heroImage } = useLoaderData<typeof loader>();
 	return (
-		<div className="flex w-full flex-col gap-10 pb-16 sm:pb-24">
-			<Hero
-				title="Testimonials"
-				image={{
-					url: 'https://www.glfonline.com.au/static/c0d6f5766ed635dca57e0209383d99cf/6833b/testimonials-hero.webp',
-				}}
-			/>
-			<Testimonials />
+		<div className="flex w-full flex-col pb-16 sm:pb-24">
+			<div className="flex w-full flex-col gap-10">
+				<Hero
+					title="Testimonials"
+					image={{
+						url: urlFor({
+							_ref: heroImage.asset._id,
+							crop: heroImage.asset.crop,
+							hotspot: heroImage.asset.hotspot,
+						})
+							.auto('format')
+							.width(1280)
+							.height(385)
+							.focalPoint(0.5, 0.5)
+							.dpr(3)
+							.url(),
+						alt: heroImage.asset.altText ?? '',
+					}}
+				/>
+				<Testimonials />
+			</div>
 			<NewsletterSignup />
 			<Map />
 		</div>
@@ -19,43 +65,49 @@ export default function TestimonialsPage() {
 }
 
 function Testimonials() {
+	const { testimonials } = useLoaderData<typeof loader>();
 	return (
-		<ul className="grid grid-flow-row-dense gap-10 md:grid-cols-2">
-			{testimonials.map(({ id, author, quote, image }) =>
-				image ? (
+		<ul className="grid grid-flow-row-dense gap-10 pb-10 md:grid-cols-2">
+			{testimonials.map(({ _key, author, quoteRaw, testimonialImage }) =>
+				testimonialImage ? (
 					<li
-						key={id}
+						key={_key}
 						className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12"
 					>
 						<img
-							src={image.src}
-							alt={image.alt ?? ''}
+							src={urlFor({
+								_ref: testimonialImage.asset._id,
+								crop: testimonialImage.asset.crop,
+								hotspot: testimonialImage.asset.hotspot,
+							})
+								.auto('format')
+								.width(1280)
+								.height(385)
+								.focalPoint(0.5, 0.5)
+								.dpr(3)
+								.url()}
+							alt={testimonialImage.asset.altText ?? ''}
 							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 						/>
 						<div className="md:col-span-7 md:col-start-6 md:py-16">
-							<div className="prose relative mx-auto w-full max-w-lg bg-white px-16 py-12 md:mx-0">
-								<OpenQuote className="text-brand-primary absolute top-8 left-5 h-8 w-8" />
-								<p
-									data-after="”"
-									className="italic after:content-[attr(data-after)]"
-								>
-									{quote}
-								</p>
-								<p className="font-bold">{author}</p>
+							<div className="relative">
+								<OpenQuote className="text-brand-primary absolute top-8 left-5 z-10 h-8 w-8" />
+								<div className="prose prose-blockquote:pl-0 prose-blockquote:border-none prose-p:before:content-none relative mx-auto w-full bg-white px-16 py-12 md:mx-0">
+									<blockquote>
+										<PortableText value={quoteRaw} />
+										<p className="font-bold">{author}</p>
+									</blockquote>
+								</div>
 							</div>
 						</div>
 					</li>
 				) : (
-					<li key={id} className="border px-8 py-10">
-						<div className="prose mx-auto">
-							<p
-								data-before="“"
-								data-after="”"
-								className="italic before:content-[attr(data-before)] after:content-[attr(data-after)]"
-							>
-								{quote}
-							</p>
-							<p className="font-bold">{author}</p>
+					<li key={_key} className="border px-8 py-10">
+						<div className="prose prose-blockquote:border-none prose-p:before:content-none prose-blockquote:pl-0">
+							<blockquote>
+								<PortableText value={quoteRaw} />
+								<p className="font-bold">{author}</p>
+							</blockquote>
 						</div>
 					</li>
 				)
@@ -71,53 +123,3 @@ function OpenQuote(props: React.SVGProps<SVGSVGElement>) {
 		</svg>
 	);
 }
-
-const testimonials: Array<{
-	id: string;
-	author: string;
-	quote: string;
-	image?: {
-		src: string;
-		alt?: string;
-	};
-}> = [
-	{
-		id: '1',
-		author: 'Thanks again, Colleen',
-		quote:
-			'Here is a photo of our team on the champagne hole. The tops looked great and we won Best Dressed team!! We also won this the year before with the other tops I got from you which were also Corsican. Very happy and many ladies commented on how great we looked.',
-		image: {
-			src: 'https://www.glfonline.com.au/static/5f3a062bc5ba0ba3ce01fee2e082343d/61162/colleen.webp',
-		},
-	},
-	{
-		id: '2',
-		author: 'Christine, Kingston, ACT',
-		quote:
-			'I just wanted to say thank you for your very efficient service. I ordered a top on line yesterday, and it was in my post office box this morning. Thanks again.',
-	},
-	{
-		id: '3',
-		author: 'Regards Janelle',
-		quote:
-			'Just visited your shop and I was delighted to discover you sell elephant sizes. Well done Gordon and Chantale. Great selection and excellent service, I’ll be back.',
-	},
-	{
-		id: '4',
-		author: 'Colleen V',
-		quote:
-			'Hi Chantale, Just thought you’d like to know we won best dressed team & had so many people complimenting us on our shirts and asking where we got them — so a great success thank you.',
-	},
-	{
-		id: '5',
-		author: 'Maureen, Kiama',
-		quote:
-			'I visited your shop when staying in Port last week. It was the best range of womens golf wear I have seen (including oseas). Congratulations, my friends in Kiama will be visiting your site once I give them your card and hear of my experience there. Looking forward to future contact.',
-	},
-	{
-		id: '6',
-		author: 'Thanks, Jules',
-		quote:
-			'Hi Gordon, I wanted to thank you for the advice on the fit of the shirt I ordered, and the terrific service. The shirt was in Adelaide within 2 days, well before we got there. It fit and was blessedly cool in the ridiculous 40C plus weather. So even when I felt like I was melting, I still felt like I looked snazzy. I’ll order again.',
-	},
-];

@@ -468,6 +468,12 @@ type RootQuery {
 		"""
 		id: ID!
 	): SanityImageAsset
+	TestimonialsPage(
+		"""
+		TestimonialsPage document ID
+		"""
+		id: ID!
+	): TestimonialsPage
 	ThemePage(
 		"""
 		ThemePage document ID
@@ -526,6 +532,19 @@ type RootQuery {
 		sort: [SanityImageAssetSorting!]
 		where: SanityImageAssetFilter
 	): [SanityImageAsset!]!
+	allTestimonialsPage(
+		"""
+		Max documents to return
+		"""
+		limit: Int
+
+		"""
+		Offset at which to start returning documents from
+		"""
+		offset: Int
+		sort: [TestimonialsPageSorting!]
+		where: TestimonialsPageFilter
+	): [TestimonialsPage!]!
 	allThemePage(
 		"""
 		Max documents to return
@@ -1007,6 +1026,82 @@ input StringFilter {
 	"""
 	neq: String
 	nin: [String!]
+}
+
+type TestimonialItem {
+	_key: String
+	_type: String
+	author: String
+	quoteRaw: JSON
+	testimonialImage: ImageWithAlt
+}
+
+input TestimonialItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	author: StringFilter
+	testimonialImage: ImageWithAltFilter
+}
+
+input TestimonialItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	author: SortOrder
+	testimonialImage: ImageWithAltSorting
+}
+
+type TestimonialsPage implements Document {
+	"""
+	Date the document was created
+	"""
+	_createdAt: DateTime
+
+	"""
+	Document ID
+	"""
+	_id: ID
+	_key: String
+
+	"""
+	Current document revision
+	"""
+	_rev: String
+
+	"""
+	Document type
+	"""
+	_type: String
+
+	"""
+	Date the document was last modified
+	"""
+	_updatedAt: DateTime
+	heroImage: ImageWithAlt
+	testimonials: [TestimonialItem]
+}
+
+input TestimonialsPageFilter {
+	"""
+	Apply filters on document level
+	"""
+	_: Sanity_DocumentFilter
+	_createdAt: DatetimeFilter
+	_id: IDFilter
+	_key: StringFilter
+	_rev: StringFilter
+	_type: StringFilter
+	_updatedAt: DatetimeFilter
+	heroImage: ImageWithAltFilter
+}
+
+input TestimonialsPageSorting {
+	_createdAt: SortOrder
+	_id: SortOrder
+	_key: SortOrder
+	_rev: SortOrder
+	_type: SortOrder
+	_updatedAt: SortOrder
+	heroImage: ImageWithAltSorting
 }
 
 type ThemePage implements Document {

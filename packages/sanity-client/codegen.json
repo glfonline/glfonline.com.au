@@ -1,7 +1,7 @@
 {
 	"schema": "https://zah69run.api.sanity.io/v1/graphql/production/default",
 	"generates": {
-		"./sanity-schema.graphql": {
+		"./schema.graphql": {
 			"plugins": ["schema-ast"]
 		}
 	},

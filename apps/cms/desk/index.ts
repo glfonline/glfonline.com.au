@@ -6,6 +6,7 @@ import type { ListItemBuilder, StructureResolver } from 'sanity/desk';
 import { faqPage } from './faq';
 import { ladiesPage } from './ladies';
 import { mensPage } from './mens';
+import { testimonialsPage } from './testimonials';
 /**
  * Desk structure overrides
  *
@@ -31,6 +32,7 @@ const hiddenDocTypes = (listItem: ListItemBuilder) => {
 		//
 		'themePage',
 		'faqPage',
+		'testimonialsPage',
 	].includes(id);
 };
 
@@ -42,5 +44,6 @@ export const structure: StructureResolver = (S, context) =>
 			mensPage(S, context),
 			S.divider(),
 			faqPage(S, context),
+			testimonialsPage(S, context),
 			...S.documentTypeListItems().filter(hiddenDocTypes),
 		]);
