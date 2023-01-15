@@ -1,4 +1,4 @@
-import { Heading } from "./design-system/heading";
+import { Heading } from './design-system/heading';
 
 export function Hero({
 	image,
@@ -8,7 +8,7 @@ export function Hero({
 		url: string;
 		alt?: string;
 	};
-	title: string;
+	title?: string;
 }) {
 	return (
 		<div className="relative flex h-80 items-center justify-center">
@@ -19,11 +19,13 @@ export function Hero({
 					className="absolute inset-0 h-full w-full object-cover"
 				/>
 			)}
-			<span className="bg-true-black/75 isolate py-2 px-6">
-				<Heading size="2" color="light" className="isolate">
-					{title}
-				</Heading>
-			</span>
+			{title && (
+				<span className="bg-true-black/75 isolate py-2 px-6">
+					<Heading size="2" color="light" className="isolate">
+						{title}
+					</Heading>
+				</span>
+			)}
 		</div>
 	);
 }
