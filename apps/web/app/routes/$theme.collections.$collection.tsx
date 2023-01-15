@@ -1,16 +1,15 @@
 import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import {
-	type DataFunctionArgs,
+type DataFunctionArgs,
 	type MetaFunction,
-	json,
-} from '@remix-run/node';
+	json} from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 
 import { Field } from '~/components/design-system/field';
-import { Heading } from '~/components/design-system/heading';
 import { Select } from '~/components/design-system/select';
+import { Hero } from '~/components/hero';
 import { formatMoney } from '~/lib/format-money';
 import { getSeoMeta } from '~/seo';
 import type { Maybe } from '~/types';
@@ -144,34 +143,6 @@ export default function CollectionPage() {
 					</li>
 				))}
 			</ul>
-		</div>
-	);
-}
-
-function Hero({
-	image,
-	title,
-}: {
-	image?: {
-		url: string;
-		alt?: string;
-	};
-	title: string;
-}) {
-	return (
-		<div className="relative flex h-80 items-center justify-center">
-			{image && (
-				<img
-					src={image.url}
-					alt={image.alt ?? ''}
-					className="absolute inset-0 h-full w-full object-cover"
-				/>
-			)}
-			<span className="bg-true-black/75 isolate py-2 px-6">
-				<Heading size="2" color="light" className="isolate">
-					{title}
-				</Heading>
-			</span>
 		</div>
 	);
 }

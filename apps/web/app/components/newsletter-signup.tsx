@@ -52,7 +52,7 @@ export function NewsletterSignup() {
 	const form = useZorm('contact_form', NewsletterSchema);
 
 	return (
-		<article className="mx-auto max-w-7xl bg-gray-100">
+		<article className="mx-auto w-full max-w-7xl bg-gray-100">
 			<div className="mx-auto max-w-xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
 				<Heading size="2" className="text-center">
 					Don't miss out, join the club

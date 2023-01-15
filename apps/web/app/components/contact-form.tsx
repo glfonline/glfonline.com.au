@@ -66,7 +66,7 @@ export function ContactForm() {
 	const form = useZorm('contact_form', ContactFormSchema);
 
 	return (
-		<article className="relative mx-auto max-w-7xl overflow-hidden bg-white">
+		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white">
 			<div
 				aria-hidden="true"
 				className="absolute inset-0 flex h-full w-full overflow-hidden"
