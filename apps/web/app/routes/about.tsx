@@ -85,7 +85,7 @@ function AboutSection({
 }) {
 	return (
 		<div className="flex flex-col gap-10 py-12 px-4 sm:px-6 lg:px-8">
-			<div className="prose max-w-none gap-8 md:columns-2 lg:columns-3">
+			<div className="prose grid max-w-none gap-8 md:grid-cols-2 lg:grid-cols-3">
 				<div>
 					<heading.level className={getHeadingStyles({ size: '2' })}>
 						{heading.text}
