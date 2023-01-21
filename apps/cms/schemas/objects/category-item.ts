@@ -2,10 +2,10 @@ import { defineField } from 'sanity';
 
 import { THEMES } from '../../constants';
 
-export const themePage = defineField({
-	name: 'themePage',
-	type: 'document',
-	title: 'Theme Page',
+export const categoryItem = defineField({
+	name: 'category.item',
+	type: 'object',
+	title: 'Category Item',
 	fields: [
 		defineField({
 			name: 'theme',
@@ -21,26 +21,26 @@ export const themePage = defineField({
 			hidden: true,
 		}),
 		defineField({
-			name: 'image',
-			type: 'imageWithAlt',
-			title: 'Collection Image',
-			validation: (Rule) => Rule.required(),
+			name: 'featuredCollection',
+			type: 'reference',
+			to: [{ type: 'themePage' }],
+			title: 'Featured Collection',
 		}),
 		defineField({
-			name: 'collectionCards',
+			name: 'sections',
 			type: 'array',
-			title: 'Collection Cards',
-			of: [{ type: 'collectionCard.item' }],
-			validation: (Rule) => Rule.required(),
+			of: [{ type: 'section.item' }],
+			title: 'Sections',
 		}),
 	],
+	validation: (Rule) => Rule.required(),
 	preview: {
 		select: {
 			title: 'theme',
 		},
 		prepare({ title }) {
 			return {
-				title: THEMES.find((theme) => theme.value === title)?.title,
+				title: `${THEMES.find((theme) => theme.value === title)?.title} Menu`,
 			};
 		},
 	},

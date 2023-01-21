@@ -110,6 +110,27 @@ input BooleanFilter {
 	neq: Boolean
 }
 
+type CategoryItem {
+	_key: String
+	_type: String
+	featuredCollection: ThemePage
+	sections: [SectionItem]
+	theme: String
+}
+
+input CategoryItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	featuredCollection: ThemePageFilter
+	theme: StringFilter
+}
+
+input CategoryItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	theme: SortOrder
+}
+
 type CollectionCardItem {
 	_key: String
 	_type: String
@@ -571,6 +592,79 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type MainNavigation implements Document {
+	"""
+	Date the document was created
+	"""
+	_createdAt: DateTime
+
+	"""
+	Document ID
+	"""
+	_id: ID
+	_key: String
+
+	"""
+	Current document revision
+	"""
+	_rev: String
+
+	"""
+	Document type
+	"""
+	_type: String
+
+	"""
+	Date the document was last modified
+	"""
+	_updatedAt: DateTime
+	categories: [CategoryItem]
+	pages: [NavItem]
+}
+
+input MainNavigationFilter {
+	"""
+	Apply filters on document level
+	"""
+	_: Sanity_DocumentFilter
+	_createdAt: DatetimeFilter
+	_id: IDFilter
+	_key: StringFilter
+	_rev: StringFilter
+	_type: StringFilter
+	_updatedAt: DatetimeFilter
+}
+
+input MainNavigationSorting {
+	_createdAt: SortOrder
+	_id: SortOrder
+	_key: SortOrder
+	_rev: SortOrder
+	_type: SortOrder
+	_updatedAt: SortOrder
+}
+
+type NavItem {
+	_key: String
+	_type: String
+	href: String
+	label: String
+}
+
+input NavItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	href: StringFilter
+	label: StringFilter
+}
+
+input NavItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	href: SortOrder
+	label: SortOrder
+}
+
 type RootQuery {
 	AboutPage(
 		"""
@@ -596,6 +690,12 @@ type RootQuery {
 		"""
 		id: ID!
 	): HomePage
+	MainNavigation(
+		"""
+		MainNavigation document ID
+		"""
+		id: ID!
+	): MainNavigation
 	SanityFileAsset(
 		"""
 		SanityFileAsset document ID
@@ -672,6 +772,19 @@ type RootQuery {
 		sort: [HomePageSorting!]
 		where: HomePageFilter
 	): [HomePage!]!
+	allMainNavigation(
+		"""
+		Max documents to return
+		"""
+		limit: Int
+
+		"""
+		Offset at which to start returning documents from
+		"""
+		offset: Int
+		sort: [MainNavigationSorting!]
+		where: MainNavigationFilter
+	): [MainNavigation!]!
 	allSanityFileAsset(
 		"""
 		Max documents to return
@@ -1135,6 +1248,25 @@ input Sanity_DocumentFilter {
 	references: ID
 }
 
+type SectionItem {
+	_key: String
+	_type: String
+	items: [NavItem]
+	label: String
+}
+
+input SectionItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	label: StringFilter
+}
+
+input SectionItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	label: SortOrder
+}
+
 type Slug {
 	_key: String
 	_type: String
@@ -1297,6 +1429,7 @@ type ThemePage implements Document {
 	"""
 	_updatedAt: DateTime
 	collectionCards: [CollectionCardItem]
+	image: ImageWithAlt
 	theme: String
 }
 
@@ -1311,6 +1444,7 @@ input ThemePageFilter {
 	_rev: StringFilter
 	_type: StringFilter
 	_updatedAt: DatetimeFilter
+	image: ImageWithAltFilter
 	theme: StringFilter
 }
 
@@ -1321,5 +1455,6 @@ input ThemePageSorting {
 	_rev: SortOrder
 	_type: SortOrder
 	_updatedAt: SortOrder
+	image: ImageWithAltSorting
 	theme: SortOrder
 }

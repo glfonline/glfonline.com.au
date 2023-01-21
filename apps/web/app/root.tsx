@@ -1,3 +1,4 @@
+import { MAIN_NAVIGATION_QUERY, sanityClient } from '@glfonline/sanity-client';
 import type { LinksFunction, LoaderArgs, MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import {
@@ -11,12 +12,14 @@ import {
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { z } from 'zod';
 
 import { getSeo } from '~/seo';
 
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { getSession } from './lib/cart';
+import { imageWithAltSchema } from './lib/image-with-alt-schema';
 import styles from './styles/tailwind.css';
 
 const [seoMeta, seoLinks] = getSeo();
@@ -37,10 +40,51 @@ export const meta: MetaFunction = () => {
 	};
 };
 
+const HomePageSchema = z.object({
+	categories: z.array(
+		z.object({
+			_key: z.string(),
+			theme: z.enum(['ladies', 'mens']),
+			featuredCollection: z.object({
+				_id: z.string(),
+				image: imageWithAltSchema,
+			}),
+			sections: z.array(
+				z.object({
+					_key: z.string(),
+					label: z.string(),
+					items: z.array(
+						z.object({
+							_key: z.string(),
+							label: z.string(),
+							href: z.string(),
+						})
+					),
+				})
+			),
+		})
+	),
+	pages: z.array(
+		z.object({
+			_key: z.string(),
+			label: z.string(),
+			href: z.string(),
+		})
+	),
+});
+
 export async function loader({ request }: LoaderArgs) {
 	const session = await getSession(request);
 	const cart = await session.getCart();
-	return json({ cartCount: cart.length });
+
+	const { MainNavigation } = await sanityClient(MAIN_NAVIGATION_QUERY, {
+		id: 'main-navigation',
+	});
+	console.log(MainNavigation?.categories?.[0]?.featuredCollection);
+	return json({
+		...HomePageSchema.parse(MainNavigation),
+		cartCount: cart.length,
+	});
 }
 
 const queryClient = new QueryClient();

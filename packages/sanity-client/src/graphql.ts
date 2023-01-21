@@ -30,8 +30,40 @@ export const IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT = gql`
  * Queries
  */
 
+export const MAIN_NAVIGATION_QUERY = gql`
+	query MAIN_NAVIGATION_QUERY($id: ID = "main-navigation") {
+		MainNavigation(id: $id) {
+			categories {
+				_key
+				theme
+				featuredCollection {
+					_id
+					image {
+						...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+					}
+				}
+				sections {
+					_key
+					label
+					items {
+						_key
+						label
+						href
+					}
+				}
+			}
+			pages {
+				_key
+				label
+				href
+			}
+		}
+	}
+	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
+` as import('../__generated__/ts-gql/MAIN_NAVIGATION_QUERY').type;
+
 export const HOME_PAGE_QUERY = gql`
-	query HOME_PAGE_QUERY($id: ID! = "home") {
+	query HOME_PAGE_QUERY($id: ID = "home") {
 		HomePage(id: $id) {
 			heroImage {
 				...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
@@ -44,7 +76,7 @@ export const HOME_PAGE_QUERY = gql`
 ` as import('../__generated__/ts-gql/HOME_PAGE_QUERY').type;
 
 export const ABOUT_PAGE_QUERY = gql`
-	query ABOUT_PAGE_QUERY($id: ID! = "testimonials") {
+	query ABOUT_PAGE_QUERY($id: ID = "testimonials") {
 		AboutPage(id: $id) {
 			sections {
 				_key
@@ -60,7 +92,7 @@ export const ABOUT_PAGE_QUERY = gql`
 ` as import('../__generated__/ts-gql/ABOUT_PAGE_QUERY').type;
 
 export const TESTIMONIALS_PAGE_QUERY = gql`
-	query TESTIMONIALS_PAGE_QUERY($id: ID! = "testimonials") {
+	query TESTIMONIALS_PAGE_QUERY($id: ID = "testimonials") {
 		TestimonialsPage(id: $id) {
 			heroImage {
 				...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
@@ -98,7 +130,7 @@ export const GET_THEME_PAGE = gql`
 ` as import('../__generated__/ts-gql/GET_THEME_PAGE').type;
 
 export const GET_FAQS_PAGES = gql`
-	query GET_FAQS_PAGES($id: ID! = "faqs") {
+	query GET_FAQS_PAGES($id: ID = "faqs") {
 		FaqPage(id: $id) {
 			_id
 			heroImage {

@@ -7,6 +7,7 @@ import { aboutPage } from './about';
 import { faqPage } from './faq';
 import { homePage } from './home';
 import { ladiesPage } from './ladies';
+import { mainNavigation } from './main-navigation';
 import { mensPage } from './mens';
 import { testimonialsPage } from './testimonials';
 /**
@@ -34,6 +35,7 @@ const hiddenDocTypes = (listItem: ListItemBuilder) => {
 		'aboutPage',
 		'faqPage',
 		'homePage',
+		'mainNavigation',
 		'testimonialsPage',
 		'themePage',
 	].includes(id);
@@ -44,6 +46,8 @@ export const structure: StructureResolver = (S, context) =>
 		.title('Content')
 		.items([
 			homePage(S, context),
+			mainNavigation(S, context),
+			S.divider(),
 			ladiesPage(S, context),
 			mensPage(S, context),
 			S.divider(),
