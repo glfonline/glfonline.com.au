@@ -30,6 +30,19 @@ export const IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT = gql`
  * Queries
  */
 
+export const HOME_PAGE_QUERY = gql`
+	query HOME_PAGE_QUERY($id: ID! = "home") {
+		HomePage(id: $id) {
+			heroImage {
+				...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+			}
+			heading
+			descriptionRaw
+		}
+	}
+	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
+` as import('../__generated__/ts-gql/HOME_PAGE_QUERY').type;
+
 export const ABOUT_PAGE_QUERY = gql`
 	query ABOUT_PAGE_QUERY($id: ID! = "testimonials") {
 		AboutPage(id: $id) {

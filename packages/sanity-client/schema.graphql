@@ -411,6 +411,61 @@ input GeopointSorting {
 	lng: SortOrder
 }
 
+type HomePage implements Document {
+	"""
+	Date the document was created
+	"""
+	_createdAt: DateTime
+
+	"""
+	Document ID
+	"""
+	_id: ID
+	_key: String
+
+	"""
+	Current document revision
+	"""
+	_rev: String
+
+	"""
+	Document type
+	"""
+	_type: String
+
+	"""
+	Date the document was last modified
+	"""
+	_updatedAt: DateTime
+	descriptionRaw: JSON
+	heading: [String]
+	heroImage: ImageWithAlt
+}
+
+input HomePageFilter {
+	"""
+	Apply filters on document level
+	"""
+	_: Sanity_DocumentFilter
+	_createdAt: DatetimeFilter
+	_id: IDFilter
+	_key: StringFilter
+	_rev: StringFilter
+	_type: StringFilter
+	_updatedAt: DatetimeFilter
+	heroImage: ImageWithAltFilter
+}
+
+input HomePageSorting {
+	_createdAt: SortOrder
+	_id: SortOrder
+	_key: SortOrder
+	_rev: SortOrder
+	_type: SortOrder
+	_updatedAt: SortOrder
+	heroImage: ImageWithAltSorting
+}
+
 input IDFilter {
 	"""
 	Checks if the value is equal to the given input.
@@ -535,6 +590,12 @@ type RootQuery {
 		"""
 		id: ID!
 	): FaqPage
+	HomePage(
+		"""
+		HomePage document ID
+		"""
+		id: ID!
+	): HomePage
 	SanityFileAsset(
 		"""
 		SanityFileAsset document ID
@@ -598,6 +659,19 @@ type RootQuery {
 		sort: [FaqPageSorting!]
 		where: FaqPageFilter
 	): [FaqPage!]!
+	allHomePage(
+		"""
+		Max documents to return
+		"""
+		limit: Int
+
+		"""
+		Offset at which to start returning documents from
+		"""
+		offset: Int
+		sort: [HomePageSorting!]
+		where: HomePageFilter
+	): [HomePage!]!
 	allSanityFileAsset(
 		"""
 		Max documents to return

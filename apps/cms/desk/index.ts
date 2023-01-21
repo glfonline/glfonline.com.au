@@ -5,6 +5,7 @@ import type { ListItemBuilder, StructureResolver } from 'sanity/desk';
 
 import { aboutPage } from './about';
 import { faqPage } from './faq';
+import { homePage } from './home';
 import { ladiesPage } from './ladies';
 import { mensPage } from './mens';
 import { testimonialsPage } from './testimonials';
@@ -29,15 +30,20 @@ const hiddenDocTypes = (listItem: ListItemBuilder) => {
 		return false;
 	}
 
-	return !['aboutPage', 'faqPage', 'testimonialsPage', 'themePage'].includes(
-		id
-	);
+	return ![
+		'aboutPage',
+		'faqPage',
+		'homePage',
+		'testimonialsPage',
+		'themePage',
+	].includes(id);
 };
 
 export const structure: StructureResolver = (S, context) =>
 	S.list()
 		.title('Content')
 		.items([
+			homePage(S, context),
 			ladiesPage(S, context),
 			mensPage(S, context),
 			S.divider(),

@@ -1,5 +1,9 @@
+import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
+import { json } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { Fragment } from 'react';
+import { z } from 'zod';
 
 import { BrandsWeLove } from '~/components/brands-we-love';
 import { ContactForm } from '~/components/contact-form';
@@ -10,9 +14,23 @@ import { Divider } from '~/components/divider';
 import { Map } from '~/components/map';
 import { NewsletterSignup } from '~/components/newsletter-signup';
 import { VerticalLogo } from '~/components/vectors/vertical-logo';
+import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
+import { PortableText } from '~/lib/portable-text';
+import { urlFor } from '~/lib/sanity-image';
 import { type Theme } from '~/types';
 
 export { action } from '../lib/actions';
+
+const HomePageSchema = z.object({
+	heroImage: imageWithAltSchema,
+	heading: z.array(z.string()),
+	descriptionRaw: z.any(),
+});
+
+export async function loader() {
+	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
+	return json(HomePageSchema.parse(HomePage));
+}
 
 export default function Index() {
 	return (
@@ -30,30 +48,41 @@ export default function Index() {
 }
 
 function Hero() {
+	const { heroImage, heading, descriptionRaw } = useLoaderData<typeof loader>();
 	return (
 		<div className="mx-auto flex w-full max-w-7xl flex-col-reverse md:flex-row">
 			<div className="bg-white px-4 py-12 sm:px-6 md:w-80 lg:px-8">
 				<div className="flex flex-col gap-6 px-4">
 					<VerticalLogo className="mx-auto hidden w-full max-w-xs text-black md:block" />
 					<h1 className={getHeadingStyles({ size: '2' })}>
-						Top brand <br />
-						golf apparel <br />
-						and accessories for women <br />
-						and men
+						{heading.map((line, index) => (
+							<Fragment key={index}>
+								{line}
+								{index !== heading.length - 1 && <br aria-hidden="true" />}
+							</Fragment>
+						))}
 					</h1>
 					<Divider />
-					<p className="text-gray-700">
-						GLF Online is the online specialist in golf apparel, clothing,
-						accessories, and everything golfing for men's and women's needs.
-						Head onto our website to get all your golfing needs.
-					</p>
+					<div className="prose">
+						<PortableText value={descriptionRaw} />
+					</div>
 				</div>
 			</div>
 			<div className="flex-1">
 				<img
-					src="https://www.glfonline.com.au/static/f518567202484cf10f66dd8a1e3764d3/06525/hero2.webp"
+					src={urlFor({
+						_ref: heroImage.asset._id,
+						crop: heroImage.asset.crop,
+						hotspot: heroImage.asset.hotspot,
+					})
+						.auto('format')
+						.width(960)
+						.height(785)
+						.focalPoint(0.5, 0.5)
+						.dpr(3)
+						.url()}
 					className="h-full w-full object-cover"
-					alt=""
+					alt={heroImage.asset.altText ?? ''}
 				/>
 			</div>
 		</div>
