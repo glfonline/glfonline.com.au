@@ -148,15 +148,15 @@ export default function CollectionPage() {
 function CollectionFilters() {
 	const { options } = useLoaderData<typeof loader>();
 	return (
-		<div className="flex w-full flex-wrap items-center justify-between gap-x-10 px-4 sm:justify-start sm:px-6 lg:px-8">
+		<div className="flex w-full flex-wrap items-center justify-between gap-x-10 gap-y-4 px-4 sm:grid sm:grid-cols-2 sm:justify-start sm:px-6 lg:grid-cols-4 lg:px-8">
 			{options.map((option) => (
-				<div key={option.name} className="w-full sm:w-auto sm:flex-1">
+				<div key={option.name} className="w-full">
 					<Field label={`Filter by ${option.name}`}>
 						<Select
 							name={option.name}
 							defaultValue="All"
 							options={[
-								{ label: `All ${option.name}`, value: 'All' },
+								{ label: 'View All', value: 'All' },
 								...option.values.map((value) => ({
 									label: value,
 									value,
