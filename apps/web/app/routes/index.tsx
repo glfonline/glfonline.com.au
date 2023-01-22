@@ -12,12 +12,13 @@ import { Heading } from '~/components/design-system/heading';
 import { getHeadingStyles } from '~/components/design-system/heading/get-heading-styles';
 import { Divider } from '~/components/divider';
 import { Map } from '~/components/map';
-import { NewsletterSignup } from '~/components/newsletter-signup';
 import { VerticalLogo } from '~/components/vectors/vertical-logo';
 import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
 import { type Theme } from '~/types';
+
+import { NewsletterSignup } from './newsletter/subscribe';
 
 export { action } from '../lib/actions';
 

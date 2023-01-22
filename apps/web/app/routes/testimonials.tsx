@@ -8,10 +8,11 @@ import { z } from 'zod';
 
 import { Hero } from '~/components/hero';
 import { Map } from '~/components/map';
-import { NewsletterSignup } from '~/components/newsletter-signup';
 import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
+
+import { NewsletterSignup } from './newsletter/subscribe';
 
 const TestimonialsSchema = z.object({
 	heroImage: imageWithAltSchema,
