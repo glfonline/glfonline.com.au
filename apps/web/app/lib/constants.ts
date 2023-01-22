@@ -12,6 +12,7 @@ import travisMatthews from '../images/brand-logos/travis-matthews.svg';
 
 export const CHANTALE_PHONE = '0431 248 847';
 export const GORDON_PHONE = '0401 726 598';
+export const WEB_ADDRESS = 'https://www.glfonline.com.au';
 export const EMAIL_ADDRESS = 'info@glfonline.com.au';
 export const CONTACT_NUMBERS = [
 	{
