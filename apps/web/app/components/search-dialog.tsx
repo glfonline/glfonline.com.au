@@ -8,7 +8,7 @@ import { Fragment, useState } from 'react';
 
 import { makeProductHref } from '~/lib/make-product-href';
 import { makeProductImage } from '~/lib/make-product-image';
-import { type Product, useProduct } from '~/lib/use-products';
+import { type Product, useAlgoliaSearch } from '~/lib/use-algolia-search';
 
 import { Spinner } from './design-system/spinner';
 
@@ -21,7 +21,7 @@ export function SearchDialog({
 }) {
 	const navigate = useNavigate();
 	const [query, setQuery] = useState('');
-	const { data, isLoading, isPreviousData } = useProduct(query);
+	const { data, isLoading, isPreviousData } = useAlgoliaSearch(query);
 
 	return (
 		<Transition.Root

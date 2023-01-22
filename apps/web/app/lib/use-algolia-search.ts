@@ -18,7 +18,7 @@ export type Product = {
 	};
 };
 
-export function useProduct(query: string) {
+export function useAlgoliaSearch(query: string) {
 	return useQuery({
 		queryKey: ['products', query],
 		queryFn: async () => {
