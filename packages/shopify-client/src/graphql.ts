@@ -243,6 +243,39 @@ export const COLLECTION_QUERY = gql`
 	}
 ` as import('../__generated__/ts-gql/COLLECTION_QUERY').type;
 
+export const COLLECTION_OPTIONS_QUERY = gql`
+	query COLLECTION_OPTIONS_QUERY(
+		$after: String
+		$collectionHandle: String
+		$first: Int = 250
+	) {
+		collection(handle: $collectionHandle) {
+			id
+			products(
+				after: $after
+				filters: { available: true }
+				first: $first
+				sortKey: BEST_SELLING
+			) {
+				pageInfo {
+					endCursor
+					hasNextPage
+				}
+				edges {
+					node {
+						id
+						options {
+							id
+							name
+							values
+						}
+					}
+				}
+			}
+		}
+	}
+` as import('../__generated__/ts-gql/COLLECTION_OPTIONS_QUERY').type;
+
 export const GET_PRODUCT_VARIANTS_QUERY = gql`
 	query GET_PRODUCT_VARIANTS_QUERY($ids: [ID!]!) {
 		nodes(ids: $ids) {

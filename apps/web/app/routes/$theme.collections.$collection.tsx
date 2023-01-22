@@ -14,6 +14,7 @@ import { Field } from '~/components/design-system/field';
 import { Select } from '~/components/design-system/select';
 import { Hero } from '~/components/hero';
 import { formatMoney } from '~/lib/format-money';
+import { getProductFilterOptions } from '~/lib/get-product-filter-options';
 import {
 	getProductsFromCollectionByTag,
 	useCollectionProducts,
@@ -31,14 +32,36 @@ const ITEMS_PER_PAGE = 32;
 export async function loader({ params }: DataFunctionArgs) {
 	const { collection: collectionHandle, theme } =
 		CollectionSchema.parse(params);
-	const { image, products, title, pageInfo } =
-		await getProductsFromCollectionByTag({
+
+	const [collectionPromise, optionsPromise] = await Promise.allSettled([
+		getProductsFromCollectionByTag({
 			collectionHandle,
 			theme,
 			itemsPerPage: ITEMS_PER_PAGE,
-		});
+		}),
+		getProductFilterOptions({ collectionHandle, first: 250 }),
+	]);
 
-	return json({ collectionHandle, image, products, theme, title });
+	/** Collection data */
+	if (collectionPromise.status === 'rejected') {
+		throw json({ error: collectionPromise.reason }, { status: 404 });
+	}
+	const { products, image, title } = collectionPromise.value;
+
+	/** Options data */
+	if (optionsPromise.status === 'rejected') {
+		throw json({ error: optionsPromise.reason }, { status: 404 });
+	}
+	const options = optionsPromise.value;
+
+	return json({
+		collectionHandle,
+		image,
+		options,
+		products,
+		theme,
+		title,
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -52,6 +75,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 export default function CollectionPage() {
 	const { theme, collectionHandle, title, image, products } =
 		useLoaderData<typeof loader>();
+
 	const { data, fetchNextPage, isFetching } = useCollectionProducts({
 		collectionHandle,
 		theme,
@@ -74,10 +98,7 @@ export default function CollectionPage() {
 		<div data-theme={theme} className="flex flex-col gap-12 py-9">
 			<Hero
 				title={title}
-				image={{
-					url: image?.url ?? '',
-					alt: image?.altText ?? '',
-				}}
+				image={{ url: image?.url ?? '', alt: image?.altText ?? '' }}
 			/>
 			<CollectionFilters />
 			<ul className="grid gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
@@ -125,49 +146,26 @@ export default function CollectionPage() {
 }
 
 function CollectionFilters() {
+	const { options } = useLoaderData<typeof loader>();
 	return (
 		<div className="flex w-full flex-wrap items-center justify-between gap-x-10 px-4 sm:justify-start sm:px-6 lg:px-8">
-			<div className="w-full sm:w-auto">
-				<Field label="Filter by size">
-					<Select
-						name="filter_by_product_size"
-						id="filter_by_product_size"
-						defaultValue="All Sizes"
-						options={[
-							{ label: 'All Sizes', value: 'All' },
-							{ label: 'S', value: 'S' },
-							{ label: 'M', value: 'M' },
-							{ label: 'L', value: 'L' },
-							{ label: 'XL', value: 'XL' },
-							{ label: 'XXL', value: 'XXL' },
-							{ label: 'XXXL', value: 'XXXL' },
-							{ label: '30', value: '30' },
-							{ label: '32', value: '32' },
-							{ label: '34', value: '34' },
-							{ label: '36', value: '36' },
-							{ label: '38', value: '38' },
-							{ label: '40', value: '40' },
-							{ label: '42', value: '42' },
-						]}
-					/>
-				</Field>
-			</div>
-			<div className="w-full sm:w-auto">
-				<Field label="Filter by style">
-					<Select
-						name="filter_by_product_style"
-						id="filter_by_product_style"
-						defaultValue="All"
-						options={[
-							{ label: 'All Styles', value: 'All' },
-							{ label: 'Outerwear', value: 'Outerwear' },
-							{ label: 'Pants Mens', value: 'Pants Mens' },
-							{ label: 'Polos Mens', value: 'Polos Mens' },
-							{ label: 'Shorts Mens', value: 'Shorts Mens' },
-						]}
-					/>
-				</Field>
-			</div>
+			{options.map((option) => (
+				<div key={option.name} className="w-full sm:w-auto sm:flex-1">
+					<Field label={`Filter by ${option.name}`}>
+						<Select
+							name={option.name}
+							defaultValue="All"
+							options={[
+								{ label: `All ${option.name}`, value: 'All' },
+								...option.values.map((value) => ({
+									label: value,
+									value,
+								})),
+							]}
+						/>
+					</Field>
+				</div>
+			))}
 		</div>
 	);
 }
