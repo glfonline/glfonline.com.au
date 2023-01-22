@@ -279,7 +279,6 @@ function QuantityPicker({
 	quantity: number;
 	quantityAvailable: number;
 }) {
-	console.log(quantityAvailable);
 	const fetcher = useFetcher();
 
 	return (
