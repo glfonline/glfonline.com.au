@@ -7870,6 +7870,7 @@ union MetafieldReference =
 	  Collection
 	| GenericFile
 	| MediaImage
+	| Metaobject
 	| Page
 	| Product
 	| ProductVariant
@@ -7904,6 +7905,138 @@ type MetafieldReferenceEdge {
 	The item at the end of MetafieldReferenceEdge.
 	"""
 	node: MetafieldReference!
+}
+
+"""
+An instance of a user-defined model based on a MetaobjectDefinition.
+"""
+type Metaobject implements Node {
+	"""
+	Accesses a field of the object by key.
+	"""
+	field(
+		"""
+		The key of the field.
+		"""
+		key: String!
+	): MetaobjectField
+
+	"All object fields with defined values.\nOmitted object keys can be assumed null, and no guarantees are made about field order.\n"
+	fields: [MetaobjectField!]!
+
+	"""
+	The unique handle of the metaobject. Useful as a custom ID.
+	"""
+	handle: String!
+
+	"""
+	A globally-unique identifier.
+	"""
+	id: ID!
+
+	"""
+	The type of the metaobject. Defines the namespace of its associated metafields.
+	"""
+	type: String!
+
+	"""
+	The date and time when the metaobject was last updated.
+	"""
+	updatedAt: DateTime!
+}
+
+"An auto-generated type for paginating through multiple Metaobjects.\n"
+type MetaobjectConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [MetaobjectEdge!]!
+
+	"""
+	A list of the nodes contained in MetaobjectEdge.
+	"""
+	nodes: [Metaobject!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one Metaobject and a cursor during pagination.\n"
+type MetaobjectEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of MetaobjectEdge.
+	"""
+	node: Metaobject!
+}
+
+"""
+Provides the value of a Metaobject field.
+"""
+type MetaobjectField {
+	"""
+	The field key.
+	"""
+	key: String!
+
+	"""
+	A referenced object if the field type is a resource reference.
+	"""
+	reference: MetafieldReference
+
+	"""
+	A list of referenced objects if the field type is a resource reference list.
+	"""
+	references(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+	): MetafieldReferenceConnection
+
+	"The type name of the field.\nSee the list of [supported types](https://shopify.dev/apps/metafields/definitions/types).\n"
+	type: String!
+
+	"""
+	The field value.
+	"""
+	value: String
+}
+
+"""
+The input fields used to retrieve a metaobject by handle.
+"""
+input MetaobjectHandleInput {
+	"""
+	The handle of the metaobject.
+	"""
+	handle: String!
+
+	"""
+	The type of the metaobject.
+	"""
+	type: String!
 }
 
 """
@@ -8617,6 +8750,11 @@ type Order implements HasMetafields & Node {
 	The total of all taxes applied to the order, excluding taxes for returned line items.
 	"""
 	currentTotalTax: MoneyV2!
+
+	"""
+	A list of the custom attributes added to the order.
+	"""
+	customAttributes: [Attribute!]!
 
 	"""
 	The locale code in which this specific order happened.
@@ -9823,6 +9961,11 @@ input ProductFilter {
 	productVendor: String
 
 	"""
+	A product tag to filter on.
+	"""
+	tag: String
+
+	"""
 	A variant metafield to filter on.
 	"""
 	variantMetafield: MetafieldFilter
@@ -10103,6 +10246,11 @@ type ProductVariant implements HasMetafields & Node {
 		Returns up to the last `n` elements from the list.
 		"""
 		last: Int
+
+		"""
+		Used to sort results based on proximity to the provided location.
+		"""
+		near: GeoCoordinateInput
 
 		"""
 		Reverse the order of the underlying list.
@@ -10435,6 +10583,61 @@ type QueryRoot {
 	): Menu
 
 	"""
+	Fetch a specific Metaobject by one of its unique identifiers.
+	"""
+	metaobject(
+		"""
+		The handle and type of the metaobject.
+		"""
+		handle: MetaobjectHandleInput
+
+		"""
+		The ID of the metaobject.
+		"""
+		id: ID
+	): Metaobject
+
+	"""
+	All active metaobjects for the shop.
+	"""
+	metaobjects(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+
+		"""
+		Reverse the order of the underlying list.
+		"""
+		reverse: Boolean = false
+
+		"""
+		The key of a field to sort with. Supports "id" and "updated_at".
+		"""
+		sortKey: String
+
+		"""
+		The type of metaobject to retrieve.
+		"""
+		type: String!
+	): MetaobjectConnection!
+
+	"""
 	Returns a specific node by ID.
 	"""
 	node(
@@ -10639,6 +10842,9 @@ type QueryRoot {
 		Returns up to the last `n` elements from the list.
 		"""
 		last: Int
+
+		"Supported filter parameters:\n - `created_at`\n - `path`\n - `target`\n\nSee the detailed [search syntax](https://shopify.dev/api/usage/search-syntax)\nfor more information about using filters.\n"
+		query: String
 
 		"""
 		Reverse the order of the underlying list.
