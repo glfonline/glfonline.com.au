@@ -1,8 +1,8 @@
-import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import {
-type DataFunctionArgs,
+	type DataFunctionArgs,
 	type MetaFunction,
-	json} from '@remix-run/node';
+	json,
+} from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
@@ -11,86 +11,14 @@ import { Field } from '~/components/design-system/field';
 import { Select } from '~/components/design-system/select';
 import { Hero } from '~/components/hero';
 import { formatMoney } from '~/lib/format-money';
+import { getProductsFromCollectionByTag } from '~/lib/get-products-from-collection-by-tag';
 import { getSeoMeta } from '~/seo';
 import type { Maybe } from '~/types';
-
-type Products = NonNullable<
-	(typeof COLLECTION_QUERY)['___type']['result']['collection']
->['products']['edges'];
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
 	theme: z.enum(['ladies', 'mens']),
 });
-
-async function getProductsFromCollectionByTag({
-	collectionHandle,
-	theme,
-	itemsPerPage = 32,
-}: {
-	collectionHandle: string;
-	theme: string;
-	itemsPerPage?: number;
-}) {
-	let products: Products = [];
-	let title = '';
-	let image:
-		| {
-				altText: string;
-				url: string;
-		  }
-		| undefined;
-	async function getProductsFromQuery() {
-		let newCursor: Maybe<string>;
-		async function getNextProds(cursor: string | null) {
-			try {
-				const { collection } = await shopifyClient(COLLECTION_QUERY, {
-					collectionHandle,
-					after: cursor,
-				});
-
-				if (!collection) throw json('Collection not found', { status: 404 });
-
-				products = [
-					...products,
-					...(collection?.products.edges.filter(({ node }) =>
-						node.tags
-							.map((tag) => tag.toLocaleLowerCase())
-							.includes(theme.toLocaleLowerCase())
-					) ?? []),
-				];
-
-				if (
-					products.length < itemsPerPage &&
-					collection?.products.pageInfo.hasNextPage
-				) {
-					newCursor = collection?.products.pageInfo.endCursor;
-					await getNextProds(newCursor);
-				}
-
-				if (!title) title = collection?.title ?? '';
-				if (!image)
-					image = {
-						altText: collection?.image?.altText ?? '',
-						url: collection?.image?.url ?? '',
-					};
-			} catch (error) {
-				/** @todo */
-				console.error(error);
-			}
-		}
-
-		await getNextProds(null);
-	}
-
-	await getProductsFromQuery();
-
-	return {
-		products: products.slice(0, itemsPerPage),
-		title,
-		image,
-	};
-}
 
 export async function loader({ params }: DataFunctionArgs) {
 	const { collection: collectionHandle, theme } =

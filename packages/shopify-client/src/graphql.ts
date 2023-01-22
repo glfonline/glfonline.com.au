@@ -211,11 +211,6 @@ export const COLLECTION_QUERY = gql`
 					node {
 						id
 						availableForSale
-						compareAtPriceRange {
-							minVariantPrice {
-								amount
-							}
-						}
 						description
 						featuredImage {
 							id
