@@ -2,7 +2,8 @@ import { Fragment } from 'react';
 
 import { ContactForm } from '~/components/contact-form';
 import { Map } from '~/components/map';
-import { NewsletterSignup } from '~/components/newsletter-signup';
+
+import { NewsletterSignup } from './newsletter/subscribe';
 
 export { action } from '../lib/actions';
 
