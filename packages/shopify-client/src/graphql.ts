@@ -188,7 +188,11 @@ export const PRODUCTS_QUERY = gql`
 ` as import('../__generated__/ts-gql/PRODUCTS_QUERY').type;
 
 export const COLLECTION_QUERY = gql`
-	query COLLECTION_QUERY($after: String, $collectionHandle: String) {
+	query COLLECTION_QUERY(
+		$after: String
+		$collectionHandle: String
+		$first: Int = 250
+	) {
 		collection(handle: $collectionHandle) {
 			id
 			title
@@ -199,9 +203,9 @@ export const COLLECTION_QUERY = gql`
 			}
 			products(
 				after: $after
-				first: 250
-				sortKey: BEST_SELLING
 				filters: { available: true }
+				first: $first
+				sortKey: BEST_SELLING
 			) {
 				pageInfo {
 					endCursor

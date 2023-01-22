@@ -5,13 +5,19 @@ import {
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
+import { Fragment, useEffect } from 'react';
+import { useInView } from 'react-intersection-observer';
 import { z } from 'zod';
 
+import { Button } from '~/components/design-system/button';
 import { Field } from '~/components/design-system/field';
 import { Select } from '~/components/design-system/select';
 import { Hero } from '~/components/hero';
 import { formatMoney } from '~/lib/format-money';
-import { getProductsFromCollectionByTag } from '~/lib/get-products-from-collection-by-tag';
+import {
+	getProductsFromCollectionByTag,
+	useCollectionProducts,
+} from '~/lib/use-collection-products';
 import { getSeoMeta } from '~/seo';
 import type { Maybe } from '~/types';
 
@@ -20,15 +26,19 @@ const CollectionSchema = z.object({
 	theme: z.enum(['ladies', 'mens']),
 });
 
+const ITEMS_PER_PAGE = 32;
+
 export async function loader({ params }: DataFunctionArgs) {
 	const { collection: collectionHandle, theme } =
 		CollectionSchema.parse(params);
-	const { image, products, title } = await getProductsFromCollectionByTag({
-		collectionHandle,
-		theme,
-	});
+	const { image, products, title, pageInfo } =
+		await getProductsFromCollectionByTag({
+			collectionHandle,
+			theme,
+			itemsPerPage: ITEMS_PER_PAGE,
+		});
 
-	return json({ image, products, theme, title });
+	return json({ collectionHandle, image, products, theme, title });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -40,7 +50,25 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function CollectionPage() {
-	const { image, products, theme, title } = useLoaderData<typeof loader>();
+	const { theme, collectionHandle, title, image, products } =
+		useLoaderData<typeof loader>();
+	const { data, fetchNextPage, isFetching } = useCollectionProducts({
+		collectionHandle,
+		theme,
+		itemsPerPage: ITEMS_PER_PAGE,
+		// @ts-ignore
+		initialData: { products, image, title },
+	});
+	const hasNextPage =
+		data?.pages[data?.pages.length - 1]?.pageInfo?.hasNextPage;
+
+	const { ref, inView } = useInView();
+
+	useEffect(() => {
+		if (inView && hasNextPage && !isFetching) {
+			fetchNextPage();
+		}
+	}, [fetchNextPage, hasNextPage, inView, isFetching]);
 
 	return (
 		<div data-theme={theme} className="flex flex-col gap-12 py-9">
@@ -53,24 +81,45 @@ export default function CollectionPage() {
 			/>
 			<CollectionFilters />
 			<ul className="grid gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
-				{products.map(({ node }) => (
-					<li key={node.id}>
-						<ProductCard
-							featuredImage={{
-								url: node.featuredImage?.url ?? '',
-								altText: node.featuredImage?.altText ?? '',
-							}}
-							theme={theme}
-							handle={node.handle}
-							price={{
-								amount: node.priceRange.minVariantPrice.amount ?? 0,
-								currencyCode: 'AUD',
-							}}
-							title={node.title}
-						/>
-					</li>
-				))}
+				{data?.pages.map((page, index) => {
+					const themedProducts =
+						page?.products?.filter(({ node }) =>
+							node.tags.map((tag) => tag.toLocaleLowerCase()).includes(theme)
+						) || [];
+					return (
+						<Fragment key={index}>
+							{themedProducts.map(({ node }) => (
+								<li key={node.id}>
+									<ProductCard
+										featuredImage={{
+											url: node.featuredImage?.url ?? '',
+											altText: node.featuredImage?.altText ?? '',
+										}}
+										theme={theme}
+										handle={node.handle}
+										price={{
+											amount: Number(node.priceRange.minVariantPrice.amount),
+											currencyCode: 'AUD',
+										}}
+										title={node.title}
+									/>
+								</li>
+							))}
+						</Fragment>
+					);
+				})}
 			</ul>
+			<div ref={ref} className="flex flex-col items-center justify-center">
+				{hasNextPage && (
+					<Button
+						variant="neutral"
+						onClick={() => fetchNextPage()}
+						isLoading={isFetching}
+					>
+						{isFetching ? 'Loading' : 'Load More'}
+					</Button>
+				)}
+			</div>
 		</div>
 	);
 }

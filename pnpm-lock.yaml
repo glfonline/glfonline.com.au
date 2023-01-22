@@ -87,6 +87,7 @@ importers:
       prettier-plugin-tailwindcss: ^0.2.1
       react: ^18.2.0
       react-dom: ^18.2.0
+      react-intersection-observer: ^9.4.1
       react-zorm: ^0.6.1
       remix: ^1.10.1
       remix-seo: ^0.1.0
@@ -118,6 +119,7 @@ importers:
       emery: 1.4.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
+      react-intersection-observer: 9.4.1_react@18.2.0
       react-zorm: 0.6.1_eojommdqom4wcqudtdbwb4awse
       remix-seo: 0.1.0_el7zvavah2elfhlwwkrdy5tjsy
       zod: 3.20.2
@@ -11538,6 +11540,14 @@ packages:
       react-clientside-effect: 1.2.6_react@18.2.0
       use-callback-ref: 1.3.0_react@18.2.0
       use-sidecar: 1.1.2_react@18.2.0
+    dev: false
+
+  /react-intersection-observer/9.4.1_react@18.2.0:
+    resolution: {integrity: sha512-IXpIsPe6BleFOEHKzKh5UjwRUaz/JYS0lT/HPsupWEQou2hDqjhLMStc5zyE3eQVT4Fk3FufM8Fw33qW1uyeiw==}
+    peerDependencies:
+      react: ^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
+    dependencies:
+      react: 18.2.0
     dev: false
 
   /react-is/16.13.1:
