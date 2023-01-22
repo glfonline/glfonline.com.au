@@ -9,12 +9,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 		{
 			className,
 			defaultValue,
-			name,
-			onBlur,
-			onChange,
 			options: optionsOrGroups,
 			placeholder,
-			required,
 			value,
 			...consumerProps
 		},
@@ -39,6 +35,8 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 				<select
 					{...consumerProps}
 					{...a11yProps}
+					defaultValue={defaultValue}
+					value={value}
 					disabled={disabled}
 					ref={forwardedRef}
 					className={clsx(
