@@ -3,8 +3,8 @@ import { isDefined } from 'emery/guards';
 import { forwardRef } from 'react';
 
 import {
-	type HeadingVariantProps,
 	getHeadingStyles,
+	type HeadingVariantProps,
 } from './get-heading-styles';
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(

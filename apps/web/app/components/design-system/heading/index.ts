@@ -1,5 +1,5 @@
 export {
-	type HeadingVariantProps,
 	getHeadingStyles,
+	type HeadingVariantProps,
 } from './get-heading-styles';
-export { type HeadingProps, Heading } from './heading';
+export { Heading, type HeadingProps } from './heading';

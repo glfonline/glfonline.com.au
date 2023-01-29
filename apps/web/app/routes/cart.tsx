@@ -7,8 +7,8 @@ import {
 } from '@heroicons/react/20/solid';
 import {
 	type ActionArgs,
-	type LoaderArgs,
 	json,
+	type LoaderArgs,
 	redirect,
 } from '@remix-run/node';
 import {
