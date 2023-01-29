@@ -5,7 +5,7 @@ import { CheckCircleIcon } from '~/components/vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '~/components/vectors/exclamation-circle-icon';
 import { mergeIds } from '~/lib/merge-ids';
 
-import { type FieldContextType, FieldContextProvider } from './context';
+import { FieldContextProvider, type FieldContextType } from './context';
 
 export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 	{

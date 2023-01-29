@@ -1,7 +1,7 @@
 import {
 	type DataFunctionArgs,
-	type MetaFunction,
 	json,
+	type MetaFunction,
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
