@@ -85,6 +85,17 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
  * Queries
  */
 
+export const LEGAL_PAGE_QUERY = gql`
+	query LEGAL_PAGE_QUERY($handle: String) {
+		page(handle: $handle) {
+			id
+			body
+			bodySummary
+			title
+		}
+	}
+` as import('../__generated__/ts-gql/LEGAL_PAGE_QUERY').type;
+
 export const SINGLE_PRODUCT_QUERY = gql`
 	query SINGLE_PRODUCT_QUERY($handle: String!) {
 		product(handle: $handle) {
