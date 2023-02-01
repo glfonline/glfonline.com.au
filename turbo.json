@@ -13,7 +13,7 @@
 		},
 		"@glfonline/web#build": {
 			"dependsOn": ["^build"],
-			"env": ["ENCRYPTION_KEY", "NODE_ENV"],
+			"env": ["ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_PASSWORD"],
 			"outputs": ["api/index.js", "api/build/**", "public/build/**"]
 		},
 		"check:types": {

@@ -23,7 +23,6 @@ import { z } from 'zod';
 
 import { Button, ButtonLink } from '~/components/design-system/button';
 import { Heading } from '~/components/design-system/heading';
-import { INTENT } from '~/lib/actions';
 import { getSession, removeCartItem, updateCartItem } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { getCartInfo } from '~/lib/get-cart-info';
@@ -37,6 +36,8 @@ export async function loader({ request }: LoaderArgs) {
 		{ headers: { 'Set-Cookie': await session.commitSession() } }
 	);
 }
+
+const INTENT = 'intent';
 
 const CHECKOUT_ACTION = 'checkout';
 const CheckoutScheme = z.object({
