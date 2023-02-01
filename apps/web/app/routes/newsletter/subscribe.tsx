@@ -8,6 +8,7 @@ import { Button } from '~/components/design-system/button';
 import { Field } from '~/components/design-system/field';
 import { Heading } from '~/components/design-system/heading';
 import { TextInput } from '~/components/design-system/text-input';
+import { mergeRefs } from '~/lib/merge-refs';
 import { type FormResponse } from '~/types';
 
 export const NewsletterSchema = z.object({
@@ -74,7 +75,7 @@ export function NewsletterSignup() {
 				</Heading>
 				<span className="sr-only">Sign up for our newsletter</span>
 				<fetcher.Form
-					ref={ref}
+					ref={mergeRefs(ref, form.ref)}
 					action="/newsletter/subscribe"
 					method="post"
 					name="newsletter_signup_form"
@@ -131,13 +132,7 @@ export function NewsletterSignup() {
 							</fieldset>
 						</div>
 
-						<Button
-							type="submit"
-							variant="neutral"
-							className="sm:col-span-4"
-							name="intent"
-							value="newsletter_signup"
-						>
+						<Button type="submit" variant="neutral" className="sm:col-span-4">
 							Join
 						</Button>
 					</div>

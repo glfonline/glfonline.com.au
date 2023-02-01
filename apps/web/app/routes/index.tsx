@@ -6,7 +6,6 @@ import { Fragment } from 'react';
 import { z } from 'zod';
 
 import { BrandsWeLove } from '~/components/brands-we-love';
-import { ContactForm } from '~/components/contact-form';
 import { ButtonLink } from '~/components/design-system/button';
 import { Heading } from '~/components/design-system/heading';
 import { getHeadingStyles } from '~/components/design-system/heading/get-heading-styles';
@@ -18,9 +17,8 @@ import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
 import { type Theme } from '~/types';
 
+import { ContactForm } from './contact';
 import { NewsletterSignup } from './newsletter/subscribe';
-
-export { action } from '../lib/actions';
 
 const HomePageSchema = z.object({
 	heroImage: imageWithAltSchema,
