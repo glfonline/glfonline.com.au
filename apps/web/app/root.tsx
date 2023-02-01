@@ -55,9 +55,11 @@ export default function App() {
 	const location = useLocation();
 
 	useEffect(() => {
-		gtag.trackingIds.forEach((id) => {
-			gtag.pageview(location.pathname, id);
-		});
+		if (process.env.NODE_ENV !== 'development') {
+			gtag.trackingIds.forEach((id) => {
+				gtag.pageview(location.pathname, id);
+			});
+		}
 	}, [location.pathname]);
 
 	return (
