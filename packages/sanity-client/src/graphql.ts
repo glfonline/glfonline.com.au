@@ -30,6 +30,54 @@ export const IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT = gql`
  * Queries
  */
 
+export const BLOG_POST_QUERY = gql`
+	query BLOG_POST_QUERY($slug: String!) {
+		allPost(where: { slug: { current: { eq: $slug } } }) {
+			_id
+			author {
+				name
+			}
+			bodyRaw
+			categories {
+				title
+			}
+			mainImage {
+				...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+			}
+			publishedAt
+			slug {
+				current
+			}
+			title
+		}
+	}
+	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
+` as import('../__generated__/ts-gql/BLOG_POST_QUERY').type;
+
+export const BLOG_PAGE_QUERY = gql`
+	query BLOG_PAGE_QUERY($limit: Int = 5, $offset: Int = 0) {
+		allPost(limit: $limit, offset: $offset, sort: { publishedAt: DESC }) {
+			_id
+			author {
+				name
+			}
+			bodyRaw
+			categories {
+				title
+			}
+			mainImage {
+				...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+			}
+			publishedAt
+			slug {
+				current
+			}
+			title
+		}
+	}
+	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
+` as import('../__generated__/ts-gql/BLOG_PAGE_QUERY').type;
+
 export const HOME_PAGE_QUERY = gql`
 	query HOME_PAGE_QUERY($id: ID! = "home") {
 		HomePage(id: $id) {

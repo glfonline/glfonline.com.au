@@ -2,6 +2,8 @@ import { LEGAL_PAGE_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 
+import { PageLayout } from '~/components/page-layout';
+
 export async function loader() {
 	const { page } = await shopifyClient(LEGAL_PAGE_QUERY, {
 		handle: 'terms-and-conditions',
@@ -15,13 +17,5 @@ export async function loader() {
 
 export default function Page() {
 	const { page } = useLoaderData<typeof loader>();
-
-	return (
-		<div className="bg-white">
-			<div
-				className="prose mx-auto px-4 py-12 sm:px-6 sm:py-16 lg:px-8"
-				dangerouslySetInnerHTML={{ __html: page.body }}
-			/>
-		</div>
-	);
+	return <PageLayout innerHtml={page.body} />;
 }

@@ -17,7 +17,7 @@ import { PhoneIcon } from './vectors/phone-icon';
 
 export function Footer() {
 	return (
-		<footer className="bg-white">
+		<footer className="flex-shrink-0 bg-white">
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="mx-auto grid items-start py-12 md:grid-cols-5 md:justify-between">
 					<div className="flex flex-col md:col-span-3 md:flex-row">

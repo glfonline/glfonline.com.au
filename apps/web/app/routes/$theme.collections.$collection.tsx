@@ -13,12 +13,12 @@ import { Button } from '~/components/design-system/button';
 import { Field } from '~/components/design-system/field';
 import { Select } from '~/components/design-system/select';
 import { Hero } from '~/components/hero';
-import { formatMoney } from '~/lib/format-money';
-import { getProductFilterOptions } from '~/lib/get-product-filter-options';
 import {
 	getProductsFromCollectionByTag,
 	useCollectionProducts,
-} from '~/lib/use-collection-products';
+} from '~/lib/fetch-collection-products';
+import { formatMoney } from '~/lib/format-money';
+import { getProductFilterOptions } from '~/lib/get-product-filter-options';
 import { getSeoMeta } from '~/seo';
 import type { Maybe } from '~/types';
 
