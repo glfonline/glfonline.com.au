@@ -60,13 +60,13 @@ function PostList({
 	const hasNextPage = data?.pages.at(-1)?.length === POSTS_LIMIT;
 
 	return (
-		<div className="mx-auto max-w-7xl">
+		<div className="mx-auto flex max-w-7xl flex-col gap-8">
 			<div className="flex">
 				<h1 className={getHeadingStyles({ size: '2' })}>
 					Stay connected with our blogs
 				</h1>
 			</div>
-			<section className="mt-8 pb-16" aria-labelledby="gallery-heading">
+			<section aria-labelledby="gallery-heading">
 				<h2 id="gallery-heading" className="sr-only">
 					Recently viewed
 				</h2>
@@ -97,9 +97,10 @@ function PostList({
 						</Fragment>
 					))}
 				</ul>
-				<div className="flex flex-col items-center justify-center">
+				<div className="flex items-center justify-center pt-16">
 					{hasNextPage && (
 						<Button
+							size="regular"
 							variant="neutral"
 							onClick={() => fetchNextPage()}
 							isLoading={isFetching}
