@@ -21,7 +21,7 @@ export function Header() {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<div className="sticky top-0 z-20 bg-white">
+		<div className="sticky top-0 z-20 flex-shrink-0 bg-white">
 			<MobileMenu open={open} setOpen={setOpen} />
 			<header className="relative">
 				<nav aria-label="Top">

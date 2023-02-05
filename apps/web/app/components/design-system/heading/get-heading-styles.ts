@@ -4,6 +4,7 @@ export const getHeadingStyles = cva('', {
 	variants: {
 		size: {
 			'2': 'text-2xl uppercase leading-tight',
+			'3': 'text-xl uppercase leading-tight',
 		},
 		weight: {
 			normal: 'font-normal',
