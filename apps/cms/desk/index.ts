@@ -50,5 +50,6 @@ export const structure: StructureResolver = (S, context) =>
 			faqPage(S, context),
 			testimonialsPage(S, context),
 			aboutPage(S, context),
+			S.divider(),
 			...S.documentTypeListItems().filter(hiddenDocTypes),
 		]);
