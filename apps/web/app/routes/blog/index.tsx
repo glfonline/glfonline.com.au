@@ -1,26 +1,35 @@
-import { Link } from '@remix-run/react';
+import { json } from '@remix-run/node';
+import { Link, useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 
-import { ButtonLink } from '~/components/design-system/button';
+import { Button, ButtonLink } from '~/components/design-system/button';
 import { getHeadingStyles } from '~/components/design-system/heading';
 import { Hero } from '~/components/hero';
+import { fetchPosts, usePosts } from '~/lib/fetch-blog-posts';
+import type { PortableTextProps } from '~/lib/portable-text';
+import { PortableText } from '~/lib/portable-text';
+import { urlFor } from '~/lib/sanity-image';
 import { type Theme } from '~/types';
 
-const posts = [
-	{
-		author: 'Gordon McCallum',
-		heading: 'GLF Pro Tip 19: Distance For Slower Swing Speeds',
-		excerpt:
-			'If your golf game is distance challenged it could be for many reasons, perhaps due to lack of strength, getting older, taking the game up later in life infact there are many, many explanations for not hitting the ball very far off the tee.',
-		href: '/blogs/tips/golf-ladies-first-tip-no-19-distance-for-slower-swing-speeds',
-		source:
-			'https://cdn.sanity.io/images/elu2en5k/production/1f65c6aa3f12b19e730666474ed50bb44953fbe5-283x178.jpg',
-		publishDate: '2020-12-30',
-		isFeatured: true,
-	},
-];
+const POSTS_LIMIT = 5;
+const POSTS_OFFSET = 0;
+
+export async function loader() {
+	const allPosts = await fetchPosts({
+		limit: POSTS_LIMIT,
+		offset: POSTS_OFFSET,
+	});
+	return json({ allPosts });
+}
 
 export default function Blog() {
+	const { allPosts } = useLoaderData<typeof loader>();
+	const posts = usePosts({
+		limit: POSTS_LIMIT,
+		offset: POSTS_OFFSET,
+		initialData: allPosts,
+	});
+
 	return (
 		<Fragment>
 			<Hero
@@ -32,7 +41,7 @@ export default function Blog() {
 			<div className="relative mx-auto flex w-full justify-center gap-4 px-4 sm:px-6 lg:gap-16 lg:px-8">
 				<div className="flex min-w-0 max-w-4xl flex-auto flex-col py-16 lg:max-w-none">
 					<article className="flex-1">
-						<PostList />
+						<PostList {...posts} />
 					</article>
 				</div>
 				<div className="hidden lg:sticky lg:top-[6.625rem] lg:-mr-6 lg:block lg:h-[calc(100vh-6.625rem)] lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
@@ -43,7 +52,13 @@ export default function Blog() {
 	);
 }
 
-function PostList() {
+function PostList({
+	data,
+	fetchNextPage,
+	isFetching,
+}: Pick<ReturnType<typeof usePosts>, 'data' | 'fetchNextPage' | 'isFetching'>) {
+	const hasNextPage = data?.pages.at(-1)?.length === POSTS_LIMIT;
+
 	return (
 		<div className="mx-auto max-w-7xl">
 			<div className="flex">
@@ -55,41 +70,90 @@ function PostList() {
 				<h2 id="gallery-heading" className="sr-only">
 					Recently viewed
 				</h2>
-				<ul role="list" className="flex flex-col gap-8">
-					{posts.map((post, index) => (
-						<Post key={index} post={post} />
+				<ul role="list" className="grid grid-flow-row auto-rows-fr gap-8">
+					{data?.pages.map((posts, pageIndex) => (
+						<Fragment key={pageIndex}>
+							{posts.map((post, postIndex) => (
+								<Post
+									key={postIndex}
+									imgSrc={urlFor({
+										_ref: post.mainImage.asset._id,
+										crop: post.mainImage.asset.crop,
+										hotspot: post.mainImage.asset.hotspot,
+									})
+										.auto('format')
+										.height(256)
+										.width(256)
+										.focalPoint(0.5, 0.5)
+										.dpr(3)
+										.url()}
+									href={`/blog/${post.slug.current}`}
+									excerpt={post.bodyRaw[0]}
+									heading={post.title}
+									author={post.author.name}
+									publishDate={post.publishedAt}
+								/>
+							))}
+						</Fragment>
 					))}
 				</ul>
+				<div className="flex flex-col items-center justify-center">
+					{hasNextPage && (
+						<Button
+							variant="neutral"
+							onClick={() => fetchNextPage()}
+							isLoading={isFetching}
+						>
+							{isFetching ? 'Loading' : 'Load More'}
+						</Button>
+					)}
+				</div>
 			</section>
 		</div>
 	);
 }
 
-function Post({ post }: { post: (typeof posts)[number] }) {
+type PostProps = {
+	imgSrc: string;
+	href: string;
+	heading: string;
+	excerpt: PortableTextProps['value'];
+	author: string;
+	publishDate: string;
+};
+
+function Post({
+	imgSrc,
+	href,
+	heading,
+	excerpt,
+	author,
+	publishDate,
+}: PostProps) {
 	return (
-		<li key={post.source} className="flex">
-			<Link to={post.href} className="flex flex-col sm:flex-row">
-				<div className="flex h-48 sm:h-auto sm:w-64">
+		<li key={imgSrc} className="flex">
+			<Link to={href} className="flex w-full flex-col sm:flex-row">
+				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<img
-						className="h-full w-full object-cover"
-						src={post.source}
+						className="h-full w-full object-cover sm:absolute sm:inset-0"
+						src={imgSrc}
 						alt=""
 					/>
 				</div>
 				<div className="flex min-w-0 flex-1 flex-col justify-between bg-white p-6">
-					<div className="flex-1">
-						<h3 className={getHeadingStyles({ size: '3' })}>{post.heading}</h3>
-						<div className="prose mt-4">
-							<p className="line-clamp-3">{post.excerpt}</p>
+					<div className="flex flex-1 flex-col gap-4">
+						<h3 className={getHeadingStyles({ size: '3' })}>{heading}</h3>
+						<div className="prose line-clamp-3">
+							<PortableText value={excerpt} />
 						</div>
 					</div>
 					<div className="mt-6 max-w-prose">
 						<p className="text-sm font-bold leading-5 text-gray-900">
-							{post.author}
+							{author}
 						</p>
 						<div className="text-sm font-bold italic text-gray-700">
-							<time dateTime={post.publishDate}>
-								{new Date(post.publishDate).toDateString()}
+							<time dateTime={publishDate}>
+								{new Date(publishDate).toDateString()}
 							</time>
 						</div>
 					</div>
@@ -100,13 +164,36 @@ function Post({ post }: { post: (typeof posts)[number] }) {
 }
 
 function Sidebar() {
-	const featuredPost = posts.find((post) => post.isFeatured);
+	const { allPosts } = useLoaderData<typeof loader>();
+	const featuredPost = allPosts.find((post) =>
+		post.categories?.find((category) => category.title === 'Featured')
+	);
+
 	return (
 		<aside
 			aria-labelledby="featured-posts"
 			className="flex w-80 flex-col gap-8"
 		>
-			{featuredPost && <FeaturedPost featuredPost={featuredPost} />}
+			{featuredPost && (
+				<FeaturedPost
+					imgSrc={urlFor({
+						_ref: featuredPost.mainImage.asset._id,
+						crop: featuredPost.mainImage.asset.crop,
+						hotspot: featuredPost.mainImage.asset.hotspot,
+					})
+						.auto('format')
+						.height(256)
+						.width(256)
+						.focalPoint(0.5, 0.5)
+						.dpr(3)
+						.url()}
+					href={`/blog/${featuredPost.slug.current}`}
+					excerpt={featuredPost.bodyRaw[0]}
+					heading={featuredPost.title}
+					author={featuredPost.author.name}
+					publishDate={featuredPost.publishedAt}
+				/>
+			)}
 			<CTA
 				heading="Shop ladies clothing and accessories"
 				image={{
@@ -135,33 +222,25 @@ function Sidebar() {
 	);
 }
 
-function FeaturedPost({
-	featuredPost,
-}: {
-	featuredPost: (typeof posts)[number];
-}) {
+function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 	return (
 		<article className="flex flex-col gap-8">
 			<h2 id="featured-posts" className={getHeadingStyles({ size: '2' })}>
 				Featured Post
 			</h2>
 			<div className="flex flex-col gap-6">
-				<img
-					src={featuredPost.source}
-					alt=""
-					className="aspect-video object-cover"
-				/>
-				<div className="prose">
-					<p className="line-clamp-3">{featuredPost.excerpt}</p>
+				<img src={imgSrc} alt="" className="aspect-square object-cover" />
+				<div className="prose line-clamp-3">
+					<PortableText value={excerpt} />
 				</div>
 				<div className="flex text-sm">
-					<span className="font-bold">{featuredPost.author}</span>
+					<span className="font-bold">{author}</span>
 					<span aria-hidden className="mx-2">
 						|
 					</span>
 					<span className="text-sm font-bold italic text-gray-700">
-						<time dateTime={featuredPost.publishDate}>
-							{new Date(featuredPost.publishDate).toDateString()}
+						<time dateTime={publishDate}>
+							{new Date(publishDate).toDateString()}
 						</time>
 					</span>
 				</div>
