@@ -76,7 +76,7 @@ export function NewsletterSignup() {
 				<span className="sr-only">Sign up for our newsletter</span>
 				<fetcher.Form
 					ref={mergeRefs(ref, form.ref)}
-					action="/newsletter/subscribe"
+					action="/api/newsletter"
 					method="post"
 					name="newsletter_signup_form"
 					replace

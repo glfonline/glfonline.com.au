@@ -17,8 +17,8 @@ import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
 import { type Theme } from '~/types';
 
-import { ContactForm } from './contact';
-import { NewsletterSignup } from './newsletter/subscribe';
+import { ContactForm } from './api/contact';
+import { NewsletterSignup } from './api/newsletter';
 
 const HomePageSchema = z.object({
 	heroImage: imageWithAltSchema,
