@@ -75,7 +75,6 @@ export const ContactFormSchema = z.object({
 export function ContactForm() {
 	const fetcher = useFetcher<typeof action>();
 	const form = useZorm('contact_form', ContactFormSchema);
-	console.log(fetcher.data);
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
@@ -143,7 +142,12 @@ export function ContactForm() {
 								<Checkbox name={form.fields.agree_to_privacy_policy()} />
 							</InlineField>
 						</div>
-						<Button type="submit" variant="neutral" className="sm:col-span-2">
+						<Button
+							type="submit"
+							variant="neutral"
+							className="sm:col-span-2"
+							isLoading={fetcher.state === 'loading'}
+						>
 							Submit
 						</Button>
 						{fetcher.data?.ok === true && (
