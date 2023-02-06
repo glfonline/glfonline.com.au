@@ -12,7 +12,7 @@ import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
 
-import { NewsletterSignup } from './newsletter/subscribe';
+import { NewsletterSignup } from './api/newsletter';
 
 const AboutSchema = z.object({
 	sections: z.array(
