@@ -1,6 +1,5 @@
 import { type ActionArgs, json } from '@remix-run/node';
 import { useFetcher } from '@remix-run/react';
-import { useEffect, useRef } from 'react';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
@@ -8,7 +7,6 @@ import { Button } from '~/components/design-system/button';
 import { Field } from '~/components/design-system/field';
 import { Heading } from '~/components/design-system/heading';
 import { TextInput } from '~/components/design-system/text-input';
-import { mergeRefs } from '~/lib/merge-refs';
 import { type FormResponse } from '~/types';
 
 export const NewsletterSchema = z.object({
@@ -60,12 +58,6 @@ export async function action({ request }: ActionArgs) {
 export function NewsletterSignup() {
 	const fetcher = useFetcher<typeof action>();
 	const form = useZorm('contact_form', NewsletterSchema);
-	const ref = useRef<HTMLFormElement>(null);
-	useEffect(() => {
-		if (fetcher.type === 'done' && fetcher.data.ok) {
-			ref.current?.reset();
-		}
-	}, [fetcher]);
 
 	return (
 		<article id="signup" className="mx-auto w-full max-w-7xl bg-gray-100">
@@ -75,7 +67,7 @@ export function NewsletterSignup() {
 				</Heading>
 				<span className="sr-only">Sign up for our newsletter</span>
 				<fetcher.Form
-					ref={mergeRefs(ref, form.ref)}
+					ref={form.ref}
 					action="/api/newsletter"
 					method="post"
 					name="newsletter_signup_form"
@@ -132,7 +124,12 @@ export function NewsletterSignup() {
 							</fieldset>
 						</div>
 
-						<Button type="submit" variant="neutral" className="sm:col-span-4">
+						<Button
+							type="submit"
+							variant="neutral"
+							className="sm:col-span-4"
+							isLoading={fetcher.state === 'loading'}
+						>
 							Join
 						</Button>
 					</div>
