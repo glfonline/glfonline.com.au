@@ -13,10 +13,12 @@ function hydrate() {
 	});
 }
 
-if (window.requestIdleCallback) {
-	window.requestIdleCallback(hydrate);
+if (requestIdleCallback) {
+	requestIdleCallback(hydrate);
 } else {
-	// Safari doesn't support requestIdleCallback
-	// https://caniuse.com/requestidlecallback
+	/**
+	 * Safari doesn't support requestIdleCallback
+	 * @see https://caniuse.com/requestidlecallback
+	 */
 	window.setTimeout(hydrate, 1);
 }
