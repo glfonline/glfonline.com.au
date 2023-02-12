@@ -31,41 +31,47 @@ const CollectionSchema = z.object({
 const ITEMS_PER_PAGE = 32;
 
 export async function loader({ params }: DataFunctionArgs) {
-	const { collection: collectionHandle, theme } =
-		CollectionSchema.parse(params);
+	const result = CollectionSchema.safeParse(params);
+	if (result.success) {
+		const { collection: collectionHandle, theme } = result.data;
+		const [collectionPromise, optionsPromise] = await Promise.allSettled([
+			getProductsFromCollectionByTag({
+				collectionHandle,
+				itemsPerPage: ITEMS_PER_PAGE,
+			}),
+			getProductFilterOptions({ collectionHandle, first: 250 }),
+		]);
 
-	const [collectionPromise, optionsPromise] = await Promise.allSettled([
-		getProductsFromCollectionByTag({
+		/** Collection data */
+		if (collectionPromise.status === 'rejected') {
+			throw json('Collection not found', { status: 404 });
+		}
+		const collection = collectionPromise.value;
+		if (!collection || !Array.isArray(collection.products)) {
+			throw json('No products in collection', { status: 404 });
+		}
+
+		/** Options data */
+		if (optionsPromise.status === 'rejected') {
+			throw json('Error fetching options', { status: 500 });
+		}
+		const options = optionsPromise.value;
+
+		return json({
 			collectionHandle,
+			image: collection.image,
+			options,
+			products: collection.products,
 			theme,
-			itemsPerPage: ITEMS_PER_PAGE,
-		}),
-		getProductFilterOptions({ collectionHandle, first: 250 }),
-	]);
-
-	/** Collection data */
-	if (collectionPromise.status === 'rejected') {
-		throw json({ error: collectionPromise.reason }, { status: 404 });
+			title: collection.title,
+		});
 	}
-	const { products, image, title } = collectionPromise.value;
 
-	/** Options data */
-	if (optionsPromise.status === 'rejected') {
-		throw json({ error: optionsPromise.reason }, { status: 404 });
-	}
-	const options = optionsPromise.value;
-
-	return json({
-		collectionHandle,
-		image,
-		options,
-		products,
-		theme,
-		title,
-	});
+	throw json(result.error, { status: 404 });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data?.title) return { title: 'Product not found' };
 	const seoMeta = getSeoMeta({
 		title: `Shop ${data.title}`,
 	});
@@ -74,8 +80,14 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function CollectionPage() {
-	const { theme, collectionHandle, title, image, products } =
-		useLoaderData<typeof loader>();
+	const {
+		//
+		collectionHandle,
+		image,
+		products,
+		theme,
+		title,
+	} = useLoaderData<typeof loader>();
 
 	const { data, fetchNextPage, isFetching } = useCollectionProducts({
 		collectionHandle,
@@ -101,7 +113,7 @@ export default function CollectionPage() {
 				title={title}
 				image={{ url: image?.url ?? '', alt: image?.altText ?? '' }}
 			/>
-			<CollectionFilters />
+			{/* <CollectionFilters /> */}
 			<ul className="grid gap-6 px-4 sm:px-6 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
 				{data?.pages.map((page, index) => {
 					const themedProducts =

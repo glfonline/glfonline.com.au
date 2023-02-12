@@ -9,9 +9,7 @@ export async function loader() {
 		handle: 'terms-and-conditions',
 	});
 
-	if (!page) {
-		throw json({ error: 'Page not found' }, { status: 404 });
-	}
+	if (!page) throw json('Page not found');
 	return json({ page });
 }
 

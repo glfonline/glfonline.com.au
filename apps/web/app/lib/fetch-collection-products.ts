@@ -6,13 +6,11 @@ export function useCollectionProducts({
 	cursor,
 	initialData,
 	itemsPerPage,
-	theme,
 }: {
 	collectionHandle: string;
 	cursor?: string;
 	initialData?: Awaited<ReturnType<typeof getProductsFromCollectionByTag>>;
 	itemsPerPage?: number;
-	theme: string;
 }) {
 	return useInfiniteQuery({
 		queryKey: ['collection-products', collectionHandle, cursor],
@@ -20,7 +18,6 @@ export function useCollectionProducts({
 			await getProductsFromCollectionByTag({
 				collectionHandle,
 				cursor: pageParam,
-				theme,
 				itemsPerPage,
 			}),
 		initialData: {
@@ -36,12 +33,10 @@ export function useCollectionProducts({
 export async function getProductsFromCollectionByTag({
 	collectionHandle,
 	cursor,
-	theme,
 	itemsPerPage,
 }: {
 	collectionHandle: string;
 	cursor?: string;
-	theme: string;
 	itemsPerPage?: number;
 }) {
 	try {
@@ -53,8 +48,8 @@ export async function getProductsFromCollectionByTag({
 
 		return {
 			image: {
-				altText: (collection?.image?.altText ?? '') as string,
-				url: (collection?.image?.url ?? '') as string,
+				altText: collection?.image?.altText ?? undefined,
+				url: (collection?.image?.url as string) ?? undefined,
 			},
 			pageInfo: collection?.products.pageInfo,
 			products: collection?.products.edges,
@@ -63,8 +58,5 @@ export async function getProductsFromCollectionByTag({
 	} catch (error) {
 		/** @todo */
 		console.error(error);
-		return {
-			products: [],
-		};
 	}
 }

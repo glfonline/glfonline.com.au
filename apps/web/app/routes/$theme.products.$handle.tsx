@@ -31,10 +31,15 @@ const CartSchema = z.object({
 });
 
 export async function loader({ params }: DataFunctionArgs) {
-	const { handle, theme } = ProductSchema.parse(params);
-	const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, { handle });
-	if (!product) throw json('Product not found', { status: 404 });
-	return json({ product, theme });
+	const result = ProductSchema.safeParse(params);
+	if (result.success) {
+		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {
+			handle: result.data.handle,
+		});
+		if (!product) throw json('Product not found', { status: 404 });
+		return json({ product, theme: result.data.theme });
+	}
+	throw json('Product not found', { status: 404 });
 }
 
 export async function action({ request }: ActionArgs) {
@@ -52,11 +57,11 @@ export async function action({ request }: ActionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	if (!data.product) return { title: 'Product not found' };
 	const seoMeta = getSeoMeta({
 		title: data.product.title,
 		description: data.product.description,
 	});
-
 	return { ...seoMeta };
 };
 

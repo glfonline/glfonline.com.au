@@ -14,12 +14,8 @@ export async function loader({ params }: LoaderArgs) {
 	const { allPost } = await sanityClient(BLOG_POST_QUERY, {
 		slug: params.slug,
 	});
-
 	const page = PostSchema.parse(allPost[0]);
-
-	if (!page) {
-		throw json({ error: 'Page not found' }, { status: 404 });
-	}
+	if (!page) throw json('Page not found');
 	return json({ page });
 }
 
