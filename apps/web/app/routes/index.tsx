@@ -2,7 +2,7 @@ import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
-import { Fragment } from 'react';
+import { Fragment, useId } from 'react';
 import { z } from 'zod';
 
 import { BrandsWeLove } from '~/components/brands-we-love';
@@ -128,6 +128,7 @@ function CollectionCard({
 	};
 	theme: Theme;
 }) {
+	const id = useId();
 	return (
 		<div className="relative aspect-square">
 			{/** @todo use Sanity tool to create optimised image */}
@@ -143,11 +144,12 @@ function CollectionCard({
 				data-theme={theme}
 				className="from-true-black/50 relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t via-transparent p-8"
 			>
-				<Heading size="2" color="light">
+				<Heading id={id} size="2" color="light">
 					{heading}
 				</Heading>
 				<p className="mx-auto flex w-full max-w-[10rem] flex-col items-stretch text-center">
 					<ButtonLink
+						aria-describedby={id}
 						className="before:absolute before:inset-0"
 						href={cta.href}
 						size="small"
