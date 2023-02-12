@@ -7,6 +7,7 @@ import {
 	type MetaFunction,
 } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
+import { Image } from '@shopify/hydrogen';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import { useZorm } from 'react-zorm';
@@ -233,40 +234,69 @@ function ImageGallery({
 							key={node.id}
 							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
 						>
-							{({ selected }) => (
-								<>
-									<span className="absolute inset-0 overflow-hidden">
-										<img
-											src={node.url}
-											alt={node.altText ?? ''}
-											className="h-full w-full object-cover object-center"
+							{({ selected }) => {
+								const width = 138;
+								return (
+									<>
+										<span className="absolute inset-0 overflow-hidden">
+											<Image
+												className="h-full w-full object-cover object-center"
+												data={{
+													...node,
+													altText: node.altText || '',
+												}}
+												loaderOptions={{
+													crop: 'center',
+													height: 96,
+													scale: 3,
+													width: width,
+												}}
+												sizes={`${width}px`}
+												widths={[width]}
+											/>
+										</span>
+										<span
+											className={clsx(
+												selected ? 'ring-brand-primary' : 'ring-transparent',
+												'pointer-events-none absolute inset-0 ring-1'
+											)}
+											aria-hidden="true"
 										/>
-									</span>
-									<span
-										className={clsx(
-											selected ? 'ring-brand-primary' : 'ring-transparent',
-											'pointer-events-none absolute inset-0 ring-1'
-										)}
-										aria-hidden="true"
-									/>
-								</>
-							)}
+									</>
+								);
+							}}
 						</Tab>
 					))}
 				</Tab.List>
 			</div>
 
 			<Tab.Panels className="relative aspect-square w-full">
-				{images.map(({ node }) => (
-					<Tab.Panel key={node.id} className="absolute inset-0 overflow-hidden">
-						<img
-							src={node.url}
-							alt={node.altText ?? ''}
-							className="h-full w-full object-contain object-center sm:rounded-lg"
-						/>
-						{isOnSale && <DiagonalBanner>On Sale</DiagonalBanner>}
-					</Tab.Panel>
-				))}
+				{images.map(({ node }) => {
+					const size = 624;
+					return (
+						<Tab.Panel
+							key={node.id}
+							className="absolute inset-0 overflow-hidden"
+						>
+							<Image
+								className="h-full w-full object-contain object-center sm:rounded-lg"
+								data={{
+									...node,
+									altText: node.altText || '',
+								}}
+								loaderOptions={{
+									crop: 'center',
+									height: size,
+									scale: 3,
+									width: size,
+								}}
+								sizes={`${size}px`}
+								widths={[size]}
+							/>
+							{isOnSale && <DiagonalBanner>On Sale</DiagonalBanner>}
+						</Tab.Panel>
+					);
+				})}
 			</Tab.Panels>
 		</Tab.Group>
 	);

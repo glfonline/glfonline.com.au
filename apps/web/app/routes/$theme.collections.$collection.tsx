@@ -4,6 +4,7 @@ import {
 	type MetaFunction,
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { Image } from '@shopify/hydrogen';
 import { clsx } from 'clsx';
 import { Fragment, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -113,8 +114,11 @@ export default function CollectionPage() {
 								<li key={node.id}>
 									<ProductCard
 										featuredImage={{
-											url: node.featuredImage?.url ?? '',
+											id: node.featuredImage?.id ?? undefined,
 											altText: node.featuredImage?.altText ?? '',
+											height: node.featuredImage?.height ?? undefined,
+											url: node.featuredImage?.url ?? undefined,
+											width: node.featuredImage?.width ?? undefined,
 										}}
 										theme={theme}
 										handle={node.handle}
@@ -180,8 +184,11 @@ function ProductCard({
 	theme: string;
 	handle: string;
 	featuredImage: Maybe<{
-		url: string;
+		id?: string;
 		altText?: string;
+		height?: number;
+		url: string;
+		width?: number;
 	}>;
 	title: string;
 	price: {
@@ -189,6 +196,7 @@ function ProductCard({
 		amount: number;
 	};
 }) {
+	const width = 384;
 	return (
 		<a
 			className={clsx(
@@ -198,10 +206,20 @@ function ProductCard({
 			href={`/${theme}/products/${handle}`}
 		>
 			<span className="overflow-hidden">
-				<img
-					alt={featuredImage?.url ?? title}
+				<Image
 					className="h-64 w-full transform object-contain duration-500 ease-in-out group-hover:scale-110 group-focus:scale-110"
-					src={featuredImage?.url}
+					data={{
+						...featuredImage,
+						altText: featuredImage?.altText || title,
+					}}
+					loaderOptions={{
+						crop: 'center',
+						height: 256,
+						scale: 3,
+						width,
+					}}
+					sizes={`${width}px`}
+					widths={[width]}
 				/>
 			</span>
 			<span className="flex flex-col gap-3 px-6">

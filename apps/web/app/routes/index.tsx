@@ -130,6 +130,7 @@ function CollectionCard({
 }) {
 	return (
 		<div className="relative aspect-square">
+			{/** @todo use Sanity tool to create optimised image */}
 			<img
 				src={image.src}
 				alt={image.alt ?? ''}
