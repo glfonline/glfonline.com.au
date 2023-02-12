@@ -19,16 +19,17 @@
 		"fix:format": "pnpm prettier . --cache --write",
 		"fix:lint": "turbo run lint -- --fix",
 		"fresh": "pnpm run clean && pnpm install",
+		"generate": "stale-dep && turbo run generate",
 		"preinstall": "npx only-allow pnpm",
 		"postinstall": "manypkg check && stale-dep -u && pnpm build:packages"
 	},
 	"dependencies": {
 		"@glfonline/eslint-config": "0.0.0",
 		"@manypkg/cli": "^0.20.0",
-		"prettier": "^2.8.3",
+		"prettier": "^2.8.4",
 		"prettier-plugin-tailwindcss": "^0.2.2",
-		"stale-dep": "^0.3.1",
-		"turbo": "^1.7.0"
+		"stale-dep": "^0.4.0",
+		"turbo": "^1.7.4"
 	},
 	"packageManager": "pnpm@7.10.0",
 	"engines": {
