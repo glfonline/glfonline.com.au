@@ -12,6 +12,7 @@ import { collectionCardItem } from './objects/collection-card-item';
 import { faqItem } from './objects/faq-item';
 import { imageWithAlt } from './objects/image-with-alt';
 import { testimonialItem } from './objects/testimonial-item';
+import { themeCardItem } from './objects/theme-card-item';
 
 const documents = [
 	aboutPage,
@@ -29,6 +30,7 @@ const objects = [
 	faqItem,
 	imageWithAlt,
 	testimonialItem,
+	themeCardItem,
 ];
 const arrays = [blockContent];
 

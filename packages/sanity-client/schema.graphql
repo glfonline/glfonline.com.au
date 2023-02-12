@@ -259,6 +259,33 @@ input CollectionCardItemSorting {
 	span: SortOrder
 }
 
+type CrossDatasetReference {
+	_dataset: String
+	_key: String
+	_projectId: String
+	_ref: String
+	_type: String
+	_weak: Boolean
+}
+
+input CrossDatasetReferenceFilter {
+	_dataset: StringFilter
+	_key: StringFilter
+	_projectId: StringFilter
+	_ref: StringFilter
+	_type: StringFilter
+	_weak: BooleanFilter
+}
+
+input CrossDatasetReferenceSorting {
+	_dataset: SortOrder
+	_key: SortOrder
+	_projectId: SortOrder
+	_ref: SortOrder
+	_type: SortOrder
+	_weak: SortOrder
+}
+
 """
 A date string, such as 2007-12-03, compliant with the `full-date` format outlined in section 5.6 of the RFC 3339 profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
 """
@@ -558,6 +585,7 @@ type HomePage implements Document {
 	descriptionRaw: JSON
 	heading: [String]
 	heroImage: ImageWithAlt
+	themeCards: [ThemeCardItem]
 }
 
 input HomePageFilter {
@@ -1509,6 +1537,36 @@ input TestimonialsPageSorting {
 	_type: SortOrder
 	_updatedAt: SortOrder
 	heroImage: ImageWithAltSorting
+}
+
+type ThemeCardItem {
+	_key: String
+	_type: String
+	heading: String
+	href: String
+	image: ImageWithAlt
+	label: String
+	theme: String
+}
+
+input ThemeCardItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	heading: StringFilter
+	href: StringFilter
+	image: ImageWithAltFilter
+	label: StringFilter
+	theme: StringFilter
+}
+
+input ThemeCardItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	heading: SortOrder
+	href: SortOrder
+	image: ImageWithAltSorting
+	label: SortOrder
+	theme: SortOrder
 }
 
 type ThemePage implements Document {

@@ -24,6 +24,16 @@ const HomePageSchema = z.object({
 	heroImage: imageWithAltSchema,
 	heading: z.array(z.string()),
 	descriptionRaw: z.any(),
+	themeCards: z.array(
+		z.object({
+			_key: z.string(),
+			heading: z.string(),
+			href: z.string(),
+			label: z.string(),
+			image: imageWithAltSchema,
+			theme: z.enum(['ladies', 'mens']),
+		})
+	),
 });
 
 export async function loader() {
@@ -69,6 +79,7 @@ function Hero() {
 			</div>
 			<div className="flex-1">
 				<img
+					loading="eager"
 					src={urlFor({
 						_ref: heroImage.asset._id,
 						crop: heroImage.asset.crop,
@@ -89,26 +100,30 @@ function Hero() {
 }
 
 function CollectionPromo() {
+	const { themeCards } = useLoaderData<typeof loader>();
 	return (
 		<div className="mx-auto grid w-full max-w-lg gap-4 sm:max-w-7xl md:grid-cols-2">
-			<CollectionCard
-				cta={{ text: 'Shop ladies', href: '/ladies' }}
-				heading="View Ladies Brands"
-				image={{
-					src: 'https://www.glfonline.com.au/static/86a73985e91fcc1fe7c049709fb6d8ba/e170b/shop-ladies.webp',
-					objectPosition: 'top',
-				}}
-				theme="ladies"
-			/>
-			<CollectionCard
-				cta={{ text: 'Shop mens', href: '/mens' }}
-				heading="View Mens Brands"
-				image={{
-					src: 'https://www.glfonline.com.au/static/0af901e0928cb1055b22dbf5fca664e5/e170b/shop-mens.webp',
-					objectPosition: 'top',
-				}}
-				theme="mens"
-			/>
+			{themeCards.map((card) => (
+				<CollectionCard
+					key={card._key}
+					heading={card.heading}
+					cta={{ text: card.label, href: card.href }}
+					image={{
+						src: urlFor({
+							_ref: card.image.asset._id,
+							crop: card.image.asset.crop,
+							hotspot: card.image.asset.hotspot,
+						})
+							.auto('format')
+							.width(632)
+							.height(632)
+							.focalPoint(0.5, 0.5)
+							.dpr(3)
+							.url(),
+					}}
+					theme={card.theme}
+				/>
+			))}
 		</div>
 	);
 }
@@ -124,21 +139,21 @@ function CollectionCard({
 	image: {
 		src: string;
 		alt?: string;
-		objectPosition?: 'center' | 'top' | 'right' | 'bottom' | 'left';
+		objectPosition?: ObjectPosition;
 	};
 	theme: Theme;
 }) {
 	const id = useId();
 	return (
 		<div className="relative aspect-square">
-			{/** @todo use Sanity tool to create optimised image */}
 			<img
 				src={image.src}
-				alt={image.alt ?? ''}
+				alt={image.alt || ''}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
-					objectPositionMap[image.objectPosition ?? 'center']
+					objectPositionMap[image.objectPosition ?? 'top']
 				)}
+				loading="eager"
 			/>
 			<div
 				data-theme={theme}

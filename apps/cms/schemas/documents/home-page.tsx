@@ -26,6 +26,13 @@ export const homePage = defineField({
 			of: [{ type: 'block' }],
 			title: 'Description',
 		}),
+		defineField({
+			name: 'themeCards',
+			type: 'array',
+			title: 'Theme Cards',
+			of: [{ type: 'themeCard.item' }],
+			validation: (Rule) => Rule.required(),
+		}),
 	],
 	validation: (Rule) => Rule.required(),
 	preview: {

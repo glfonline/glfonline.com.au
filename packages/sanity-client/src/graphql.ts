@@ -86,6 +86,16 @@ export const HOME_PAGE_QUERY = gql`
 			}
 			heading
 			descriptionRaw
+			themeCards {
+				_key
+				heading
+				href
+				label
+				image {
+					...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+				}
+				theme
+			}
 		}
 	}
 	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}

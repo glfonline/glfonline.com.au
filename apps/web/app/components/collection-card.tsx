@@ -21,7 +21,7 @@ export function CollectionCard({
 		<div className={clsx('relative flex h-96', spanMap[span])}>
 			<img
 				src={image.src}
-				alt={image.alt ?? ''}
+				alt={image.alt || ''}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'center']
