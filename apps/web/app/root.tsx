@@ -28,6 +28,8 @@ export const links: LinksFunction = () => {
 	return [
 		...seoLinks,
 		{ rel: 'stylesheet', href: styles },
+		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
+		{ rel: 'preconnect', href: 'https://shop.app' },
 		{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
 	];
 };
