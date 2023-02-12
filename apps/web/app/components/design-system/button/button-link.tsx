@@ -1,3 +1,4 @@
+import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 
 import type { ButtonVariantProps } from './get-button-styles';
@@ -5,14 +6,28 @@ import { getButtonStyles } from './get-button-styles';
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
 	function ButtonLink(
-		{ className, children, size, variant, ...consumerProps },
+		{ className, children, href, rel, size, variant, ...consumerProps },
 		forwardedRef
 	) {
+		const shouldUseLink = href[0] === '/';
+		if (shouldUseLink) {
+			return (
+				<Link
+					{...consumerProps}
+					className={getButtonStyles({ className, size, variant })}
+					ref={forwardedRef}
+					to={href}
+				>
+					{children}
+				</Link>
+			);
+		}
 		return (
 			<a
 				{...consumerProps}
-				ref={forwardedRef}
 				className={getButtonStyles({ className, size, variant })}
+				href={href}
+				ref={forwardedRef}
 			>
 				{children}
 			</a>
@@ -21,5 +36,8 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
 );
 
 type NativeAnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement>;
-export type ButtonLinkProps = NativeAnchorProps &
-	Omit<ButtonVariantProps, 'isLoading'>;
+export type ButtonLinkProps = Omit<NativeAnchorProps, 'href'> &
+	Omit<ButtonVariantProps, 'isLoading'> & {
+		/** URL to be used for the link. */
+		href: string;
+	};
