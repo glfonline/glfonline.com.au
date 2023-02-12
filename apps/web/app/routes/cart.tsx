@@ -18,6 +18,7 @@ import {
 	useLoaderData,
 	useTransition,
 } from '@remix-run/react';
+import { Image } from '@shopify/hydrogen';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 
@@ -150,6 +151,7 @@ export default function CartPage() {
 									.includes('ladies')
 									? 'ladies'
 									: 'mens';
+								const size = 96;
 								return (
 									<li
 										key={node.id}
@@ -157,10 +159,20 @@ export default function CartPage() {
 										className="flex py-6 sm:py-10"
 									>
 										<div className="flex-shrink-0">
-											<img
-												src={node.variant?.image?.url}
-												alt={node.variant?.image?.altText ?? ''}
+											<Image
 												className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
+												data={{
+													...node.variant?.image,
+													altText: node.variant?.image?.altText || node.title,
+												}}
+												loaderOptions={{
+													crop: 'center',
+													height: size,
+													scale: 3,
+													width: size,
+												}}
+												sizes={`${size}px`}
+												widths={[size]}
 											/>
 										</div>
 

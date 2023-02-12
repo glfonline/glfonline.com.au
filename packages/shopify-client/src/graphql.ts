@@ -4,60 +4,17 @@ import { gql } from '@ts-gql/tag/no-transform';
  * Fragments
  */
 
-export const PRODUCT_CONNECTION_PRODUCTS = gql`
-	fragment PRODUCT_CONNECTION_PRODUCTS on ProductConnection {
-		pageInfo {
-			hasNextPage
-			hasPreviousPage
-		}
-		edges {
-			cursor
-			node {
-				id
-				handle
-				images(first: 1) {
-					pageInfo {
-						hasNextPage
-						hasPreviousPage
-					}
-					edges {
-						node {
-							id
-							altText
-							height
-							originalSrc
-							width
-						}
-					}
-				}
-				priceRange {
-					minVariantPrice {
-						amount
-					}
-				}
-				title
-				variants(first: 1) {
-					edges {
-						node {
-							id
-						}
-					}
-				}
-				vendor
-			}
-		}
-	}
-` as import('../__generated__/ts-gql/PRODUCT_CONNECTION_PRODUCTS').type;
-
-export const PRODUCT_VARIANT_PRODUCTS = gql`
-	fragment PRODUCT_VARIANT_PRODUCTS on ProductVariant {
+export const PRODUCT_VARIANT_PRODUCTS_FRAGMENT = gql`
+	fragment PRODUCT_VARIANT_PRODUCTS_FRAGMENT on ProductVariant {
 		__typename
 		id
 		title
 		image {
 			id
 			altText
+			height
 			url
+			width
 		}
 		priceV2 {
 			amount
@@ -71,7 +28,9 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
 					node {
 						id
 						altText
+						height
 						url
+						width
 					}
 				}
 			}
@@ -79,7 +38,7 @@ export const PRODUCT_VARIANT_PRODUCTS = gql`
 			title
 		}
 	}
-` as import('../__generated__/ts-gql/PRODUCT_VARIANT_PRODUCTS').type;
+` as import('../__generated__/ts-gql/PRODUCT_VARIANT_PRODUCTS_FRAGMENT').type;
 
 /**
  * Queries
@@ -148,7 +107,9 @@ export const SINGLE_PRODUCT_QUERY = gql`
 						image {
 							id
 							altText
+							height
 							url
+							width
 						}
 						price {
 							amount
@@ -181,7 +142,9 @@ export const PRODUCTS_QUERY = gql`
 							node {
 								id
 								altText
-								transformedSrc
+								height
+								url
+								width
 							}
 						}
 					}
@@ -210,7 +173,9 @@ export const COLLECTION_QUERY = gql`
 			image {
 				id
 				altText
+				height
 				url
+				width
 			}
 			products(
 				after: $after
@@ -230,7 +195,9 @@ export const COLLECTION_QUERY = gql`
 						featuredImage {
 							id
 							altText
+							height
 							url
+							width
 						}
 						handle
 						options {
@@ -291,10 +258,10 @@ export const GET_PRODUCT_VARIANTS_QUERY = gql`
 	query GET_PRODUCT_VARIANTS_QUERY($ids: [ID!]!) {
 		nodes(ids: $ids) {
 			id
-			...PRODUCT_VARIANT_PRODUCTS
+			...PRODUCT_VARIANT_PRODUCTS_FRAGMENT
 		}
 	}
-	${PRODUCT_VARIANT_PRODUCTS}
+	${PRODUCT_VARIANT_PRODUCTS_FRAGMENT}
 ` as import('../__generated__/ts-gql/GET_PRODUCT_VARIANTS_QUERY').type;
 
 /**
@@ -319,7 +286,9 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 								image {
 									id
 									altText
+									height
 									url
+									width
 								}
 								price {
 									amount
