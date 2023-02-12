@@ -21,7 +21,7 @@ import {
 import { formatMoney } from '~/lib/format-money';
 import { getProductFilterOptions } from '~/lib/get-product-filter-options';
 import { getSeoMeta } from '~/seo';
-import type { Maybe } from '~/types';
+import { type Maybe } from '~/types';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),

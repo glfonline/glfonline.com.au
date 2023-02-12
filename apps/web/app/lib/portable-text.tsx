@@ -1,5 +1,5 @@
 import { PortableText as PortableTextBase } from '@portabletext/react';
-import type { SanityAsset } from '@sanity/asset-utils';
+import { type SanityAsset } from '@sanity/asset-utils';
 import { getImageDimensions } from '@sanity/asset-utils';
 
 import { config, urlFor } from './sanity-image';

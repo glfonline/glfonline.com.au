@@ -10,7 +10,7 @@ import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 
 import { CHANTALE_PHONE, mainNavigation, socialLinks } from '~/lib/constants';
-import type { loader } from '~/root';
+import { type loader } from '~/root';
 
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';

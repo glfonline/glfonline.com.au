@@ -1,4 +1,4 @@
-import type { Hit } from '@algolia/client-search';
+import { type Hit } from '@algolia/client-search';
 import { Combobox, Dialog, Transition } from '@headlessui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';

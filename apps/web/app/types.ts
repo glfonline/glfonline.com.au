@@ -1,4 +1,4 @@
-import type { ZodIssue } from 'zod';
+import { type ZodIssue } from 'zod';
 
 /**
  * Response type from the Remix Action Function

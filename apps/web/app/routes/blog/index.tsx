@@ -6,7 +6,7 @@ import { Button, ButtonLink } from '~/components/design-system/button';
 import { getHeadingStyles } from '~/components/design-system/heading';
 import { Hero } from '~/components/hero';
 import { fetchPosts, usePosts } from '~/lib/fetch-blog-posts';
-import type { PortableTextProps } from '~/lib/portable-text';
+import { type PortableTextProps } from '~/lib/portable-text';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
 import { getSeoMeta } from '~/seo';

@@ -1,4 +1,4 @@
-import type { Hit } from '@algolia/client-search';
+import { type Hit } from '@algolia/client-search';
 import { default as algoliasearch } from 'algoliasearch/lite';
 
 const ALGOLIA_APP_ID = 'SF44VDBM4X';

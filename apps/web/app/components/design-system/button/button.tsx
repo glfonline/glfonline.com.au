@@ -3,8 +3,7 @@ import { forwardRef, useCallback, useRef } from 'react';
 import { mergeRefs } from '~/lib/merge-refs';
 
 import { Spinner } from '../spinner';
-import type { ButtonVariantProps } from './get-button-styles';
-import { getButtonStyles } from './get-button-styles';
+import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	function Button(
