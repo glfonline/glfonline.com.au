@@ -20,6 +20,7 @@ import { Fragment, useEffect } from 'react';
 
 import { getSeo } from '~/seo';
 
+import favicon from '../public/favicon.svg';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { getSession } from './lib/cart';
@@ -34,7 +35,7 @@ export const links: LinksFunction = () => {
 		{ rel: 'stylesheet', href: styles },
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
-		{ rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
+		{ rel: 'icon', href: favicon, type: 'image/svg+xml' },
 	];
 };
 
