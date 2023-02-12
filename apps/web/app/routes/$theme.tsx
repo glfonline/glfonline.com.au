@@ -54,11 +54,15 @@ const CollectionSchema = z.object({
 });
 
 export async function loader({ params }: DataFunctionArgs) {
-	const { theme } = ThemeSchema.parse(params);
-	const { ThemePage } = await sanityClient(GET_THEME_PAGE, { id: theme });
-	const collection = CollectionSchema.parse(ThemePage);
-
-	return json({ collection });
+	const result = ThemeSchema.safeParse(params);
+	if (result.success) {
+		const { ThemePage } = await sanityClient(GET_THEME_PAGE, {
+			id: result.data.theme,
+		});
+		const collection = CollectionSchema.parse(ThemePage);
+		return json({ collection });
+	}
+	throw json('Not Found', { status: 404 });
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {

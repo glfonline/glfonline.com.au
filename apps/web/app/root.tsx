@@ -11,6 +11,7 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useCatch,
 	useLocation,
 } from '@remix-run/react';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
@@ -22,8 +23,10 @@ import { getSeo } from '~/seo';
 
 import favicon from '../public/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
+import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
+import { NotFound } from './components/not-found';
 import { getSession } from './lib/cart';
 import * as gtag from './lib/gtag';
 import styles from './styles/tailwind.css';
@@ -91,6 +94,48 @@ export default function App() {
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
+			</body>
+		</html>
+	);
+}
+
+export function CatchBoundary() {
+	const caught = useCatch();
+	const isNotFound = caught.status === 404;
+
+	return (
+		<html lang="en" className="h-full">
+			<head>
+				<title>{isNotFound ? 'Not found' : 'Error'}</title>
+				<Meta />
+				<Links />
+			</head>
+			<body className="relative flex h-full flex-col">
+				{isNotFound ? (
+					<NotFound />
+				) : (
+					<GenericError
+						error={{ message: `${caught.status} ${caught.data}` }}
+					/>
+				)}
+
+				<Scripts />
+			</body>
+		</html>
+	);
+}
+
+export function ErrorBoundary({ error }: { error: Error }) {
+	return (
+		<html lang="en" className="h-full">
+			<head>
+				<title>Error</title>
+				<Meta />
+				<Links />
+			</head>
+			<body className="relative flex h-full flex-col">
+				<GenericError error={error} />
+				<Scripts />
 			</body>
 		</html>
 	);
