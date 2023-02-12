@@ -147,7 +147,12 @@ function CollectionCard({
 					{heading}
 				</Heading>
 				<p className="mx-auto flex w-full max-w-[10rem] flex-col items-stretch text-center">
-					<ButtonLink href={cta.href} variant="brand" size="small">
+					<ButtonLink
+						className="before:absolute before:inset-0"
+						href={cta.href}
+						size="small"
+						variant="brand"
+					>
 						{cta.text}
 					</ButtonLink>
 				</p>
