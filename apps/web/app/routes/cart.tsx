@@ -9,6 +9,7 @@ import {
 	type ActionArgs,
 	json,
 	type LoaderArgs,
+	type MetaFunction,
 	redirect,
 } from '@remix-run/node';
 import {
@@ -27,6 +28,7 @@ import { Heading } from '~/components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '~/lib/cart';
 import { formatMoney } from '~/lib/format-money';
 import { getCartInfo } from '~/lib/get-cart-info';
+import { getSeoMeta } from '~/seo';
 
 export async function loader({ request }: LoaderArgs) {
 	const session = await getSession(request);
@@ -104,6 +106,13 @@ export async function action({ request }: ActionArgs) {
 		}
 	}
 }
+
+export const meta: MetaFunction = () => {
+	const seoMeta = getSeoMeta({
+		title: 'Cart',
+	});
+	return { ...seoMeta };
+};
 
 export default function CartPage() {
 	const { cartInfo } = useLoaderData<typeof loader>();

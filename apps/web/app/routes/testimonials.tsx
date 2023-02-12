@@ -2,7 +2,7 @@ import {
 	sanityClient,
 	TESTIMONIALS_PAGE_QUERY,
 } from '@glfonline/sanity-client';
-import { json } from '@remix-run/node';
+import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
@@ -11,6 +11,7 @@ import { Map } from '~/components/map';
 import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
+import { getSeoMeta } from '~/seo';
 
 import { NewsletterSignup } from './api/newsletter';
 
@@ -32,16 +33,23 @@ export async function loader() {
 	});
 	const { testimonials, heroImage } =
 		TestimonialsSchema.parse(TestimonialsPage);
-	return json({ heroImage, testimonials });
+	return json({ heroImage, testimonials, title: 'Testimonials' });
 }
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const seoMeta = getSeoMeta({
+		title: data.title,
+	});
+	return { ...seoMeta };
+};
+
 export default function TestimonialsPage() {
-	const { heroImage } = useLoaderData<typeof loader>();
+	const { heroImage, title } = useLoaderData<typeof loader>();
 	return (
 		<div className="flex w-full flex-col pb-16 sm:pb-24">
 			<div className="flex w-full flex-col gap-10">
 				<Hero
-					title="Testimonials"
+					title={title}
 					image={{
 						url: urlFor({
 							_ref: heroImage.asset._id,

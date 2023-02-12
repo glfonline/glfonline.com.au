@@ -1,4 +1,4 @@
-import { json } from '@remix-run/node';
+import { json, type MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 
@@ -9,6 +9,7 @@ import { fetchPosts, usePosts } from '~/lib/fetch-blog-posts';
 import type { PortableTextProps } from '~/lib/portable-text';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
+import { getSeoMeta } from '~/seo';
 import { type Theme } from '~/types';
 
 const POSTS_LIMIT = 5;
@@ -19,11 +20,18 @@ export async function loader() {
 		limit: POSTS_LIMIT,
 		offset: POSTS_OFFSET,
 	});
-	return json({ allPosts });
+	return json({ allPosts, title: 'Blog' });
 }
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const seoMeta = getSeoMeta({
+		title: data.title,
+	});
+	return { ...seoMeta };
+};
+
 export default function Blog() {
-	const { allPosts } = useLoaderData<typeof loader>();
+	const { allPosts, title } = useLoaderData<typeof loader>();
 	const posts = usePosts({
 		limit: POSTS_LIMIT,
 		offset: POSTS_OFFSET,
@@ -33,7 +41,7 @@ export default function Blog() {
 	return (
 		<Fragment>
 			<Hero
-				title="Blog"
+				title={title}
 				image={{
 					url: 'https://www.glfonline.com.au/static/9a328f78e40c139b626f4e1ffe4e2f7f/385a5/blog-hero.webp',
 				}}

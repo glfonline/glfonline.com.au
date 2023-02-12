@@ -1,4 +1,5 @@
 import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
+import type { MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
@@ -8,6 +9,7 @@ import { Hero } from '~/components/hero';
 import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
+import { getSeoMeta } from '~/seo';
 
 const FaqSchema = z.object({
 	heroImage: imageWithAltSchema,
@@ -20,11 +22,18 @@ export async function loader() {
 	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, { id: 'faqs' });
 	const faqPage = FaqSchema.parse(FaqPage);
 
-	return json({ faqPage });
+	return json({ faqPage, title: 'Frequently Asked Questions' });
 }
 
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const seoMeta = getSeoMeta({
+		title: data.title,
+	});
+	return { ...seoMeta };
+};
+
 export default function FaqPage() {
-	const { faqPage } = useLoaderData<typeof loader>();
+	const { faqPage, title } = useLoaderData<typeof loader>();
 
 	return (
 		<div className="bg-white">
@@ -47,7 +56,7 @@ export default function FaqPage() {
 			/>
 			<div className="mx-auto flex max-w-prose flex-col gap-6 divide-y-2 divide-gray-200 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
 				<Heading size="2" headingElement="h1">
-					Frequently asked questions
+					{title}
 				</Heading>
 				<dl className="flex flex-col gap-6 divide-y divide-gray-200">
 					{faqPage.faqs.map((faq) => (

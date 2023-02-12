@@ -1,5 +1,5 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
-import type { LoaderArgs } from '@remix-run/node';
+import { type LoaderArgs, type MetaFunction } from '@remix-run/node';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
@@ -8,6 +8,7 @@ import { Hero } from '~/components/hero';
 import { PortableText } from '~/lib/portable-text';
 import { PostSchema } from '~/lib/post-schema';
 import { urlFor } from '~/lib/sanity-image';
+import { getSeoMeta } from '~/seo';
 
 export async function loader({ params }: LoaderArgs) {
 	assert(isString(params.slug));
@@ -18,6 +19,13 @@ export async function loader({ params }: LoaderArgs) {
 	if (!page) throw json('Page not found');
 	return json({ page });
 }
+
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	const seoMeta = getSeoMeta({
+		title: data.page.title,
+	});
+	return { ...seoMeta };
+};
 
 export default function Page() {
 	const { page } = useLoaderData<typeof loader>();

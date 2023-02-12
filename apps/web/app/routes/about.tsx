@@ -1,5 +1,5 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { json } from '@remix-run/node';
+import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 import { z } from 'zod';
@@ -11,6 +11,7 @@ import { Map } from '~/components/map';
 import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
+import { getSeoMeta } from '~/seo';
 
 import { NewsletterSignup } from './api/newsletter';
 
@@ -33,6 +34,13 @@ export async function loader() {
 	const { sections } = AboutSchema.parse(AboutPage);
 	return json({ sections });
 }
+
+export const meta: MetaFunction = () => {
+	const seoMeta = getSeoMeta({
+		title: 'About',
+	});
+	return { ...seoMeta };
+};
 
 export default function AboutPage() {
 	const { sections } = useLoaderData<typeof loader>();

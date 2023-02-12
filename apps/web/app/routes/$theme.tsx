@@ -67,7 +67,7 @@ export async function loader({ params }: DataFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
 	const seoMeta = getSeoMeta({
-		title: params.theme === 'ladies' ? 'Ladies' : 'Mens',
+		title: `Shop ${params.theme === 'ladies' ? 'Ladies' : 'Mens'}`,
 	});
 
 	return { ...seoMeta };
