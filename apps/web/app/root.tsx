@@ -110,7 +110,7 @@ export function CatchBoundary() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex min-h-fit flex-col">
+			<body className="relative flex h-full flex-col">
 				{isNotFound ? (
 					<NotFound />
 				) : (
@@ -133,7 +133,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex min-h-fit flex-col">
+			<body className="relative flex h-full flex-col">
 				<GenericError error={error} />
 				<Scripts />
 			</body>
