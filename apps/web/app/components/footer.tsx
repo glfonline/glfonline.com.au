@@ -66,14 +66,14 @@ export function Footer() {
 							<dt className="sr-only">Hours</dt>
 							<dd className="group flex">
 								<ClockIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<span className="ml-3">
+								<ul role="list" className="ml-3">
 									{Object.entries(HOURS).map(([key, value], index) => (
-										<Fragment key={key}>
+										<li key={key}>
 											{key}: {value}
 											{Object.entries(HOURS).length - 1 !== index && ', '}
-										</Fragment>
+										</li>
 									))}
-								</span>
+								</ul>
 							</dd>
 						</div>
 						<div className="mt-3 first:mt-0">

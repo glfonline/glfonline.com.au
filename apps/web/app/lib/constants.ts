@@ -28,8 +28,8 @@ export const FACEBOOK_URL = 'https://www.facebook.com/GLFONLINE.COM.AU';
 export const INSTAGRAM_URL = 'https://www.instagram.com/glf.online';
 export const STREET_ADDRESS = 'Shop 2 Royal Bayside, 2 Horton Street';
 export const HOURS = {
-	'Monday to Friday': '09:00 – 17:00',
-	Saturday: '09:00 - 13:00',
+	'Monday to Friday': '09:30am – 4:30pm',
+	Saturday: '09:30pm - 1:00pm',
 	Sunday: 'Closed',
 };
 
