@@ -27,7 +27,7 @@
 		"@glfonline/eslint-config": "0.0.0",
 		"@manypkg/cli": "^0.20.0",
 		"prettier": "^2.8.4",
-		"prettier-plugin-tailwindcss": "^0.2.2",
+		"prettier-plugin-tailwindcss": "^0.2.3",
 		"stale-dep": "^0.4.0",
 		"turbo": "^1.7.4"
 	},
