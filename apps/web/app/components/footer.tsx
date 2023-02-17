@@ -1,5 +1,4 @@
 import { Link } from '@remix-run/react';
-import { Fragment } from 'react';
 
 import {
 	CONTACT_NUMBERS,
