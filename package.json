@@ -28,8 +28,8 @@
 		"@manypkg/cli": "^0.20.0",
 		"prettier": "^2.8.4",
 		"prettier-plugin-tailwindcss": "^0.2.3",
-		"stale-dep": "^0.4.0",
-		"turbo": "^1.7.4"
+		"stale-dep": "^0.6.0",
+		"turbo": "^1.8.1"
 	},
 	"packageManager": "pnpm@7.10.0",
 	"engines": {
