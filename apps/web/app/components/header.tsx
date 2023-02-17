@@ -139,7 +139,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 									className="group -m-2 flex items-center gap-2 p-2"
 								>
 									<ShoppingCartIcon
-										className="h-6 w-6 flex-shrink-0 text-gray-400 group-hover:text-gray-500"
+										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
 										aria-hidden="true"
 									/>
 									<span className="text-sm text-gray-700 group-hover:text-gray-800">
