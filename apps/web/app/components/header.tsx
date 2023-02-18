@@ -189,7 +189,7 @@ function MegaMenu() {
 									leaveFrom="opacity-100"
 									leaveTo="opacity-0"
 								>
-									<Popover.Panel className="absolute inset-x-0 top-full text-gray-500 sm:text-sm">
+									<Popover.Panel className="absolute inset-x-0 top-full sm:text-sm">
 										{/**
 										 * Presentational element used to render the bottom
 										 * shadow, if we put the shadow on the actual panel it
@@ -256,7 +256,7 @@ function MegaMenu() {
 																					<Popover.Button
 																						as={NavLink}
 																						to={href}
-																						className="hover:text-gray-800"
+																						className="text-gray-700 hover:text-gray-900"
 																					>
 																						{label}
 																					</Popover.Button>
