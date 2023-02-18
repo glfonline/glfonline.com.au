@@ -7,9 +7,14 @@ import {
 } from '@heroicons/react/24/outline';
 import { NavLink, useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
-import { Fragment, useState } from 'react';
+import { Fragment, useId, useState } from 'react';
 
-import { CHANTALE_PHONE, mainNavigation, socialLinks } from '~/lib/constants';
+import {
+	CHANTALE_PHONE,
+	mainNavigation,
+	type NavItem,
+	socialLinks,
+} from '~/lib/constants';
 import { type loader } from '~/root';
 
 import { ButtonLink } from './design-system/button';
@@ -236,36 +241,10 @@ function MegaMenu() {
 													</div>
 													<div className="col-span-2 row-start-1 grid grid-cols-[1fr_2fr_1fr] gap-y-10 gap-x-8 text-sm">
 														{category.sections.map((section, sectionIdx) => (
-															<div key={sectionIdx}>
-																<p
-																	// id={`${section.label}-heading`}
-																	className="font-bold uppercase text-gray-900"
-																>
-																	{section.label}
-																</p>
-																<div className="grid grid-cols-2 gap-y-10 gap-x-8">
-																	{section.items.map((item, itemIdx) => (
-																		<ul
-																			key={itemIdx}
-																			role="list"
-																			// aria-labelledby={`${section.label}-heading`}
-																			className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
-																		>
-																			{item.map(({ label, href }) => (
-																				<li key={label} className="flex">
-																					<Popover.Button
-																						as={NavLink}
-																						to={href}
-																						className="text-gray-700 hover:text-gray-900"
-																					>
-																						{label}
-																					</Popover.Button>
-																				</li>
-																			))}
-																		</ul>
-																	))}
-																</div>
-															</div>
+															<CategorySection
+																key={sectionIdx}
+																section={section}
+															/>
 														))}
 													</div>
 												</div>
@@ -284,5 +263,41 @@ function MegaMenu() {
 				))}
 			</div>
 		</Popover.Group>
+	);
+}
+function CategorySection({
+	section,
+}: {
+	section: { label: string; items: NavItem[][] };
+}) {
+	const id = useId();
+	return (
+		<div>
+			<p id={id} className="font-bold uppercase text-gray-900">
+				{section.label}
+			</p>
+			<div className="grid grid-cols-2 gap-y-10 gap-x-8">
+				{section.items.map((item, itemIdx) => (
+					<ul
+						key={itemIdx}
+						role="list"
+						aria-labelledby={id}
+						className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+					>
+						{item.map(({ label, href }) => (
+							<li key={label} className="flex">
+								<Popover.Button
+									as={NavLink}
+									to={href}
+									className="text-gray-700 hover:text-gray-900"
+								>
+									{label}
+								</Popover.Button>
+							</li>
+						))}
+					</ul>
+				))}
+			</div>
+		</div>
 	);
 }
