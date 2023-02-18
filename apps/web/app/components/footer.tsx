@@ -1,4 +1,5 @@
 import { Link } from '@remix-run/react';
+import { Fragment } from 'react';
 
 import {
 	CONTACT_NUMBERS,
@@ -52,61 +53,15 @@ export function Footer() {
 						</nav>
 					</div>
 					<dl className="mt-6 w-full text-base leading-6 text-gray-600 md:col-span-2 md:mt-0">
-						<div className="mt-3 first:mt-0">
-							<dt className="sr-only">Address</dt>
-							<dd className="group flex gap-3">
-								<HouseIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<span>
-									{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia
-								</span>
-							</dd>
-						</div>
-						<div className="mt-3 first:mt-0">
-							<dt className="sr-only">Hours</dt>
-							<dd className="group flex gap-3">
-								<ClockIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<ul role="list">
-									{Object.entries(HOURS).map(([key, value], index) => (
-										<li key={key}>
-											{key}: {value}
-											{Object.entries(HOURS).length - 1 !== index && ', '}
-										</li>
-									))}
-								</ul>
-							</dd>
-						</div>
-						<div className="mt-3 first:mt-0">
-							<dt className="sr-only">Phone number</dt>
-							<dd className="group flex gap-3">
-								<PhoneIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<div>
-									{CONTACT_NUMBERS.map(({ name, phone }, index) => (
-										<a
-											key={name}
-											href={`tel:${phone}`}
-											className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
-										>
-											{name}: {phone}
-											{CONTACT_NUMBERS.length - 1 !== index && ' | '}
-										</a>
-									))}
-								</div>
-							</dd>
-						</div>
-						<div className="mt-3 first:mt-0">
-							<dt className="sr-only">Email</dt>
-							<dd className="group flex gap-3">
-								<MailIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<span>
-									<a
-										href={`mailto:${EMAIL_ADDRESS}`}
-										className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
-									>
-										{EMAIL_ADDRESS}
-									</a>
-								</span>
-							</dd>
-						</div>
+						{descriptionList.map(({ heading, icon: Icon, description }) => (
+							<div key={heading} className="mt-3 first:mt-0">
+								<dt className="sr-only">{heading}</dt>
+								<dd className="group flex gap-3">
+									<Icon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
+									{description}
+								</dd>
+							</div>
+						))}
 					</dl>
 				</div>
 				<div className="mt-8 border-t border-gray-200 bg-white">
@@ -126,3 +81,60 @@ export function Footer() {
 		</footer>
 	);
 }
+
+const descriptionList = [
+	{
+		heading: 'Address',
+		icon: HouseIcon,
+		description: <>{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia</>,
+	},
+	{
+		heading: 'Hours',
+		icon: ClockIcon,
+		description: (
+			<ul role="list">
+				{Object.entries(HOURS).map(([key, value], index) => (
+					<li key={key}>
+						{key}: {value}
+						{Object.entries(HOURS).length - 1 !== index && ', '}
+					</li>
+				))}
+			</ul>
+		),
+	},
+	{
+		heading: 'Phone number',
+		icon: PhoneIcon,
+		description: (
+			<>
+				{CONTACT_NUMBERS.map(({ name, phone }, index) => (
+					<Fragment key={name}>
+						<a
+							href={`tel:${phone}`}
+							className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+						>
+							{name}: {phone}
+						</a>
+						{CONTACT_NUMBERS.length - 1 !== index && (
+							<span aria-hidden="true">|</span>
+						)}
+					</Fragment>
+				))}
+			</>
+		),
+	},
+	{
+		heading: 'Email',
+		icon: MailIcon,
+		description: (
+			<>
+				<a
+					href={`mailto:${EMAIL_ADDRESS}`}
+					className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+				>
+					{EMAIL_ADDRESS}
+				</a>
+			</>
+		),
+	},
+];
