@@ -54,18 +54,18 @@ export function Footer() {
 					<dl className="mt-6 w-full text-base leading-6 text-gray-600 md:col-span-2 md:mt-0">
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Address</dt>
-							<dd className="group flex">
+							<dd className="group flex gap-3">
 								<HouseIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<span className="ml-3">
+								<span>
 									{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia
 								</span>
 							</dd>
 						</div>
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Hours</dt>
-							<dd className="group flex">
+							<dd className="group flex gap-3">
 								<ClockIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<ul role="list" className="ml-3">
+								<ul role="list">
 									{Object.entries(HOURS).map(([key, value], index) => (
 										<li key={key}>
 											{key}: {value}
@@ -77,9 +77,9 @@ export function Footer() {
 						</div>
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Phone number</dt>
-							<dd className="group flex">
+							<dd className="group flex gap-3">
 								<PhoneIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<div className="ml-3">
+								<div>
 									{CONTACT_NUMBERS.map(({ name, phone }, index) => (
 										<a
 											key={name}
@@ -95,9 +95,9 @@ export function Footer() {
 						</div>
 						<div className="mt-3 first:mt-0">
 							<dt className="sr-only">Email</dt>
-							<dd className="group flex">
+							<dd className="group flex gap-3">
 								<MailIcon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
-								<span className="ml-3">
+								<span>
 									<a
 										href={`mailto:${EMAIL_ADDRESS}`}
 										className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
