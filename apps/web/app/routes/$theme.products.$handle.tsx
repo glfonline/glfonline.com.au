@@ -13,7 +13,7 @@ import { useState } from 'react';
 import { useZorm } from 'react-zorm';
 import { z } from 'zod';
 
-import { Button } from '~/components/design-system/button';
+import { Button, ButtonLink } from '~/components/design-system/button';
 import { getHeadingStyles, Heading } from '~/components/design-system/heading';
 import { DiagonalBanner } from '~/components/diagonal-banner';
 import { addToCart, getSession } from '~/lib/cart';
@@ -137,14 +137,6 @@ export default function ProductPage() {
 									<legend className="text-sm font-bold text-gray-900">
 										Options
 									</legend>
-									{sizingChart && (
-										<a
-											href={sizingChart.href}
-											className="text-brand-primary hover:text-brand-light text-sm underline"
-										>
-											{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
-										</a>
-									)}
 								</div>
 								<div className="flex flex-wrap gap-3">
 									{product.variants.edges.map(({ node }) => (
@@ -183,15 +175,27 @@ export default function ProductPage() {
 								</div>
 							</fieldset>
 
-							<Button
-								variant="neutral"
-								type="submit"
-								disabled={!product.availableForSale}
-							>
-								{product.availableForSale
-									? form.errors.variantId()?.message || buttonText
-									: 'Sold Out'}
-							</Button>
+							<div className="flex flex-col gap-4">
+								{sizingChart && (
+									<ButtonLink
+										href={sizingChart.href}
+										target="_blank"
+										rel="noreferrer noopener"
+									>
+										{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
+									</ButtonLink>
+								)}
+
+								<Button
+									variant="neutral"
+									type="submit"
+									disabled={!product.availableForSale}
+								>
+									{product.availableForSale
+										? form.errors.variantId()?.message || buttonText
+										: 'Sold Out'}
+								</Button>
+							</div>
 						</Form>
 
 						<div>
