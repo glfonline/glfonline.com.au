@@ -20,7 +20,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 
 		const mapOptions = useCallback(
 			(opt: Option) => (
-				<option key={opt.value} value={opt.value} disabled={opt.disabled}>
+				<option disabled={opt.disabled} key={opt.value} value={opt.value}>
 					{opt.label}
 				</option>
 			),
@@ -35,10 +35,6 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 				<select
 					{...consumerProps}
 					{...a11yProps}
-					defaultValue={defaultValue}
-					value={value}
-					disabled={disabled}
-					ref={forwardedRef}
 					className={clsx(
 						'block w-full text-base transition focus:ring focus:ring-offset-2 sm:text-sm',
 						invalid
@@ -46,9 +42,13 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 							: 'focus:border-brand-300 focus:ring-brand-400 border-gray-300',
 						className
 					)}
+					defaultValue={defaultValue}
+					disabled={disabled}
+					ref={forwardedRef}
+					value={value}
 				>
 					{!value || !defaultValue || placeholder ? (
-						<option value="" disabled>
+						<option disabled value="">
 							{placeholder}
 						</option>
 					) : null}

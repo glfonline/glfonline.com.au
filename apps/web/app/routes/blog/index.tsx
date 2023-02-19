@@ -41,10 +41,10 @@ export default function Blog() {
 	return (
 		<Fragment>
 			<Hero
-				title={title}
 				image={{
 					url: 'https://www.glfonline.com.au/static/9a328f78e40c139b626f4e1ffe4e2f7f/385a5/blog-hero.webp',
 				}}
+				title={title}
 			/>
 			<div className="relative mx-auto flex w-full justify-center gap-4 px-4 sm:px-6 lg:gap-16 lg:px-8">
 				<div className="flex min-w-0 max-w-4xl flex-auto flex-col py-16 lg:max-w-none">
@@ -75,15 +75,18 @@ function PostList({
 				</h1>
 			</div>
 			<section aria-labelledby="gallery-heading">
-				<h2 id="gallery-heading" className="sr-only">
+				<h2 className="sr-only" id="gallery-heading">
 					Recently viewed
 				</h2>
-				<ul role="list" className="grid grid-flow-row auto-rows-fr gap-8">
+				<ul className="grid grid-flow-row auto-rows-fr gap-8" role="list">
 					{data?.pages.map((posts, pageIndex) => (
 						<Fragment key={pageIndex}>
 							{posts.map((post, postIndex) => (
 								<Post
-									key={postIndex}
+									author={post.author.name}
+									excerpt={post.bodyRaw[0]}
+									heading={post.title}
+									href={`/blog/${post.slug.current}`}
 									imgSrc={urlFor({
 										_ref: post.mainImage.asset._id,
 										crop: post.mainImage.asset.crop,
@@ -95,10 +98,7 @@ function PostList({
 										.focalPoint(0.5, 0.5)
 										.dpr(3)
 										.url()}
-									href={`/blog/${post.slug.current}`}
-									excerpt={post.bodyRaw[0]}
-									heading={post.title}
-									author={post.author.name}
+									key={postIndex}
 									publishDate={post.publishedAt}
 								/>
 							))}
@@ -108,10 +108,10 @@ function PostList({
 				<div className="flex items-center justify-center pt-16">
 					{hasNextPage && (
 						<Button
+							isLoading={isFetching}
+							onClick={() => fetchNextPage()}
 							size="regular"
 							variant="neutral"
-							onClick={() => fetchNextPage()}
-							isLoading={isFetching}
 						>
 							{isFetching ? 'Loading' : 'Load More'}
 						</Button>
@@ -140,13 +140,13 @@ function Post({
 	publishDate,
 }: PostProps) {
 	return (
-		<li key={imgSrc} className="flex">
-			<Link to={href} className="flex w-full flex-col sm:flex-row">
+		<li className="flex" key={imgSrc}>
+			<Link className="flex w-full flex-col sm:flex-row" to={href}>
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<img
+						alt=""
 						className="h-full w-full object-cover sm:absolute sm:inset-0"
 						src={imgSrc}
-						alt=""
 					/>
 				</div>
 				<div className="flex min-w-0 flex-1 flex-col justify-between bg-white p-6">
@@ -185,6 +185,10 @@ function Sidebar() {
 		>
 			{featuredPost && (
 				<FeaturedPost
+					author={featuredPost.author.name}
+					excerpt={featuredPost.bodyRaw[0]}
+					heading={featuredPost.title}
+					href={`/blog/${featuredPost.slug.current}`}
 					imgSrc={urlFor({
 						_ref: featuredPost.mainImage.asset._id,
 						crop: featuredPost.mainImage.asset.crop,
@@ -196,36 +200,32 @@ function Sidebar() {
 						.focalPoint(0.5, 0.5)
 						.dpr(3)
 						.url()}
-					href={`/blog/${featuredPost.slug.current}`}
-					excerpt={featuredPost.bodyRaw[0]}
-					heading={featuredPost.title}
-					author={featuredPost.author.name}
 					publishDate={featuredPost.publishedAt}
 				/>
 			)}
 			<CTA
+				cta={{
+					text: 'Shop now',
+					href: '/ladies',
+				}}
 				heading="Shop ladies clothing and accessories"
 				image={{
 					src: 'https://www.glfonline.com.au/static/d56361304f93d4458132ff614006fb17/596e5/blog-sidebar-ladies.webp',
 				}}
 				subHeading="Head to our online store"
 				theme="ladies"
-				cta={{
-					text: 'Shop now',
-					href: '/ladies',
-				}}
 			/>
 			<CTA
+				cta={{
+					text: 'Shop now',
+					href: '/mens',
+				}}
 				heading="Shop mens clothing and accessories"
 				image={{
 					src: 'https://www.glfonline.com.au/static/571c3c636479496cc71e4d95e7326491/596e5/blog-sidebar-mens.webp',
 				}}
 				subHeading="Head to our online store"
 				theme="mens"
-				cta={{
-					text: 'Shop now',
-					href: '/mens',
-				}}
 			/>
 		</aside>
 	);
@@ -234,11 +234,11 @@ function Sidebar() {
 function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 	return (
 		<article className="flex flex-col gap-8">
-			<h2 id="featured-posts" className={getHeadingStyles({ size: '2' })}>
+			<h2 className={getHeadingStyles({ size: '2' })} id="featured-posts">
 				Featured Post
 			</h2>
 			<div className="flex flex-col gap-6">
-				<img src={imgSrc} alt="" className="aspect-square object-cover" />
+				<img alt="" className="aspect-square object-cover" src={imgSrc} />
 				<div className="prose line-clamp-3">
 					<PortableText value={excerpt} />
 				</div>
@@ -277,13 +277,13 @@ function CTA({
 	return (
 		<div className="relative flex">
 			<img
+				alt={image.alt ?? ''}
 				className="absolute inset-0 h-full w-full object-cover"
 				src={image.src}
-				alt={image.alt ?? ''}
 			/>
 			<div
-				data-theme={theme}
 				className="bg-true-black/50 relative flex flex-1 flex-col items-center gap-2 px-8 py-16 text-center text-white"
+				data-theme={theme}
 			>
 				<h2 className={getHeadingStyles({ size: '2', color: 'light' })}>
 					{heading}

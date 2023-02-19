@@ -74,7 +74,7 @@ export default function App() {
 	}, [location.pathname]);
 
 	return (
-		<html lang="en" className="h-full">
+		<html className="h-full" lang="en">
 			<head>
 				<Meta />
 				<Links />
@@ -104,7 +104,7 @@ export function CatchBoundary() {
 	const isNotFound = caught.status === 404;
 
 	return (
-		<html lang="en" className="h-full">
+		<html className="h-full" lang="en">
 			<head>
 				<title>{isNotFound ? 'Not found' : 'Error'}</title>
 				<Meta />
@@ -127,7 +127,7 @@ export function CatchBoundary() {
 
 export function ErrorBoundary({ error }: { error: Error }) {
 	return (
-		<html lang="en" className="h-full">
+		<html className="h-full" lang="en">
 			<head>
 				<title>Error</title>
 				<Meta />

@@ -95,7 +95,7 @@ export default function ProductPage() {
 	);
 
 	return (
-		<div data-theme={theme} className="bg-white">
+		<div className="bg-white" data-theme={theme}>
 			<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
 				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
 					<ImageGallery
@@ -123,10 +123,10 @@ export default function ProductPage() {
 						</div>
 
 						<Form
-							ref={form.ref}
-							method="post"
-							replace
 							className="flex flex-col gap-6"
+							method="post"
+							ref={form.ref}
+							replace
 						>
 							<fieldset
 								className={clsx(
@@ -140,10 +140,13 @@ export default function ProductPage() {
 								</div>
 								<div className="flex flex-wrap gap-3">
 									{product.variants.edges.map(({ node }) => (
-										<label key={node.id} htmlFor={node.id} className="relative">
+										<label className="relative" htmlFor={node.id} key={node.id}>
 											<input
+												checked={variant?.node.id === node.id}
+												className="sr-only"
+												disabled={!node.availableForSale}
 												id={node.id}
-												type="radio"
+												name={form.fields.variantId()}
 												onChange={(event) => {
 													setVariant(
 														product.variants.edges.find(
@@ -151,11 +154,8 @@ export default function ProductPage() {
 														)
 													);
 												}}
-												name={form.fields.variantId()}
+												type="radio"
 												value={node.id}
-												checked={variant?.node.id === node.id}
-												className="sr-only"
-												disabled={!node.availableForSale}
 											/>
 											<span
 												className={clsx(
@@ -179,17 +179,17 @@ export default function ProductPage() {
 								{sizingChart && (
 									<ButtonLink
 										href={sizingChart.href}
-										target="_blank"
 										rel="noreferrer noopener"
+										target="_blank"
 									>
 										{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
 									</ButtonLink>
 								)}
 
 								<Button
-									variant="neutral"
-									type="submit"
 									disabled={!product.availableForSale}
+									type="submit"
+									variant="neutral"
 								>
 									{product.availableForSale
 										? form.errors.variantId()?.message || buttonText
@@ -240,8 +240,8 @@ function ImageGallery({
 				>
 					{images.map(({ node }) => (
 						<Tab
-							key={node.id}
 							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+							key={node.id}
 						>
 							{({ selected }) => {
 								const width = 138;
@@ -265,11 +265,11 @@ function ImageGallery({
 											/>
 										</span>
 										<span
+											aria-hidden="true"
 											className={clsx(
 												selected ? 'ring-brand-primary' : 'ring-transparent',
 												'pointer-events-none absolute inset-0 ring-1'
 											)}
-											aria-hidden="true"
 										/>
 									</>
 								);
@@ -284,8 +284,8 @@ function ImageGallery({
 					const size = 624;
 					return (
 						<Tab.Panel
-							key={node.id}
 							className="absolute inset-0 overflow-hidden"
+							key={node.id}
 						>
 							<Image
 								className="h-full w-full object-contain object-center sm:rounded-lg"

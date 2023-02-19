@@ -49,25 +49,25 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 			<FieldContextProvider value={fieldContext}>
 				<div
 					{...consumerProps}
-					ref={forwardedRef}
 					className="flex flex-col gap-1"
+					ref={forwardedRef}
 				>
 					<div className="relative flex items-start gap-3">
 						{children}
 						<div className="text-sm">
 							<label
-								htmlFor={inputId}
 								className={clsx(
 									'select-none',
 									disabled ? 'text-gray-400' : 'text-gray-700'
 								)}
+								htmlFor={inputId}
 							>
 								{label}
 							</label>
 						</div>
 					</div>
 					{message && (
-						<FieldMessage tone={tone} id={messageId} message={message} />
+						<FieldMessage id={messageId} message={message} tone={tone} />
 					)}
 				</div>
 			</FieldContextProvider>

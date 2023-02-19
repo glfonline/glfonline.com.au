@@ -2,10 +2,10 @@ export function CartIcon(props: React.SVGProps<SVGSVGElement>) {
 	return (
 		<svg
 			aria-hidden="true"
+			fill="currentColor"
 			focusable="false"
 			preserveAspectRatio="xMidYMid meet"
 			role="img"
-			fill="currentColor"
 			viewBox="0 0 20 20"
 			{...props}
 		>

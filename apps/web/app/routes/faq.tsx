@@ -38,7 +38,6 @@ export default function FaqPage() {
 	return (
 		<div className="bg-white">
 			<Hero
-				title="FAQs"
 				image={{
 					url: urlFor({
 						_ref: faqPage.heroImage.asset._id,
@@ -53,14 +52,15 @@ export default function FaqPage() {
 						.url(),
 					alt: faqPage.heroImage.asset.altText ?? '',
 				}}
+				title="FAQs"
 			/>
 			<div className="mx-auto flex max-w-prose flex-col gap-6 divide-y-2 divide-gray-200 px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
-				<Heading size="2" headingElement="h1">
+				<Heading headingElement="h1" size="2">
 					{title}
 				</Heading>
 				<dl className="flex flex-col gap-6 divide-y divide-gray-200">
 					{faqPage.faqs.map((faq) => (
-						<div key={faq.question} className="prose mx-auto pt-6">
+						<div className="prose mx-auto pt-6" key={faq.question}>
 							<dt className="font-bold">{faq.question}</dt>
 							<dd className="mt-2 text-base text-gray-500">
 								<PortableText value={faq.answerRaw} />

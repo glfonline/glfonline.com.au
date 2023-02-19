@@ -11,12 +11,12 @@ export function PortableText({ value = [] }: PortableTextProps) {
 	return (
 		<PortableTextBase
 			{...config}
-			value={value}
 			components={{
 				types: {
 					image: ImageComponent,
 				},
 			}}
+			value={value}
 		/>
 	);
 }
@@ -25,11 +25,11 @@ function ImageComponent({ value }: { value: SanityAsset }) {
 	const { width, height } = getImageDimensions(value);
 	return (
 		<img
-			src={urlFor(value).width(580).fit('max').auto('format').url()}
 			// @ts-ignore
 			alt={value?.alt ?? ''}
-			loading="lazy"
 			className="mx-auto block"
+			loading="lazy"
+			src={urlFor(value).width(580).fit('max').auto('format').url()}
 			style={{ aspectRatio: width / height }}
 		/>
 	);

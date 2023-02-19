@@ -20,13 +20,12 @@ export function LoadingProgress() {
 
 	return (
 		<div
-			role="progressbar"
 			aria-hidden={!active}
 			aria-valuetext={active ? 'Loading' : undefined}
 			className="fixed inset-x-0 top-0 left-0 z-50 h-1 animate-pulse"
+			role="progressbar"
 		>
 			<div
-				ref={ref}
 				className={clsx(
 					'bg-brand-primary h-full transition-all duration-500 ease-in-out',
 					transition.state === 'idle' &&
@@ -36,6 +35,7 @@ export function LoadingProgress() {
 					transition.state === 'loading' && 'w-10/12',
 					transition.state === 'idle' && !animationComplete && 'w-full'
 				)}
+				ref={ref}
 			/>
 		</div>
 	);

@@ -83,8 +83,10 @@ export default function CollectionsPage() {
 			<div className="grid gap-4 lg:grid-cols-5">
 				{collection.collectionCards.map((collection) => (
 					<CollectionCard
-						key={collection._key}
-						span={collection.span}
+						cta={{
+							text: collection.label,
+							href: collection.href,
+						}}
 						image={{
 							src: urlFor({
 								_ref: collection.image.asset._id,
@@ -100,10 +102,8 @@ export default function CollectionsPage() {
 							alt: collection.image.asset.altText ?? '',
 							objectPosition: 'top',
 						}}
-						cta={{
-							text: collection.label,
-							href: collection.href,
-						}}
+						key={collection._key}
+						span={collection.span}
 					/>
 				))}
 			</div>

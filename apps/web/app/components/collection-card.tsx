@@ -20,12 +20,12 @@ export function CollectionCard({
 	return (
 		<div className={clsx('relative flex h-96', spanMap[span])}>
 			<img
-				src={image.src}
 				alt={image.alt || ''}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'center']
 				)}
+				src={image.src}
 			/>
 			<div
 				className={clsx(
@@ -35,9 +35,9 @@ export function CollectionCard({
 			>
 				<span className="mt-auto flex flex-1 flex-col items-center">
 					<ButtonLink
+						className="before:absolute before:inset-0"
 						href={cta.href}
 						variant="outline"
-						className="before:absolute before:inset-0"
 					>
 						{cta.text}
 					</ButtonLink>

@@ -2,10 +2,10 @@ export function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
 	return (
 		<svg
 			aria-hidden="true"
-			focusable="false"
-			role="img"
-			preserveAspectRatio="xMidYMid meet"
 			fill="none"
+			focusable="false"
+			preserveAspectRatio="xMidYMid meet"
+			role="img"
 			stroke="currentColor"
 			strokeLinecap="round"
 			strokeLinejoin="round"
@@ -14,10 +14,10 @@ export function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
 			{...props}
 		>
 			<path
+				d="M4 6h16M4 12h16M4 18h16"
 				strokeLinecap="round"
 				strokeLinejoin="round"
 				strokeWidth={2}
-				d="M4 6h16M4 12h16M4 18h16"
 			/>
 		</svg>
 	);

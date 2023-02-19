@@ -150,9 +150,9 @@ export default function CollectionPage() {
 								)}
 							</div>
 							<Pagination
+								endCursor={pageInfo?.endCursor ?? undefined}
 								hasNextPage={!!pageInfo?.hasNextPage}
 								hasPrevPage={!!after}
-								endCursor={pageInfo?.endCursor ?? undefined}
 								results={products.length}
 							/>
 						</section>
@@ -483,10 +483,10 @@ export function Pagination({
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
 					<button
+						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							navigate(-1);
 						}}
-						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 					>
 						Previous
 					</button>
@@ -499,12 +499,12 @@ export function Pagination({
 			<div className="flex min-w-0 flex-1 justify-end">
 				{hasNextPage && endCursor && (
 					<button
+						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							const params = new URLSearchParams(location.search);
 							params.set('after', endCursor);
 							navigate(location.pathname + '?' + params.toString());
 						}}
-						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 					>
 						Next
 					</button>

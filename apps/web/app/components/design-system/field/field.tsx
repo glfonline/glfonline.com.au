@@ -41,8 +41,8 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 		<FieldContextProvider value={fieldContext}>
 			<div
 				{...consumerProps}
-				ref={forwardedRef}
 				className={clsx('flex flex-col gap-1', className)}
+				ref={forwardedRef}
 			>
 				<label htmlFor={inputId}>
 					<span
@@ -61,7 +61,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 				)}
 				{children}
 				{message && (
-					<FieldMessage tone={tone} id={messageId} message={message} />
+					<FieldMessage id={messageId} message={message} tone={tone} />
 				)}
 			</div>
 		</FieldContextProvider>

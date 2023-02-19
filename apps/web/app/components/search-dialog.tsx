@@ -25,10 +25,10 @@ export function SearchDialog({
 
 	return (
 		<Transition.Root
-			show={isSearchOpen}
-			as={Fragment}
 			afterLeave={() => setQuery('')}
 			appear
+			as={Fragment}
+			show={isSearchOpen}
 		>
 			<Dialog as="div" className="relative z-30" onClose={setSearchOpen}>
 				<Transition.Child
@@ -64,13 +64,13 @@ export function SearchDialog({
 							>
 								<div className="relative">
 									<MagnifyingGlassIcon
-										className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
 										aria-hidden="true"
+										className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
 									/>
 									<Combobox.Input
 										className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
-										placeholder="Search..."
 										onChange={(event) => setQuery(event.target.value)}
+										placeholder="Search..."
 									/>
 								</div>
 
@@ -113,37 +113,37 @@ function SearchResults({
 	if (data?.hits && data.hits.length > 0) {
 		return (
 			<Combobox.Options
-				static
 				className="max-h-96 scroll-py-3 overflow-y-auto p-3"
+				static
 				style={{ opacity: isPreviousData ? 0.5 : 1 }}
 			>
 				{data.hits.map((product) => (
 					<Combobox.Option
-						key={product.objectID}
-						value={product}
 						className={({ active }) =>
 							clsx(
 								'flex cursor-default select-none rounded-xl p-3',
 								active && 'bg-gray-100'
 							)
 						}
+						key={product.objectID}
+						value={product}
 					>
 						{({ active }) => {
 							const imageWidth = 44;
 							return (
 								<NavLink
-									to={makeProductHref(product)}
-									onClick={() => setSearchOpen(false)}
 									className="flex flex-auto items-center gap-3"
+									onClick={() => setSearchOpen(false)}
+									to={makeProductHref(product)}
 								>
 									<img
+										alt=""
+										className="aspect-square w-11 bg-white object-contain"
+										height={imageWidth}
 										src={makeProductImage({
 											image: product.image,
 											width: imageWidth,
 										})}
-										alt=""
-										className="aspect-square w-11 bg-white object-contain"
-										height={imageWidth}
 										width={imageWidth}
 									/>
 									<span
@@ -168,9 +168,9 @@ function SearchResults({
 		return (
 			<div className="py-14 px-6 text-center text-sm sm:px-14">
 				<ExclamationCircleIcon
-					type="outline"
-					name="exclamation-circle"
 					className="mx-auto h-6 w-6 text-gray-400"
+					name="exclamation-circle"
+					type="outline"
 				/>
 				<p className="mt-4 font-semibold text-gray-900">No results found</p>
 				<p className="mt-2 text-gray-500">

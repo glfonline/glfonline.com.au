@@ -57,9 +57,9 @@ function TopNav() {
 					<div className="inline-flex gap-3">
 						{socialLinks.map((link) => (
 							<a
-								key={link.href}
-								href={link.href}
 								className="focus:ring-brand inline-flex focus:outline-none focus:ring-2"
+								href={link.href}
+								key={link.href}
 							>
 								<span className="sr-only">{link.label}</span>
 								<link.icon className="h-6 w-6" />
@@ -84,8 +84,8 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 				<div className="flex h-14 items-center justify-between">
 					{/* Logo (lg+) */}
 					<NavLink
-						to="/"
 						className="hidden h-full items-center lg:flex lg:px-8 xl:w-80"
+						to="/"
 					>
 						<span className="sr-only">GLF Online</span>
 						<HorizontalLogo className="h-8 w-auto" />
@@ -97,26 +97,26 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 					{/* Mobile menu and search (lg-) */}
 					<div className="flex items-center px-4 sm:px-6 lg:hidden">
 						<button
-							type="button"
 							className="-ml-2 rounded-md bg-white p-2 text-gray-400"
 							onClick={() => setOpen(true)}
+							type="button"
 						>
 							<span className="sr-only">Open menu</span>
-							<Bars3Icon className="h-6 w-6" aria-hidden="true" />
+							<Bars3Icon aria-hidden="true" className="h-6 w-6" />
 						</button>
 
 						{/* Search */}
 						<button
-							onClick={toggleSearch}
 							className="ml-2 p-2 text-gray-600 hover:text-gray-800"
+							onClick={toggleSearch}
 						>
 							<span className="sr-only">Search</span>
-							<MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
+							<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 						</button>
 					</div>
 
 					{/* Logo (lg-) */}
-					<NavLink to="/" className="lg:hidden">
+					<NavLink className="lg:hidden" to="/">
 						<span className="sr-only">GLF Online</span>
 						<HorizontalLogo className="h-8 w-auto" />
 					</NavLink>
@@ -126,13 +126,13 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 							<div className="flex">
 								<div className="hidden lg:flex">
 									<button
-										onClick={toggleSearch}
 										className="-m-2 p-2 text-gray-600 hover:text-gray-800"
+										onClick={toggleSearch}
 									>
 										<span className="sr-only">Search</span>
 										<MagnifyingGlassIcon
-											className="h-6 w-6"
 											aria-hidden="true"
+											className="h-6 w-6"
 										/>
 									</button>
 								</div>
@@ -140,12 +140,12 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 
 							<div className="flow-root">
 								<NavLink
-									to="/cart"
 									className="group -m-2 flex items-center gap-2 p-2"
+									to="/cart"
 								>
 									<ShoppingCartIcon
-										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
 										aria-hidden="true"
+										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
 									/>
 									<span className="text-sm text-gray-700 group-hover:text-gray-800">
 										{cartCount}
@@ -172,7 +172,7 @@ function MegaMenu() {
 		<Popover.Group className="hidden h-full lg:flex lg:flex-1">
 			<div className="grid h-full w-full auto-cols-fr grid-flow-col justify-center divide-x divide-gray-200 border-l border-gray-200">
 				{mainNavigation.categories.map((category, index) => (
-					<Popover key={index} data-theme={category.theme} className="flex">
+					<Popover className="flex" data-theme={category.theme} key={index}>
 						{({ open }) => (
 							<Fragment>
 								<Popover.Button
@@ -202,8 +202,8 @@ function MegaMenu() {
 										 * to hide the top of the shadow.
 										 */}
 										<div
-											className="absolute inset-0 top-1/2 bg-white shadow"
 											aria-hidden="true"
+											className="absolute inset-0 top-1/2 bg-white shadow"
 										/>
 
 										<div className="relative bg-white">
@@ -211,25 +211,25 @@ function MegaMenu() {
 												<div className="grid grid-cols-3 gap-y-10 gap-x-8 py-12">
 													<div className="col-start-3 grid">
 														<div
-															key={category.featured.href}
 															className="group relative flex flex-col gap-6 text-base sm:text-sm"
+															key={category.featured.href}
 														>
 															<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
 																<img
-																	src={category.featured.image.src}
 																	alt={category.featured.image.alt}
 																	className="object-cover object-center"
+																	src={category.featured.image.src}
 																/>
 															</div>
 															<div>
 																<Popover.Button
 																	as={NavLink}
-																	to={category.featured.href}
 																	className="block font-bold uppercase text-gray-900"
+																	to={category.featured.href}
 																>
 																	<span
-																		className="absolute inset-0 z-10"
 																		aria-hidden="true"
+																		className="absolute inset-0 z-10"
 																	/>
 																	{category.featured.label}
 																</Popover.Button>
@@ -257,7 +257,7 @@ function MegaMenu() {
 					</Popover>
 				))}
 				{mainNavigation.pages.map((page, index) => (
-					<NavLink key={index} to={page.href} className={clsx(navItemClasses)}>
+					<NavLink className={clsx(navItemClasses)} key={index} to={page.href}>
 						{page.label}
 					</NavLink>
 				))}
@@ -273,23 +273,23 @@ function CategorySection({
 	const id = useId();
 	return (
 		<div>
-			<p id={id} className="font-bold uppercase text-gray-900">
+			<p className="font-bold uppercase text-gray-900" id={id}>
 				{section.label}
 			</p>
 			<div className="grid grid-cols-2 gap-y-10 gap-x-8">
 				{section.items.map((item, itemIdx) => (
 					<ul
-						key={itemIdx}
-						role="list"
 						aria-labelledby={id}
 						className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+						key={itemIdx}
+						role="list"
 					>
 						{item.map(({ label, href }) => (
-							<li key={label} className="flex">
+							<li className="flex" key={label}>
 								<Popover.Button
 									as={NavLink}
-									to={href}
 									className="text-gray-700 hover:text-gray-900"
+									to={href}
 								>
 									{label}
 								</Popover.Button>

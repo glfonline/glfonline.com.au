@@ -80,6 +80,8 @@ function Hero() {
 			</div>
 			<div className="flex-1">
 				<img
+					alt={heroImage.asset.altText ?? ''}
+					className="h-full w-full object-cover"
 					loading="eager"
 					src={urlFor({
 						_ref: heroImage.asset._id,
@@ -92,8 +94,6 @@ function Hero() {
 						.focalPoint(0.5, 0.5)
 						.dpr(3)
 						.url()}
-					className="h-full w-full object-cover"
-					alt={heroImage.asset.altText ?? ''}
 				/>
 			</div>
 		</div>
@@ -106,9 +106,8 @@ function CollectionPromo() {
 		<div className="mx-auto grid w-full max-w-lg gap-4 sm:max-w-7xl md:grid-cols-2">
 			{themeCards.map((card) => (
 				<CollectionCard
-					key={card._key}
-					heading={card.heading}
 					cta={{ text: card.label, href: card.href }}
+					heading={card.heading}
 					image={{
 						src: urlFor({
 							_ref: card.image.asset._id,
@@ -122,6 +121,7 @@ function CollectionPromo() {
 							.dpr(3)
 							.url(),
 					}}
+					key={card._key}
 					theme={card.theme}
 				/>
 			))}
@@ -148,19 +148,19 @@ function CollectionCard({
 	return (
 		<div className="relative aspect-square">
 			<img
-				src={image.src}
 				alt={image.alt || ''}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'top']
 				)}
 				loading="eager"
+				src={image.src}
 			/>
 			<div
-				data-theme={theme}
 				className="from-true-black/50 relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t via-transparent p-8"
+				data-theme={theme}
 			>
-				<Heading id={id} size="2" color="light">
+				<Heading color="light" id={id} size="2">
 					{heading}
 				</Heading>
 				<p className="mx-auto flex w-full max-w-[10rem] flex-col items-stretch text-center">

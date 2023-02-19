@@ -34,10 +34,10 @@ export function Footer() {
 						<nav className="mt-6 w-full flex-1 text-base leading-6 md:ml-12 md:mt-0">
 							<div className="grid w-full grid-cols-2 justify-center">
 								{footerNavigation.map((col, index) => (
-									<div key={index} className="flex md:justify-center">
+									<div className="flex md:justify-center" key={index}>
 										<ul>
 											{col.map((col) => (
-												<li key={col.href} className="mt-3 first:mt-0">
+												<li className="mt-3 first:mt-0" key={col.href}>
 													<Link
 														className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
 														to={col.href}
@@ -54,7 +54,7 @@ export function Footer() {
 					</div>
 					<dl className="mt-6 w-full text-base leading-6 text-gray-600 md:col-span-2 md:mt-0">
 						{descriptionList.map(({ heading, icon: Icon, description }) => (
-							<div key={heading} className="mt-3 first:mt-0">
+							<div className="mt-3 first:mt-0" key={heading}>
 								<dt className="sr-only">{heading}</dt>
 								<dd className="group flex gap-3">
 									<Icon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
@@ -69,8 +69,8 @@ export function Footer() {
 						<p className="text-center text-base leading-6 text-gray-700">
 							Website by{' '}
 							<a
-								href="https://www.lukebennett.com.au/"
 								className="hover:text-primary focus:text-primary font-bold transition duration-150 ease-out focus:underline focus:outline-none"
+								href="https://www.lukebennett.com.au/"
 							>
 								Luke Bennett
 							</a>
@@ -110,8 +110,8 @@ const descriptionList = [
 				{CONTACT_NUMBERS.map(({ name, phone }, index) => (
 					<Fragment key={name}>
 						<a
-							href={`tel:${phone}`}
 							className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+							href={`tel:${phone}`}
 						>
 							{name}: {phone}
 						</a>
@@ -129,8 +129,8 @@ const descriptionList = [
 		description: (
 			<>
 				<a
-					href={`mailto:${EMAIL_ADDRESS}`}
 					className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+					href={`mailto:${EMAIL_ADDRESS}`}
 				>
 					{EMAIL_ADDRESS}
 				</a>

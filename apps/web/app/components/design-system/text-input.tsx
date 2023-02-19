@@ -19,9 +19,6 @@ export const TextInput = forwardRef<
 		<input
 			{...consumerProps}
 			{...a11yProps}
-			disabled={disabled}
-			ref={forwardedRef}
-			type="text"
 			className={clsx(
 				'block h-12 w-full transition focus:ring focus:ring-offset-2',
 				invalid
@@ -29,6 +26,9 @@ export const TextInput = forwardRef<
 					: 'focus:border-brand-300 focus:ring-brand-400 border-gray-300',
 				className
 			)}
+			disabled={disabled}
+			ref={forwardedRef}
+			type="text"
 		/>
 	);
 });

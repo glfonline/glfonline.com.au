@@ -123,7 +123,7 @@ export default function CartPage() {
 			<div className="bg-white">
 				<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 text-center sm:px-6 lg:max-w-7xl lg:px-8">
 					<div className="flex flex-col gap-6">
-						<Heading size="2" headingElement="h1">
+						<Heading headingElement="h1" size="2">
 							Shopping Cart
 						</Heading>
 						<h2>Your cart is currently empty.</h2>
@@ -141,18 +141,18 @@ export default function CartPage() {
 	return (
 		<div className="bg-white">
 			<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
-				<Heading size="2" headingElement="h1">
+				<Heading headingElement="h1" size="2">
 					Shopping Cart
 				</Heading>
 				<div className="mt-12 lg:grid lg:grid-cols-12 lg:items-start lg:gap-x-12 xl:gap-x-16">
 					<section aria-labelledby="cart-heading" className="lg:col-span-7">
-						<h2 id="cart-heading" className="sr-only">
+						<h2 className="sr-only" id="cart-heading">
 							Items in your shopping cart
 						</h2>
 
 						<ul
-							role="list"
 							className="divide-y divide-gray-200 border-t border-b border-gray-200"
+							role="list"
 						>
 							{cartInfo?.lineItems.edges.map(({ node }) => {
 								const theme = node.variant?.product.tags
@@ -163,9 +163,9 @@ export default function CartPage() {
 								const size = 96;
 								return (
 									<li
-										key={node.id}
-										data-theme={theme}
 										className="flex py-6 sm:py-10"
+										data-theme={theme}
+										key={node.id}
 									>
 										<div className="flex-shrink-0">
 											<Image
@@ -191,8 +191,8 @@ export default function CartPage() {
 													<div className="flex justify-between">
 														<h3 className="text-sm">
 															<Link
-																to={`/${theme}/products/${node.variant?.product.handle}`}
 																className="text-gray-700 hover:text-gray-800"
+																to={`/${theme}/products/${node.variant?.product.handle}`}
 															>
 																{node.title}
 															</Link>
@@ -228,13 +228,13 @@ export default function CartPage() {
 											<p className="mt-4 flex space-x-2 text-sm text-gray-700">
 												{node.variant?.currentlyNotInStock ? (
 													<ClockIcon
-														className="h-5 w-5 flex-shrink-0 text-gray-300"
 														aria-hidden="true"
+														className="h-5 w-5 flex-shrink-0 text-gray-300"
 													/>
 												) : (
 													<CheckIcon
-														className="h-5 w-5 flex-shrink-0 text-green-500"
 														aria-hidden="true"
+														className="h-5 w-5 flex-shrink-0 text-green-500"
 													/>
 												)}
 
@@ -253,11 +253,11 @@ export default function CartPage() {
 
 					{/* Order summary */}
 					<Form
-						method="post"
 						aria-labelledby="summary-heading"
 						className="mt-16 flex flex-col gap-6 bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
+						method="post"
 					>
-						<h2 id="summary-heading" className="text-lg text-gray-900">
+						<h2 className="text-lg text-gray-900" id="summary-heading">
 							Order summary
 						</h2>
 
@@ -274,14 +274,14 @@ export default function CartPage() {
 							Taxes and shipping are calculated at checkout
 						</p>
 
-						<input type="hidden" name="webUrl" value={cartInfo?.webUrl} />
+						<input name="webUrl" type="hidden" value={cartInfo?.webUrl} />
 
 						<Button
-							type="submit"
-							variant="neutral"
-							name={INTENT}
-							value={CHECKOUT_ACTION}
 							disabled={transition.state !== 'idle'}
+							name={INTENT}
+							type="submit"
+							value={CHECKOUT_ACTION}
+							variant="neutral"
 						>
 							Checkout
 						</Button>
@@ -310,12 +310,9 @@ function QuantityPicker({
 			</span>
 			<span className="isolate inline-flex shadow-sm">
 				<fetcher.Form method="post" replace>
-					<input type="hidden" name="variantId" value={variantId} />
-					<input type="hidden" name="quantity" value={quantity - 1} />
+					<input name="variantId" type="hidden" value={variantId} />
+					<input name="quantity" type="hidden" value={quantity - 1} />
 					<button
-						name={INTENT}
-						value={DECREMENT_ACTION}
-						type="submit"
 						className={clsx(
 							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
 							'hover:bg-gray-50',
@@ -324,8 +321,11 @@ function QuantityPicker({
 							fetcher.state === 'loading' && 'opacity-50'
 						)}
 						disabled={quantity <= 1}
+						name={INTENT}
+						type="submit"
+						value={DECREMENT_ACTION}
 					>
-						<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+						<ChevronLeftIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
 				</fetcher.Form>
 				<span
@@ -337,12 +337,9 @@ function QuantityPicker({
 					{quantity}
 				</span>
 				<fetcher.Form method="post" replace>
-					<input type="hidden" name="variantId" value={variantId} />
-					<input type="hidden" name="quantity" value={quantity + 1} />
+					<input name="variantId" type="hidden" value={variantId} />
+					<input name="quantity" type="hidden" value={quantity + 1} />
 					<button
-						name={INTENT}
-						value={INCREMENT_ACTION}
-						type="submit"
 						className={clsx(
 							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
 							'hover:bg-gray-50',
@@ -351,8 +348,11 @@ function QuantityPicker({
 							fetcher.state === 'loading' && 'opacity-50'
 						)}
 						disabled={quantity + 1 >= quantityAvailable}
+						name={INTENT}
+						type="submit"
+						value={INCREMENT_ACTION}
 					>
-						<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+						<ChevronRightIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
 				</fetcher.Form>
 			</span>
@@ -364,19 +364,19 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
 
 	return (
-		<fetcher.Form method="post" replace className="absolute top-0 right-0">
-			<input type="hidden" name="variantId" value={variantId} />
+		<fetcher.Form className="absolute top-0 right-0" method="post" replace>
+			<input name="variantId" type="hidden" value={variantId} />
 			<button
-				name={INTENT}
-				value={REMOVE_ACTION}
-				type="submit"
 				className={clsx(
 					'-m-2 inline-flex bg-white p-2 text-gray-400',
 					'focus:ring-brand-primary hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
 				)}
+				name={INTENT}
+				type="submit"
+				value={REMOVE_ACTION}
 			>
 				<span className="sr-only">Remove</span>
-				<XMarkIcon className="h-5 w-5" aria-hidden="true" />
+				<XMarkIcon aria-hidden="true" className="h-5 w-5" />
 			</button>
 		</fetcher.Form>
 	);

@@ -49,7 +49,6 @@ export default function TestimonialsPage() {
 		<div className="flex w-full flex-col pb-16 sm:pb-24">
 			<div className="flex w-full flex-col gap-10">
 				<Hero
-					title={title}
 					image={{
 						url: urlFor({
 							_ref: heroImage.asset._id,
@@ -64,6 +63,7 @@ export default function TestimonialsPage() {
 							.url(),
 						alt: heroImage.asset.altText ?? '',
 					}}
+					title={title}
 				/>
 				<Testimonials />
 			</div>
@@ -80,10 +80,12 @@ function Testimonials() {
 			{testimonials.map(({ _key, author, quoteRaw, testimonialImage }) =>
 				testimonialImage ? (
 					<li
-						key={_key}
 						className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12"
+						key={_key}
 					>
 						<img
+							alt={testimonialImage.asset.altText ?? ''}
+							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 							src={urlFor({
 								_ref: testimonialImage.asset._id,
 								crop: testimonialImage.asset.crop,
@@ -95,8 +97,6 @@ function Testimonials() {
 								.focalPoint(0.5, 0.5)
 								.dpr(3)
 								.url()}
-							alt={testimonialImage.asset.altText ?? ''}
-							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 						/>
 						<div className="md:col-span-7 md:col-start-6 md:py-16">
 							<div className="relative">
@@ -111,7 +111,7 @@ function Testimonials() {
 						</div>
 					</li>
 				) : (
-					<li key={_key} className="border px-8 py-10">
+					<li className="border px-8 py-10" key={_key}>
 						<div className="prose prose-blockquote:border-none prose-p:before:content-none prose-blockquote:pl-0">
 							<blockquote>
 								<PortableText value={quoteRaw} />

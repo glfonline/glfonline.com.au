@@ -2,10 +2,10 @@ export function ClockIcon(props: React.SVGProps<SVGSVGElement>) {
 	return (
 		<svg
 			aria-hidden="true"
-			focusable="false"
-			role="img"
-			preserveAspectRatio="xMidYMid meet"
 			fill="none"
+			focusable="false"
+			preserveAspectRatio="xMidYMid meet"
+			role="img"
 			stroke="currentColor"
 			strokeLinecap="round"
 			strokeLinejoin="round"

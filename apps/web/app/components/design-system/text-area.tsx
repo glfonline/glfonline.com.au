@@ -12,9 +12,6 @@ export const TextArea = forwardRef<
 		<textarea
 			{...consumerProps}
 			{...a11yProps}
-			disabled={disabled}
-			ref={forwardedRef}
-			rows={rows}
 			className={clsx(
 				'block w-full transition focus:ring focus:ring-offset-2',
 				invalid
@@ -22,6 +19,9 @@ export const TextArea = forwardRef<
 					: 'focus:border-brand-300 focus:ring-brand-400 border-gray-300',
 				className
 			)}
+			disabled={disabled}
+			ref={forwardedRef}
+			rows={rows}
 		/>
 	);
 });

@@ -16,21 +16,21 @@ export function BrandsWeLove({ brands }: { brands: BrandCard[] }) {
 				<div className="mt-6 grid grid-cols-2 gap-4 lg:mt-8 lg:grid-cols-4">
 					{brands.map((brand) => (
 						<Link
-							data-theme={brand.theme}
-							key={brand.href}
-							to={brand.href}
 							className={clsx(
 								'relative col-span-1 flex justify-center rounded px-8 py-8 transition duration-150 ease-in-out',
 								'hover:bg-brand-100',
 								'focus:bg-brand-50 focus:ring-brand focus:z-10 focus:outline-none focus:ring focus:ring-opacity-50',
 								'active:bg-brand-200'
 							)}
+							data-theme={brand.theme}
+							key={brand.href}
+							to={brand.href}
 						>
 							<span className="sr-only">Shop {brand.label}</span>
 							<img
+								alt=""
 								className="max-h-12 mix-blend-multiply grayscale"
 								src={brand.icon}
-								alt=""
 							/>
 						</Link>
 					))}

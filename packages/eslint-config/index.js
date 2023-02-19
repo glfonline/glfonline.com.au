@@ -28,6 +28,7 @@ module.exports = {
 		'import/no-extraneous-dependencies': ERROR,
 		'jsx-a11y/no-redundant-roles': OFF,
 		'prefer-const': WARN,
+		'react/jsx-sort-props': ERROR,
 		'react/no-unescaped-entities': OFF,
 		'simple-import-sort/exports': ERROR,
 		'simple-import-sort/imports': ERROR,

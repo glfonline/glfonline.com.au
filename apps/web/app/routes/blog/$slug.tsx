@@ -33,7 +33,6 @@ export default function Page() {
 		<div className="bg-white">
 			<div className="mx-auto flex max-w-2xl flex-col gap-12 px-4 pb-12 sm:gap-16 sm:px-6 sm:pb-16 lg:px-8">
 				<Hero
-					title={page.title}
 					image={{
 						url: urlFor({
 							_ref: page.mainImage.asset._id,
@@ -48,6 +47,7 @@ export default function Page() {
 							.url(),
 						alt: page.mainImage.asset.altText ?? '',
 					}}
+					title={page.title}
 				/>
 				<div className="prose">
 					<PortableText value={page.bodyRaw} />

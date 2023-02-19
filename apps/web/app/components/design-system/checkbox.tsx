@@ -11,9 +11,6 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 				<input
 					{...consumerProps}
 					{...a11yProps}
-					ref={forwardedRef}
-					type="checkbox"
-					disabled={disabled}
 					className={clsx(
 						'h-4 w-4 rounded border-gray-300',
 						invalid
@@ -21,6 +18,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 							: 'text-brand-600 focus:ring-brand-500',
 						className
 					)}
+					disabled={disabled}
+					ref={forwardedRef}
+					type="checkbox"
 				/>
 			</div>
 		);

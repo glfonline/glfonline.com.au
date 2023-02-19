@@ -8,17 +8,17 @@ export function GoogleAnalytics() {
 		<Fragment>
 			{gtag.trackingIds.map((id) => (
 				<script
-					key={id}
 					async
+					key={id}
 					src={`https://www.googletagmanager.com/gtag/js?id=${id}`}
 				/>
 			))}
 			<script
 				async
-				id="gtag-init"
 				dangerouslySetInnerHTML={{
 					__html: gtagInitScript,
 				}}
+				id="gtag-init"
 			/>
 		</Fragment>
 	);

@@ -29,15 +29,15 @@ export function GenericError({ error }: { error?: Partial<Error> }) {
 								<span>{error.message}</span>
 								{error?.stack && (
 									<pre
+										dangerouslySetInnerHTML={{
+											__html: addLinksToStackTrace(error.stack),
+										}}
 										style={{
 											padding: '2rem',
 											background: 'hsla(10, 50%, 50%, 0.1)',
 											color: 'red',
 											overflow: 'auto',
 											maxWidth: '100%',
-										}}
-										dangerouslySetInnerHTML={{
-											__html: addLinksToStackTrace(error.stack),
 										}}
 									/>
 								)}
@@ -57,7 +57,7 @@ export function GenericError({ error }: { error?: Partial<Error> }) {
 
 function addLinksToStackTrace(stackTrace: string) {
 	return stackTrace?.replace(
-		/^\s*at\s?.*?[(\s]((\/|\w\:).+)\)\n/gim,
+		/^\s*at\s?.*?[(\s]((\/|\w:).+)\)\n/gim,
 		(all, m1) =>
 			all.replace(
 				m1,
