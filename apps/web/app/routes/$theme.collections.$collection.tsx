@@ -80,14 +80,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function CollectionPage() {
-	const {
-		//
-		collectionHandle,
-		image,
-		products,
-		theme,
-		title,
-	} = useLoaderData<typeof loader>();
+	const { collectionHandle, image, products, theme, title } =
+		useLoaderData<typeof loader>();
 
 	const { data, fetchNextPage, isFetching } = useCollectionProducts({
 		collectionHandle,
