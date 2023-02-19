@@ -1,49 +1,49 @@
 import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { useInfiniteQuery } from '@tanstack/react-query';
 
-export function useCollectionProducts({
-	collectionHandle,
-	cursor,
-	initialData,
-	itemsPerPage,
-}: {
-	collectionHandle: string;
-	cursor?: string;
-	initialData?: Awaited<ReturnType<typeof getProductsFromCollectionByTag>>;
+import { capitalise } from './capitalise';
+
+type ProductCollectionSortKeys =
+	| 'BEST_SELLING'
+	| 'COLLECTION_DEFAULT'
+	| 'CREATED'
+	| 'ID'
+	| 'MANUAL'
+	| 'PRICE'
+	| 'RELEVANCE'
+	| 'TITLE';
+
+type GetProductsFromCollectionByTag = {
+	handle: string;
+	after?: string;
 	itemsPerPage?: number;
-}) {
-	return useInfiniteQuery({
-		queryKey: ['collection-products', collectionHandle, cursor],
-		queryFn: async ({ pageParam }: { pageParam?: string }) =>
-			await getProductsFromCollectionByTag({
-				collectionHandle,
-				cursor: pageParam,
-				itemsPerPage,
-			}),
-		initialData: {
-			pageParams: [cursor],
-			pages: [initialData],
-		},
-		getNextPageParam: (lastPage) =>
-			(lastPage?.pageInfo?.hasNextPage && lastPage.pageInfo.endCursor) ??
-			undefined,
-	});
-}
+	theme: string;
+	sortBy?: string;
+	filterOptions?: Record<string, string>;
+};
 
 export async function getProductsFromCollectionByTag({
-	collectionHandle,
-	cursor,
+	handle,
+	after,
 	itemsPerPage,
-}: {
-	collectionHandle: string;
-	cursor?: string;
-	itemsPerPage?: number;
-}) {
+	theme,
+	sortBy = 'price-desc',
+	filterOptions,
+}: GetProductsFromCollectionByTag) {
 	try {
 		const { collection } = await shopifyClient(COLLECTION_QUERY, {
-			collectionHandle,
-			after: cursor,
+			...getSortOptions(sortBy),
+			after,
 			first: itemsPerPage,
+			handle,
+			filters: [
+				{ available: true },
+				{ tag: capitalise(theme) },
+				...(filterOptions
+					? Object.entries(filterOptions).map(([key, value]) => ({
+							variantOption: { name: key, value: value },
+					  }))
+					: []),
+			],
 		});
 
 		return {
@@ -58,5 +58,65 @@ export async function getProductsFromCollectionByTag({
 	} catch (error) {
 		/** @todo */
 		console.error(error);
+	}
+}
+
+export type SortBy =
+	| 'collection-default'
+	| 'latest-desc'
+	| 'price-asc'
+	| 'price-desc'
+	| 'relevance'
+	| 'title-asc'
+	| 'title-desc'
+	| 'trending-desc';
+
+function getSortOptions(sortType: string): {
+	sortKey: ProductCollectionSortKeys;
+	reverse: boolean;
+} {
+	switch (sortType) {
+		case 'collection-default':
+			return {
+				sortKey: 'COLLECTION_DEFAULT',
+				reverse: false,
+			};
+		case 'latest-desc':
+			return {
+				sortKey: 'CREATED',
+				reverse: true,
+			};
+		case 'price-asc':
+			return {
+				sortKey: 'PRICE',
+				reverse: false,
+			};
+		case 'price-desc':
+			return {
+				sortKey: 'PRICE',
+				reverse: true,
+			};
+		case 'relevance':
+			return {
+				sortKey: 'RELEVANCE',
+				reverse: false,
+			};
+		case 'title-asc':
+			return {
+				sortKey: 'TITLE',
+				reverse: false,
+			};
+		case 'title-desc':
+			return {
+				sortKey: 'TITLE',
+				reverse: true,
+			};
+		case 'trending-desc':
+			return {
+				sortKey: 'BEST_SELLING',
+				reverse: true,
+			};
+		default:
+			return getSortOptions('collection-default');
 	}
 }

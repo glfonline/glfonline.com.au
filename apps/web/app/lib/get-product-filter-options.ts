@@ -17,9 +17,10 @@ export async function getProductFilterOptions({
 	let cursor: string | undefined;
 	async function getProducts() {
 		const { collection } = await shopifyClient(COLLECTION_OPTIONS_QUERY, {
-			collectionHandle,
-			after: cursor,
+			handle: collectionHandle,
+			after: after ?? cursor,
 			first,
+			filters: [{ available: true }],
 		});
 		const { products } = schema.parse(collection);
 		prods = [...prods, ...products.edges];

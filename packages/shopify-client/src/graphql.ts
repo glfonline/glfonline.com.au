@@ -1,14 +1,87 @@
 import { gql } from '@ts-gql/tag/no-transform';
 
-/**
+/*******************************************************************************
  * Fragments
- */
+ ******************************************************************************/
 
-export const PRODUCT_VARIANT_PRODUCTS_FRAGMENT = gql`
-	fragment PRODUCT_VARIANT_PRODUCTS_FRAGMENT on ProductVariant {
-		__typename
+export const IMAGE_FRAGMENT = gql`
+	fragment IMAGE_FRAGMENT on Image {
 		id
-		title
+		altText
+		height
+		url
+		width
+	}
+` as import('../__generated__/ts-gql/IMAGE_FRAGMENT').type;
+
+export const PRODUCT_PRICE_RANGE_FRAGMENT = gql`
+	fragment PRODUCT_PRICE_RANGE_FRAGMENT on ProductPriceRange {
+		maxVariantPrice {
+			amount
+			currencyCode
+		}
+		minVariantPrice {
+			amount
+			currencyCode
+		}
+	}
+` as import('../__generated__/ts-gql/PRODUCT_PRICE_RANGE_FRAGMENT').type;
+
+export const PRODUCT_CONNECTION_FRAGMENT = gql`
+	fragment PRODUCT_CONNECTION_FRAGMENT on ProductConnection {
+		pageInfo {
+			endCursor
+			hasNextPage
+			hasPreviousPage
+		}
+		edges {
+			cursor
+			node {
+				id
+				title
+				vendor
+				handle
+				priceRange {
+					minVariantPrice {
+						amount
+						currencyCode
+					}
+				}
+				images(first: 1) {
+					pageInfo {
+						hasNextPage
+						hasPreviousPage
+					}
+					edges {
+						node {
+							id
+							altText
+							height
+							url
+							width
+						}
+					}
+				}
+				variants(first: 1) {
+					edges {
+						node {
+							id
+						}
+					}
+				}
+			}
+		}
+	}
+` as import('../__generated__/ts-gql/PRODUCT_CONNECTION_FRAGMENT').type;
+
+export const PRODUCT_VARIANT_FRAGMENT = gql`
+	fragment PRODUCT_VARIANT_FRAGMENT on ProductVariant {
+		id
+		availableForSale
+		compareAtPrice {
+			amount
+		}
+		currentlyNotInStock
 		image {
 			id
 			altText
@@ -16,33 +89,22 @@ export const PRODUCT_VARIANT_PRODUCTS_FRAGMENT = gql`
 			url
 			width
 		}
-		priceV2 {
+		price {
 			amount
 		}
-		product {
-			id
-			availableForSale
-			handle
-			images(first: 1) {
-				edges {
-					node {
-						id
-						altText
-						height
-						url
-						width
-					}
-				}
-			}
-			tags
-			title
+		requiresShipping
+		selectedOptions {
+			name
+			value
 		}
+		sku
+		title
 	}
-` as import('../__generated__/ts-gql/PRODUCT_VARIANT_PRODUCTS_FRAGMENT').type;
+` as import('../__generated__/ts-gql/PRODUCT_VARIANT_FRAGMENT').type;
 
-/**
+/*******************************************************************************
  * Queries
- */
+ ******************************************************************************/
 
 export const LEGAL_PAGE_QUERY = gql`
 	query LEGAL_PAGE_QUERY($handle: String) {
@@ -54,6 +116,112 @@ export const LEGAL_PAGE_QUERY = gql`
 		}
 	}
 ` as import('../__generated__/ts-gql/LEGAL_PAGE_QUERY').type;
+
+export const COLLECTION_QUERY = gql`
+	query COLLECTION_QUERY(
+		$after: String
+		$before: String
+		$filters: [ProductFilter!]
+		$first: Int
+		$handle: String
+		$last: Int
+		$reverse: Boolean
+		$sortKey: ProductCollectionSortKeys
+	) {
+		collection(handle: $handle) {
+			id
+			image {
+				...IMAGE_FRAGMENT
+			}
+			products(
+				after: $after
+				before: $before
+				filters: $filters
+				first: $first
+				last: $last
+				reverse: $reverse
+				sortKey: $sortKey
+			) {
+				pageInfo {
+					endCursor
+					hasNextPage
+					hasPreviousPage
+				}
+				edges {
+					node {
+						id
+						availableForSale
+						compareAtPriceRange {
+							...PRODUCT_PRICE_RANGE_FRAGMENT
+						}
+						handle
+						featuredImage {
+							...IMAGE_FRAGMENT
+						}
+						priceRange {
+							...PRODUCT_PRICE_RANGE_FRAGMENT
+						}
+						tags
+						title
+					}
+				}
+			}
+			title
+		}
+	}
+	${IMAGE_FRAGMENT}
+	${PRODUCT_PRICE_RANGE_FRAGMENT}
+` as import('../__generated__/ts-gql/COLLECTION_QUERY').type;
+
+export const COLLECTION_OPTIONS_QUERY = gql`
+	query COLLECTION_OPTIONS_QUERY(
+		$after: String
+		$filters: [ProductFilter!]
+		$first: Int = 250
+		$handle: String
+	) {
+		collection(handle: $handle) {
+			id
+			products(after: $after, filters: $filters, first: $first) {
+				pageInfo {
+					endCursor
+					hasNextPage
+				}
+				edges {
+					node {
+						id
+						options {
+							id
+							name
+							values
+						}
+					}
+				}
+			}
+		}
+	}
+` as import('../__generated__/ts-gql/COLLECTION_OPTIONS_QUERY').type;
+
+export const ALL_PRODUCTS_QUERY = gql`
+	query ALL_PRODUCTS_QUERY(
+		$first: Int = 20
+		$query: String = ""
+		$sortKey: ProductSortKeys = RELEVANCE
+		$reverse: Boolean = false
+		$cursor: String = null
+	) {
+		products(
+			first: $first
+			sortKey: $sortKey
+			reverse: $reverse
+			query: $query
+			after: $cursor
+		) {
+			...PRODUCT_CONNECTION_FRAGMENT
+		}
+	}
+	${PRODUCT_CONNECTION_FRAGMENT}
+` as import('../__generated__/ts-gql/ALL_PRODUCTS_QUERY').type;
 
 export const SINGLE_PRODUCT_QUERY = gql`
 	query SINGLE_PRODUCT_QUERY($handle: String!) {
@@ -69,11 +237,7 @@ export const SINGLE_PRODUCT_QUERY = gql`
 				}
 				edges {
 					node {
-						id
-						altText
-						url
-						height
-						width
+						...IMAGE_FRAGMENT
 					}
 				}
 			}
@@ -98,176 +262,20 @@ export const SINGLE_PRODUCT_QUERY = gql`
 				}
 				edges {
 					node {
-						id
-						availableForSale
-						compareAtPrice {
-							amount
-						}
-						currentlyNotInStock
-						image {
-							id
-							altText
-							height
-							url
-							width
-						}
-						price {
-							amount
-						}
-						requiresShipping
-						selectedOptions {
-							name
-							value
-						}
-						sku
-						title
+						...PRODUCT_VARIANT_FRAGMENT
 					}
 				}
 			}
 			vendor
 		}
 	}
+	${IMAGE_FRAGMENT}
+	${PRODUCT_VARIANT_FRAGMENT}
 ` as import('../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;
 
-export const PRODUCTS_QUERY = gql`
-	query PRODUCTS_QUERY($first: Int = 6) {
-		products(first: $first) {
-			edges {
-				node {
-					id
-					description
-					handle
-					images(first: 1) {
-						edges {
-							node {
-								id
-								altText
-								height
-								url
-								width
-							}
-						}
-					}
-					priceRange {
-						minVariantPrice {
-							amount
-						}
-					}
-					tags
-					title
-				}
-			}
-		}
-	}
-` as import('../__generated__/ts-gql/PRODUCTS_QUERY').type;
-
-export const COLLECTION_QUERY = gql`
-	query COLLECTION_QUERY(
-		$after: String
-		$collectionHandle: String
-		$first: Int = 250
-		$sortKey: ProductCollectionSortKeys = BEST_SELLING
-	) {
-		collection(handle: $collectionHandle) {
-			id
-			title
-			image {
-				id
-				altText
-				height
-				url
-				width
-			}
-			products(
-				after: $after
-				filters: { available: true }
-				first: $first
-				sortKey: $sortKey
-			) {
-				pageInfo {
-					endCursor
-					hasNextPage
-				}
-				edges {
-					node {
-						id
-						availableForSale
-						description
-						featuredImage {
-							id
-							altText
-							height
-							url
-							width
-						}
-						handle
-						options {
-							id
-							name
-							values
-						}
-						priceRange {
-							minVariantPrice {
-								amount
-							}
-						}
-						productType
-						tags
-						title
-						vendor
-					}
-				}
-			}
-		}
-	}
-` as import('../__generated__/ts-gql/COLLECTION_QUERY').type;
-
-export const COLLECTION_OPTIONS_QUERY = gql`
-	query COLLECTION_OPTIONS_QUERY(
-		$after: String
-		$collectionHandle: String
-		$first: Int = 250
-	) {
-		collection(handle: $collectionHandle) {
-			id
-			products(
-				after: $after
-				filters: { available: true }
-				first: $first
-				sortKey: BEST_SELLING
-			) {
-				pageInfo {
-					endCursor
-					hasNextPage
-				}
-				edges {
-					node {
-						id
-						options {
-							id
-							name
-							values
-						}
-					}
-				}
-			}
-		}
-	}
-` as import('../__generated__/ts-gql/COLLECTION_OPTIONS_QUERY').type;
-
-export const GET_PRODUCT_VARIANTS_QUERY = gql`
-	query GET_PRODUCT_VARIANTS_QUERY($ids: [ID!]!) {
-		nodes(ids: $ids) {
-			id
-			...PRODUCT_VARIANT_PRODUCTS_FRAGMENT
-		}
-	}
-	${PRODUCT_VARIANT_PRODUCTS_FRAGMENT}
-` as import('../__generated__/ts-gql/GET_PRODUCT_VARIANTS_QUERY').type;
-
-/**
+/*******************************************************************************
  * Mutations
- */
+ ******************************************************************************/
 
 export const CREATE_CHECKOUT_MUTATION = gql`
 	mutation CREATE_CHECKOUT_MUTATION($input: CheckoutCreateInput!) {
@@ -285,11 +293,7 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 								availableForSale
 								currentlyNotInStock
 								image {
-									id
-									altText
-									height
-									url
-									width
+									...IMAGE_FRAGMENT
 								}
 								price {
 									amount
@@ -312,4 +316,5 @@ export const CREATE_CHECKOUT_MUTATION = gql`
 			}
 		}
 	}
+	${IMAGE_FRAGMENT}
 ` as import('../__generated__/ts-gql/CREATE_CHECKOUT_MUTATION').type;
