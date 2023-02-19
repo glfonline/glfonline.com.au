@@ -12,6 +12,7 @@ import { getHeadingStyles } from '~/components/design-system/heading/get-heading
 import { Divider } from '~/components/divider';
 import { Map } from '~/components/map';
 import { VerticalLogo } from '~/components/vectors/vertical-logo';
+import { brands } from '~/lib/constants';
 import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
 import { PortableText } from '~/lib/portable-text';
 import { urlFor } from '~/lib/sanity-image';
@@ -48,7 +49,7 @@ export default function Index() {
 				<Hero />
 				<CollectionPromo />
 			</article>
-			<BrandsWeLove />
+			<BrandsWeLove brands={brands} />
 			<ContactForm />
 			<NewsletterSignup />
 			<Map />

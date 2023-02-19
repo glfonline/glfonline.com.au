@@ -1,11 +1,11 @@
 import { Link } from '@remix-run/react';
 import { clsx } from 'clsx';
 
-import { brands } from '~/lib/constants';
+import type { BrandCard } from '~/lib/constants';
 
 import { Heading } from './design-system/heading';
 
-export function BrandsWeLove() {
+export function BrandsWeLove({ brands }: { brands: BrandCard[] }) {
 	return (
 		<article className="bg-white">
 			<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">

@@ -422,12 +422,12 @@ export const footerNavigation: Array<Array<NavItem>> = [
 	],
 ];
 
-export const brands: Array<
-	NavItem & {
-		icon: string;
-		theme: 'ladies' | 'mens';
-	}
-> = [
+export type BrandCard = NavItem & {
+	icon: string;
+	theme: 'ladies' | 'mens';
+};
+
+export const brands = [
 	{
 		label: 'IBKUL',
 		href: '/ladies/collections/ibkul/',
@@ -476,4 +476,4 @@ export const brands: Array<
 		icon: sporteLeisure,
 		theme: 'ladies',
 	},
-];
+] satisfies Array<BrandCard>;

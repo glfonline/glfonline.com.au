@@ -7,7 +7,9 @@ import {
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
+import { BrandsWeLove } from '~/components/brands-we-love';
 import { CollectionCard } from '~/components/collection-card';
+import { brands } from '~/lib/constants';
 import { urlFor } from '~/lib/sanity-image';
 import { getSeoMeta } from '~/seo';
 
@@ -77,32 +79,35 @@ export default function CollectionsPage() {
 	const { collection } = useLoaderData<typeof loader>();
 
 	return (
-		<div className="grid gap-4 lg:grid-cols-5">
-			{collection.collectionCards.map((collection) => (
-				<CollectionCard
-					key={collection._key}
-					span={collection.span}
-					image={{
-						src: urlFor({
-							_ref: collection.image.asset._id,
-							crop: collection.image.asset.crop,
-							hotspot: collection.image.asset.hotspot,
-						})
-							.auto('format')
-							.width((1280 / 5) * Number(collection.span))
-							.height(385)
-							.focalPoint(0.5, 0.5)
-							.dpr(3)
-							.url(),
-						alt: collection.image.asset.altText ?? '',
-						objectPosition: 'top',
-					}}
-					cta={{
-						text: collection.label,
-						href: collection.href,
-					}}
-				/>
-			))}
+		<div>
+			<div className="grid gap-4 lg:grid-cols-5">
+				{collection.collectionCards.map((collection) => (
+					<CollectionCard
+						key={collection._key}
+						span={collection.span}
+						image={{
+							src: urlFor({
+								_ref: collection.image.asset._id,
+								crop: collection.image.asset.crop,
+								hotspot: collection.image.asset.hotspot,
+							})
+								.auto('format')
+								.width((1280 / 5) * Number(collection.span))
+								.height(385)
+								.focalPoint(0.5, 0.5)
+								.dpr(3)
+								.url(),
+							alt: collection.image.asset.altText ?? '',
+							objectPosition: 'top',
+						}}
+						cta={{
+							text: collection.label,
+							href: collection.href,
+						}}
+					/>
+				))}
+			</div>
+			<BrandsWeLove brands={brands} />
 		</div>
 	);
 }
