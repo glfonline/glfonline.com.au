@@ -29,6 +29,7 @@ import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import { getSession } from './lib/cart';
 import * as gtag from './lib/gtag';
+import { useAnalytics } from './lib/use-analytics';
 import styles from './styles/tailwind.css';
 
 const [seoMeta, seoLinks] = getSeo();
@@ -64,6 +65,13 @@ const persister = createSyncStoragePersister({
 
 export default function App() {
 	const location = useLocation();
+	useAnalytics({
+		hasUserConsent: true,
+		locale: {
+			currency: 'AUD',
+			language: 'EN',
+		},
+	});
 
 	useEffect(() => {
 		if (process.env.NODE_ENV !== 'development') {
