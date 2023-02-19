@@ -23,7 +23,7 @@ export function Footer() {
 					<div className="flex flex-col md:col-span-3 md:flex-row">
 						<Link
 							aria-current="page"
-							className="focus:shadow-outline-primary my-auto flex rounded-lg focus:bg-gray-50 focus:outline-none"
+							className="focus:shadow-outline-primary focus:ring-brand -m-4 my-auto flex rounded-lg p-4 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
 							to="/"
 						>
 							<div className="text-primary">
