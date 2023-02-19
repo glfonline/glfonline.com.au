@@ -346,7 +346,7 @@ function ProductCard({ node }: { node: any }) {
 			</div>
 			<div className="flex flex-1 flex-col space-y-2 p-4">
 				<h3 className="line-clamp-2" title={node.title}>
-					<Link to={`/${theme}/products/${node.handle}`}>
+					<Link prefetch="intent" to={`/${theme}/products/${node.handle}`}>
 						<span aria-hidden="true" className="absolute inset-0" />
 						{node.title}
 					</Link>

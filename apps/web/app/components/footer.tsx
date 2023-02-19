@@ -24,6 +24,7 @@ export function Footer() {
 						<Link
 							aria-current="page"
 							className="focus:shadow-outline-primary focus:ring-brand -m-4 my-auto flex rounded-lg p-4 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
+							prefetch="intent"
 							to="/"
 						>
 							<div className="text-primary">
@@ -40,6 +41,7 @@ export function Footer() {
 												<li className="mt-3 first:mt-0" key={col.href}>
 													<Link
 														className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
+														prefetch="intent"
 														to={col.href}
 													>
 														{col.label}

@@ -192,6 +192,7 @@ export default function CartPage() {
 														<h3 className="text-sm">
 															<Link
 																className="text-gray-700 hover:text-gray-800"
+																prefetch="intent"
 																to={`/${theme}/products/${node.variant?.product.handle}`}
 															>
 																{node.title}

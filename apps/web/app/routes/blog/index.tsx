@@ -141,7 +141,11 @@ function Post({
 }: PostProps) {
 	return (
 		<li className="flex" key={imgSrc}>
-			<Link className="flex w-full flex-col sm:flex-row" to={href}>
+			<Link
+				className="flex w-full flex-col sm:flex-row"
+				prefetch="intent"
+				to={href}
+			>
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<img
 						alt=""

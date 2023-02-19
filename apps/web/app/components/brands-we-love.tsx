@@ -24,6 +24,7 @@ export function BrandsWeLove({ brands }: { brands: BrandCard[] }) {
 							)}
 							data-theme={brand.theme}
 							key={brand.href}
+							prefetch="intent"
 							to={brand.href}
 						>
 							<span className="sr-only">Shop {brand.label}</span>

@@ -14,6 +14,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(
 				<Link
 					{...consumerProps}
 					className={getButtonStyles({ className, size, variant })}
+					prefetch="intent"
 					ref={forwardedRef}
 					to={href}
 				>

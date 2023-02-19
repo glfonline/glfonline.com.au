@@ -90,12 +90,12 @@ export function ContactForm() {
 				</div>
 				<div>
 					<fetcher.Form
-						ref={form.ref}
 						action="/api/contact"
+						className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 						method="post"
 						name="contact_form"
+						ref={form.ref}
 						replace
-						className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 					>
 						<Field
 							label="First name"
@@ -107,30 +107,30 @@ export function ContactForm() {
 							<TextInput name={form.fields.last_name()} />
 						</Field>
 						<Field
+							className="sm:col-span-2"
 							label="Email"
 							message={form.errors.email()?.message}
-							className="sm:col-span-2"
 						>
 							<TextInput name={form.fields.email()} />
 						</Field>
 						<Field
+							className="sm:col-span-2"
 							label="Phone number"
 							message={form.errors.phone_number()?.message}
-							className="sm:col-span-2"
 						>
 							<TextInput name={form.fields.phone_number()} />
 						</Field>
 						<Field
+							className="sm:col-span-2"
 							label="Subject"
 							message={form.errors.subject()?.message}
-							className="sm:col-span-2"
 						>
 							<TextInput name={form.fields.subject()} />
 						</Field>
 						<Field
+							className="sm:col-span-2"
 							label="Message"
 							message={form.errors.message()?.message}
-							className="sm:col-span-2"
 						>
 							<TextArea name={form.fields.message()} />
 						</Field>
@@ -143,10 +143,10 @@ export function ContactForm() {
 							</InlineField>
 						</div>
 						<Button
-							type="submit"
-							variant="neutral"
 							className="sm:col-span-2"
 							isLoading={fetcher.state === 'loading'}
+							type="submit"
+							variant="neutral"
 						>
 							Submit
 						</Button>
@@ -171,7 +171,7 @@ function PrivacyPolicyLabel() {
 	return (
 		<Fragment>
 			By selecting this, you agree to the{' '}
-			<Link to="/privacy-policy/" className="underline">
+			<Link className="underline" prefetch="intent" to="/privacy-policy/">
 				Privacy Policy
 			</Link>
 			.
