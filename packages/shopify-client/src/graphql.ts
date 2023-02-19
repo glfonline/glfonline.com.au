@@ -166,6 +166,7 @@ export const COLLECTION_QUERY = gql`
 		$after: String
 		$collectionHandle: String
 		$first: Int = 250
+		$sortKey: ProductCollectionSortKeys = BEST_SELLING
 	) {
 		collection(handle: $collectionHandle) {
 			id
@@ -181,7 +182,7 @@ export const COLLECTION_QUERY = gql`
 				after: $after
 				filters: { available: true }
 				first: $first
-				sortKey: BEST_SELLING
+				sortKey: $sortKey
 			) {
 				pageInfo {
 					endCursor
