@@ -1,5 +1,7 @@
 import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
 
+import { type StringWithAutocomplete } from '~/types';
+
 import { capitalise } from './capitalise';
 
 type ProductCollectionSortKeys =
@@ -17,7 +19,7 @@ type GetProductsFromCollectionByTag = {
 	after?: string;
 	itemsPerPage?: number;
 	theme: string;
-	sortBy?: string;
+	sortBy?: StringWithAutocomplete<SortBy>;
 	filterOptions?: Record<string, string>;
 };
 
@@ -26,7 +28,7 @@ export async function getProductsFromCollectionByTag({
 	after,
 	itemsPerPage,
 	theme,
-	sortBy = 'price-desc',
+	sortBy = 'collection-default',
 	filterOptions,
 }: GetProductsFromCollectionByTag) {
 	try {
