@@ -1,7 +1,7 @@
 import { useFetchers, useLocation, useMatches } from '@remix-run/react';
-import type {
-	ShopifyAddToCartPayload,
-	ShopifyPageViewPayload,
+import {
+	type ShopifyAddToCartPayload,
+	type ShopifyPageViewPayload,
 } from '@shopify/hydrogen';
 import {
 	AnalyticsEventName,
@@ -9,10 +9,10 @@ import {
 	sendShopifyAnalytics,
 	useShopifyCookies,
 } from '@shopify/hydrogen';
-import type {
-	CountryCode,
-	CurrencyCode,
-	LanguageCode,
+import {
+	type CountryCode,
+	type CurrencyCode,
+	type LanguageCode,
 } from '@shopify/hydrogen/storefront-api-types';
 import { useEffect } from 'react';
 

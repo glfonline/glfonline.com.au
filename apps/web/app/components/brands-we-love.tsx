@@ -1,7 +1,7 @@
 import { Link } from '@remix-run/react';
 import { clsx } from 'clsx';
 
-import type { BrandCard } from '~/lib/constants';
+import { type BrandCard } from '~/lib/constants';
 
 import { Heading } from './design-system/heading';
 

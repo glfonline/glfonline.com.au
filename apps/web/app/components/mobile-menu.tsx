@@ -4,7 +4,7 @@ import { NavLink } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 
-import type { NavItem } from '~/lib/constants';
+import { type NavItem } from '~/lib/constants';
 import { mainNavigation, socialLinks } from '~/lib/constants';
 
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
