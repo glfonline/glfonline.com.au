@@ -478,7 +478,7 @@ export function Pagination({
 	return (
 		<nav
 			aria-label="Pagination"
-			className="mx-auto mt-6 flex max-w-7xl justify-between text-sm font-medium text-gray-700"
+			className="mx-auto mt-6 flex max-w-7xl items-center justify-between text-sm font-medium text-gray-700"
 		>
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
