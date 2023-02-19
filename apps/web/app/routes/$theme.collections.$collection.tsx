@@ -112,7 +112,7 @@ export default function CollectionPage() {
 	return (
 		<div className="flex flex-col gap-12 py-9" data-theme={theme}>
 			<Hero
-				image={{ url: image?.url ?? '', alt: image?.altText ?? '' }}
+				image={{ url: imageMap[theme], alt: image?.altText ?? '' }}
 				title={title}
 			/>
 
@@ -527,3 +527,9 @@ const sortOptions = [
 	label: string;
 	value: SortBy;
 }>;
+
+const imageMap = {
+	ladies:
+		'https://cdn.shopify.com/s/files/1/1080/9832/files/hero-default-ladies.jpg?v=1614314620&width=1200',
+	mens: 'https://cdn.shopify.com/s/files/1/1080/9832/files/hero-default-mens.jpg?v=1676795688&width=1200',
+};
