@@ -163,6 +163,21 @@ export const COLLECTION_QUERY = gql`
 						}
 						tags
 						title
+						variants(first: 250) {
+							edges {
+								node {
+									id
+									compareAtPrice {
+										amount
+										currencyCode
+									}
+									price {
+										amount
+										currencyCode
+									}
+								}
+							}
+						}
 					}
 				}
 			}

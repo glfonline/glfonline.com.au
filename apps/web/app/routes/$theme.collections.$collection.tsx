@@ -18,6 +18,7 @@ import { Image } from '@shopify/hydrogen';
 import { Fragment, useId, useState } from 'react';
 import { z } from 'zod';
 
+import { DiagonalBanner } from '~/components/diagonal-banner';
 import { Hero } from '~/components/hero';
 import { capitalise } from '~/lib/capitalise';
 import {
@@ -141,7 +142,7 @@ export default function CollectionPage() {
 							<div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:gap-x-8 xl:grid-cols-3">
 								{products.length > 0 ? (
 									products.map(({ node }) => (
-										<ProductCard key={node.id} node={node} />
+										<ProductCard key={node.id} node={node as ProductNode} />
 									))
 								) : (
 									<p className="col-start-1 col-end-[-1] text-center text-xl font-bold uppercase">
@@ -333,8 +334,22 @@ function MobileFilters({
 	);
 }
 
-function ProductCard({ node }: { node: any }) {
+type ProductNode = NonNullable<
+	NonNullable<
+		NonNullable<
+			Awaited<ReturnType<typeof getProductsFromCollectionByTag>>
+		>['products']
+	>[number]['node']
+>;
+
+function ProductCard({ node }: { node: ProductNode }) {
 	const { theme } = useLoaderData<typeof loader>();
+
+	const isOnSale = node.variants.edges.some(
+		({ node: { compareAtPrice, price } }) =>
+			compareAtPrice &&
+			parseFloat(price.amount) < parseFloat(compareAtPrice.amount)
+	);
 
 	return (
 		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -345,6 +360,11 @@ function ProductCard({ node }: { node: any }) {
 						...node.featuredImage,
 					}}
 				/>
+				{isOnSale && (
+					<div className="pointer-events-none absolute top-0 left-0 right-0 aspect-square">
+						<DiagonalBanner>On Sale</DiagonalBanner>
+					</div>
+				)}
 			</div>
 			<div className="flex flex-1 flex-col space-y-2 p-4">
 				<h3 className="line-clamp-2" title={node.title}>
