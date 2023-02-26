@@ -1,6 +1,5 @@
-import { FacebookIcon } from '~/components/vectors/facebook-icon';
-import { InstagramIcon } from '~/components/vectors/instagram-icon';
-
+import { FacebookIcon } from '../components/vectors/facebook-icon';
+import { InstagramIcon } from '../components/vectors/instagram-icon';
 import corsicanGolf from '../images/brand-logos/corsican-golf.svg';
 import dailySports from '../images/brand-logos/daily-sports.svg';
 import gregNorman from '../images/brand-logos/greg-norman.svg';

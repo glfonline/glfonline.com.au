@@ -1,19 +1,15 @@
 import { useFetchers, useLocation, useMatches } from '@remix-run/react';
 import {
-	type ShopifyAddToCartPayload,
-	type ShopifyPageViewPayload,
-} from '@shopify/hydrogen';
-import {
 	AnalyticsEventName,
 	getClientBrowserParameters,
 	sendShopifyAnalytics,
+	type ShopifyAddToCartPayload,
+	type ShopifyPageViewPayload,
 	useShopifyCookies,
 } from '@shopify/hydrogen';
 import { useEffect } from 'react';
 
-import type { I18nLocale } from '~/types';
-import { CartAction } from '~/types';
-
+import { CartAction, type I18nLocale } from '../types';
 import { PUBLIC_STORE_DOMAIN } from './constants';
 
 export function useAnalytics({

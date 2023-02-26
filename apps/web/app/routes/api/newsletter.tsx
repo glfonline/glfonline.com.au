@@ -3,11 +3,11 @@ import { useFetcher } from '@remix-run/react';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
-import { Button } from '~/components/design-system/button';
-import { Field } from '~/components/design-system/field';
-import { Heading } from '~/components/design-system/heading';
-import { TextInput } from '~/components/design-system/text-input';
-import { type FormResponse } from '~/types';
+import { Button } from '../../components/design-system/button';
+import { Field } from '../../components/design-system/field';
+import { Heading } from '../../components/design-system/heading';
+import { TextInput } from '../../components/design-system/text-input';
+import { type FormResponse } from '../../types';
 
 export const NewsletterSchema = z.object({
 	first_name: z.string().min(1, 'First name is required'),
@@ -60,38 +60,38 @@ export function NewsletterSignup() {
 	const form = useZorm('contact_form', NewsletterSchema);
 
 	return (
-		<article id="signup" className="mx-auto w-full max-w-7xl bg-gray-100">
+		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
 			<div className="mx-auto max-w-xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
-				<Heading size="2" className="text-center">
+				<Heading className="text-center" size="2">
 					Don't miss out, join the club
 				</Heading>
 				<span className="sr-only">Sign up for our newsletter</span>
 				<fetcher.Form
-					ref={form.ref}
 					action="/api/newsletter"
+					className="w-full py-8 sm:flex"
 					method="post"
 					name="newsletter_signup_form"
+					ref={form.ref}
 					replace
-					className="w-full py-8 sm:flex"
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
 						<Field
-							label="First name"
 							className="sm:col-span-2"
+							label="First name"
 							message={form.errors.first_name()?.message}
 						>
 							<TextInput name={form.fields.first_name()} />
 						</Field>
 						<Field
-							label="Last name"
 							className="sm:col-span-2"
+							label="Last name"
 							message={form.errors.last_name()?.message}
 						>
 							<TextInput name={form.fields.last_name()} />
 						</Field>
 						<Field
-							label="Email address"
 							className="sm:col-span-4"
+							label="Email address"
 							message={form.errors.email()?.message}
 						>
 							<TextInput name={form.fields.email()} />
@@ -104,17 +104,17 @@ export function NewsletterSignup() {
 								<legend className="sr-only">Email list</legend>
 								<div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
 									{(['Ladies', 'Mens'] as const).map((options) => (
-										<div key={options} className="flex items-center gap-3">
+										<div className="flex items-center gap-3" key={options}>
 											<input
+												className="text-brand-primary focus:ring-brand-light h-5 w-5 border-gray-300"
 												id={options}
 												name={form.fields.gender()}
 												type="radio"
 												value={options}
-												className="text-brand-primary focus:ring-brand-light h-5 w-5 border-gray-300"
 											/>
 											<label
-												htmlFor={options}
 												className="block text-sm font-medium text-gray-700"
+												htmlFor={options}
 											>
 												{options}
 											</label>
@@ -125,10 +125,10 @@ export function NewsletterSignup() {
 						</div>
 
 						<Button
-							type="submit"
-							variant="neutral"
 							className="sm:col-span-4"
 							isLoading={fetcher.state === 'loading'}
+							type="submit"
+							variant="neutral"
 						>
 							Join
 						</Button>

@@ -1,7 +1,6 @@
 import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
 
-import { type StringWithAutocomplete } from '~/types';
-
+import { type StringWithAutocomplete } from '../types';
 import { capitalise } from './capitalise';
 
 type ProductCollectionSortKeys =

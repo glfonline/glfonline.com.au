@@ -1,8 +1,7 @@
 import { clsx } from 'clsx';
 import { forwardRef, useMemo } from 'react';
 
-import { mergeIds } from '~/lib/merge-ids';
-
+import { mergeIds } from '../../../lib/merge-ids';
 import { FieldContextProvider, type FieldContextType } from './context';
 import { FieldMessage, type FieldProps, useFieldIds } from './field';
 

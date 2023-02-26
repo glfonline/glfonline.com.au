@@ -23,12 +23,12 @@ import { Image } from '@shopify/hydrogen';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 
-import { Button, ButtonLink } from '~/components/design-system/button';
-import { Heading } from '~/components/design-system/heading';
-import { getSession, removeCartItem, updateCartItem } from '~/lib/cart';
-import { formatMoney } from '~/lib/format-money';
-import { getCartInfo } from '~/lib/get-cart-info';
-import { getSeoMeta } from '~/seo';
+import { Button, ButtonLink } from '../components/design-system/button';
+import { Heading } from '../components/design-system/heading';
+import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
+import { formatMoney } from '../lib/format-money';
+import { getCartInfo } from '../lib/get-cart-info';
+import { getSeoMeta } from '../seo';
 
 export async function loader({ request }: LoaderArgs) {
 	const session = await getSession(request);

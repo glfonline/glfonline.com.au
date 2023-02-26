@@ -1,5 +1,5 @@
-import type { ConfigContext } from 'sanity';
-import type { StructureBuilder } from 'sanity/desk';
+import { type ConfigContext } from 'sanity';
+import { type StructureBuilder } from 'sanity/desk';
 
 /**
  * Helper for creating and typing composable desk structure parts.

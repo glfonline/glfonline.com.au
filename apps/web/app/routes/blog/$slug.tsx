@@ -4,11 +4,11 @@ import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
 
-import { Hero } from '~/components/hero';
-import { PortableText } from '~/lib/portable-text';
-import { PostSchema } from '~/lib/post-schema';
-import { urlFor } from '~/lib/sanity-image';
-import { getSeoMeta } from '~/seo';
+import { Hero } from '../../components/hero';
+import { PortableText } from '../../lib/portable-text';
+import { PostSchema } from '../../lib/post-schema';
+import { urlFor } from '../../lib/sanity-image';
+import { getSeoMeta } from '../../seo';
 
 export async function loader({ params }: LoaderArgs) {
 	assert(isString(params.slug));

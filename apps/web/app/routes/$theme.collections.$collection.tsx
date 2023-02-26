@@ -18,16 +18,16 @@ import { Image } from '@shopify/hydrogen';
 import { Fragment, useId, useState } from 'react';
 import { z } from 'zod';
 
-import { DiagonalBanner } from '~/components/diagonal-banner';
-import { Hero } from '~/components/hero';
-import { capitalise } from '~/lib/capitalise';
+import { DiagonalBanner } from '../components/diagonal-banner';
+import { Hero } from '../components/hero';
+import { capitalise } from '../lib/capitalise';
 import {
 	getProductsFromCollectionByTag,
 	type SortBy,
-} from '~/lib/fetch-collection-products';
-import { formatMoney } from '~/lib/format-money';
-import { getProductFilterOptions } from '~/lib/get-product-filter-options';
-import { getSeoMeta } from '~/seo';
+} from '../lib/fetch-collection-products';
+import { formatMoney } from '../lib/format-money';
+import { getProductFilterOptions } from '../lib/get-product-filter-options';
+import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
