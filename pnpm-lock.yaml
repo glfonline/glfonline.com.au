@@ -74,6 +74,7 @@ importers:
       '@tanstack/react-query': ^4.24.6
       '@tanstack/react-query-devtools': ^4.24.6
       '@tanstack/react-query-persist-client': ^4.24.6
+      '@types/dedent': ^0.7.0
       '@types/node': 18.14.0
       '@types/nodemailer': ^6.4.7
       '@types/react': ^18.0.28
@@ -83,6 +84,7 @@ importers:
       class-variance-authority: ^0.4.0
       clsx: ^1.2.1
       concurrently: ^7.6.0
+      dedent: ^0.7.0
       dotenv-cli: ^7.0.0
       emery: ^1.4.1
       eslint: ^8.34.0
@@ -123,6 +125,7 @@ importers:
       algoliasearch: 4.14.3
       class-variance-authority: 0.4.0_typescript@4.9.5
       clsx: 1.2.1
+      dedent: 0.7.0
       emery: 1.4.1
       nodemailer: 6.9.1
       react: 18.2.0
@@ -141,6 +144,7 @@ importers:
       '@tailwindcss/forms': 0.5.3_tailwindcss@3.2.7
       '@tailwindcss/line-clamp': 0.4.2_tailwindcss@3.2.7
       '@tailwindcss/typography': 0.5.9_tailwindcss@3.2.7
+      '@types/dedent': 0.7.0
       '@types/node': 18.14.0
       '@types/nodemailer': 6.4.7
       '@types/react': 18.0.28
@@ -4402,6 +4406,10 @@ packages:
       '@types/ms': 0.7.31
     dev: true
 
+  /@types/dedent/0.7.0:
+    resolution: {integrity: sha512-EGlKlgMhnLt/cM4DbUSafFdrkeJoC9Mvnj0PUCU7tFmTjMjNRT957kXCx0wYm3JuEq4o4ZsS5vG+NlkM2DMd2A==}
+    dev: true
+
   /@types/diff-match-patch/1.0.32:
     resolution: {integrity: sha512-bPYT5ECFiblzsVzyURaNhljBH2Gh1t9LowgUwciMrNAhFewLkHT2H0Mto07Y4/3KCOGZHRQll3CTtQZ0X11D/A==}
     dev: false
@@ -6397,6 +6405,10 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       mimic-response: 3.1.0
+    dev: false
+
+  /dedent/0.7.0:
+    resolution: {integrity: sha512-Q6fKUPqnAHAyhiUgFU7BUzLiv0kd8saH9al7tnu5Q/okj6dnupxyTgFIBjVzJATdfIAm9NAsvXNzjaKa+bxVyA==}
     dev: false
 
   /deep-equal/2.2.0:
