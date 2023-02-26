@@ -7,8 +7,7 @@ import {
 	footerNavigation,
 	HOURS,
 	STREET_ADDRESS,
-} from '~/lib/constants';
-
+} from '../lib/constants';
 import { ClockIcon } from './vectors/clock-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 import { HouseIcon } from './vectors/house-icon';

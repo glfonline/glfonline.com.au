@@ -1,6 +1,5 @@
-import { FacebookIcon } from '~/components/vectors/facebook-icon';
-import { InstagramIcon } from '~/components/vectors/instagram-icon';
-
+import { FacebookIcon } from '../components/vectors/facebook-icon';
+import { InstagramIcon } from '../components/vectors/instagram-icon';
 import corsicanGolf from '../images/brand-logos/corsican-golf.svg';
 import dailySports from '../images/brand-logos/daily-sports.svg';
 import gregNorman from '../images/brand-logos/greg-norman.svg';
@@ -13,6 +12,7 @@ import travisMatthews from '../images/brand-logos/travis-matthews.svg';
 export const CHANTALE_PHONE = '0431 248 847';
 export const GORDON_PHONE = '0401 726 598';
 export const WEB_ADDRESS = 'https://www.glfonline.com.au';
+export const PUBLIC_STORE_DOMAIN = 'golfladiesfirst.myshopify.com';
 export const EMAIL_ADDRESS = 'info@glfonline.com.au';
 export const CONTACT_NUMBERS = [
 	{

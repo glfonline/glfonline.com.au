@@ -13,13 +13,13 @@ import { useState } from 'react';
 import { useZorm } from 'react-zorm';
 import { z } from 'zod';
 
-import { Button, ButtonLink } from '~/components/design-system/button';
-import { getHeadingStyles, Heading } from '~/components/design-system/heading';
-import { DiagonalBanner } from '~/components/diagonal-banner';
-import { addToCart, getSession } from '~/lib/cart';
-import { formatMoney } from '~/lib/format-money';
-import { getSizingChart } from '~/lib/get-sizing-chart';
-import { getSeoMeta } from '~/seo';
+import { Button, ButtonLink } from '../components/design-system/button';
+import { getHeadingStyles, Heading } from '../components/design-system/heading';
+import { DiagonalBanner } from '../components/diagonal-banner';
+import { addToCart, getSession } from '../lib/cart';
+import { formatMoney } from '../lib/format-money';
+import { getSizingChart } from '../lib/get-sizing-chart';
+import { getSeoMeta } from '../seo';
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),

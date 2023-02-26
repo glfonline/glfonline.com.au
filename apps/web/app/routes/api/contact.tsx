@@ -4,15 +4,15 @@ import { Fragment } from 'react';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
-import { Button } from '~/components/design-system/button';
-import { Checkbox } from '~/components/design-system/checkbox';
-import { Field, InlineField } from '~/components/design-system/field';
-import { Heading } from '~/components/design-system/heading';
-import { TextArea } from '~/components/design-system/text-area';
-import { TextInput } from '~/components/design-system/text-input';
-import { SplitBackground } from '~/components/split-background';
-import { createTransport } from '~/entry.server';
-import { EMAIL_ADDRESS } from '~/lib/constants';
+import { Button } from '../../components/design-system/button';
+import { Checkbox } from '../../components/design-system/checkbox';
+import { Field, InlineField } from '../../components/design-system/field';
+import { Heading } from '../../components/design-system/heading';
+import { TextArea } from '../../components/design-system/text-area';
+import { TextInput } from '../../components/design-system/text-input';
+import { SplitBackground } from '../../components/split-background';
+import { createTransport } from '../../entry.server';
+import { EMAIL_ADDRESS } from '../../lib/constants';
 
 export default function () {
 	return null;

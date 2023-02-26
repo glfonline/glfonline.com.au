@@ -1,10 +1,9 @@
 import { clsx } from 'clsx';
 import { forwardRef, useId, useMemo } from 'react';
 
-import { CheckCircleIcon } from '~/components/vectors/check-circle-icon';
-import { ExclamationCircleIcon } from '~/components/vectors/exclamation-circle-icon';
-import { mergeIds } from '~/lib/merge-ids';
-
+import { CheckCircleIcon } from '../../../components/vectors/check-circle-icon';
+import { ExclamationCircleIcon } from '../../../components/vectors/exclamation-circle-icon';
+import { mergeIds } from '../../../lib/merge-ids';
 import { FieldContextProvider, type FieldContextType } from './context';
 
 export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(

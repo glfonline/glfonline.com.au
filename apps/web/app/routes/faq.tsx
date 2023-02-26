@@ -4,12 +4,12 @@ import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
-import { Heading } from '~/components/design-system/heading';
-import { Hero } from '~/components/hero';
-import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
-import { PortableText } from '~/lib/portable-text';
-import { urlFor } from '~/lib/sanity-image';
-import { getSeoMeta } from '~/seo';
+import { Heading } from '../components/design-system/heading';
+import { Hero } from '../components/hero';
+import { imageWithAltSchema } from '../lib/image-with-alt-schema';
+import { PortableText } from '../lib/portable-text';
+import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
 
 const FaqSchema = z.object({
 	heroImage: imageWithAltSchema,

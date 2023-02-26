@@ -14,9 +14,8 @@ import {
 	mainNavigation,
 	type NavItem,
 	socialLinks,
-} from '~/lib/constants';
-import { type loader } from '~/root';
-
+} from '../lib/constants';
+import { type loader } from '../root';
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
 import { SearchDialog } from './search-dialog';

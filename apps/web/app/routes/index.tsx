@@ -5,19 +5,18 @@ import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
 import { z } from 'zod';
 
-import { BrandsWeLove } from '~/components/brands-we-love';
-import { ButtonLink } from '~/components/design-system/button';
-import { Heading } from '~/components/design-system/heading';
-import { getHeadingStyles } from '~/components/design-system/heading/get-heading-styles';
-import { Divider } from '~/components/divider';
-import { Map } from '~/components/map';
-import { VerticalLogo } from '~/components/vectors/vertical-logo';
-import { brands } from '~/lib/constants';
-import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
-import { PortableText } from '~/lib/portable-text';
-import { urlFor } from '~/lib/sanity-image';
-import { type Theme } from '~/types';
-
+import { BrandsWeLove } from '../components/brands-we-love';
+import { ButtonLink } from '../components/design-system/button';
+import { Heading } from '../components/design-system/heading';
+import { getHeadingStyles } from '../components/design-system/heading/get-heading-styles';
+import { Divider } from '../components/divider';
+import { Map } from '../components/map';
+import { VerticalLogo } from '../components/vectors/vertical-logo';
+import { brands } from '../lib/constants';
+import { imageWithAltSchema } from '../lib/image-with-alt-schema';
+import { PortableText } from '../lib/portable-text';
+import { urlFor } from '../lib/sanity-image';
+import { type Theme } from '../types';
 import { ContactForm } from './api/contact';
 import { NewsletterSignup } from './api/newsletter';
 
@@ -129,12 +128,7 @@ function CollectionPromo() {
 	);
 }
 
-function CollectionCard({
-	cta,
-	heading,
-	image,
-	theme,
-}: {
+type CollectionCardProps = {
 	cta: { text: string; href: string };
 	heading: string;
 	image: {
@@ -143,7 +137,9 @@ function CollectionCard({
 		objectPosition?: ObjectPosition;
 	};
 	theme: Theme;
-}) {
+};
+
+function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 	const id = useId();
 	return (
 		<div className="relative aspect-square">

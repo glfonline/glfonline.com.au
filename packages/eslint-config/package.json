@@ -9,7 +9,7 @@
 		"@ts-gql/eslint-plugin": "^0.8.5",
 		"eslint": "^8.34.0",
 		"eslint-config-prettier": "^8.6.0",
-		"eslint-config-turbo": "^0.0.7",
+		"eslint-config-turbo": "^0.0.8",
 		"eslint-plugin-react": "7.32.2",
 		"eslint-plugin-simple-import-sort": "^10.0.0"
 	},

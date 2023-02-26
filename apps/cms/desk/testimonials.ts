@@ -1,4 +1,4 @@
-import type { ListItemBuilder } from 'sanity/desk';
+import { type ListItemBuilder } from 'sanity/desk';
 
 import { defineStructure } from '../utils/define-structure';
 

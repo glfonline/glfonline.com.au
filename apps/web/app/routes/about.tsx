@@ -4,15 +4,14 @@ import { useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 import { z } from 'zod';
 
-import { getHeadingStyles } from '~/components/design-system/heading';
-import { Divider } from '~/components/divider';
-import { Hero } from '~/components/hero';
-import { Map } from '~/components/map';
-import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
-import { PortableText } from '~/lib/portable-text';
-import { urlFor } from '~/lib/sanity-image';
-import { getSeoMeta } from '~/seo';
-
+import { getHeadingStyles } from '../components/design-system/heading';
+import { Divider } from '../components/divider';
+import { Hero } from '../components/hero';
+import { Map } from '../components/map';
+import { imageWithAltSchema } from '../lib/image-with-alt-schema';
+import { PortableText } from '../lib/portable-text';
+import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
 import { NewsletterSignup } from './api/newsletter';
 
 const AboutSchema = z.object({

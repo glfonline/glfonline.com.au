@@ -6,13 +6,12 @@ import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
-import { Hero } from '~/components/hero';
-import { Map } from '~/components/map';
-import { imageWithAltSchema } from '~/lib/image-with-alt-schema';
-import { PortableText } from '~/lib/portable-text';
-import { urlFor } from '~/lib/sanity-image';
-import { getSeoMeta } from '~/seo';
-
+import { Hero } from '../components/hero';
+import { Map } from '../components/map';
+import { imageWithAltSchema } from '../lib/image-with-alt-schema';
+import { PortableText } from '../lib/portable-text';
+import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
 import { NewsletterSignup } from './api/newsletter';
 
 const TestimonialsSchema = z.object({

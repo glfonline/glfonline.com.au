@@ -2,15 +2,15 @@ import { json, type MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 
-import { Button, ButtonLink } from '~/components/design-system/button';
-import { getHeadingStyles } from '~/components/design-system/heading';
-import { Hero } from '~/components/hero';
-import { fetchPosts, usePosts } from '~/lib/fetch-blog-posts';
-import { type PortableTextProps } from '~/lib/portable-text';
-import { PortableText } from '~/lib/portable-text';
-import { urlFor } from '~/lib/sanity-image';
-import { getSeoMeta } from '~/seo';
-import { type Theme } from '~/types';
+import { Button, ButtonLink } from '../../components/design-system/button';
+import { getHeadingStyles } from '../../components/design-system/heading';
+import { Hero } from '../../components/hero';
+import { fetchPosts, usePosts } from '../../lib/fetch-blog-posts';
+import { type PortableTextProps } from '../../lib/portable-text';
+import { PortableText } from '../../lib/portable-text';
+import { urlFor } from '../../lib/sanity-image';
+import { getSeoMeta } from '../../seo';
+import { type Theme } from '../../types';
 
 const POSTS_LIMIT = 5;
 const POSTS_OFFSET = 0;

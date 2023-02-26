@@ -1,4 +1,4 @@
-import type { SlugIsUniqueValidator } from 'sanity';
+import { type SlugIsUniqueValidator } from 'sanity';
 
 export const isUniqueAcrossAllDocuments: SlugIsUniqueValidator = async (
 	slug,

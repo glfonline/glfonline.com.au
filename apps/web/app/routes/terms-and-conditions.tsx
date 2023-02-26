@@ -2,8 +2,8 @@ import { LEGAL_PAGE_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 
-import { PageLayout } from '~/components/page-layout';
-import { getSeoMeta } from '~/seo';
+import { PageLayout } from '../components/page-layout';
+import { getSeoMeta } from '../seo';
 
 export async function loader() {
 	const { page } = await shopifyClient(LEGAL_PAGE_QUERY, {

@@ -7,11 +7,11 @@ import {
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
-import { BrandsWeLove } from '~/components/brands-we-love';
-import { CollectionCard } from '~/components/collection-card';
-import { brands } from '~/lib/constants';
-import { urlFor } from '~/lib/sanity-image';
-import { getSeoMeta } from '~/seo';
+import { BrandsWeLove } from '../components/brands-we-love';
+import { CollectionCard } from '../components/collection-card';
+import { brands } from '../lib/constants';
+import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
 
 const ThemeSchema = z.object({
 	theme: z.enum(['ladies', 'mens']),
