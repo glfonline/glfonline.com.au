@@ -33,7 +33,7 @@
 	},
 	"packageManager": "pnpm@7.27.1",
 	"engines": {
-		"node": ">=18.0.0",
+		"node": ">=16.19.1",
 		"pnpm": ">=7.27.1"
 	},
 	"manypkg": {
