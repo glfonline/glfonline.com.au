@@ -1,19 +1,19 @@
-import { GET_ALL_PRODUCTS, shopifyClient } from '@glfonline/shopify-client';
+import { ALL_PRODUCTS_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import dedent from 'dedent';
 
 import { WEB_ADDRESS } from '~/lib/constants';
 
 type Products =
-	(typeof GET_ALL_PRODUCTS)['___type']['result']['products']['edges'];
+	(typeof ALL_PRODUCTS_QUERY)['___type']['result']['products']['edges'];
 
 export async function loader() {
 	async function getAllProductPages() {
 		let pages: Products = [];
 
 		async function getProductPages(cursor?: string) {
-			const newPages = await shopifyClient(GET_ALL_PRODUCTS, {
+			const newPages = await shopifyClient(ALL_PRODUCTS_QUERY, {
 				first: 250,
-				after: cursor,
+				cursor,
 			});
 
 			pages = pages.concat(newPages.products.edges);

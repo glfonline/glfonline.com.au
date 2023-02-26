@@ -41,12 +41,6 @@ export const PRODUCT_CONNECTION_FRAGMENT = gql`
 				title
 				vendor
 				handle
-				priceRange {
-					minVariantPrice {
-						amount
-						currencyCode
-					}
-				}
 				images(first: 1) {
 					pageInfo {
 						hasNextPage
@@ -62,6 +56,13 @@ export const PRODUCT_CONNECTION_FRAGMENT = gql`
 						}
 					}
 				}
+				priceRange {
+					minVariantPrice {
+						amount
+						currencyCode
+					}
+				}
+				tags
 				variants(first: 1) {
 					edges {
 						node {
