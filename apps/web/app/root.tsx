@@ -1,3 +1,4 @@
+import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import {
 	json,
 	type LinksFunction,
@@ -14,12 +15,11 @@ import {
 	useCatch,
 	useLocation,
 } from '@remix-run/react';
+import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect } from 'react';
-
-import { getSeo } from '~/seo';
 
 import favicon from '../public/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
@@ -29,33 +29,45 @@ import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import { getSession } from './lib/cart';
 import * as gtag from './lib/gtag';
-import { useAnalytics } from './lib/use-analytics';
 import styles from './styles/tailwind.css';
 
-const [seoMeta, seoLinks] = getSeo();
+const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
+	title: data.shop.name,
+	titleTemplate:
+		'%s | Ladies and Mens golf clothing and apparel, skorts and clearance items',
+	description: data.shop.description,
+	url: `https://www.glfonline.com.au${pathname}`,
+});
+
+export const handle = {
+	seo,
+};
 
 export const links: LinksFunction = () => {
 	return [
-		...seoLinks,
 		{ rel: 'stylesheet', href: styles },
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
-		{ rel: 'icon', href: favicon, type: 'image/svg+xml' },
+		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
 	];
 };
 
-export const meta: MetaFunction = () => {
-	return {
-		...seoMeta,
-		charset: 'utf-8',
-		viewport: 'width=device-width,initial-scale=1',
-	};
-};
+export const meta: MetaFunction = () => ({
+	charset: 'utf-8',
+	viewport: 'width=device-width,initial-scale=1',
+});
 
 export async function loader({ request }: LoaderArgs) {
 	const session = await getSession(request);
-	const cart = await session.getCart();
-	return json({ cartCount: cart.length });
+	const [cart, { shop }] = await Promise.all([
+		session.getCart(),
+		shopifyClient(SHOP_QUERY),
+	]);
+
+	return json({
+		cartCount: cart.length,
+		shop,
+	});
 }
 
 const queryClient = new QueryClient();
@@ -65,13 +77,6 @@ const persister = createSyncStoragePersister({
 
 export default function App() {
 	const location = useLocation();
-	useAnalytics({
-		hasUserConsent: true,
-		locale: {
-			currency: 'AUD',
-			language: 'EN',
-		},
-	});
 
 	useEffect(() => {
 		if (process.env.NODE_ENV !== 'development') {
@@ -84,6 +89,7 @@ export default function App() {
 	return (
 		<html className="h-full" lang="en">
 			<head>
+				<Seo />
 				<Meta />
 				<Links />
 			</head>
@@ -126,7 +132,6 @@ export function CatchBoundary() {
 						error={{ message: `${caught.status} ${caught.data}` }}
 					/>
 				)}
-
 				<Scripts />
 			</body>
 		</html>

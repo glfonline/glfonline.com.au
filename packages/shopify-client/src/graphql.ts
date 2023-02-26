@@ -4,6 +4,13 @@ import { gql } from '@ts-gql/tag/no-transform';
  * Fragments
  ******************************************************************************/
 
+export const MONEY_FRAGMENT = gql`
+	fragment MONEY_FRAGMENT on MoneyV2 {
+		currencyCode
+		amount
+	}
+` as import('../__generated__/ts-gql/MONEY_FRAGMENT').type;
+
 export const IMAGE_FRAGMENT = gql`
 	fragment IMAGE_FRAGMENT on Image {
 		id
@@ -288,6 +295,116 @@ export const SINGLE_PRODUCT_QUERY = gql`
 	${IMAGE_FRAGMENT}
 	${PRODUCT_VARIANT_FRAGMENT}
 ` as import('../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;
+
+export const SHOP_QUERY = gql`
+	query SHOP_QUERY {
+		shop {
+			id
+			name
+			description
+		}
+	}
+` as import('../__generated__/ts-gql/SHOP_QUERY').type;
+
+export const CART_QUERY = gql`
+	query CART_QUERY($cartId: ID!, $country: CountryCode, $language: LanguageCode)
+	@inContext(country: $country, language: $language) {
+		cart(id: $cartId) {
+			id
+			checkoutUrl
+			totalQuantity
+			buyerIdentity {
+				countryCode
+				customer {
+					id
+					email
+					firstName
+					lastName
+					displayName
+				}
+				email
+				phone
+			}
+			lines(first: 100) {
+				edges {
+					node {
+						id
+						quantity
+						attributes {
+							key
+							value
+						}
+						cost {
+							totalAmount {
+								amount
+								currencyCode
+							}
+							amountPerQuantity {
+								amount
+								currencyCode
+							}
+							compareAtAmountPerQuantity {
+								amount
+								currencyCode
+							}
+						}
+						merchandise {
+							... on ProductVariant {
+								id
+								availableForSale
+								compareAtPrice {
+									...MONEY_FRAGMENT
+								}
+								price {
+									...MONEY_FRAGMENT
+								}
+								requiresShipping
+								title
+								image {
+									...IMAGE_FRAGMENT
+								}
+								product {
+									handle
+									title
+									id
+								}
+								selectedOptions {
+									name
+									value
+								}
+							}
+						}
+					}
+				}
+			}
+			cost {
+				subtotalAmount {
+					...MONEY_FRAGMENT
+				}
+				totalAmount {
+					...MONEY_FRAGMENT
+				}
+				totalDutyAmount {
+					...MONEY_FRAGMENT
+				}
+				totalTaxAmount {
+					...MONEY_FRAGMENT
+				}
+			}
+			note
+			attributes {
+				key
+				value
+			}
+			discountCodes {
+				code
+			}
+		}
+	}
+
+	${IMAGE_FRAGMENT}
+	${MONEY_FRAGMENT}
+` as import('../__generated__/ts-gql/CART_QUERY').type;
 
 /*******************************************************************************
  * Mutations

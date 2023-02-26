@@ -9,27 +9,16 @@ import {
 	sendShopifyAnalytics,
 	useShopifyCookies,
 } from '@shopify/hydrogen';
-import {
-	type CountryCode,
-	type CurrencyCode,
-	type LanguageCode,
-} from '@shopify/hydrogen/storefront-api-types';
 import { useEffect } from 'react';
 
-export type Locale = {
-	language: LanguageCode;
-	country: CountryCode;
-	label: string;
-	currency: CurrencyCode;
-};
+import type { I18nLocale } from '~/types';
+import { CartAction } from '~/types';
 
-export type I18nLocale = Locale & {
-	pathPrefix: string;
-};
+import { PUBLIC_STORE_DOMAIN } from './constants';
 
 export function useAnalytics({
 	hasUserConsent,
-	locale: { currency, language },
+	locale,
 }: {
 	hasUserConsent: boolean;
 	locale: Pick<I18nLocale, 'currency' | 'language'>;
@@ -42,8 +31,8 @@ export function useAnalytics({
 
 	const pageAnalytics = {
 		...analyticsFromMatches,
-		currency: currency,
-		acceptedLanguage: language,
+		currency: locale.currency,
+		acceptedLanguage: locale.language,
 		hasUserConsent,
 	};
 
@@ -51,7 +40,7 @@ export function useAnalytics({
 	 * Page view analytics
 	 *
 	 * We want useEffect to execute only when location changes
-	 * which represents a page view
+	 * which represents a page view.
 	 */
 	useEffect(() => {
 		const payload: ShopifyPageViewPayload = {
@@ -59,17 +48,20 @@ export function useAnalytics({
 			...pageAnalytics,
 		};
 
-		sendShopifyAnalytics({
-			eventName: AnalyticsEventName.PAGE_VIEW,
-			payload,
-		});
+		sendShopifyAnalytics(
+			{
+				eventName: AnalyticsEventName.PAGE_VIEW,
+				payload,
+			},
+			PUBLIC_STORE_DOMAIN
+		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location]);
 
 	/** Add to cart analytics */
 	const cartData = useDataFromFetchers({
 		formDataKey: 'cartAction',
-		formDataValue: cartActionMap.ADD_TO_CART,
+		formDataValue: CartAction.ADD_TO_CART,
 		dataKey: 'analytics',
 	}) as unknown as ShopifyAddToCartPayload;
 	if (cartData) {
@@ -79,10 +71,13 @@ export function useAnalytics({
 			...cartData,
 		};
 
-		sendShopifyAnalytics({
-			eventName: AnalyticsEventName.ADD_TO_CART,
-			payload: addToCartPayload,
-		});
+		sendShopifyAnalytics(
+			{
+				eventName: AnalyticsEventName.ADD_TO_CART,
+				payload: addToCartPayload,
+			},
+			PUBLIC_STORE_DOMAIN
+		);
 	}
 }
 
@@ -224,11 +219,3 @@ function useDataFromFetchers({
 	}
 	return Object.keys(data).length ? data : undefined;
 }
-
-const cartActionMap = {
-	ADD_TO_CART: 'ADD_TO_CART',
-	REMOVE_FROM_CART: 'REMOVE_FROM_CART',
-	UPDATE_CART: 'UPDATE_CART',
-	UPDATE_DISCOUNT: 'UPDATE_DISCOUNT',
-	UPDATE_BUYER_IDENTITY: 'UPDATE_BUYER_IDENTITY',
-};
