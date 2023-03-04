@@ -133,6 +133,7 @@ function SearchResults({
 								<NavLink
 									className="flex flex-auto items-center gap-3"
 									onClick={() => setSearchOpen(false)}
+									prefetch="intent"
 									to={makeProductHref(product)}
 								>
 									<img
