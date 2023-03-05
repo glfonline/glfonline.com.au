@@ -1,3 +1,4 @@
+import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 
 import { ButtonLink } from './design-system/button';
@@ -10,22 +11,29 @@ export type CollectionCardProps = {
 		objectPosition?: keyof typeof objectPositionMap;
 	};
 	span?: keyof typeof spanMap;
+	priority?: boolean;
 };
 
 export function CollectionCard({
 	cta,
 	image,
 	span = '5',
+	priority,
 }: CollectionCardProps) {
 	return (
 		<div className={clsx('relative flex h-96', spanMap[span])}>
-			<img
+			{/* @ts-expect-error */}
+			<Image
 				alt={image.alt || ''}
+				breakpoints={[640, 768, 1024, 1280]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'center']
 				)}
+				layout="fullWidth"
+				priority={priority}
 				src={image.src}
+				width={widthMap[span]}
 			/>
 			<div
 				className={clsx(
@@ -46,6 +54,12 @@ export function CollectionCard({
 		</div>
 	);
 }
+
+const widthMap = {
+	'2': (1280 / 5) * 2,
+	'3': (1280 / 5) * 3,
+	'5': 1280,
+};
 
 const spanMap = {
 	'2': 'lg:col-span-2',

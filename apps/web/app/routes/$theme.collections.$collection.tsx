@@ -14,7 +14,7 @@ import {
 	useLocation,
 	useNavigate,
 } from '@remix-run/react';
-import { Image } from '@shopify/hydrogen';
+import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
 import { z } from 'zod';
 
@@ -355,10 +355,13 @@ function ProductCard({ node }: { node: ProductNode }) {
 		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
 			<div className="aspect-[3/4] bg-gray-200 group-hover:opacity-75 sm:aspect-auto sm:h-96">
 				<Image
+					breakpoints={[320, 640]}
+					cdn="shopify"
 					className="h-full w-full object-cover object-center sm:h-full sm:w-full"
-					data={{
-						...node.featuredImage,
-					}}
+					height={944}
+					layout="constrained"
+					src={node.featuredImage?.url}
+					width={605}
 				/>
 				{isOnSale && (
 					<div className="pointer-events-none absolute top-0 left-0 right-0 aspect-square">

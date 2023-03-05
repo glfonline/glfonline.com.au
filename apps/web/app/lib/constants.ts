@@ -76,7 +76,7 @@ export const mainNavigation: MainNavigation = {
 				label: 'Shop Ladies',
 				href: '/ladies',
 				image: {
-					src: 'https://www.glfonline.com.au/static/86a73985e91fcc1fe7c049709fb6d8ba/e170b/shop-ladies.webp',
+					src: 'https://cdn.shopify.com/s/files/1/1080/9832/files/shop-ladies.jpg?v=1677993085',
 					alt: '',
 				},
 			},
@@ -249,7 +249,7 @@ export const mainNavigation: MainNavigation = {
 				label: 'Shop Mens',
 				href: '/mens',
 				image: {
-					src: 'https://www.glfonline.com.au/static/0af901e0928cb1055b22dbf5fca664e5/e170b/shop-mens.webp',
+					src: 'https://cdn.shopify.com/s/files/1/1080/9832/files/shop-mens.jpg?v=1677993095',
 					alt: '',
 				},
 			},

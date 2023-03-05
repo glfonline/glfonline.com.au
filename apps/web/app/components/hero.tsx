@@ -1,3 +1,5 @@
+import { Image } from '@unpic/react';
+
 import { Heading } from './design-system/heading';
 
 export function Hero({
@@ -13,9 +15,12 @@ export function Hero({
 	return (
 		<div className="relative flex h-80 items-center justify-center">
 			{image && (
-				<img
+				<Image
 					alt={image.alt ?? ''}
+					breakpoints={[640, 768, 1024, 1280]}
 					className="absolute inset-0 h-full w-full object-cover"
+					layout="fullWidth"
+					priority
 					src={image.url}
 				/>
 			)}

@@ -1,5 +1,6 @@
 import { json, type MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData } from '@remix-run/react';
+import { Image } from '@unpic/react';
 import { Fragment } from 'react';
 
 import { Button, ButtonLink } from '../../components/design-system/button';
@@ -42,7 +43,7 @@ export default function Blog() {
 		<Fragment>
 			<Hero
 				image={{
-					url: 'https://www.glfonline.com.au/static/9a328f78e40c139b626f4e1ffe4e2f7f/385a5/blog-hero.webp',
+					url: 'https://cdn.shopify.com/s/files/1/1080/9832/files/blog-hero.jpg?v=1677992122',
 				}}
 				title={title}
 			/>
@@ -147,9 +148,12 @@ function Post({
 				to={href}
 			>
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
-					<img
+					<Image
 						alt=""
+						breakpoints={[512]}
 						className="h-full w-full object-cover sm:absolute sm:inset-0"
+						layout="fullWidth"
+						sizes="(min-width: 256px) 256px, 100vw"
 						src={imgSrc}
 					/>
 				</div>
@@ -214,7 +218,7 @@ function Sidebar() {
 				}}
 				heading="Shop ladies clothing and accessories"
 				image={{
-					src: 'https://www.glfonline.com.au/static/d56361304f93d4458132ff614006fb17/596e5/blog-sidebar-ladies.webp',
+					src: 'https://cdn.shopify.com/s/files/1/1080/9832/files/blog-sidebar-ladies.jpg?v=1677993059',
 				}}
 				subHeading="Head to our online store"
 				theme="ladies"
@@ -226,7 +230,7 @@ function Sidebar() {
 				}}
 				heading="Shop mens clothing and accessories"
 				image={{
-					src: 'https://www.glfonline.com.au/static/571c3c636479496cc71e4d95e7326491/596e5/blog-sidebar-mens.webp',
+					src: 'https://cdn.shopify.com/s/files/1/1080/9832/files/blog-sidebar-mens.jpg?v=1677993069',
 				}}
 				subHeading="Head to our online store"
 				theme="mens"
@@ -242,7 +246,14 @@ function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 				Featured Post
 			</h2>
 			<div className="flex flex-col gap-6">
-				<img alt="" className="aspect-square object-cover" src={imgSrc} />
+				<Image
+					alt=""
+					className="aspect-square object-cover"
+					height={320}
+					layout="constrained"
+					src={imgSrc}
+					width={320}
+				/>
 				<div className="prose line-clamp-3">
 					<PortableText value={excerpt} />
 				</div>
@@ -280,10 +291,13 @@ function CTA({
 }) {
 	return (
 		<div className="relative flex">
-			<img
+			<Image
 				alt={image.alt ?? ''}
 				className="absolute inset-0 h-full w-full object-cover"
+				height={320}
+				layout="constrained"
 				src={image.src}
+				width={320}
 			/>
 			<div
 				className="bg-true-black/50 relative flex flex-1 flex-col items-center gap-2 px-8 py-16 text-center text-white"

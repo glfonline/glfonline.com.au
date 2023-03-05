@@ -3,11 +3,11 @@ import { Combobox, Dialog, Transition } from '@headlessui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { NavLink, useNavigate } from '@remix-run/react';
+import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 
 import { makeProductHref } from '../lib/make-product-href';
-import { makeProductImage } from '../lib/make-product-image';
 import { type Product, useAlgoliaSearch } from '../lib/use-algolia-search';
 import { Spinner } from './design-system/spinner';
 
@@ -136,16 +136,21 @@ function SearchResults({
 									prefetch="intent"
 									to={makeProductHref(product)}
 								>
-									<img
-										alt=""
-										className="aspect-square w-11 bg-white object-contain"
-										height={imageWidth}
-										src={makeProductImage({
-											image: product.image,
-											width: imageWidth,
-										})}
-										width={imageWidth}
-									/>
+									{product.image ? (
+										<Image
+											alt=""
+											className="aspect-square w-11 bg-white object-contain"
+											height={imageWidth}
+											layout="constrained"
+											src={product.image}
+											width={imageWidth}
+										/>
+									) : (
+										<span
+											aria-hidden="true"
+											className="aspect-square w-11 bg-gray-200"
+										/>
+									)}
 									<span
 										className={clsx(
 											'text-sm font-medium [&>em]:bg-black [&>em]:not-italic [&>em]:text-white',
