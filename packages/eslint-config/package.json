@@ -4,6 +4,9 @@
 	"private": true,
 	"license": "MIT",
 	"main": "index.js",
+	"scripts": {
+		"clean": "rm -rf node_modules"
+	},
 	"dependencies": {
 		"@remix-run/eslint-config": "^1.14.0",
 		"@ts-gql/eslint-plugin": "^0.8.5",

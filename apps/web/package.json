@@ -11,6 +11,8 @@
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
 		"check:types": "tsc --noEmit",
+		"clean": "pnpm clean:outputs && rm -rf node_modules",
+		"clean:outputs": "rm -rf .cache && rm -rf .turbo && rm -rf api",
 		"dev": "concurrently \"pnpm run dev:css\" \"pnpm run dev:remix\"",
 		"dev:css": "tailwindcss -w -i ./styles/tailwind.css -o app/styles/tailwind.css",
 		"dev:remix": "remix dev",

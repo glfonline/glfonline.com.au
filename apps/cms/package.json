@@ -8,6 +8,8 @@
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
 		"check:types": "tsc --noEmit",
+		"clean": "pnpm clean:outputs && rm -rf node_modules",
+		"clean:outputs": "rm -rf .sanity && rm -rf .turbo && rm -rf dist",
 		"deploy": "pnpm run deploy:studio && pnpm run deploy:graphql",
 		"deploy:graphql": "sanity graphql deploy",
 		"deploy:studio": "sanity deploy",
