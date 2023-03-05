@@ -62,7 +62,7 @@ export async function loader({ params, request }: DataFunctionArgs) {
 				filterOptions,
 				after,
 			}),
-			getProductFilterOptions({ collectionHandle, first: 250 }),
+			getProductFilterOptions({ collectionHandle, first: 250, theme }),
 		]);
 
 		/** Collection data */

@@ -4,14 +4,18 @@ import {
 } from '@glfonline/shopify-client';
 import { z } from 'zod';
 
+import { capitalise } from './capitalise';
+
 export async function getProductFilterOptions({
 	after,
 	collectionHandle,
 	first,
+	theme,
 }: {
 	after?: string;
 	collectionHandle: string;
 	first: number;
+	theme: string;
 }) {
 	let prods: Products = [];
 	let cursor: string | undefined;
@@ -20,7 +24,7 @@ export async function getProductFilterOptions({
 			handle: collectionHandle,
 			after: after ?? cursor,
 			first,
-			filters: [{ available: true }],
+			filters: [{ available: true }, { tag: capitalise(theme) }],
 		});
 		const { products } = schema.parse(collection);
 		prods = [...prods, ...products.edges];
