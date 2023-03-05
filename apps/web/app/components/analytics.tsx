@@ -11,6 +11,7 @@ export function GoogleAnalytics() {
 					async
 					key={id}
 					src={`https://www.googletagmanager.com/gtag/js?id=${id}`}
+					type="text/partytown"
 				/>
 			))}
 			<script
@@ -19,6 +20,7 @@ export function GoogleAnalytics() {
 					__html: gtagInitScript,
 				}}
 				id="gtag-init"
+				type="text/partytown"
 			/>
 		</Fragment>
 	);
@@ -39,7 +41,10 @@ export function MetaAnalytics() {
 	if (process.env.NODE_ENV === 'development') return null;
 	return (
 		<Fragment>
-			<script dangerouslySetInnerHTML={{ __html: metaInitScript }} />
+			<script
+				dangerouslySetInnerHTML={{ __html: metaInitScript }}
+				type="text/partytown"
+			/>
 			<noscript
 				dangerouslySetInnerHTML={{
 					__html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"/>`,

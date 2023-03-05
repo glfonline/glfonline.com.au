@@ -50,6 +50,7 @@ importers:
       '@algolia/client-search': ^4.15.0
       '@algolia/transporter': ^4.15.0
       '@babel/core': ^7.21.0
+      '@builder.io/partytown': ^0.7.5
       '@glfonline/eslint-config': 0.0.0
       '@glfonline/sanity-client': 0.0.0
       '@glfonline/shopify-client': 0.0.0
@@ -85,6 +86,7 @@ importers:
       class-variance-authority: ^0.4.0
       clsx: ^1.2.1
       concurrently: ^7.6.0
+      cross-env: ^7.0.3
       dedent: ^0.7.0
       dotenv-cli: ^7.0.0
       emery: ^1.4.1
@@ -105,6 +107,7 @@ importers:
     dependencies:
       '@algolia/client-search': 4.15.0
       '@algolia/transporter': 4.15.0
+      '@builder.io/partytown': 0.7.5
       '@glfonline/sanity-client': link:../../packages/sanity-client
       '@glfonline/shopify-client': link:../../packages/shopify-client
       '@headlessui/react': 1.7.13_biqbaboplfbrettd7655fr4n2y
@@ -150,6 +153,7 @@ importers:
       '@types/react': 18.0.28
       '@types/react-dom': 18.0.11
       concurrently: 7.6.0
+      cross-env: 7.0.3
       dotenv-cli: 7.0.0
       eslint: 8.35.0
       postcss: 8.4.21
@@ -1675,6 +1679,11 @@ packages:
       '@babel/helper-string-parser': 7.19.4
       '@babel/helper-validator-identifier': 7.19.1
       to-fast-properties: 2.0.0
+
+  /@builder.io/partytown/0.7.5:
+    resolution: {integrity: sha512-Zbr2Eo0AQ4yzmQr/36/h+6LKjmdVBB3Q5cGzO6rtlIKB/IOpbQVUZW+XAnhpJmJr9sIF97OZjgbhG9k7Sjn4yw==}
+    hasBin: true
+    dev: false
 
   /@codemirror/autocomplete/6.4.2:
     resolution: {integrity: sha512-8WE2xp+D0MpWEv5lZ6zPW1/tf4AGb358T5GWYiKEuCP8MvFfT3tH2mIF9Y2yr2e3KbHuSvsVhosiEyqCpiJhZQ==}
@@ -6097,6 +6106,14 @@ packages:
   /crelt/1.0.5:
     resolution: {integrity: sha512-+BO9wPPi+DWTDcNYhr/W90myha8ptzftZT+LwcmUbbok0rcP/fequmFYCw8NMoH7pkAZQzU78b3kYrlua5a9eA==}
     dev: false
+
+  /cross-env/7.0.3:
+    resolution: {integrity: sha512-+/HKd6EgcQCJGh2PSjZuUitQBQynKor4wrFbRg4DtAgS1aWO+gU52xpH7M9ScGgXSYmAVS9bIJ8EzuaGw0oNAw==}
+    engines: {node: '>=10.14', npm: '>=6', yarn: '>=1'}
+    hasBin: true
+    dependencies:
+      cross-spawn: 7.0.3
+    dev: true
 
   /cross-fetch/3.1.5:
     resolution: {integrity: sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==}

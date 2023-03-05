@@ -1,3 +1,4 @@
+import { Partytown } from '@builder.io/partytown/react';
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import {
 	json,
@@ -89,6 +90,24 @@ export default function App() {
 	return (
 		<html className="h-full" lang="en">
 			<head>
+				<Partytown
+					debug={true}
+					forward={['dataLayer.push', 'fbq']}
+					resolveUrl={function (url) {
+						if (url.hostname === 'connect.facebook.net') {
+							const proxyUrl = new URL('https://my-reverse-proxy.com/');
+							proxyUrl.searchParams.append('url', url.href);
+							return proxyUrl;
+						}
+						return url;
+					}}
+				/>
+				<script
+					dangerouslySetInnerHTML={{
+						__html: '// inlined third-party script',
+					}}
+					type="text/partytown"
+				/>
 				<Meta />
 				<Seo />
 				<Links />

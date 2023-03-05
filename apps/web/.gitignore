@@ -8,3 +8,4 @@ app/styles/tailwind.css
 build/
 node_modules
 public/build
+public/~partytown

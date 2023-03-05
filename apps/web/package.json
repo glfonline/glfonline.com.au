@@ -4,9 +4,9 @@
 	"private": true,
 	"sideEffects": false,
 	"scripts": {
-		"build": "pnpm run build:css && pnpm run build:remix",
+		"build": "pnpm run partytown && pnpm run build:css && pnpm run build:remix",
 		"build:css": "tailwindcss -m -i ./styles/tailwind.css -o app/styles/tailwind.css",
-		"build:remix": "remix build",
+		"build:remix": "NODE_ENV=production remix build",
 		"check": "pnpm run check:format && pnpm run check:lint && pnpm run check:types",
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
@@ -16,11 +16,13 @@
 		"dev": "concurrently \"pnpm run dev:css\" \"pnpm run dev:remix\"",
 		"dev:css": "tailwindcss -w -i ./styles/tailwind.css -o app/styles/tailwind.css",
 		"dev:remix": "remix dev",
-		"lint": "TIMING=1 eslint \"./**/*.{js,ts,jsx,tsx}\""
+		"lint": "TIMING=1 eslint \"./**/*.{js,ts,jsx,tsx}\"",
+		"partytown": "partytown copylib public/~partytown"
 	},
 	"dependencies": {
 		"@algolia/client-search": "^4.15.0",
 		"@algolia/transporter": "^4.15.0",
+		"@builder.io/partytown": "^0.7.5",
 		"@glfonline/sanity-client": "0.0.0",
 		"@glfonline/shopify-client": "0.0.0",
 		"@headlessui/react": "^1.7.13",
@@ -67,6 +69,7 @@
 		"@types/react": "^18.0.28",
 		"@types/react-dom": "^18.0.11",
 		"concurrently": "^7.6.0",
+		"cross-env": "^7.0.3",
 		"dotenv-cli": "^7.0.0",
 		"eslint": "^8.35.0",
 		"postcss": "^8.4.21",
