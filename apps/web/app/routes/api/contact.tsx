@@ -1,5 +1,8 @@
 import { type ActionArgs, json } from '@remix-run/node';
 import { Link, useFetcher } from '@remix-run/react';
+import sendgrid from '@sendgrid/mail';
+import dedent from 'dedent';
+import { assert, isString } from 'emery';
 import { Fragment } from 'react';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
@@ -11,7 +14,6 @@ import { Heading } from '../../components/design-system/heading';
 import { TextArea } from '../../components/design-system/text-area';
 import { TextInput } from '../../components/design-system/text-input';
 import { SplitBackground } from '../../components/split-background';
-import { createTransport } from '../../entry.server';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 
 export default function () {
@@ -22,32 +24,30 @@ export async function action({ request }: ActionArgs) {
 	const formData = await request.formData();
 	try {
 		const data = parseForm(ContactFormSchema, formData);
-		const transport = createTransport({
-			host: 'smtp.sendgrid.net',
-			port: 587,
-			auth: {
-				user: 'apikey',
-				pass: process.env.SENDGRID_PASSWORD,
-			},
-		});
+		assert(isString(process.env.SENDGRID_API_KEY), 'SENDGRID_API_KEY not set');
+		sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 
 		const mailOptions = {
-			from: EMAIL_ADDRESS,
 			to: EMAIL_ADDRESS,
+			from: 'contact_form@glfonline.com.au',
 			subject: `New GLF Online Contact Form Submission from ${data.first_name}`,
-			html: `<div>
-			<h1>New GLF Online Contact Form Submission</h1>
-			<ul>
-				<li>Name: ${data.first_name} ${data.last_name}</li>
-				<li>Email: ${data.email}</li>
-				<li>Email: ${data.phone_number}</li>
-				<li>Subject: ${data.subject}</li>
-				<li>Message: ${data.message}</li>
-			</ul>
-		</div>`,
+			html: dedent`
+				<div>
+					<h1>New GLF Online Contact Form Submission</h1>
+					<ul>
+						<li>Name: ${data.first_name} ${data.last_name}</li>
+						<li>Email: ${data.email}</li>
+						<li>Email: ${data.phone_number}</li>
+						<li>Subject: ${data.subject}</li>
+						<li>Message: ${data.message}</li>
+					</ul>
+				</div>
+			`.trim(),
 		};
+		console.log(mailOptions);
 
-		await transport.sendMail(mailOptions);
+		const response = await sendgrid.send(mailOptions);
+		console.log(response);
 		return json({ ok: true });
 	} catch (error) {
 		/** @todo */
