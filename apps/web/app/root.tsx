@@ -89,8 +89,8 @@ export default function App() {
 	return (
 		<html className="h-full" lang="en">
 			<head>
-				<Seo />
 				<Meta />
+				<Seo />
 				<Links />
 			</head>
 			<body className="relative flex min-h-full flex-col">
