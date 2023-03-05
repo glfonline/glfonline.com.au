@@ -40,9 +40,9 @@ export async function loader({ request }: LoaderArgs) {
 	);
 }
 
-const INTENT = 'intent';
+export const INTENT = 'intent';
 
-const CHECKOUT_ACTION = 'checkout';
+export const CHECKOUT_ACTION = 'checkout';
 const CheckoutScheme = z.object({
 	webUrl: z.string().min(1),
 });

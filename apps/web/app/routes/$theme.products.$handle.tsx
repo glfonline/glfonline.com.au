@@ -1,15 +1,18 @@
 import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
-import { Tab } from '@headlessui/react';
+import { Tab, Transition } from '@headlessui/react';
+import { ChevronRightIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import * as Toast from '@radix-ui/react-toast';
 import {
 	type ActionArgs,
 	type DataFunctionArgs,
 	json,
 	type MetaFunction,
+	redirect,
 } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { useZorm } from 'react-zorm';
 import { z } from 'zod';
 
@@ -43,6 +46,8 @@ export async function loader({ params }: DataFunctionArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
+	const url = new URL(request.url);
+
 	const [formData, session] = await Promise.all([
 		request.formData(),
 		getSession(request),
@@ -53,7 +58,10 @@ export async function action({ request }: ActionArgs) {
 	let cart = await session.getCart();
 	cart = addToCart(cart, variantId, 1);
 	await session.setCart(cart);
-	return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
+	url.searchParams.set('cartCount', cart.length.toString());
+	return redirect(url.href, {
+		headers: { 'Set-Cookie': await session.commitSession() },
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -94,123 +102,222 @@ export default function ProductPage() {
 		({ node }) => node.title === 'Default Title'
 	);
 
+	const [showToast, setShowToast] = useState(false);
+
+	useEffect(() => {
+		if (transition.type === 'actionRedirect') {
+			setShowToast(true);
+		}
+	}, [transition.type]);
+
 	return (
-		<div className="bg-white" data-theme={theme}>
-			<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
-				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
-					<ImageGallery
-						images={product.images.edges.map(
-							({ node: { id, altText, url, height, width } }) => ({
-								node: { id, altText, url, height, width },
-							})
-						)}
-						isOnSale={isOnSale}
-					/>
-
-					{/* Product info */}
-					<div className="mt-10 flex flex-col gap-6 px-4 sm:mt-16 sm:px-0 lg:mt-0">
-						<div className="flex flex-col gap-3">
-							<Heading headingElement="h1" size="2" weight="normal">
-								{product.title}
-							</Heading>
-							<h2 className="sr-only">Product information</h2>
-							{variant?.node.price && (
-								<p className={getHeadingStyles({ size: '2' })}>
-									{formatMoney(variant.node.price.amount, 'AUD')}{' '}
-									<small className="font-normal">{'AUD'}</small>
-								</p>
+		<Toast.Provider swipeDirection="right">
+			<div className="bg-white" data-theme={theme}>
+				<div className="mx-auto max-w-2xl py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+					<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
+						<ImageGallery
+							images={product.images.edges.map(
+								({ node: { id, altText, url, height, width } }) => ({
+									node: { id, altText, url, height, width },
+								})
 							)}
-						</div>
+							isOnSale={isOnSale}
+						/>
 
-						<Form
-							className="flex flex-col gap-6"
-							method="post"
-							ref={form.ref}
-							replace
-						>
-							<fieldset
-								className={clsx(
-									hasNoVariants ? 'sr-only' : 'flex flex-col gap-3'
+						{/* Product info */}
+						<div className="mt-10 flex flex-col gap-6 px-4 sm:mt-16 sm:px-0 lg:mt-0">
+							<div className="flex flex-col gap-3">
+								<Heading headingElement="h1" size="2" weight="normal">
+									{product.title}
+								</Heading>
+								<h2 className="sr-only">Product information</h2>
+								{variant?.node.price && (
+									<p className={getHeadingStyles({ size: '2' })}>
+										{formatMoney(variant.node.price.amount, 'AUD')}{' '}
+										<small className="font-normal">{'AUD'}</small>
+									</p>
 								)}
-							>
-								<div className="flex items-center justify-between">
-									<legend className="text-sm font-bold text-gray-900">
-										Options
-									</legend>
-								</div>
-								<div className="flex flex-wrap gap-3">
-									{product.variants.edges.map(({ node }) => (
-										<label className="relative" htmlFor={node.id} key={node.id}>
-											<input
-												checked={variant?.node.id === node.id}
-												className="sr-only"
-												disabled={!node.availableForSale}
-												id={node.id}
-												name={form.fields.variantId()}
-												onChange={(event) => {
-													setVariant(
-														product.variants.edges.find(
-															({ node }) => node.id === event.target.value
-														)
-													);
-												}}
-												type="radio"
-												value={node.id}
-											/>
-											<span
-												className={clsx(
-													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
-													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-													node.availableForSale
-														? 'cursor-pointer focus:outline-none'
-														: 'cursor-not-allowed opacity-25',
-													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
-													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white'
-												)}
-											>
-												{node.title}
-											</span>
-										</label>
-									))}
-								</div>
-							</fieldset>
-
-							<div className="flex flex-col gap-4">
-								{sizingChart && (
-									<ButtonLink
-										href={sizingChart.href}
-										rel="noreferrer noopener"
-										target="_blank"
-									>
-										{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
-									</ButtonLink>
-								)}
-
-								<Button
-									disabled={!product.availableForSale}
-									type="submit"
-									variant="neutral"
-								>
-									{product.availableForSale
-										? form.errors.variantId()?.message || buttonText
-										: 'Sold Out'}
-								</Button>
 							</div>
-						</Form>
 
-						<div>
-							<h2 className="sr-only">Description</h2>
-							<div
-								className="prose space-y-6 text-base text-gray-700"
-								dangerouslySetInnerHTML={{
-									__html: product.descriptionHtml,
-								}}
-							/>
+							<Form
+								className="flex flex-col gap-6"
+								method="post"
+								ref={form.ref}
+								replace
+							>
+								<fieldset
+									className={clsx(
+										hasNoVariants ? 'sr-only' : 'flex flex-col gap-3'
+									)}
+								>
+									<div className="flex items-center justify-between">
+										<legend className="text-sm font-bold text-gray-900">
+											Options
+										</legend>
+									</div>
+									<div className="flex flex-wrap gap-3">
+										{product.variants.edges.map(({ node }) => (
+											<label
+												className="relative"
+												htmlFor={node.id}
+												key={node.id}
+											>
+												<input
+													checked={variant?.node.id === node.id}
+													className="sr-only"
+													disabled={!node.availableForSale}
+													id={node.id}
+													name={form.fields.variantId()}
+													onChange={(event) => {
+														setVariant(
+															product.variants.edges.find(
+																({ node }) => node.id === event.target.value
+															)
+														);
+													}}
+													type="radio"
+													value={node.id}
+												/>
+												<span
+													className={clsx(
+														'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
+														'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
+														node.availableForSale
+															? 'cursor-pointer focus:outline-none'
+															: 'cursor-not-allowed opacity-25',
+														'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
+														'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white'
+													)}
+												>
+													{node.title}
+												</span>
+											</label>
+										))}
+									</div>
+								</fieldset>
+
+								<div className="flex flex-col gap-4">
+									{sizingChart && (
+										<ButtonLink
+											href={sizingChart.href}
+											rel="noreferrer noopener"
+											target="_blank"
+										>
+											{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
+										</ButtonLink>
+									)}
+
+									<Button
+										disabled={!product.availableForSale}
+										type="submit"
+										variant="neutral"
+									>
+										{product.availableForSale
+											? form.errors.variantId()?.message || buttonText
+											: 'Sold Out'}
+									</Button>
+								</div>
+							</Form>
+
+							<div>
+								<h2 className="sr-only">Description</h2>
+								<div
+									className="prose space-y-6 text-base text-gray-700"
+									dangerouslySetInnerHTML={{
+										__html: product.descriptionHtml,
+									}}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+
+			<Toast.Viewport className="fixed top-[6.25rem] z-50 flex w-full max-w-7xl justify-end px-4 sm:px-6 lg:px-8">
+				<Transition
+					as={Toast.Root}
+					className="w-96"
+					enter="transform ease-out duration-300 transition"
+					enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+					enterTo="translate-y-0 opacity-100 sm:translate-x-0"
+					leave="transition ease-in duration-100"
+					leaveFrom="opacity-100"
+					leaveTo="opacity-0"
+					onOpenChange={setShowToast}
+					show={showToast}
+				>
+					<div className="pointer-events-auto flex w-full max-w-sm flex-wrap gap-4 overflow-hidden rounded-lg bg-white p-4 shadow-lg ring-1 ring-black ring-opacity-5">
+						<div className="flex-shrink-0">
+							<Image
+								alt={variant?.node.image?.altText ?? ''}
+								cdn="shopify"
+								className="w-24 object-contain object-center"
+								height={96}
+								layout="constrained"
+								src={variant?.node.image?.url}
+								width={96}
+							/>
+						</div>
+						<div className="flex-1">
+							<div className="flex items-start gap-4">
+								<div className="flex w-0 flex-1 flex-col items-start pt-0.5">
+									<Toast.Title asChild>
+										<h2 className="text-sm font-bold uppercase text-gray-900">
+											Added to cart
+										</h2>
+									</Toast.Title>
+									<div className="flex flex-col items-start gap-1 text-sm text-gray-500">
+										<h3>{product.title}</h3>
+										<dl>
+											{variant?.node.selectedOptions.map((option, index) =>
+												option.name === 'Title' ||
+												option.name === 'Price' ? null : (
+													<div key={index}>
+														<dt className="inline">{option.name}: </dt>
+														<dd className="inline">{option.value}</dd>
+													</div>
+												)
+											)}
+										</dl>
+										<span className="text-sm">
+											1x{' '}
+											<span className="font-bold">
+												{formatMoney(variant?.node.price.amount, 'AUD')}{' '}
+												<small className="font-normal">AUD</small>
+											</span>
+										</span>
+									</div>
+								</div>
+								<div className="flex flex-shrink-0">
+									<Toast.Action altText="Close" asChild>
+										<button
+											className="focus:ring-brand inline-flex rounded bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2"
+											onClick={() => {
+												setShowToast(false);
+											}}
+											type="button"
+										>
+											<span className="sr-only">Close</span>
+											<XMarkIcon aria-hidden="true" className="h-5 w-5" />
+										</button>
+									</Toast.Action>
+								</div>
+							</div>
+						</div>
+						<div className="flex w-full gap-4">
+							<ButtonLink
+								className="flex-1"
+								href="/cart"
+								size="small"
+								variant="neutral"
+							>
+								Go to cart <ChevronRightIcon className="h-4 w-4" />
+							</ButtonLink>
+						</div>
+					</div>
+				</Transition>
+			</Toast.Viewport>
+		</Toast.Provider>
 	);
 }
 
