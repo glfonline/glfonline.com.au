@@ -3,8 +3,7 @@ __generated__
 .env
 .output
 .vercel
-api/index.js
-api/index.js.map
+api
 app/styles/tailwind.css
 build/
 node_modules
