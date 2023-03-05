@@ -6,6 +6,7 @@ import {
 	ShoppingCartIcon,
 } from '@heroicons/react/24/outline';
 import { NavLink, useLoaderData } from '@remix-run/react';
+import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId, useState } from 'react';
 
@@ -214,10 +215,13 @@ function MegaMenu() {
 															key={category.featured.href}
 														>
 															<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-																<img
+																<Image
 																	alt={category.featured.image.alt}
 																	className="object-cover object-center"
+																	height={384}
+																	layout="constrained"
 																	src={category.featured.image.src}
+																	width={384}
 																/>
 															</div>
 															<div>

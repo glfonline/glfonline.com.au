@@ -1,6 +1,7 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
 import { z } from 'zod';
@@ -78,10 +79,12 @@ function Hero() {
 				</div>
 			</div>
 			<div className="flex-1">
-				<img
+				<Image
 					alt={heroImage.asset.altText ?? ''}
+					breakpoints={[640, 768, 1024, 1280]}
 					className="h-full w-full object-cover"
-					loading="eager"
+					layout="fullWidth"
+					priority
 					src={urlFor({
 						_ref: heroImage.asset._id,
 						crop: heroImage.asset.crop,
@@ -143,13 +146,16 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 	const id = useId();
 	return (
 		<div className="relative aspect-square">
-			<img
+			<Image
 				alt={image.alt || ''}
+				breakpoints={[1264, 1080, 960, 828, 750, 640, 632]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'top']
 				)}
-				loading="eager"
+				layout="fullWidth"
+				priority
+				sizes="(min-width: 632px) 632px, 100vw"
 				src={image.src}
 			/>
 			<div

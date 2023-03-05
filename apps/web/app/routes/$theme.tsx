@@ -81,7 +81,7 @@ export default function CollectionsPage() {
 	return (
 		<div>
 			<div className="grid gap-4 lg:grid-cols-5">
-				{collection.collectionCards.map((collection) => (
+				{collection.collectionCards.map((collection, index) => (
 					<CollectionCard
 						cta={{
 							text: collection.label,
@@ -95,7 +95,7 @@ export default function CollectionsPage() {
 							})
 								.auto('format')
 								.width((1280 / 5) * Number(collection.span))
-								.height(385)
+								.height(384)
 								.focalPoint(0.5, 0.5)
 								.dpr(3)
 								.url(),
@@ -103,6 +103,7 @@ export default function CollectionsPage() {
 							objectPosition: 'top',
 						}}
 						key={collection._key}
+						priority={index === 0}
 						span={collection.span}
 					/>
 				))}

@@ -4,6 +4,7 @@ import {
 } from '@glfonline/sanity-client';
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { Image } from '@unpic/react';
 import { z } from 'zod';
 
 import { Hero } from '../components/hero';
@@ -82,17 +83,20 @@ function Testimonials() {
 						className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12"
 						key={_key}
 					>
-						<img
+						<Image
 							alt={testimonialImage.asset.altText ?? ''}
+							breakpoints={[640, 750, 767, 828, 960, 1080, 1280, 1534]}
 							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
+							layout="fullWidth"
+							sizes="(min-width: 767px) 767px, 100vw"
 							src={urlFor({
 								_ref: testimonialImage.asset._id,
 								crop: testimonialImage.asset.crop,
 								hotspot: testimonialImage.asset.hotspot,
 							})
 								.auto('format')
-								.width(1280)
-								.height(385)
+								.width(767)
+								.height(452)
 								.focalPoint(0.5, 0.5)
 								.dpr(3)
 								.url()}

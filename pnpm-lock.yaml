@@ -79,6 +79,7 @@ importers:
       '@types/node': 18.14.1
       '@types/react': ^18.0.28
       '@types/react-dom': ^18.0.11
+      '@unpic/react': ^0.0.11
       '@vercel/node': ^2.9.10
       algoliasearch: ^4.15.0
       class-variance-authority: ^0.4.0
@@ -120,6 +121,7 @@ importers:
       '@tanstack/react-query': 4.24.10_biqbaboplfbrettd7655fr4n2y
       '@tanstack/react-query-devtools': 4.24.13_636dldj5wfr5vkyyqzs5k363kq
       '@tanstack/react-query-persist-client': 4.24.10_ealzb334a6lsej726khr2zjck4
+      '@unpic/react': 0.0.11_biqbaboplfbrettd7655fr4n2y
       '@vercel/node': 2.9.10
       algoliasearch: 4.15.0
       class-variance-authority: 0.4.0_typescript@4.9.5
@@ -4728,6 +4730,23 @@ packages:
       - '@codemirror/autocomplete'
       - '@codemirror/language'
       - '@codemirror/search'
+    dev: false
+
+  /@unpic/core/0.0.11:
+    resolution: {integrity: sha512-dBFVT+hWNAuR2hiAs9TLDGuiIWOku+dGV04kiyq5DCetVDJornjYZTKiUq7F2dUatqYwJH/H589miUF061tgZA==}
+    dependencies:
+      unpic: 2.1.0
+    dev: false
+
+  /@unpic/react/0.0.11_biqbaboplfbrettd7655fr4n2y:
+    resolution: {integrity: sha512-3gxOM52d9l/ihLnI8LRM+4PD7O8F1hr4PWPZxiguYuGIlpNXt0rQbUndcVMesBmmw0Jh7KZhk46sZEK14PZRXQ==}
+    peerDependencies:
+      react: '>=17'
+      react-dom: '>=17'
+    dependencies:
+      '@unpic/core': 0.0.11
+      react: 18.2.0
+      react-dom: 18.2.0_react@18.2.0
     dev: false
 
   /@vanilla-extract/babel-plugin-debug-ids/1.0.1:
@@ -13255,6 +13274,10 @@ packages:
     dependencies:
       normalize-path: 2.1.1
     dev: true
+
+  /unpic/2.1.0:
+    resolution: {integrity: sha512-Jvf9J5wOrPgCXBYohlWHvGHMgI2Cq/vkcAJW2xBKGZokR2a2kb+gsr8DNcwaghu7ypV7bR1Q2zk2NARd2TVRFQ==}
+    dev: false
 
   /unpipe/1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}

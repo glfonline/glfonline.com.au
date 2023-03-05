@@ -7,9 +7,9 @@ import {
 	type MetaFunction,
 } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
-import { Image } from '@shopify/hydrogen';
+import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { Fragment, useState } from 'react';
 import { useZorm } from 'react-zorm';
 import { z } from 'zod';
 
@@ -244,24 +244,18 @@ function ImageGallery({
 							key={node.id}
 						>
 							{({ selected }) => {
-								const width = 138;
 								return (
-									<>
+									<Fragment>
 										<span className="absolute inset-0 overflow-hidden">
 											<Image
+												alt={node.altText || ''}
+												breakpoints={[276]}
+												cdn="shopify"
 												className="h-full w-full object-cover object-center"
-												data={{
-													...node,
-													altText: node.altText || '',
-												}}
-												loaderOptions={{
-													crop: 'center',
-													height: 96,
-													scale: 3,
-													width: width,
-												}}
-												sizes={`${width}px`}
-												widths={[width]}
+												height={192}
+												layout="constrained"
+												src={node.url}
+												width={276}
 											/>
 										</span>
 										<span
@@ -271,7 +265,7 @@ function ImageGallery({
 												'pointer-events-none absolute inset-0 ring-1'
 											)}
 										/>
-									</>
+									</Fragment>
 								);
 							}}
 						</Tab>
@@ -281,26 +275,20 @@ function ImageGallery({
 
 			<Tab.Panels className="relative aspect-square w-full">
 				{images.map(({ node }) => {
-					const size = 624;
 					return (
 						<Tab.Panel
 							className="absolute inset-0 overflow-hidden"
 							key={node.id}
 						>
 							<Image
+								alt={node.altText || ''}
+								breakpoints={[640, 768, 1024, 1280]}
 								className="h-full w-full object-contain object-center sm:rounded-lg"
-								data={{
-									...node,
-									altText: node.altText || '',
-								}}
-								loaderOptions={{
-									crop: 'center',
-									height: size,
-									scale: 3,
-									width: size,
-								}}
-								sizes={`${size}px`}
-								widths={[size]}
+								height={624}
+								layout="constrained"
+								priority
+								src={node.url}
+								width={624}
 							/>
 							{isOnSale && <DiagonalBanner>On Sale</DiagonalBanner>}
 						</Tab.Panel>
