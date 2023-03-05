@@ -273,7 +273,7 @@ function ImageGallery({
 				</Tab.List>
 			</div>
 
-			<Tab.Panels className="relative aspect-square w-full">
+			<Tab.Panels className="relative aspect-square w-full bg-gray-200">
 				{images.map(({ node }) => {
 					return (
 						<Tab.Panel

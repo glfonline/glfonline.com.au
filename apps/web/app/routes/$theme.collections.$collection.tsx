@@ -353,16 +353,23 @@ function ProductCard({ node }: { node: ProductNode }) {
 
 	return (
 		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
-			<div className="aspect-[3/4] bg-gray-200 group-hover:opacity-75 sm:aspect-auto sm:h-96">
-				<Image
-					breakpoints={[320, 640]}
-					cdn="shopify"
-					className="h-full w-full object-cover object-center sm:h-full sm:w-full"
-					height={944}
-					layout="constrained"
-					src={node.featuredImage?.url}
-					width={605}
-				/>
+			<div className="aspect-[3/4] group-hover:opacity-75 sm:aspect-auto sm:h-96">
+				{node.featuredImage?.url ? (
+					<Image
+						breakpoints={[320, 640]}
+						cdn="shopify"
+						className="h-full w-full"
+						layout="fullWidth"
+						objectFit="contain"
+						sizes="(min-width: 605px) 605px, 100vw"
+						src={node.featuredImage?.url}
+					/>
+				) : (
+					<span
+						aria-hidden="true"
+						className="block h-full w-full bg-gray-200"
+					/>
+				)}
 				{isOnSale && (
 					<div className="pointer-events-none absolute top-0 left-0 right-0 aspect-square">
 						<DiagonalBanner>On Sale</DiagonalBanner>

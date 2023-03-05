@@ -167,15 +167,19 @@ export default function CartPage() {
 										key={node.id}
 									>
 										<div className="flex-shrink-0">
-											<Image
-												alt={node.variant?.image?.altText ?? ''}
-												cdn="shopify"
-												className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
-												height={192}
-												layout="constrained"
-												src={node.variant?.image?.url}
-												width={192}
-											/>
+											{node.variant?.image?.url ? (
+												<Image
+													alt={node.variant.image?.altText ?? ''}
+													cdn="shopify"
+													className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
+													height={192}
+													layout="constrained"
+													src={node.variant.image?.url}
+													width={192}
+												/>
+											) : (
+												<span className="block h-24 w-24 bg-gray-200 sm:h-48 sm:w-48" />
+											)}
 										</div>
 
 										<div className="ml-4 flex flex-1 flex-col justify-between sm:ml-6">
