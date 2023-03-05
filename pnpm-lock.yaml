@@ -89,6 +89,7 @@ importers:
       dotenv-cli: ^7.0.0
       emery: ^1.4.1
       eslint: ^8.35.0
+      isbot: ^3.6.6
       postcss: ^8.4.21
       prettier: ^2.8.4
       prettier-plugin-tailwindcss: ^0.2.4
@@ -128,6 +129,7 @@ importers:
       clsx: 1.2.1
       dedent: 0.7.0
       emery: 1.4.1
+      isbot: 3.6.6
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
       react-intersection-observer: 9.4.3_react@18.2.0
@@ -9023,6 +9025,11 @@ packages:
 
   /isarray/2.0.5:
     resolution: {integrity: sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==}
+    dev: false
+
+  /isbot/3.6.6:
+    resolution: {integrity: sha512-98aGl1Spbx1led422YFrusDJ4ZutSNOymb2avZ2V4BCCjF3MqAF2k+J2zoaLYahubaFkb+3UyvbVDVlk/Ngrew==}
+    engines: {node: '>=12'}
     dev: false
 
   /isexe/2.0.0:

@@ -3,6 +3,7 @@ import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
 import dedent from 'dedent';
 import { assert, isString } from 'emery';
+import isbot from 'isbot';
 import { Fragment } from 'react';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
@@ -21,8 +22,11 @@ export default function () {
 }
 
 export async function action({ request }: ActionArgs) {
-	const formData = await request.formData();
 	try {
+		if (isbot(request.headers.get('user-agent'))) {
+			throw new Error('Bot detected');
+		}
+		const formData = await request.formData();
 		const data = parseForm(ContactFormSchema, formData);
 		assert(isString(process.env.SENDGRID_API_KEY), 'SENDGRID_API_KEY not set');
 		sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
@@ -44,10 +48,9 @@ export async function action({ request }: ActionArgs) {
 				</div>
 			`.trim(),
 		};
-		console.log(mailOptions);
-
+		console.log({ mailOptions });
 		const response = await sendgrid.send(mailOptions);
-		console.log(response);
+		console.log({ response });
 		return json({ ok: true });
 	} catch (error) {
 		/** @todo */
