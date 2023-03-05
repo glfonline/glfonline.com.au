@@ -93,7 +93,7 @@ export default function App() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex min-h-fit flex-col">
+			<body className="relative flex min-h-full flex-col">
 				<GoogleAnalytics />
 				<MetaAnalytics />
 				<LoadingProgress />
