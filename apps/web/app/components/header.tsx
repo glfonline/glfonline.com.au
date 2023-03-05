@@ -42,7 +42,7 @@ function TopNav() {
 		<div className="bg-white">
 			<div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
 				<p className="flex-1 text-center text-sm font-bold uppercase lg:flex-none">
-					Get free delivery on orders over $100 Australia wide
+					Free delivery on orders over $100 Australia wide
 				</p>
 
 				<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:gap-6">
