@@ -238,7 +238,7 @@ function MegaMenu() {
 															</div>
 														</div>
 													</div>
-													<div className="col-span-2 row-start-1 grid grid-cols-[1fr_2fr_1fr] gap-y-10 gap-x-8 text-sm">
+													<div className="col-span-2 row-start-1 grid grid-cols-4 gap-y-10 gap-x-8 text-sm">
 														{category.sections.map((section, sectionIdx) => (
 															<CategorySection
 																key={sectionIdx}
@@ -271,7 +271,7 @@ function CategorySection({
 }) {
 	const id = useId();
 	return (
-		<div>
+		<div className={section.label === 'Brands' ? 'col-span-2' : undefined}>
 			<p className="font-bold uppercase text-gray-900" id={id}>
 				{section.label}
 			</p>
@@ -279,7 +279,10 @@ function CategorySection({
 				{section.items.map((item, itemIdx) => (
 					<ul
 						aria-labelledby={id}
-						className="mt-6 space-y-6 sm:mt-4 sm:space-y-4"
+						className={clsx(
+							'mt-6 space-y-6 sm:mt-4 sm:space-y-4',
+							section.items.length === 1 && 'col-span-2'
+						)}
 						key={itemIdx}
 						role="list"
 					>
