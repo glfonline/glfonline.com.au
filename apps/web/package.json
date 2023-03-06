@@ -25,7 +25,6 @@
 		"@glfonline/shopify-client": "0.0.0",
 		"@headlessui/react": "^1.7.13",
 		"@heroicons/react": "^2.0.16",
-		"@marsidev/react-turnstile": "^0.0.7",
 		"@portabletext/react": "^2.0.2",
 		"@remix-run/node": "^1.14.0",
 		"@remix-run/react": "^1.14.0",
@@ -40,6 +39,7 @@
 		"@tanstack/react-query-persist-client": "^4.24.10",
 		"@unpic/react": "^0.0.11",
 		"@vercel/node": "^2.9.10",
+		"akismet-api": "^6.0.0",
 		"algoliasearch": "^4.15.0",
 		"class-variance-authority": "^0.4.0",
 		"clsx": "^1.2.1",
@@ -50,6 +50,7 @@
 		"react-intersection-observer": "^9.4.3",
 		"react-zorm": "^0.6.1",
 		"remix-seo": "^0.1.0",
+		"remix-utils": "^6.0.0",
 		"zod": "^3.20.6"
 	},
 	"devDependencies": {

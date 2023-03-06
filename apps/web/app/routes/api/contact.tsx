@@ -1,10 +1,12 @@
 import { type ActionArgs, json } from '@remix-run/node';
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
+import { AkismetClient } from 'akismet-api';
 import dedent from 'dedent';
 import { assert, isString } from 'emery';
 import { Fragment } from 'react';
 import { parseForm, useZorm } from 'react-zorm';
+import { getClientIPAddress } from 'remix-utils';
 import { z } from 'zod';
 
 import { Button } from '../../components/design-system/button';
@@ -14,7 +16,6 @@ import { Heading } from '../../components/design-system/heading';
 import { TextArea } from '../../components/design-system/text-area';
 import { TextInput } from '../../components/design-system/text-input';
 import { SplitBackground } from '../../components/split-background';
-import { Turnstile } from '../../components/turnstyle';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 
 export default function () {
@@ -24,11 +25,31 @@ export default function () {
 export async function action({ request }: ActionArgs) {
 	try {
 		const formData = await request.formData();
-		console.log(Object.fromEntries(formData.entries()));
 		const data = parseForm(ContactFormSchema, formData);
 		assert(isString(process.env.SENDGRID_API_KEY), 'SENDGRID_API_KEY not set');
 		sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
-
+		assert(isString(process.env.AKISMET_API_KEY), 'AKISMET_API_KEY not set');
+		const client = new AkismetClient({
+			blog: 'https://www.glfonline.com.au',
+			/** @todo move into env var */
+			key: '7037e531a098',
+		});
+		let isSpam = false;
+		client.checkSpam(
+			{
+				comment_author_email: data.email,
+				comment_author: data.first_name + ' ' + data.last_name,
+				comment_content: data.message,
+				permalink: 'https://www.glfonline.com.au',
+				user_ip: getClientIPAddress(request) as string,
+			},
+			(_err, _isSpam) => {
+				isSpam = _isSpam;
+			}
+		);
+		if (isSpam) {
+			throw new Error('Spam detected');
+		}
 		const mailOptions = {
 			to: EMAIL_ADDRESS,
 			from: 'contact_form@glfonline.com.au',
@@ -89,7 +110,6 @@ export function ContactForm() {
 				<div className="text-center">
 					<Heading size="2">Get in touch with our team</Heading>
 				</div>
-
 				<fetcher.Form
 					action="/api/contact"
 					className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
@@ -140,12 +160,6 @@ export function ContactForm() {
 							<Checkbox name={form.fields.agree_to_privacy_policy()} />
 						</InlineField>
 					</div>
-					<div
-						className="cf-turnstile"
-						data-callback="javascriptCallback"
-						data-sitekey="yourSitekey"
-					/>
-					<Turnstile />
 					<Button
 						className="sm:col-span-2"
 						isLoading={fetcher.state === 'loading'}
