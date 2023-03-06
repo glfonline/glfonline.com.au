@@ -3,7 +3,6 @@ import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
 import dedent from 'dedent';
 import { assert, isString } from 'emery';
-import isbot from 'isbot';
 import { Fragment } from 'react';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
@@ -15,6 +14,7 @@ import { Heading } from '../../components/design-system/heading';
 import { TextArea } from '../../components/design-system/text-area';
 import { TextInput } from '../../components/design-system/text-input';
 import { SplitBackground } from '../../components/split-background';
+import { Turnstile } from '../../components/turnstyle';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 
 export default function () {
@@ -23,10 +23,8 @@ export default function () {
 
 export async function action({ request }: ActionArgs) {
 	try {
-		if (isbot(request.headers.get('user-agent'))) {
-			throw new Error('Bot detected');
-		}
 		const formData = await request.formData();
+		console.log(Object.fromEntries(formData.entries()));
 		const data = parseForm(ContactFormSchema, formData);
 		assert(isString(process.env.SENDGRID_API_KEY), 'SENDGRID_API_KEY not set');
 		sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
@@ -91,80 +89,82 @@ export function ContactForm() {
 				<div className="text-center">
 					<Heading size="2">Get in touch with our team</Heading>
 				</div>
-				<div>
-					<fetcher.Form
-						action="/api/contact"
-						className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
-						method="post"
-						name="contact_form"
-						ref={form.ref}
-						replace
+
+				<fetcher.Form
+					action="/api/contact"
+					className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
+					method="post"
+					name="contact_form"
+					ref={form.ref}
+					replace
+				>
+					<Field label="First name" message={form.errors.first_name()?.message}>
+						<TextInput name={form.fields.first_name()} />
+					</Field>
+					<Field label="Last name" message={form.errors.last_name()?.message}>
+						<TextInput name={form.fields.last_name()} />
+					</Field>
+					<Field
+						className="sm:col-span-2"
+						label="Email"
+						message={form.errors.email()?.message}
 					>
-						<Field
-							label="First name"
-							message={form.errors.first_name()?.message}
+						<TextInput name={form.fields.email()} />
+					</Field>
+					<Field
+						className="sm:col-span-2"
+						label="Phone number"
+						message={form.errors.phone_number()?.message}
+					>
+						<TextInput name={form.fields.phone_number()} />
+					</Field>
+					<Field
+						className="sm:col-span-2"
+						label="Subject"
+						message={form.errors.subject()?.message}
+					>
+						<TextInput name={form.fields.subject()} />
+					</Field>
+					<Field
+						className="sm:col-span-2"
+						label="Message"
+						message={form.errors.message()?.message}
+					>
+						<TextArea name={form.fields.message()} />
+					</Field>
+					<div className="sm:col-span-2">
+						<InlineField
+							label={<PrivacyPolicyLabel />}
+							message={form.errors.agree_to_privacy_policy()?.message}
 						>
-							<TextInput name={form.fields.first_name()} />
-						</Field>
-						<Field label="Last name" message={form.errors.last_name()?.message}>
-							<TextInput name={form.fields.last_name()} />
-						</Field>
-						<Field
-							className="sm:col-span-2"
-							label="Email"
-							message={form.errors.email()?.message}
-						>
-							<TextInput name={form.fields.email()} />
-						</Field>
-						<Field
-							className="sm:col-span-2"
-							label="Phone number"
-							message={form.errors.phone_number()?.message}
-						>
-							<TextInput name={form.fields.phone_number()} />
-						</Field>
-						<Field
-							className="sm:col-span-2"
-							label="Subject"
-							message={form.errors.subject()?.message}
-						>
-							<TextInput name={form.fields.subject()} />
-						</Field>
-						<Field
-							className="sm:col-span-2"
-							label="Message"
-							message={form.errors.message()?.message}
-						>
-							<TextArea name={form.fields.message()} />
-						</Field>
-						<div className="sm:col-span-2">
-							<InlineField
-								label={<PrivacyPolicyLabel />}
-								message={form.errors.agree_to_privacy_policy()?.message}
-							>
-								<Checkbox name={form.fields.agree_to_privacy_policy()} />
-							</InlineField>
-						</div>
-						<Button
-							className="sm:col-span-2"
-							isLoading={fetcher.state === 'loading'}
-							type="submit"
-							variant="neutral"
-						>
-							Submit
-						</Button>
-						{fetcher.data?.ok === true && (
-							<p className="text-center sm:col-span-2">
-								Thank you for your message!
-							</p>
-						)}
-						{fetcher.data?.ok === false && (
-							<p className="text-center sm:col-span-2">
-								There was an error sending your message. Please try again later.
-							</p>
-						)}
-					</fetcher.Form>
-				</div>
+							<Checkbox name={form.fields.agree_to_privacy_policy()} />
+						</InlineField>
+					</div>
+					<div
+						className="cf-turnstile"
+						data-callback="javascriptCallback"
+						data-sitekey="yourSitekey"
+					/>
+					<Turnstile />
+					<Button
+						className="sm:col-span-2"
+						isLoading={fetcher.state === 'loading'}
+						type="submit"
+						variant="neutral"
+					>
+						Submit
+					</Button>
+					{fetcher.data?.ok === true && (
+						<p className="text-center sm:col-span-2">
+							Thank you for your message!
+						</p>
+					)}
+					{fetcher.data?.ok === false && (
+						<p className="text-center sm:col-span-2">
+							There was an error sending your message. Please try again later.
+						</p>
+					)}
+				</fetcher.Form>
 			</div>
 		</article>
 	);
