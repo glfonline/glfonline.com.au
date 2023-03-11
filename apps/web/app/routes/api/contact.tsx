@@ -16,7 +16,7 @@ import { Heading } from '../../components/design-system/heading';
 import { TextArea } from '../../components/design-system/text-area';
 import { TextInput } from '../../components/design-system/text-input';
 import { SplitBackground } from '../../components/split-background';
-import { EMAIL_ADDRESS } from '../../lib/constants';
+import { EMAIL_ADDRESS, WEB_ADDRESS } from '../../lib/constants';
 
 export default function () {
 	return null;
@@ -30,17 +30,17 @@ export async function action({ request }: ActionArgs) {
 		sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
 		assert(isString(process.env.AKISMET_API_KEY), 'AKISMET_API_KEY not set');
 		const client = new AkismetClient({
-			blog: 'https://www.glfonline.com.au',
-			/** @todo move into env var */
-			key: '7037e531a098',
+			blog: WEB_ADDRESS,
+			key: process.env.AKISMET_API_KEY,
 		});
 		let isSpam = false;
 		client.checkSpam(
 			{
-				comment_author_email: data.email,
-				comment_author: data.first_name + ' ' + data.last_name,
-				comment_content: data.message,
-				permalink: 'https://www.glfonline.com.au',
+				content: data.message,
+				email: data.email,
+				name: data.first_name + ' ' + data.last_name,
+				permalink: WEB_ADDRESS,
+				user_agent: request.headers.get('user-agent') as string,
 				user_ip: getClientIPAddress(request) as string,
 			},
 			(_err, _isSpam) => {
