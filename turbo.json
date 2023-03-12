@@ -17,7 +17,8 @@
 				"AKISMET_API_KEY",
 				"ENCRYPTION_KEY",
 				"NODE_ENV",
-				"SENDGRID_API_KEY"
+				"SENDGRID_API_KEY",
+				"TURNSTILE_SECRET_KEY"
 			],
 			"outputs": ["api/index.js", "api/build/**", "public/build/**"]
 		},

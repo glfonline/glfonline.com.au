@@ -2,9 +2,10 @@ import { type ActionArgs, json } from '@remix-run/node';
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
 import { AkismetClient } from 'akismet-api';
+import { requiredEnv } from 'app/lib/required-env';
 import dedent from 'dedent';
-import { assert, isString } from 'emery';
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
+import Turnstile from 'react-turnstile';
 import { parseForm, useZorm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils';
 import { z } from 'zod';
@@ -24,21 +25,64 @@ export default function () {
 
 export async function action({ request }: ActionArgs) {
 	try {
+		/** Get the form data out of the request */
 		const formData = await request.formData();
-		const data = parseForm(ContactFormSchema, formData);
-		assert(isString(process.env.SENDGRID_API_KEY), 'SENDGRID_API_KEY not set');
-		sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
-		assert(isString(process.env.AKISMET_API_KEY), 'AKISMET_API_KEY not set');
+		/** Parse the data to ensure it's in the expected format */
+		const {
+			agree_to_privacy_policy,
+			first_name,
+			email,
+			last_name,
+			message,
+			phone_number,
+			subject,
+			token,
+		} = parseForm(ContactFormSchema, formData);
+
+		/** Make sure the user agrees to the Privacy Policy */
+		if (!agree_to_privacy_policy) {
+			throw new Error('You must agree to the Privacy Policy');
+		}
+
+		/** Attempt to parse users IP address from request object */
+		const clientIPAddress = getClientIPAddress(request);
+
+		/**
+		 * Validate Cloudflare Turnstyle token server-side
+		 * @see https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
+		 */
+		const challengeResponse = await fetch(
+			'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+			{
+				body: JSON.stringify({
+					secret: process.env.TURNSTILE_SECRET_KEY,
+					response: token,
+					...(clientIPAddress && { remoteip: clientIPAddress }),
+				}),
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				method: 'POST',
+			}
+		);
+		const challengeJson = await challengeResponse.json();
+		if (!challengeJson.success) {
+			throw new Error('Failed to verify token');
+		}
+
+		/** Set up Akismet client for spam filtering */
 		const client = new AkismetClient({
 			blog: WEB_ADDRESS,
-			key: process.env.AKISMET_API_KEY,
+			key: requiredEnv('AKISMET_API_KEY', process.env.AKISMET_API_KEY),
 		});
+
+		/** Check that the content of the form is not spam */
 		let isSpam = false;
 		client.checkSpam(
 			{
-				content: data.message,
-				email: data.email,
-				name: data.first_name + ' ' + data.last_name,
+				content: message,
+				email: email,
+				name: first_name + ' ' + last_name,
 				permalink: WEB_ADDRESS,
 				user_agent: request.headers.get('user-agent') as string,
 				user_ip: getClientIPAddress(request) as string,
@@ -50,26 +94,32 @@ export async function action({ request }: ActionArgs) {
 		if (isSpam) {
 			throw new Error('Spam detected');
 		}
+
+		/** Format HTML for contact form notification email */
 		const mailOptions = {
 			to: EMAIL_ADDRESS,
 			from: 'contact_form@glfonline.com.au',
-			subject: `New GLF Online Contact Form Submission from ${data.first_name}`,
+			subject: `New GLF Online Contact Form Submission from ${first_name}`,
 			html: dedent`
 				<div>
 					<h1>New GLF Online Contact Form Submission</h1>
 					<ul>
-						<li>Name: ${data.first_name} ${data.last_name}</li>
-						<li>Email: ${data.email}</li>
-						<li>Email: ${data.phone_number}</li>
-						<li>Subject: ${data.subject}</li>
-						<li>Message: ${data.message}</li>
+						<li>Name: ${first_name} ${last_name}</li>
+						<li>Email: ${email}</li>
+						<li>Email: ${phone_number}</li>
+						<li>Subject: ${subject}</li>
+						<li>Message: ${message}</li>
 					</ul>
 				</div>
 			`.trim(),
 		};
-		console.log({ mailOptions });
-		const response = await sendgrid.send(mailOptions);
-		console.log({ response });
+
+		/** Send email with Sendgrid */
+		sendgrid.setApiKey(
+			requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY)
+		);
+		const sendgridResponse = await sendgrid.send(mailOptions);
+		console.log({ sendgridResponse });
 		return json({ ok: true });
 	} catch (error) {
 		/** @todo */
@@ -92,11 +142,13 @@ export const ContactFormSchema = z.object({
 		.min(8, 'Invalid phone number'),
 	subject: z.string().min(1, 'Subject is required'),
 	message: z.string().min(1, 'Message is required'),
+	token: z.string(),
 });
 
 export function ContactForm() {
 	const fetcher = useFetcher<typeof action>();
 	const form = useZorm('contact_form', ContactFormSchema);
+	const [token, setToken] = useState('');
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
@@ -159,6 +211,17 @@ export function ContactForm() {
 						>
 							<Checkbox name={form.fields.agree_to_privacy_policy()} />
 						</InlineField>
+					</div>
+					<div className="sm:col-span-2">
+						<Turnstile
+							className="[&>*]:!w-full"
+							onVerify={(token) => setToken(token)}
+							sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
+							size="normal"
+							style={{ width: '100%' }}
+							theme="light"
+						/>
+						<input name={form.fields.token()} type="hidden" value={token} />
 					</div>
 					<Button
 						className="sm:col-span-2"
