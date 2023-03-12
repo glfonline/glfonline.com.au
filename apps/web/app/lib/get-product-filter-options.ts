@@ -5,6 +5,12 @@ import {
 import { z } from 'zod';
 
 import { capitalise } from './capitalise';
+import { sortSizes } from './sort-sizes';
+
+type Option = {
+	name: string;
+	values: string[];
+};
 
 export async function getProductFilterOptions({
 	after,
@@ -17,43 +23,40 @@ export async function getProductFilterOptions({
 	first: number;
 	theme: string;
 }) {
-	let prods: Products = [];
-	let cursor: string | undefined;
-	async function getProducts() {
+	const optionsMap = new Map<string, Set<string>>();
+	let hasNextPage = true;
+	let cursor = after;
+	while (hasNextPage) {
 		const { collection } = await shopifyClient(COLLECTION_OPTIONS_QUERY, {
 			handle: collectionHandle,
-			after: after ?? cursor,
+			after: cursor,
 			first,
 			filters: [{ available: true }, { tag: capitalise(theme) }],
 		});
 		const { products } = schema.parse(collection);
-		prods = [...prods, ...products.edges];
-		if (products.pageInfo.hasNextPage) {
-			cursor = products.pageInfo.endCursor;
-			getProducts();
-		}
-	}
-	await getProducts();
-	const options = prods
-		.map((prod) => prod.node.options)
-		.flat()
-		.reduce((acc, { name, values }) => {
-			const option = acc.find((o) => o.name === name);
-			if (option) {
-				option.values = [...option.values, ...values];
-			} else {
-				acc.push({ name, values });
+		for (const { node } of products.edges) {
+			for (const { name, values } of node.options) {
+				if (name === 'Title') continue;
+				const optionValues = optionsMap.get(name) || new Set<string>();
+				for (const value of values) {
+					optionValues.add(value);
+				}
+				optionsMap.set(name, optionValues);
 			}
-			return acc;
-		}, [] as { name: string; values: string[] }[])
-		.map(({ name, values }) => ({ name, values: [...new Set(values.sort())] }))
-		.filter(({ name }) => name !== 'Title');
-
+		}
+		hasNextPage = products.pageInfo.hasNextPage;
+		cursor = products.pageInfo.endCursor;
+	}
+	const options: Option[] = [];
+	for (const [key, value] of optionsMap) {
+		let optionValues = [...value].sort();
+		if (key === 'Size') {
+			optionValues = sortSizes(optionValues);
+		}
+		options.push({ name: key, values: optionValues });
+	}
 	return options;
 }
-
-type Products = Schema['products']['edges'];
-type Schema = z.infer<typeof schema>;
 
 export const schema = z.object({
 	products: z.object({
