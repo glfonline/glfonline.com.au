@@ -21,11 +21,11 @@ import { z } from 'zod';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { capitalise } from '../lib/capitalise';
+import { formatMoney } from '../lib/format-money';
 import {
 	getProductsFromCollectionByTag,
 	type SortBy,
-} from '../lib/fetch-collection-products';
-import { formatMoney } from '../lib/format-money';
+} from '../lib/get-collection-products';
 import { getProductFilterOptions } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
@@ -152,8 +152,8 @@ export default function CollectionPage() {
 							</div>
 							<Pagination
 								endCursor={pageInfo?.endCursor ?? undefined}
-								hasNextPage={!!pageInfo?.hasNextPage}
-								hasPrevPage={!!after}
+								hasNextPage={Boolean(pageInfo?.hasNextPage)}
+								hasPrevPage={Boolean(after)}
 								results={products.length}
 							/>
 						</section>

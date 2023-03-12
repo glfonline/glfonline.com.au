@@ -1,27 +1,59 @@
-import { json, type MetaFunction } from '@remix-run/node';
-import { Link, useLoaderData } from '@remix-run/react';
+import { json, type LoaderArgs, type MetaFunction } from '@remix-run/node';
+import {
+	Link,
+	useLoaderData,
+	useLocation,
+	useNavigate,
+} from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment } from 'react';
+import { z } from 'zod';
 
-import { Button, ButtonLink } from '../../components/design-system/button';
+import { ButtonLink } from '../../components/design-system/button';
 import { getHeadingStyles } from '../../components/design-system/heading';
 import { Hero } from '../../components/hero';
-import { fetchPosts, usePosts } from '../../lib/fetch-blog-posts';
-import { type PortableTextProps } from '../../lib/portable-text';
-import { PortableText } from '../../lib/portable-text';
+import { getBlogPostCount, getBlogPosts } from '../../lib/get-blog-posts';
+import { PortableText, type PortableTextProps } from '../../lib/portable-text';
 import { urlFor } from '../../lib/sanity-image';
 import { getSeoMeta } from '../../seo';
 import { type Theme } from '../../types';
 
 const POSTS_LIMIT = 5;
-const POSTS_OFFSET = 0;
 
-export async function loader() {
-	const allPosts = await fetchPosts({
-		limit: POSTS_LIMIT,
-		offset: POSTS_OFFSET,
+const BlogSchema = z
+	.object({
+		after: z.string().optional(),
+	})
+	.transform(({ after }) => {
+		const afterAsNumber = Number(after);
+		return {
+			after:
+				after === undefined
+					? undefined
+					: afterAsNumber >= 0 && !Number.isNaN(afterAsNumber)
+					? afterAsNumber
+					: undefined,
+		};
 	});
-	return json({ allPosts, title: 'Blog' });
+
+export async function loader({ request }: LoaderArgs) {
+	const url = new URL(request.url);
+	const { after = 0 } = BlogSchema.parse(
+		Object.fromEntries(url.searchParams.entries())
+	);
+	const [posts, count] = await Promise.all([
+		getBlogPosts({
+			limit: POSTS_LIMIT,
+			offset: after,
+		}),
+		getBlogPostCount(),
+	]);
+	return json({
+		after,
+		count,
+		posts,
+		title: 'Blog',
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -32,12 +64,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function Blog() {
-	const { allPosts, title } = useLoaderData<typeof loader>();
-	const posts = usePosts({
-		limit: POSTS_LIMIT,
-		offset: POSTS_OFFSET,
-		initialData: allPosts,
-	});
+	const { title } = useLoaderData<typeof loader>();
 
 	return (
 		<Fragment>
@@ -50,7 +77,7 @@ export default function Blog() {
 			<div className="relative mx-auto flex w-full justify-center gap-4 px-4 sm:px-6 lg:gap-16 lg:px-8">
 				<div className="flex min-w-0 max-w-4xl flex-auto flex-col py-16 lg:max-w-none">
 					<article className="flex-1">
-						<PostList {...posts} />
+						<PostList />
 					</article>
 				</div>
 				<div className="hidden lg:sticky lg:top-[6.625rem] lg:-mr-6 lg:block lg:h-[calc(100vh-6.625rem)] lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
@@ -61,12 +88,8 @@ export default function Blog() {
 	);
 }
 
-function PostList({
-	data,
-	fetchNextPage,
-	isFetching,
-}: Pick<ReturnType<typeof usePosts>, 'data' | 'fetchNextPage' | 'isFetching'>) {
-	const hasNextPage = data?.pages.at(-1)?.length === POSTS_LIMIT;
+function PostList() {
+	const { after, count, posts } = useLoaderData<typeof loader>();
 
 	return (
 		<div className="mx-auto flex max-w-7xl flex-col gap-8">
@@ -80,46 +103,81 @@ function PostList({
 					Recently viewed
 				</h2>
 				<ul className="grid grid-flow-row auto-rows-fr gap-8" role="list">
-					{data?.pages.map((posts, pageIndex) => (
-						<Fragment key={pageIndex}>
-							{posts.map((post, postIndex) => (
-								<Post
-									author={post.author.name}
-									excerpt={post.bodyRaw[0]}
-									heading={post.title}
-									href={`/blog/${post.slug.current}`}
-									imgSrc={urlFor({
-										_ref: post.mainImage.asset._id,
-										crop: post.mainImage.asset.crop,
-										hotspot: post.mainImage.asset.hotspot,
-									})
-										.auto('format')
-										.height(256)
-										.width(256)
-										.focalPoint(0.5, 0.5)
-										.dpr(3)
-										.url()}
-									key={postIndex}
-									publishDate={post.publishedAt}
-								/>
-							))}
-						</Fragment>
+					{posts.map((post, postIndex) => (
+						<Post
+							author={post.author.name}
+							excerpt={post.bodyRaw[0]}
+							heading={post.title}
+							href={`/blog/${post.slug.current}`}
+							imgSrc={urlFor({
+								_ref: post.mainImage.asset._id,
+								crop: post.mainImage.asset.crop,
+								hotspot: post.mainImage.asset.hotspot,
+							})
+								.auto('format')
+								.height(256)
+								.width(256)
+								.focalPoint(0.5, 0.5)
+								.dpr(3)
+								.url()}
+							key={postIndex}
+							publishDate={post.publishedAt}
+						/>
 					))}
 				</ul>
-				<div className="flex items-center justify-center pt-16">
-					{hasNextPage && (
-						<Button
-							isLoading={isFetching}
-							onClick={() => fetchNextPage()}
-							size="regular"
-							variant="neutral"
-						>
-							{isFetching ? 'Loading' : 'Load More'}
-						</Button>
-					)}
-				</div>
+				<Pagination
+					hasNextPage={after + POSTS_LIMIT <= count}
+					hasPrevPage={after > POSTS_LIMIT}
+				/>
 			</section>
 		</div>
+	);
+}
+
+export function Pagination({
+	hasNextPage,
+	hasPrevPage,
+}: {
+	hasNextPage: boolean;
+	hasPrevPage: boolean;
+}) {
+	const { after } = useLoaderData<typeof loader>();
+	const location = useLocation();
+	const navigate = useNavigate();
+
+	return (
+		<nav
+			aria-label="Pagination"
+			className="mx-auto mt-6 flex max-w-7xl items-center justify-between text-sm font-medium text-gray-700"
+		>
+			<div className="min-w-0 flex-1">
+				{hasPrevPage && (
+					<button
+						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
+						onClick={() => {
+							navigate(-1);
+						}}
+					>
+						Previous
+					</button>
+				)}
+			</div>
+			<p className="mx-auto flex-1 text-center">{/*  */}</p>
+			<div className="flex min-w-0 flex-1 justify-end">
+				{hasNextPage && (
+					<button
+						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
+						onClick={() => {
+							const params = new URLSearchParams(location.search);
+							params.set('after', (after + POSTS_LIMIT).toString());
+							navigate(location.pathname + '?' + params.toString());
+						}}
+					>
+						Next
+					</button>
+				)}
+			</div>
+		</nav>
 	);
 }
 
@@ -181,8 +239,8 @@ function Post({
 }
 
 function Sidebar() {
-	const { allPosts } = useLoaderData<typeof loader>();
-	const featuredPost = allPosts.find((post) =>
+	const { posts } = useLoaderData<typeof loader>();
+	const featuredPost = posts.find((post) =>
 		post.categories?.find((category) => category.title === 'Featured')
 	);
 

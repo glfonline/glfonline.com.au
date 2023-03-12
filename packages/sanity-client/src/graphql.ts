@@ -54,6 +54,14 @@ export const BLOG_POST_QUERY = gql`
 	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
 ` as import('../__generated__/ts-gql/BLOG_POST_QUERY').type;
 
+export const BLOG_POSTS_COUNT_QUERY = gql`
+	query BLOG_POSTS_COUNT_QUERY {
+		allPost {
+			_id
+		}
+	}
+` as import('../__generated__/ts-gql/BLOG_POSTS_COUNT_QUERY').type;
+
 export const BLOG_PAGE_QUERY = gql`
 	query BLOG_PAGE_QUERY($limit: Int = 5, $offset: Int = 0) {
 		allPost(limit: $limit, offset: $offset, sort: { publishedAt: DESC }) {
