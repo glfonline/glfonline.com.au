@@ -9,7 +9,6 @@ import {
 import {
 	Link,
 	type Location,
-	NavLink,
 	useLoaderData,
 	useLocation,
 	useNavigate,
@@ -20,7 +19,6 @@ import { z } from 'zod';
 
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
-import { capitalise } from '../lib/capitalise';
 import { formatMoney } from '../lib/format-money';
 import {
 	getProductsFromCollectionByTag,
@@ -124,7 +122,7 @@ export default function CollectionPage() {
 				/>
 
 				<div className="border-b border-gray-200">
-					<Breadcrumbs theme={theme} title={title} />
+					<ClearFilters />
 				</div>
 
 				<main className="mx-auto max-w-2xl px-4 lg:max-w-7xl lg:px-8 xl:px-0">
@@ -227,51 +225,58 @@ function Filters({
 	);
 }
 
-function Breadcrumbs({
-	theme,
-	title,
-}: {
-	theme: string;
-	title: string | undefined;
-}) {
+function ClearFilters() {
+	const location = useLocation();
+	const searchParams = Object.fromEntries(
+		new URLSearchParams(location.search).entries()
+	);
 	return (
-		<nav
-			aria-label="Breadcrumb"
-			className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
-		>
+		<article className="mx-auto flex max-w-2xl items-center gap-4 px-4 lg:max-w-7xl lg:px-8 xl:px-0">
+			<h2 className="sr-only text-sm font-medium text-gray-500 lg:not-sr-only">
+				Filters
+			</h2>
+			<div
+				aria-hidden="true"
+				className="hidden h-5 w-px bg-gray-300 lg:block"
+			/>
 			<ol className="flex items-center gap-4 py-4" role="list">
-				<li>
-					<div className="flex items-center gap-4">
-						<NavLink
-							className="text-sm font-medium text-gray-900"
-							to={`/${theme}`}
-						>
-							{capitalise(theme)}
-						</NavLink>
-						<svg
-							aria-hidden="true"
-							className="h-5 w-auto text-gray-300"
-							viewBox="0 0 6 20"
-						>
-							<path
-								d="M4.878 4.34H3.551L.27 16.532h1.327l3.281-12.19z"
-								fill="currentColor"
-							/>
-						</svg>
-					</div>
-				</li>
-				{title && (
-					<li className="text-sm">
-						<NavLink
-							className="font-medium text-gray-500 hover:text-gray-600"
-							to="."
-						>
-							{title}
-						</NavLink>
-					</li>
+				{Object.entries(searchParams).map(
+					([key, value], index) =>
+						key !== 'sort' && (
+							<li
+								className="inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-xs font-bold uppercase text-gray-900"
+								key={index}
+							>
+								<span>
+									{key}: {value}
+								</span>
+
+								<Link
+									className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
+									preventScrollReset
+									to={clearSearchUrl({ key, location })}
+								>
+									<span className="sr-only">
+										Remove filter for {key}: {value}
+									</span>
+									<svg
+										className="h-2 w-2"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 8 8"
+									>
+										<path
+											d="M1 1l6 6m0-6L1 7"
+											strokeLinecap="round"
+											strokeWidth="1.5"
+										/>
+									</svg>
+								</Link>
+							</li>
+						)
 				)}
 			</ol>
-		</nav>
+		</article>
 	);
 }
 
@@ -421,7 +426,7 @@ function DisplayOptions() {
 						</h2>
 						<Disclosure.Panel className="flex flex-col">
 							{sortOptions.map((option) => (
-								<NavLink
+								<Link
 									className="-mx-4 py-2 px-4"
 									key={option.value}
 									preventScrollReset
@@ -432,7 +437,7 @@ function DisplayOptions() {
 									})}
 								>
 									{option.label}
-								</NavLink>
+								</Link>
 							))}
 						</Disclosure.Panel>
 					</Fragment>
@@ -457,7 +462,7 @@ function DisplayOptions() {
 							</h2>
 							<Disclosure.Panel className="flex flex-col">
 								{location.search.includes(option.name) && (
-									<NavLink
+									<Link
 										className="-mx-4 py-2 px-4"
 										preventScrollReset
 										to={clearSearchUrl({
@@ -466,10 +471,10 @@ function DisplayOptions() {
 										})}
 									>
 										Clear {option.name}
-									</NavLink>
+									</Link>
 								)}
 								{option.values.map((value) => (
-									<NavLink
+									<Link
 										className="-mx-4 py-2 px-4"
 										key={value}
 										preventScrollReset
@@ -480,7 +485,7 @@ function DisplayOptions() {
 										})}
 									>
 										{value}
-									</NavLink>
+									</Link>
 								))}
 							</Disclosure.Panel>
 						</Fragment>
