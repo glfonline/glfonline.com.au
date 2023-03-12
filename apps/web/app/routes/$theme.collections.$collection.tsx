@@ -122,10 +122,6 @@ export default function CollectionPage() {
 					setMobileFiltersOpen={setMobileFiltersOpen}
 				/>
 
-				<div className="border-b border-gray-200">
-					<ClearFilters />
-				</div>
-
 				<main className="mx-auto max-w-2xl px-4 lg:max-w-7xl lg:px-8 xl:px-0">
 					<div className="pt-12 pb-24 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
 						<Filters setMobileFiltersOpen={setMobileFiltersOpen} />
@@ -178,19 +174,6 @@ function getSearchUrl({
 	return location.pathname + '?' + params.toString();
 }
 
-function clearSearchUrl({
-	location,
-	key,
-}: {
-	location: Location;
-	key: string;
-}) {
-	const params = new URLSearchParams(location.search);
-	params.delete('cursor');
-	params.delete(key);
-	return location.pathname + '?' + params.toString();
-}
-
 function Filters({
 	setMobileFiltersOpen,
 }: {
@@ -223,61 +206,6 @@ function Filters({
 				</div>
 			</div>
 		</aside>
-	);
-}
-
-function ClearFilters() {
-	const location = useLocation();
-	const searchParams = Object.fromEntries(
-		new URLSearchParams(location.search).entries()
-	);
-	return (
-		<article className="mx-auto flex max-w-2xl items-center gap-4 px-4 lg:max-w-7xl lg:px-8 xl:px-0">
-			<h2 className="sr-only text-sm font-medium text-gray-500 lg:not-sr-only">
-				Filters
-			</h2>
-			<div
-				aria-hidden="true"
-				className="hidden h-5 w-px bg-gray-300 lg:block"
-			/>
-			<ol className="flex items-center gap-4 py-4" role="list">
-				{Object.entries(searchParams).map(
-					([key, value], index) =>
-						key !== 'sort' && (
-							<li
-								className="inline-flex items-center rounded-full border border-gray-200 bg-white py-1.5 pl-3 pr-2 text-xs font-bold uppercase text-gray-900"
-								key={index}
-							>
-								<span>
-									{key}: {value}
-								</span>
-
-								<Link
-									className="ml-1 inline-flex h-4 w-4 flex-shrink-0 rounded-full p-1 text-gray-400 hover:bg-gray-200 hover:text-gray-500"
-									preventScrollReset
-									to={clearSearchUrl({ key, location })}
-								>
-									<span className="sr-only">
-										Remove filter for {key}: {value}
-									</span>
-									<svg
-										className="h-2 w-2"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 8 8"
-									>
-										<path
-											d="M1 1l6 6m0-6L1 7"
-											strokeLinecap="round"
-											strokeWidth="1.5"
-										/>
-									</svg>
-								</Link>
-							</li>
-						)
-				)}
-			</ol>
-		</article>
 	);
 }
 
@@ -405,11 +333,102 @@ function ProductCard({ node }: { node: ProductNode }) {
 	);
 }
 
+function clearSearchUrl({
+	location,
+	key,
+}: {
+	location: Location;
+	key: string;
+}) {
+	const params = new URLSearchParams(location.search);
+	params.delete('cursor');
+	params.delete(key);
+	return location.pathname + '?' + params.toString();
+}
+
 function DisplayOptions() {
-	const location = useLocation();
 	const { options } = useLoaderData<typeof loader>();
+	const location = useLocation();
+	const params = new URLSearchParams(location.search);
+	const searchParamsArray = Object.entries(
+		Object.fromEntries(params.entries())
+	);
+
 	return (
 		<div className="flex flex-col divide-y">
+			{searchParamsArray.length > 0 && (
+				<div className="py-4">
+					<h2 className="font-bold">Clear Filters</h2>
+					<ul className="mt-2">
+						{searchParamsArray.map(([key, value]) => (
+							<li key={key}>
+								<Link
+									className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700"
+									to={clearSearchUrl({ key, location })}
+								>
+									<svg
+										className="h-2 w-2"
+										fill="none"
+										stroke="currentColor"
+										viewBox="0 0 8 8"
+									>
+										<path
+											d="M1 1l6 6m0-6L1 7"
+											strokeLinecap="round"
+											strokeWidth="1.5"
+										/>
+									</svg>
+									<span className="before:mb-[-0.4392em] before:table after:mt-[-0.3425em] after:table">
+										{key}: {value}
+									</span>
+								</Link>
+							</li>
+						))}
+					</ul>
+				</div>
+			)}
+			{options.map((option) => {
+				if (option.name !== 'Size') {
+					return null;
+				}
+				return (
+					<Disclosure as="div" className="py-2" key={option.name}>
+						{({ open }) => (
+							<>
+								<h2>
+									<Disclosure.Button className="flex w-full items-center justify-between gap-6 py-2 px-4">
+										<span className="-ml-4 font-bold">{option.name}</span>
+										<span className="-mr-4 inline-flex items-center">
+											{open ? (
+												<MinusIcon aria-hidden="true" className="h-5 w-5" />
+											) : (
+												<PlusIcon aria-hidden="true" className="h-5 w-5" />
+											)}
+										</span>
+									</Disclosure.Button>
+								</h2>
+								<Disclosure.Panel className="flex flex-col">
+									{option.values.map((value) => (
+										<Link
+											className="-mx-4 py-2 px-4"
+											key={value}
+											preventScrollReset
+											to={getSearchUrl({
+												key: option.name,
+												location,
+												value,
+											})}
+										>
+											{value}
+										</Link>
+									))}
+								</Disclosure.Panel>
+							</>
+						)}
+					</Disclosure>
+				);
+			})}
+
 			<Disclosure as="div" className="py-2">
 				{({ open }) => (
 					<Fragment>
@@ -444,55 +463,6 @@ function DisplayOptions() {
 					</Fragment>
 				)}
 			</Disclosure>
-
-			{options.map((option) => (
-				<Disclosure as="div" className="py-2" key={option.name}>
-					{({ open }) => (
-						<Fragment>
-							<h2>
-								<Disclosure.Button className="flex w-full items-center justify-between gap-6 py-2 px-4">
-									<span className="-ml-4 font-bold">{option.name}</span>
-									<span className="-mr-4 inline-flex items-center">
-										{open ? (
-											<MinusIcon aria-hidden="true" className="h-5 w-5" />
-										) : (
-											<PlusIcon aria-hidden="true" className="h-5 w-5" />
-										)}
-									</span>
-								</Disclosure.Button>
-							</h2>
-							<Disclosure.Panel className="flex flex-col">
-								{location.search.includes(option.name) && (
-									<Link
-										className="-mx-4 py-2 px-4"
-										preventScrollReset
-										to={clearSearchUrl({
-											key: option.name,
-											location,
-										})}
-									>
-										Clear {option.name}
-									</Link>
-								)}
-								{option.values.map((value) => (
-									<Link
-										className="-mx-4 py-2 px-4"
-										key={value}
-										preventScrollReset
-										to={getSearchUrl({
-											key: option.name,
-											location,
-											value,
-										})}
-									>
-										{value}
-									</Link>
-								))}
-							</Disclosure.Panel>
-						</Fragment>
-					)}
-				</Disclosure>
-			))}
 		</div>
 	);
 }
