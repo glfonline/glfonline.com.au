@@ -1,6 +1,5 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type LoaderArgs, type MetaFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { json, type LoaderArgs, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
 
