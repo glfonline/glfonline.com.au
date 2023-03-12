@@ -57,6 +57,7 @@ export async function loader({ params, request }: DataFunctionArgs) {
 				itemsPerPage: ITEMS_PER_PAGE,
 				theme: paramsResult.data.theme,
 				sortBy: sort,
+				// @ts-expect-error
 				filterOptions,
 				after,
 			}),
