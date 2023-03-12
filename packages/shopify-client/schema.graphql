@@ -9334,7 +9334,7 @@ type PageEdge {
 	node: Page!
 }
 
-"Returns information about pagination in a connection, in accordance with the\n[Relay specification](https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo).\n"
+"Returns information about pagination in a connection, in accordance with the\n[Relay specification](https://relay.dev/graphql/connections.htm#sec-undefined.PageInfo).\nFor more information, please read our [GraphQL Pagination Usage Guide](https://shopify.dev/api/usage/pagination-graphql).\n"
 type PageInfo {
 	"""
 	The cursor corresponding to the last node in edges.
