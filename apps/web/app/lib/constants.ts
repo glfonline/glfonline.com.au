@@ -9,6 +9,8 @@ import nivo from '../images/brand-logos/nivo.svg';
 import sporteLeisure from '../images/brand-logos/sporte-leisure-logo.png';
 import travisMatthews from '../images/brand-logos/travis-matthews.svg';
 
+export const SENTRY_DSN =
+	'https://a2413a79501942ae9580c3a12c4addb2:a20584dc5ae345e6b8c9b627642ffd94@o4504862915297280.ingest.sentry.io/4504862916476928';
 export const CHANTALE_PHONE = '0431 248 847';
 export const GORDON_PHONE = '0401 726 598';
 export const WEB_ADDRESS = 'https://www.glfonline.com.au';

@@ -21,6 +21,7 @@ module.exports = {
 		],
 		'@typescript-eslint/no-empty-function': OFF,
 		'@typescript-eslint/no-explicit-any': OFF,
+		'@typescript-eslint/no-unused-vars': WARN,
 		'@typescript-eslint/no-var-requires': OFF,
 		'import/first': ERROR,
 		'import/newline-after-import': ERROR,

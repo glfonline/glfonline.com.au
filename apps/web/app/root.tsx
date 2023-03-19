@@ -15,6 +15,7 @@ import {
 	useCatch,
 	useLocation,
 } from '@remix-run/react';
+import { withSentry } from '@sentry/remix';
 import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
@@ -75,7 +76,7 @@ const persister = createSyncStoragePersister({
 	storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 });
 
-export default function App() {
+function App() {
 	const location = useLocation();
 
 	useEffect(() => {
@@ -153,3 +154,5 @@ export function ErrorBoundary({ error }: { error: Error }) {
 		</html>
 	);
 }
+
+export default withSentry(App);
