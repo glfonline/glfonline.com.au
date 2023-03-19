@@ -69,8 +69,8 @@ export async function loader({ params, request }: DataFunctionArgs) {
 			throw json('Collection not found', { status: 404 });
 		}
 		const collection = collectionPromise.value;
-		if (!collection || !collection.products) {
-			throw json('No products in collection', { status: 404 });
+		if (!collection || !Array.isArray(collection.products)) {
+			throw json('Collection not found', { status: 404 });
 		}
 
 		/** Options data */
