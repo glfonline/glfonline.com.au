@@ -74,10 +74,8 @@ export async function loader({ params, request }: DataFunctionArgs) {
 		}
 
 		/** Options data */
-		if (optionsPromise.status === 'rejected') {
-			throw json('Error fetching options', { status: 500 });
-		}
-		const options = optionsPromise.value;
+		const options =
+			optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
 
 		return json({
 			after,
