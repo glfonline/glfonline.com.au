@@ -167,6 +167,10 @@ export const mainNavigation: MainNavigation = {
 								href: '/ladies/collections/glove-it-brand',
 							},
 							{
+								label: 'Green Lamb',
+								href: '/ladies/collections/green-lamb',
+							},
+							{
 								label: 'Greg Norman',
 								href: '/ladies/collections/greg-norman',
 							},
