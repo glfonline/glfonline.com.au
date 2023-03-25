@@ -27,10 +27,10 @@
 	"dependencies": {
 		"@glfonline/eslint-config": "0.0.0",
 		"@manypkg/cli": "^0.20.0",
-		"prettier": "^2.8.4",
-		"prettier-plugin-tailwindcss": "^0.2.4",
+		"prettier": "^2.8.7",
+		"prettier-plugin-tailwindcss": "^0.2.5",
 		"stale-dep": "^0.6.0",
-		"turbo": "^1.8.3"
+		"turbo": "^1.8.5"
 	},
 	"packageManager": "pnpm@7.27.1",
 	"engines": {
