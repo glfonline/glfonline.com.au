@@ -126,6 +126,13 @@ export default function ProductPage() {
 							<h2 className="sr-only">Product information</h2>
 							{variant?.node.price && (
 								<p className={getHeadingStyles({ size: '2' })}>
+									{isOnSale && variant.node.compareAtPrice?.amount && (
+										<del>
+											<span className="sr-only">was </span>
+											{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
+										</del>
+									)}
+									{isOnSale && <span className="sr-only">now</span>}{' '}
 									{formatMoney(variant.node.price.amount, 'AUD')}{' '}
 									<small className="font-normal">{'AUD'}</small>
 								</p>
