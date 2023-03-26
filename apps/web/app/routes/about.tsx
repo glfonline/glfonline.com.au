@@ -8,11 +8,14 @@ import { getHeadingStyles } from '../components/design-system/heading';
 import { Divider } from '../components/divider';
 import { Hero } from '../components/hero';
 import { Map } from '../components/map';
+import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 import { NewsletterSignup } from './api/newsletter';
+
+export const headers = routeHeaders;
 
 const AboutSchema = z.object({
 	sections: z.array(
@@ -31,7 +34,14 @@ export async function loader() {
 	});
 
 	const { sections } = AboutSchema.parse(AboutPage);
-	return json({ sections });
+	return json(
+		{ sections },
+		{
+			headers: {
+				'Cache-Control': CACHE_LONG,
+			},
+		}
+	);
 }
 
 export const meta: MetaFunction = () => {

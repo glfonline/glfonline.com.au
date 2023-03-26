@@ -13,6 +13,7 @@ import { getHeadingStyles } from '../components/design-system/heading/get-headin
 import { Divider } from '../components/divider';
 import { Map } from '../components/map';
 import { VerticalLogo } from '../components/vectors/vertical-logo';
+import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { brands } from '../lib/constants';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
@@ -20,6 +21,8 @@ import { urlFor } from '../lib/sanity-image';
 import { type Theme } from '../types';
 import { ContactForm } from './api/contact';
 import { NewsletterSignup } from './api/newsletter';
+
+export const headers = routeHeaders;
 
 const HomePageSchema = z.object({
 	heroImage: imageWithAltSchema,
@@ -39,7 +42,11 @@ const HomePageSchema = z.object({
 
 export async function loader() {
 	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
-	return json(HomePageSchema.parse(HomePage));
+	return json(HomePageSchema.parse(HomePage), {
+		headers: {
+			'Cache-Control': CACHE_SHORT,
+		},
+	});
 }
 
 export default function Index() {

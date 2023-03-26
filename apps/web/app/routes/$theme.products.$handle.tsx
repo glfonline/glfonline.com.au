@@ -16,10 +16,13 @@ import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
+import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { getSeoMeta } from '../seo';
+
+export const headers = routeHeaders;
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),
@@ -37,7 +40,14 @@ export async function loader({ params }: DataFunctionArgs) {
 			handle: result.data.handle,
 		});
 		if (!product) throw json('Product not found', { status: 404 });
-		return json({ product, theme: result.data.theme });
+		return json(
+			{ product, theme: result.data.theme },
+			{
+				headers: {
+					'Cache-Control': CACHE_SHORT,
+				},
+			}
+		);
 	}
 	throw json('Product not found', { status: 404 });
 }
