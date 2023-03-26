@@ -483,6 +483,30 @@ input FaqPageSorting {
 	heroImage: ImageWithAltSorting
 }
 
+type FeaturedNavItem {
+	_key: String
+	_type: String
+	href: String
+	image: ImageWithAlt
+	label: String
+}
+
+input FeaturedNavItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	href: StringFilter
+	image: ImageWithAltFilter
+	label: StringFilter
+}
+
+input FeaturedNavItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	href: SortOrder
+	image: ImageWithAltSorting
+	label: SortOrder
+}
+
 type File {
 	_key: String
 	_type: String
@@ -717,6 +741,123 @@ The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://
 """
 scalar JSON
 
+type MainNavigation implements Document {
+	"""
+	Date the document was created
+	"""
+	_createdAt: DateTime
+
+	"""
+	Document ID
+	"""
+	_id: ID
+	_key: String
+
+	"""
+	Current document revision
+	"""
+	_rev: String
+
+	"""
+	Document type
+	"""
+	_type: String
+
+	"""
+	Date the document was last modified
+	"""
+	_updatedAt: DateTime
+	navCategories: [NavCategory]
+	pages: [NavItem]
+}
+
+input MainNavigationFilter {
+	"""
+	Apply filters on document level
+	"""
+	_: Sanity_DocumentFilter
+	_createdAt: DatetimeFilter
+	_id: IDFilter
+	_key: StringFilter
+	_rev: StringFilter
+	_type: StringFilter
+	_updatedAt: DatetimeFilter
+}
+
+input MainNavigationSorting {
+	_createdAt: SortOrder
+	_id: SortOrder
+	_key: SortOrder
+	_rev: SortOrder
+	_type: SortOrder
+	_updatedAt: SortOrder
+}
+
+type NavCategory {
+	_key: String
+	_type: String
+	featured: FeaturedNavItem
+	label: String
+	navSections: [NavSection]
+	theme: String
+}
+
+input NavCategoryFilter {
+	_key: StringFilter
+	_type: StringFilter
+	featured: FeaturedNavItemFilter
+	label: StringFilter
+	theme: StringFilter
+}
+
+input NavCategorySorting {
+	_key: SortOrder
+	_type: SortOrder
+	featured: FeaturedNavItemSorting
+	label: SortOrder
+	theme: SortOrder
+}
+
+type NavItem {
+	_key: String
+	_type: String
+	href: String
+	label: String
+}
+
+input NavItemFilter {
+	_key: StringFilter
+	_type: StringFilter
+	href: StringFilter
+	label: StringFilter
+}
+
+input NavItemSorting {
+	_key: SortOrder
+	_type: SortOrder
+	href: SortOrder
+	label: SortOrder
+}
+
+type NavSection {
+	_key: String
+	_type: String
+	items: [NavItem]
+	label: String
+}
+
+input NavSectionFilter {
+	_key: StringFilter
+	_type: StringFilter
+	label: StringFilter
+}
+
+input NavSectionSorting {
+	_key: SortOrder
+	_type: SortOrder
+	label: SortOrder
+}
+
 type Post implements Document {
 	"""
 	Date the document was created
@@ -820,6 +961,12 @@ type RootQuery {
 		"""
 		id: ID!
 	): HomePage
+	MainNavigation(
+		"""
+		MainNavigation document ID
+		"""
+		id: ID!
+	): MainNavigation
 	Post(
 		"""
 		Post document ID
@@ -928,6 +1075,19 @@ type RootQuery {
 		sort: [HomePageSorting!]
 		where: HomePageFilter
 	): [HomePage!]!
+	allMainNavigation(
+		"""
+		Max documents to return
+		"""
+		limit: Int
+
+		"""
+		Offset at which to start returning documents from
+		"""
+		offset: Int
+		sort: [MainNavigationSorting!]
+		where: MainNavigationFilter
+	): [MainNavigation!]!
 	allPost(
 		"""
 		Max documents to return

@@ -1,11 +1,12 @@
 import { Dialog, Disclosure, Tab, Transition } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { NavLink } from '@remix-run/react';
+import { NavLink, useLoaderData } from '@remix-run/react';
+import type { loader } from 'app/root';
 import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 
 import { type NavItem } from '../lib/constants';
-import { mainNavigation, socialLinks } from '../lib/constants';
+import { socialLinks } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
 export function MobileMenu({
@@ -22,6 +23,8 @@ export function MobileMenu({
 			return () => document.removeEventListener('click', onClose);
 		}
 	}, [open, setOpen]);
+
+	const { mainNavigation } = useLoaderData<typeof loader>();
 
 	return (
 		<Transition.Root as={Fragment} show={open}>
@@ -64,7 +67,7 @@ export function MobileMenu({
 							<Tab.Group as="div" className="mt-2">
 								<div className="border-b border-gray-200">
 									<Tab.List className="-mb-px flex space-x-8 px-4">
-										{mainNavigation.categories.map((category) => (
+										{mainNavigation.navCategories.map((category) => (
 											<Tab
 												className={({ selected }) =>
 													clsx(
@@ -83,12 +86,12 @@ export function MobileMenu({
 									</Tab.List>
 								</div>
 								<Tab.Panels as={Fragment}>
-									{mainNavigation.categories.map((category) => (
+									{mainNavigation.navCategories.map((category) => (
 										<Tab.Panel
 											className="flex flex-col gap-1 px-4 pt-6"
 											key={category.label}
 										>
-											{category.sections.map((section) => (
+											{category.navSections.map((section) => (
 												<Section key={section.label} section={section} />
 											))}
 										</Tab.Panel>

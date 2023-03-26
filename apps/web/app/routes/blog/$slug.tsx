@@ -4,10 +4,13 @@ import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
 
 import { Hero } from '../../components/hero';
+import { CACHE_LONG, routeHeaders } from '../../lib/cache';
 import { PortableText } from '../../lib/portable-text';
 import { PostSchema } from '../../lib/post-schema';
 import { urlFor } from '../../lib/sanity-image';
 import { getSeoMeta } from '../../seo';
+
+export const headers = routeHeaders;
 
 export async function loader({ params }: LoaderArgs) {
 	assert(isString(params.slug));
@@ -16,7 +19,14 @@ export async function loader({ params }: LoaderArgs) {
 	});
 	const page = PostSchema.parse(allPost[0]);
 	if (!page) throw json('Page not found');
-	return json({ page });
+	return json(
+		{ page },
+		{
+			headers: {
+				'Cache-Control': CACHE_LONG,
+			},
+		}
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

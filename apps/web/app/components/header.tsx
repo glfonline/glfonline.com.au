@@ -10,12 +10,8 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId, useState } from 'react';
 
-import {
-	CHANTALE_PHONE,
-	mainNavigation,
-	type NavItem,
-	socialLinks,
-} from '../lib/constants';
+import { CHANTALE_PHONE, type NavItem, socialLinks } from '../lib/constants';
+import { urlFor } from '../lib/sanity-image';
 import { type loader } from '../root';
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
@@ -168,10 +164,11 @@ function MegaMenu() {
 		'focus:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary',
 	];
 
+	const { mainNavigation } = useLoaderData<typeof loader>();
 	return (
 		<Popover.Group className="hidden h-full lg:flex lg:flex-1">
 			<div className="grid h-full w-full auto-cols-fr grid-flow-col justify-center divide-x divide-gray-200 border-l border-gray-200">
-				{mainNavigation.categories.map((category, index) => (
+				{mainNavigation.navCategories.map((category, index) => (
 					<Popover className="flex" data-theme={category.theme} key={index}>
 						{({ open }) => (
 							<Fragment>
@@ -209,6 +206,16 @@ function MegaMenu() {
 										<div className="relative bg-white">
 											<div className="mx-auto max-w-7xl px-8">
 												<div className="grid grid-cols-3 gap-y-10 gap-x-8 py-12">
+													{/* Nav sections */}
+													<div className="col-span-2 row-start-1 grid grid-cols-4 gap-y-10 gap-x-8 text-sm">
+														{category.navSections.map((section, sectionIdx) => (
+															<CategorySection
+																key={sectionIdx}
+																section={section}
+															/>
+														))}
+													</div>
+													{/* Featured */}
 													<div className="col-start-3 grid">
 														<div
 															className="group relative flex flex-col gap-6 text-base sm:text-sm"
@@ -216,11 +223,25 @@ function MegaMenu() {
 														>
 															<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
 																<Image
-																	alt={category.featured.image.alt}
+																	alt={
+																		category.featured.image.asset.altText ?? ''
+																	}
+																	cdn="imgix"
 																	className="object-cover object-center"
 																	height={384}
 																	layout="constrained"
-																	src={category.featured.image.src}
+																	src={urlFor({
+																		_ref: category.featured.image.asset._id,
+																		crop: category.featured.image.asset.crop,
+																		hotspot:
+																			category.featured.image.asset.hotspot,
+																	})
+																		.auto('format')
+																		.width(384)
+																		.height(384)
+																		.focalPoint(0.5, 0.5)
+																		.dpr(3)
+																		.url()}
 																	width={384}
 																/>
 															</div>
@@ -242,14 +263,6 @@ function MegaMenu() {
 															</div>
 														</div>
 													</div>
-													<div className="col-span-2 row-start-1 grid grid-cols-4 gap-y-10 gap-x-8 text-sm">
-														{category.sections.map((section, sectionIdx) => (
-															<CategorySection
-																key={sectionIdx}
-																section={section}
-															/>
-														))}
-													</div>
 												</div>
 											</div>
 										</div>
@@ -268,6 +281,26 @@ function MegaMenu() {
 		</Popover.Group>
 	);
 }
+
+const spanMap = {
+	1: 'col-span-1',
+	2: 'col-span-2',
+	3: 'col-span-3',
+} as const;
+
+type Span = keyof typeof spanMap;
+
+function inSpanMap(value: unknown): value is Span {
+	return typeof value === 'string' && value in spanMap;
+}
+
+function getSpan(value: number) {
+	if (inSpanMap(value.toString())) {
+		return value as Span;
+	}
+	return 1;
+}
+
 function CategorySection({
 	section,
 }: {
@@ -275,7 +308,7 @@ function CategorySection({
 }) {
 	const id = useId();
 	return (
-		<div className={section.label === 'Brands' ? 'col-span-2' : undefined}>
+		<div className={spanMap[getSpan(section.items.length)]}>
 			<p className="font-bold uppercase text-gray-900" id={id}>
 				{section.label}
 			</p>

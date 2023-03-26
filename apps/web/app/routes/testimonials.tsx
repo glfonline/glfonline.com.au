@@ -9,11 +9,14 @@ import { z } from 'zod';
 
 import { Hero } from '../components/hero';
 import { Map } from '../components/map';
+import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 import { NewsletterSignup } from './api/newsletter';
+
+export const headers = routeHeaders;
 
 const TestimonialsSchema = z.object({
 	heroImage: imageWithAltSchema,
@@ -33,7 +36,14 @@ export async function loader() {
 	});
 	const { testimonials, heroImage } =
 		TestimonialsSchema.parse(TestimonialsPage);
-	return json({ heroImage, testimonials, title: 'Testimonials' });
+	return json(
+		{ heroImage, testimonials, title: 'Testimonials' },
+		{
+			headers: {
+				'Cache-Control': CACHE_LONG,
+			},
+		}
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

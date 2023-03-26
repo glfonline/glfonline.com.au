@@ -7,6 +7,7 @@ export {
 	GET_THEME_PAGE,
 	HOME_PAGE_QUERY,
 	IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
+	MAIN_NAVIGATION_QUERY,
 	TESTIMONIALS_PAGE_QUERY,
 } from './graphql';
 export { sanityClient } from './sanity-client';

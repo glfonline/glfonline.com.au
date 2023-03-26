@@ -6,10 +6,13 @@ import { z } from 'zod';
 
 import { Heading } from '../components/design-system/heading';
 import { Hero } from '../components/hero';
+import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
+
+export const headers = routeHeaders;
 
 const FaqSchema = z.object({
 	heroImage: imageWithAltSchema,
@@ -22,7 +25,14 @@ export async function loader() {
 	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, { id: 'faqs' });
 	const faqPage = FaqSchema.parse(FaqPage);
 
-	return json({ faqPage, title: 'Frequently Asked Questions' });
+	return json(
+		{ faqPage, title: 'Frequently Asked Questions' },
+		{
+			headers: {
+				'Cache-Control': CACHE_LONG,
+			},
+		}
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

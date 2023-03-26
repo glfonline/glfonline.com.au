@@ -29,6 +29,7 @@ import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import { getSession } from './lib/cart';
+import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import styles from './styles/tailwind.css';
 
@@ -60,13 +61,15 @@ export const meta: MetaFunction = () => ({
 
 export async function loader({ request }: LoaderArgs) {
 	const session = await getSession(request);
-	const [cart, { shop }] = await Promise.all([
+	const [cart, { shop }, mainNavigation] = await Promise.all([
 		session.getCart(),
 		shopifyClient(SHOP_QUERY),
+		getMainNavigation(),
 	]);
 
 	return json({
 		cartCount: cart.length,
+		mainNavigation,
 		shop,
 	});
 }
