@@ -62,7 +62,7 @@ export async function loader({ params }: DataFunctionArgs) {
 			id: result.data.theme,
 		});
 		const collection = CollectionSchema.parse(ThemePage);
-		return json({ collection });
+		return json({ collection, theme: result.data.theme });
 	}
 	throw json('Not Found', { status: 404 });
 }
@@ -76,10 +76,10 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 };
 
 export default function CollectionsPage() {
-	const { collection } = useLoaderData<typeof loader>();
+	const { collection, theme } = useLoaderData<typeof loader>();
 
 	return (
-		<div>
+		<div data-theme={theme}>
 			<div className="grid gap-4 lg:grid-cols-5">
 				{collection.collectionCards.map((collection, index) => (
 					<CollectionCard
