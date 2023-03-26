@@ -86,6 +86,31 @@ export const BLOG_PAGE_QUERY = gql`
 	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
 ` as import('../__generated__/ts-gql/BLOG_PAGE_QUERY').type;
 
+export const FEATURED_BLOG_POST_QUERY = gql`
+	query FEATURED_BLOG_POST_QUERY {
+		allPost(sort: { publishedAt: DESC }) {
+			_id
+			author {
+				name
+			}
+			bodyRaw
+			categories {
+				title
+			}
+			mainImage {
+				...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+			}
+			publishedAt
+			slug {
+				current
+			}
+			title
+		}
+	}
+
+	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
+` as import('../__generated__/ts-gql/FEATURED_BLOG_POST_QUERY').type;
+
 export const MAIN_NAVIGATION_QUERY = gql`
 	query MAIN_NAVIGATION_QUERY($id: ID = "mainNavigation") {
 		MainNavigation(id: $id) {

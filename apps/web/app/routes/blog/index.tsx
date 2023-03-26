@@ -13,6 +13,7 @@ import { ButtonLink } from '../../components/design-system/button';
 import { getHeadingStyles } from '../../components/design-system/heading';
 import { Hero } from '../../components/hero';
 import { getBlogPostCount, getBlogPosts } from '../../lib/get-blog-posts';
+import { getFeaturedBlogPost } from '../../lib/get-featured-blog-post';
 import { PortableText, type PortableTextProps } from '../../lib/portable-text';
 import { urlFor } from '../../lib/sanity-image';
 import { getSeoMeta } from '../../seo';
@@ -41,16 +42,18 @@ export async function loader({ request }: LoaderArgs) {
 	const { after = 0 } = BlogSchema.parse(
 		Object.fromEntries(url.searchParams.entries())
 	);
-	const [posts, count] = await Promise.all([
+	const [posts, featuredPost, count] = await Promise.all([
 		getBlogPosts({
 			limit: POSTS_LIMIT,
 			offset: after,
 		}),
+		getFeaturedBlogPost(),
 		getBlogPostCount(),
 	]);
 	return json({
 		after,
 		count,
+		featuredPost,
 		posts,
 		title: 'Blog',
 	});
@@ -80,7 +83,7 @@ export default function Blog() {
 						<PostList />
 					</article>
 				</div>
-				<div className="hidden lg:sticky lg:top-[6.625rem] lg:-mr-6 lg:block lg:h-[calc(100vh-6.625rem)] lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
+				<div className="hidden lg:-mr-6 lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
 					<Sidebar />
 				</div>
 			</div>
@@ -239,10 +242,7 @@ function Post({
 }
 
 function Sidebar() {
-	const { posts } = useLoaderData<typeof loader>();
-	const featuredPost = posts.find((post) =>
-		post.categories?.find((category) => category.title === 'Featured')
-	);
+	const { featuredPost } = useLoaderData<typeof loader>();
 
 	return (
 		<aside
