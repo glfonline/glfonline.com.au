@@ -4,6 +4,10 @@ import { Fragment, useEffect } from 'react';
 
 import { NewsletterSignup } from '../routes/api/newsletter';
 
+function wait(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 export function NewsletterDialog({
 	isOpen,
 	setIsOpen,
@@ -14,8 +18,12 @@ export function NewsletterDialog({
 	const fetchers = useFetchers();
 	const fetcher = fetchers.find((f) => f.formAction === '/api/newsletter');
 	useEffect(() => {
-		if (fetcher?.data?.ok) {
+		async function handleSuccess() {
+			await wait(2000);
 			setIsOpen(false);
+		}
+		if (fetcher?.data?.ok) {
+			handleSuccess();
 		}
 	}, [fetcher, setIsOpen]);
 
