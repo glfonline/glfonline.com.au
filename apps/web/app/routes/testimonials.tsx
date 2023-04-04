@@ -113,7 +113,7 @@ function Testimonials() {
 						/>
 						<div className="md:col-span-7 md:col-start-6 md:py-16">
 							<div className="relative">
-								<OpenQuote className="text-brand-primary absolute top-8 left-5 z-10 h-8 w-8" />
+								<OpenQuote className="text-brand-primary absolute left-5 top-8 z-10 h-8 w-8" />
 								<div className="prose prose-blockquote:pl-0 prose-blockquote:border-none prose-p:before:content-none relative mx-auto w-full bg-white px-16 py-12 md:mx-0">
 									<blockquote>
 										<PortableText value={quoteRaw} />

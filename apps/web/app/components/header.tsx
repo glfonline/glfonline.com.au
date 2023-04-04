@@ -205,9 +205,9 @@ function MegaMenu() {
 
 										<div className="relative bg-white">
 											<div className="mx-auto max-w-7xl px-8">
-												<div className="grid grid-cols-3 gap-y-10 gap-x-8 py-12">
+												<div className="grid grid-cols-3 gap-x-8 gap-y-10 py-12">
 													{/* Nav sections */}
-													<div className="col-span-2 row-start-1 grid grid-cols-4 gap-y-10 gap-x-8 text-sm">
+													<div className="col-span-2 row-start-1 grid grid-cols-4 gap-x-8 gap-y-10 text-sm">
 														{category.navSections.map((section, sectionIdx) => (
 															<CategorySection
 																key={sectionIdx}
@@ -312,7 +312,7 @@ function CategorySection({
 			<p className="font-bold uppercase text-gray-900" id={id}>
 				{section.label}
 			</p>
-			<div className="grid grid-cols-2 gap-y-10 gap-x-8">
+			<div className="grid grid-cols-2 gap-x-8 gap-y-10">
 				{section.items.map((item, itemIdx) => (
 					<ul
 						aria-labelledby={id}
