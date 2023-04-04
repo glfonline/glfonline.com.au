@@ -33,6 +33,11 @@ directive @inContext(
 	preferredLocationId: ID
 ) on MUTATION | QUERY
 
+"""
+Requires that exactly one field must be supplied and that field must not be `null`.
+"""
+directive @oneOf on INPUT_OBJECT
+
 "A version of the API, as defined by [Shopify API versioning](https://shopify.dev/api/usage/versioning).\nVersions are commonly referred to by their handle (for example, `2021-10`).\n"
 type ApiVersion {
 	"""
