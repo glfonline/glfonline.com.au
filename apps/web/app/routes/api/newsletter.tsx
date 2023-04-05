@@ -61,7 +61,7 @@ export function NewsletterSignup() {
 
 	return (
 		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
-			<div className="mx-auto max-w-xl px-4 py-12 sm:px-6 lg:py-16 lg:px-8">
+			<div className="mx-auto max-w-xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
 				<Heading className="text-center" size="2">
 					Don't miss out, join the club
 				</Heading>
@@ -102,7 +102,7 @@ export function NewsletterSignup() {
 							</label>
 							<fieldset>
 								<legend className="sr-only">Email list</legend>
-								<div className="space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+								<div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
 									{(['Ladies', 'Mens'] as const).map((options) => (
 										<div className="flex items-center gap-3" key={options}>
 											<input

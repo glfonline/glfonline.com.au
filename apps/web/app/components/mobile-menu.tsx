@@ -52,7 +52,7 @@ export function MobileMenu({
 						leaveTo="-translate-x-full"
 					>
 						<Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white shadow-xl">
-							<div className="flex px-4 pt-5 pb-2">
+							<div className="flex px-4 pb-2 pt-5">
 								<button
 									className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
 									onClick={() => setOpen(false)}
@@ -74,7 +74,7 @@ export function MobileMenu({
 														selected
 															? 'border-brand-primary text-brand-primary'
 															: 'border-transparent text-gray-900',
-														'flex-1 whitespace-nowrap border-b-2 py-4 px-1 text-base font-bold uppercase'
+														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase'
 													)
 												}
 												data-theme={category.theme}
@@ -100,7 +100,7 @@ export function MobileMenu({
 							</Tab.Group>
 
 							{/* More Nav Links */}
-							<div className="flex flex-col gap-1 border-gray-200 px-4 pt-1 pb-6">
+							<div className="flex flex-col gap-1 border-gray-200 px-4 pb-6 pt-1">
 								{mainNavigation.pages.map((page) => (
 									<div className="flow-root" key={page.label}>
 										<NavLink
