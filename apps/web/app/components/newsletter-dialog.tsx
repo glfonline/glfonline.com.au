@@ -10,26 +10,26 @@ function wait(ms: number) {
 
 export function NewsletterDialog({
 	isOpen,
-	setIsOpen,
+	onClose,
 }: {
 	isOpen: boolean;
-	setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+	onClose: () => void;
 }) {
 	const fetchers = useFetchers();
 	const fetcher = fetchers.find((f) => f.formAction === '/api/newsletter');
 	useEffect(() => {
 		async function handleSuccess() {
 			await wait(2000);
-			setIsOpen(false);
+			onClose();
 		}
 		if (fetcher?.data?.ok) {
 			handleSuccess();
 		}
-	}, [fetcher, setIsOpen]);
+	}, [fetcher, onClose]);
 
 	return (
 		<Transition.Root appear as={Fragment} show={isOpen}>
-			<Dialog as="div" className="relative z-30" onClose={setIsOpen}>
+			<Dialog as="div" className="relative z-30" onClose={onClose}>
 				<Transition.Child
 					as={Fragment}
 					enter="ease-out duration-300"
