@@ -16,7 +16,6 @@ import { type loader } from '../root';
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
 import { SearchDialog } from './search-dialog';
-import { SignupBanner } from './signup-banner';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 
 export function Header() {
@@ -24,7 +23,6 @@ export function Header() {
 
 	return (
 		<header className="sticky top-0 z-20 flex-shrink-0 bg-white">
-			<SignupBanner />
 			<MobileMenu open={open} setOpen={setOpen} />
 			<header className="relative">
 				<nav aria-label="Top">
