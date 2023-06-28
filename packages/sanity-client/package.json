@@ -28,20 +28,20 @@
 		"@ts-gql/tag": "^0.7.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.21.4",
+		"@babel/core": "^7.22.5",
 		"@glfonline/eslint-config": "0.0.0",
 		"@glfonline/tsconfig": "0.0.0",
-		"@graphql-codegen/cli": "^3.3.0",
-		"@graphql-codegen/schema-ast": "^3.0.1",
+		"@graphql-codegen/cli": "^4.0.1",
+		"@graphql-codegen/schema-ast": "^4.0.0",
 		"@types/node": "18.15.11",
-		"concurrently": "^8.0.1",
+		"concurrently": "^8.2.0",
 		"cosmiconfig-toml-loader": "^1.0.0",
-		"eslint": "^8.37.0",
-		"graphql": "^16.6.0",
+		"eslint": "^8.43.0",
+		"graphql": "^16.7.1",
 		"react": "^18.2.0",
 		"ts-node": "^10.9.1",
-		"tsup": "^6.7.0",
-		"typescript": "^5.0.3"
+		"tsup": "^7.1.0",
+		"typescript": "^5.1.5"
 	},
 	"ts-gql": {
 		"addTypenames": false,

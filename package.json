@@ -26,16 +26,19 @@
 	},
 	"dependencies": {
 		"@glfonline/eslint-config": "0.0.0",
-		"@manypkg/cli": "^0.20.0",
-		"prettier": "^2.8.7",
-		"prettier-plugin-tailwindcss": "^0.2.6",
+		"@manypkg/cli": "^0.21.0",
+		"prettier": "^2.8.8",
+		"prettier-plugin-tailwindcss": "^0.3.0",
 		"stale-dep": "^0.6.0",
-		"turbo": "^1.8.8"
+		"turbo": "^1.10.6"
 	},
-	"packageManager": "pnpm@7.27.1",
+	"packageManager": "pnpm@8.6.5",
 	"engines": {
-		"node": ">=16.19.1",
-		"pnpm": ">=7.27.1"
+		"node": ">=18.16.1",
+		"pnpm": ">=8.6.5"
+	},
+	"volta": {
+		"node": "18.16.1"
 	},
 	"manypkg": {
 		"defaultBranch": "main"

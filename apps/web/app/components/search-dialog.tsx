@@ -64,7 +64,7 @@ export function SearchDialog({
 								<div className="relative">
 									<MagnifyingGlassIcon
 										aria-hidden="true"
-										className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
+										className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
 									/>
 									<Combobox.Input
 										className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
@@ -171,7 +171,7 @@ function SearchResults({
 
 	if (query !== '' && data?.hits.length === 0) {
 		return (
-			<div className="py-14 px-6 text-center text-sm sm:px-14">
+			<div className="px-6 py-14 text-center text-sm sm:px-14">
 				<ExclamationCircleIcon
 					className="mx-auto h-6 w-6 text-gray-400"
 					name="exclamation-circle"

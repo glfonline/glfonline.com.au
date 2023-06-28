@@ -121,7 +121,7 @@ export default function CartPage() {
 	if (!cartInfo?.lineItems.edges.length) {
 		return (
 			<div className="bg-white">
-				<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 text-center sm:px-6 lg:max-w-7xl lg:px-8">
+				<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 text-center sm:px-6 lg:max-w-7xl lg:px-8">
 					<div className="flex flex-col gap-6">
 						<Heading headingElement="h1" size="2">
 							Shopping Cart
@@ -140,7 +140,7 @@ export default function CartPage() {
 
 	return (
 		<div className="bg-white">
-			<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
+			<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
 				<Heading headingElement="h1" size="2">
 					Shopping Cart
 				</Heading>
@@ -151,7 +151,7 @@ export default function CartPage() {
 						</h2>
 
 						<ul
-							className="divide-y divide-gray-200 border-t border-b border-gray-200"
+							className="divide-y divide-gray-200 border-b border-t border-gray-200"
 							role="list"
 						>
 							{cartInfo?.lineItems.edges.map(({ node }) => {
@@ -362,7 +362,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
 
 	return (
-		<fetcher.Form className="absolute top-0 right-0" method="post" replace>
+		<fetcher.Form className="absolute right-0 top-0" method="post" replace>
 			<input name="variantId" type="hidden" value={variantId} />
 			<button
 				className={clsx(
