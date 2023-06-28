@@ -4,12 +4,14 @@ const ERROR = 2;
 
 /** @type {import('@types/eslint').Linter.BaseConfig} */
 module.exports = {
+	parser: '@typescript-eslint/parser',
 	extends: [
+		'eslint:recommended',
+		'plugin:@typescript-eslint/recommended',
 		'@remix-run/eslint-config',
 		'@remix-run/eslint-config/node',
 		'turbo',
 		'prettier',
-		'plugin:@typescript-eslint/recommended',
 	],
 	plugins: ['@ts-gql', 'simple-import-sort'],
 	rules: {
