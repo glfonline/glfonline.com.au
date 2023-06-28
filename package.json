@@ -34,8 +34,11 @@
 	},
 	"packageManager": "pnpm@7.27.1",
 	"engines": {
-		"node": ">=16.19.1",
+		"node": ">=18.16.1",
 		"pnpm": ">=7.27.1"
+	},
+	"volta": {
+		"node": "18.16.1"
 	},
 	"manypkg": {
 		"defaultBranch": "main"
