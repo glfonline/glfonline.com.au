@@ -11,7 +11,7 @@ export function NotFound() {
 			>
 				<SplitBackground />
 			</div>
-			<div className="isolate flex flex-col gap-4 border bg-white py-24 px-6 text-center lg:px-8">
+			<div className="isolate flex flex-col gap-4 border bg-white px-6 py-24 text-center lg:px-8">
 				<div className="flex flex-col gap-2">
 					<p className="text-brand-600 text-base font-semibold">404</p>
 					<Heading headingElement="h1" size="2">

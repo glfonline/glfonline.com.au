@@ -121,7 +121,7 @@ export default function CollectionPage() {
 				/>
 
 				<main className="mx-auto max-w-2xl px-4 lg:max-w-7xl lg:px-8 xl:px-0">
-					<div className="pt-12 pb-24 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
+					<div className="pb-24 pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
 						<Filters setMobileFiltersOpen={setMobileFiltersOpen} />
 
 						<section
@@ -243,7 +243,7 @@ function MobileFilters({
 						leaveFrom="translate-x-0"
 						leaveTo="translate-x-full"
 					>
-						<Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white py-4 px-4 pb-6 shadow-xl">
+						<Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl">
 							<div className="flex items-center justify-between">
 								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
 								<button
@@ -301,7 +301,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 					/>
 				)}
 				{isOnSale && (
-					<div className="pointer-events-none absolute top-0 left-0 right-0 aspect-square">
+					<div className="pointer-events-none absolute left-0 right-0 top-0 aspect-square">
 						<DiagonalBanner>On Sale</DiagonalBanner>
 					</div>
 				)}
@@ -392,7 +392,7 @@ function DisplayOptions() {
 						{({ open }) => (
 							<>
 								<h2>
-									<Disclosure.Button className="flex w-full items-center justify-between gap-6 py-2 px-4">
+									<Disclosure.Button className="flex w-full items-center justify-between gap-6 px-4 py-2">
 										<span className="-ml-4 font-bold">{option.name}</span>
 										<span className="-mr-4 inline-flex items-center">
 											{open ? (
@@ -406,7 +406,7 @@ function DisplayOptions() {
 								<Disclosure.Panel className="flex flex-col">
 									{option.values.map((value) => (
 										<Link
-											className="-mx-4 py-2 px-4"
+											className="-mx-4 px-4 py-2"
 											key={value}
 											preventScrollReset
 											to={getSearchUrl({
@@ -429,7 +429,7 @@ function DisplayOptions() {
 				{({ open }) => (
 					<Fragment>
 						<h2>
-							<Disclosure.Button className="flex w-full items-center justify-between gap-6 py-2 px-4">
+							<Disclosure.Button className="flex w-full items-center justify-between gap-6 px-4 py-2">
 								<span className="-ml-4 font-bold">Sort</span>
 								<span className="-mr-4 inline-flex items-center">
 									{open ? (
@@ -443,7 +443,7 @@ function DisplayOptions() {
 						<Disclosure.Panel className="flex flex-col">
 							{sortOptions.map((option) => (
 								<Link
-									className="-mx-4 py-2 px-4"
+									className="-mx-4 px-4 py-2"
 									key={option.value}
 									preventScrollReset
 									to={getSearchUrl({
