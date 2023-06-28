@@ -1,3 +1,9 @@
+/**
+ * By default, Remix will handle hydrating your app on the client for you.
+ * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
+ * @see https://remix.run/file-conventions/entry.client
+ */
+
 import { RemixBrowser, useLocation, useMatches } from '@remix-run/react';
 import * as Sentry from '@sentry/remix';
 import { startTransition, StrictMode, useEffect } from 'react';
@@ -19,23 +25,11 @@ Sentry.init({
 	],
 });
 
-function hydrate() {
-	startTransition(() => {
-		hydrateRoot(
-			document,
-			<StrictMode>
-				<RemixBrowser />
-			</StrictMode>
-		);
-	});
-}
-
-if (typeof requestIdleCallback === 'function') {
-	requestIdleCallback(hydrate);
-} else {
-	/**
-	 * Safari doesn't support requestIdleCallback
-	 * @see https://caniuse.com/requestidlecallback
-	 */
-	setTimeout(hydrate, 1);
-}
+startTransition(() => {
+	hydrateRoot(
+		document,
+		<StrictMode>
+			<RemixBrowser />
+		</StrictMode>
+	);
+});

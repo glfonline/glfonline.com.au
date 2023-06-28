@@ -46,6 +46,7 @@
 		"clsx": "^1.2.1",
 		"dedent": "^0.7.0",
 		"emery": "^1.4.2",
+		"isbot": "^3.6.12",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
 		"react-intersection-observer": "^9.5.1",
