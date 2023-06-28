@@ -35,5 +35,5 @@ jobs:
       - name: Lint
         run: pnpm check:lint
 
-      # - name: Types
-      #   run: pnpm check:types
+      - name: Types
+        run: pnpm check:types
