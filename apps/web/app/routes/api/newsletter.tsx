@@ -56,7 +56,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export function NewsletterSignup() {
-	const fetcher = useFetcher<typeof action>();
+	const fetcher = useFetcher();
 	const form = useZorm('contact_form', NewsletterSchema);
 
 	return (
