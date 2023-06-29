@@ -3,7 +3,6 @@ import { Fragment } from 'react';
 import * as gtag from '../lib/gtag';
 
 export function GoogleAnalytics() {
-	if (process.env.NODE_ENV === 'development') return null;
 	return (
 		<Fragment>
 			{gtag.trackingIds.map((id) => (
@@ -36,7 +35,6 @@ ${gtag.trackingIds
 `;
 
 export function MetaAnalytics() {
-	if (process.env.NODE_ENV === 'development') return null;
 	return (
 		<Fragment>
 			<script dangerouslySetInnerHTML={{ __html: metaInitScript }} />

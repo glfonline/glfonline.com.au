@@ -20,7 +20,8 @@ import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { useEffect } from 'react';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { Fragment, useEffect } from 'react';
 
 import favicon from '../public/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
@@ -98,8 +99,13 @@ function App() {
 				<Links />
 			</head>
 			<body className="relative flex min-h-full flex-col">
-				<GoogleAnalytics />
-				<MetaAnalytics />
+				{process.env.NODE_ENV === 'production' && (
+					<Fragment>
+						<GoogleAnalytics />
+						<MetaAnalytics />
+						<VercelAnalytics />
+					</Fragment>
+				)}
 				<LoadingProgress />
 				<PersistQueryClientProvider
 					client={queryClient}
