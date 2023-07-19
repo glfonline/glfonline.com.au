@@ -5,8 +5,7 @@ import type { loader } from 'app/root';
 import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 
-import { type NavItem } from '../lib/constants';
-import { socialLinks } from '../lib/constants';
+import { socialLinks, type NavItem } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
 export function MobileMenu({

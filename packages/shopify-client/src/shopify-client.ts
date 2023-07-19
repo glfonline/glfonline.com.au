@@ -1,5 +1,5 @@
-import { type Fetcher, GraphQLErrorResult } from '@ts-gql/fetch';
-import { type DocumentNode, print } from 'graphql';
+import { GraphQLErrorResult, type Fetcher } from '@ts-gql/fetch';
+import { print, type DocumentNode } from 'graphql';
 
 const API_URL =
 	'https://golfladiesfirst.myshopify.com/api/2023-01/graphql.json';

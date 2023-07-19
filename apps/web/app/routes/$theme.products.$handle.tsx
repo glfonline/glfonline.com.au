@@ -1,9 +1,9 @@
 import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
 import {
+	json,
 	type ActionArgs,
 	type DataFunctionArgs,
-	json,
 	type MetaFunction,
 } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';

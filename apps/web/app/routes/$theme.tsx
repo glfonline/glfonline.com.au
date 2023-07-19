@@ -1,7 +1,7 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
 import {
-	type DataFunctionArgs,
 	json,
+	type DataFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';

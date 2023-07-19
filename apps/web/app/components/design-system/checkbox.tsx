@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { useFieldContext } from './field/context';
 
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
-	function Checkbox({ children, className, ...consumerProps }, forwardedRef) {
+	function Checkbox({ className, ...consumerProps }, forwardedRef) {
 		const [{ disabled, invalid }, a11yProps] = useFieldContext();
 		return (
 			<div className="flex h-5 items-center">
@@ -27,4 +27,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 	}
 );
 
-type CheckboxProps = React.InputHTMLAttributes<HTMLInputElement>;
+type CheckboxProps = Omit<
+	React.InputHTMLAttributes<HTMLInputElement>,
+	'children'
+>;

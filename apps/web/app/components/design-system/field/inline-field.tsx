@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from 'react';
 
 import { mergeIds } from '../../../lib/merge-ids';
 import { FieldContextProvider, type FieldContextType } from './context';
-import { FieldMessage, type FieldProps, useFieldIds } from './field';
+import { FieldMessage, useFieldIds, type FieldProps } from './field';
 
 export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 	function Field(
@@ -48,7 +48,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 			<FieldContextProvider value={fieldContext}>
 				<div
 					{...consumerProps}
-					className="flex flex-col gap-1"
+					className={clsx('flex flex-col gap-1', className)}
 					ref={forwardedRef}
 				>
 					<div className="relative flex items-start gap-3">

@@ -10,7 +10,7 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId, useState } from 'react';
 
-import { CHANTALE_PHONE, type NavItem, socialLinks } from '../lib/constants';
+import { CHANTALE_PHONE, socialLinks, type NavItem } from '../lib/constants';
 import { urlFor } from '../lib/sanity-image';
 import { type loader } from '../root';
 import { ButtonLink } from './design-system/button';

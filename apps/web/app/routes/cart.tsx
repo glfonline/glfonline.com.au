@@ -6,11 +6,11 @@ import {
 	XMarkIcon,
 } from '@heroicons/react/20/solid';
 import {
-	type ActionArgs,
 	json,
+	redirect,
+	type ActionArgs,
 	type LoaderArgs,
 	type MetaFunction,
-	redirect,
 } from '@remix-run/node';
 import {
 	Form,

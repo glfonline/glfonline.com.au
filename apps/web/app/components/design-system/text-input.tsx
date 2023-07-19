@@ -28,7 +28,7 @@ export const TextInput = forwardRef<
 			)}
 			disabled={disabled}
 			ref={forwardedRef}
-			type="text"
+			type={type}
 		/>
 	);
 });

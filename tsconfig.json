@@ -1,5 +1,5 @@
 {
 	"extends": "@glfonline/tsconfig/base.json",
-	"include": ["src"],
+	"include": [".eslintrc.cjs", "**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
 	"exclude": ["build", "dist", "node_modules"]
 }
