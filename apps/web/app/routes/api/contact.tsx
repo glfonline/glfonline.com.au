@@ -181,14 +181,14 @@ export function ContactForm() {
 						label="Email"
 						message={form.errors.email()?.message}
 					>
-						<TextInput name={form.fields.email()} />
+						<TextInput name={form.fields.email()} type="email" />
 					</Field>
 					<Field
 						className="sm:col-span-2"
 						label="Phone number"
 						message={form.errors.phone_number()?.message}
 					>
-						<TextInput name={form.fields.phone_number()} />
+						<TextInput name={form.fields.phone_number()} type="tel" />
 					</Field>
 					<Field
 						className="sm:col-span-2"
