@@ -1,14 +1,5 @@
-name: Check
-
-on:
-  workflow_call:
-  pull_request:
-    branches:
-      - main
-
 jobs:
-  check:
-    name: Check
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -26,9 +17,6 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
-
       - name: Format
         run: pnpm check:format
 
@@ -37,3 +25,11 @@ jobs:
 
       - name: Types
         run: pnpm check:types
+
+name: Build
+
+on:
+  pull_request: ~
+  push:
+    branches:
+      - main
