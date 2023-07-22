@@ -16,7 +16,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			variant,
 			...consumerProps
 		},
-		forwardedRef
+		forwardedRef,
 	) {
 		const internalRef = useRef<HTMLButtonElement>(null);
 		const handleOnClick = useCallback(
@@ -25,7 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				if (isLoading) return;
 				onClick?.(event);
 			},
-			[isLoading, onClick]
+			[isLoading, onClick],
 		);
 
 		return (
@@ -46,7 +46,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				</span>
 			</button>
 		);
-	}
+	},
 );
 
 type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;

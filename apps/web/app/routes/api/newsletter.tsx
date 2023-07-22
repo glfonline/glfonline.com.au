@@ -22,7 +22,7 @@ export async function action({ request }: ActionArgs) {
 		const data = parseForm(NewsletterSchema, formData);
 
 		const url = new URL(
-			'https://golfladiesfirst.us12.list-manage.com/subscribe/post?u=f7790536b053b57996dbc24d0&amp;id=f711b0e505'
+			'https://golfladiesfirst.us12.list-manage.com/subscribe/post?u=f7790536b053b57996dbc24d0&amp;id=f711b0e505',
 		);
 
 		url.searchParams.set('EMAIL', data.email);

@@ -55,7 +55,7 @@ export function SearchDialog({
 						<Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
 							<Combobox
 								onChange={(
-									product: NonNullable<typeof data>['hits'][number]
+									product: NonNullable<typeof data>['hits'][number],
 								) => {
 									navigate(makeProductHref(product));
 									setSearchOpen(false);
@@ -121,7 +121,7 @@ function SearchResults({
 						className={({ active }) =>
 							clsx(
 								'flex cursor-default select-none rounded-xl p-3',
-								active && 'bg-gray-100'
+								active && 'bg-gray-100',
 							)
 						}
 						key={product.objectID}
@@ -154,7 +154,7 @@ function SearchResults({
 									<span
 										className={clsx(
 											'text-sm font-medium [&>em]:bg-black [&>em]:not-italic [&>em]:text-white',
-											active ? 'text-gray-900' : 'text-gray-700'
+											active ? 'text-gray-900' : 'text-gray-700',
 										)}
 										dangerouslySetInnerHTML={{
 											__html: product._highlightResult.title.value,

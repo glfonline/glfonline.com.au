@@ -73,7 +73,7 @@ export function MobileMenu({
 														selected
 															? 'border-brand-primary text-brand-primary'
 															: 'border-transparent text-gray-900',
-														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase'
+														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase',
 													)
 												}
 												data-theme={category.theme}

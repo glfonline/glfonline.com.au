@@ -14,7 +14,7 @@ export function LoadingProgress() {
 		if (active) setAnimationComplete(false);
 
 		Promise.allSettled(
-			ref.current.getAnimations().map(({ finished }) => finished)
+			ref.current.getAnimations().map(({ finished }) => finished),
 		).then(() => !active && setAnimationComplete(true));
 	}, [active]);
 
@@ -33,7 +33,7 @@ export function LoadingProgress() {
 						'w-0 transition-none',
 					transition.state === 'submitting' && 'w-4/12',
 					transition.state === 'loading' && 'w-10/12',
-					transition.state === 'idle' && !animationComplete && 'w-full'
+					transition.state === 'idle' && !animationComplete && 'w-full',
 				)}
 				ref={ref}
 			/>

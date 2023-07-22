@@ -5,7 +5,7 @@ const API_URL = 'https://zah69run.api.sanity.io/v1/graphql/production/default';
 
 export const sanityClient: Fetcher = (
 	operation: DocumentNode,
-	variables?: Record<string, unknown>
+	variables?: Record<string, unknown>,
 ) => {
 	return fetch(API_URL, {
 		method: 'POST',

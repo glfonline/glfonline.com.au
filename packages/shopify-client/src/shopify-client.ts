@@ -7,7 +7,7 @@ const ACCESS_TOKEN = '2288cabae0640a8f47933d6ed4116607';
 
 export const shopifyClient: Fetcher = (
 	operation: DocumentNode,
-	variables?: Record<string, unknown>
+	variables?: Record<string, unknown>,
 ) => {
 	return fetch(API_URL, {
 		method: 'POST',

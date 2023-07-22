@@ -63,7 +63,7 @@ export async function action({ request }: ActionArgs) {
 					'Content-Type': 'application/json',
 				},
 				method: 'POST',
-			}
+			},
 		);
 		const challengeJson = await challengeResponse.json();
 		if (!challengeJson.success) {
@@ -89,7 +89,7 @@ export async function action({ request }: ActionArgs) {
 			},
 			(_err, _isSpam) => {
 				isSpam = _isSpam;
-			}
+			},
 		);
 		if (isSpam) {
 			throw new Error('Spam detected');
@@ -116,7 +116,7 @@ export async function action({ request }: ActionArgs) {
 
 		/** Send email with Sendgrid */
 		sendgrid.setApiKey(
-			requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY)
+			requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY),
 		);
 		const sendgridResponse = await sendgrid.send(mailOptions);
 		console.log({ sendgridResponse });

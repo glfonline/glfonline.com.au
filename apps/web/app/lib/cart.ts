@@ -44,7 +44,7 @@ export async function getSession(input: Request | string | null | undefined) {
 export function addToCart(
 	cart: CartItem[],
 	variantId: string,
-	quantity: number
+	quantity: number,
 ) {
 	let added = false;
 	for (const item of cart) {
@@ -63,7 +63,7 @@ export function addToCart(
 export function updateCartItem(
 	cart: CartItem[],
 	variantId: string,
-	quantity: number
+	quantity: number,
 ) {
 	let updated = false;
 	for (const item of cart) {

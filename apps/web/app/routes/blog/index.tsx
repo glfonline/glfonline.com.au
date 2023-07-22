@@ -40,7 +40,7 @@ const BlogSchema = z
 export async function loader({ request }: LoaderArgs) {
 	const url = new URL(request.url);
 	const { after = 0 } = BlogSchema.parse(
-		Object.fromEntries(url.searchParams.entries())
+		Object.fromEntries(url.searchParams.entries()),
 	);
 	const [posts, featuredPost, count] = await Promise.all([
 		getBlogPosts({

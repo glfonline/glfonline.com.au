@@ -30,7 +30,7 @@ export async function loader() {
 			headers: {
 				'Cache-Control': CACHE_LONG,
 			},
-		}
+		},
 	);
 }
 

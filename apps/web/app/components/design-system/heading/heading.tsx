@@ -18,7 +18,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
 			weight,
 			...consumerProps
 		},
-		forwardedRef
+		forwardedRef,
 	) {
 		assert(isDefined(size), 'Heading level must be defined');
 		const HeadingElement = headingElement || headingLevelMap[size];
@@ -31,7 +31,7 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
 				{children}
 			</HeadingElement>
 		);
-	}
+	},
 );
 
 const headingLevelMap = {

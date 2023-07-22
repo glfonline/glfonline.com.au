@@ -69,10 +69,10 @@ export const schema = z.object({
 							id: z.string(),
 							name: z.string(),
 							values: z.array(z.string()),
-						})
+						}),
 					),
 				}),
-			})
+			}),
 		),
 	}),
 });

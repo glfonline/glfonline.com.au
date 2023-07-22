@@ -35,7 +35,7 @@ export const getButtonStyles = cva(
 			size: 'regular',
 			variant: 'outline',
 		},
-	}
+	},
 );
 
 export type ButtonVariantProps = VariantProps<typeof getButtonStyles>;

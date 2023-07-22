@@ -61,7 +61,7 @@ function addLinksToStackTrace(stackTrace: string) {
 		(all, m1) =>
 			all.replace(
 				m1,
-				`<a href="vscode://file${m1}" class="hover:underline">${m1}</a>`
-			)
+				`<a href="vscode://file${m1}" class="hover:underline">${m1}</a>`,
+			),
 	);
 }

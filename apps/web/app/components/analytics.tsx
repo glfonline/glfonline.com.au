@@ -29,7 +29,7 @@ function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
 ${gtag.trackingIds
 	.map(
-		(id) => `gtag('config', '${id}', {page_path: window.location.pathname});`
+		(id) => `gtag('config', '${id}', {page_path: window.location.pathname});`,
 	)
 	.join('\n')}
 `;

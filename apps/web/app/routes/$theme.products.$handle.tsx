@@ -46,7 +46,7 @@ export async function loader({ params }: DataFunctionArgs) {
 				headers: {
 					'Cache-Control': CACHE_SHORT,
 				},
-			}
+			},
 		);
 	}
 	throw json('Product not found', { status: 404 });
@@ -58,7 +58,7 @@ export async function action({ request }: ActionArgs) {
 		getSession(request),
 	]);
 	const { variantId } = CartSchema.parse(
-		Object.fromEntries(formData.entries())
+		Object.fromEntries(formData.entries()),
 	);
 	let cart = await session.getCart();
 	cart = addToCart(cart, variantId, 1);
@@ -80,14 +80,14 @@ export default function ProductPage() {
 
 	const [variant, setVariant] = useState(
 		product.variants.edges.find(
-			({ node: { availableForSale } }) => availableForSale
-		)
+			({ node: { availableForSale } }) => availableForSale,
+		),
 	);
 
 	const isOnSale = product.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
 			compareAtPrice &&
-			parseFloat(price.amount) < parseFloat(compareAtPrice.amount)
+			parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
 	);
 
 	const form = useZorm('cart_form', CartSchema);
@@ -101,7 +101,7 @@ export default function ProductPage() {
 	const sizingChart = getSizingChart(product);
 
 	const hasNoVariants = product.variants.edges.some(
-		({ node }) => node.title === 'Default Title'
+		({ node }) => node.title === 'Default Title',
 	);
 
 	return (
@@ -112,7 +112,7 @@ export default function ProductPage() {
 						images={product.images.edges.map(
 							({ node: { id, altText, url, height, width } }) => ({
 								node: { id, altText, url, height, width },
-							})
+							}),
 						)}
 						isOnSale={isOnSale}
 					/>
@@ -147,7 +147,7 @@ export default function ProductPage() {
 						>
 							<fieldset
 								className={clsx(
-									hasNoVariants ? 'sr-only' : 'flex flex-col gap-3'
+									hasNoVariants ? 'sr-only' : 'flex flex-col gap-3',
 								)}
 							>
 								<div className="flex items-center justify-between">
@@ -167,8 +167,8 @@ export default function ProductPage() {
 												onChange={(event) => {
 													setVariant(
 														product.variants.edges.find(
-															({ node }) => node.id === event.target.value
-														)
+															({ node }) => node.id === event.target.value,
+														),
 													);
 												}}
 												type="radio"
@@ -182,7 +182,7 @@ export default function ProductPage() {
 														? 'cursor-pointer focus:outline-none'
 														: 'cursor-not-allowed opacity-25',
 													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
-													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white'
+													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white',
 												)}
 											>
 												{node.title}
@@ -252,7 +252,7 @@ function ImageGallery({
 			<div className="mx-auto hidden w-full max-w-2xl sm:block lg:max-w-none">
 				<Tab.List
 					className={clsx(
-						images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only'
+						images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only',
 					)}
 				>
 					{images.map(({ node }) => (
@@ -279,7 +279,7 @@ function ImageGallery({
 											aria-hidden="true"
 											className={clsx(
 												selected ? 'ring-brand-primary' : 'ring-transparent',
-												'pointer-events-none absolute inset-0 ring-1'
+												'pointer-events-none absolute inset-0 ring-1',
 											)}
 										/>
 									</Fragment>

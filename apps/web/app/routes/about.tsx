@@ -24,7 +24,7 @@ const AboutSchema = z.object({
 			aboutImage: imageWithAltSchema,
 			contentRaw: z.any(),
 			subheading: z.string(),
-		})
+		}),
 	),
 });
 
@@ -40,7 +40,7 @@ export async function loader() {
 			headers: {
 				'Cache-Control': CACHE_LONG,
 			},
-		}
+		},
 	);
 }
 

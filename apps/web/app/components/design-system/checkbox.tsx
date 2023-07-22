@@ -16,7 +16,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 						invalid
 							? 'text-red-600 focus:ring-red-500'
 							: 'text-brand-600 focus:ring-brand-500',
-						className
+						className,
 					)}
 					disabled={disabled}
 					ref={forwardedRef}
@@ -24,7 +24,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
 				/>
 			</div>
 		);
-	}
+	},
 );
 
 type CheckboxProps = Omit<

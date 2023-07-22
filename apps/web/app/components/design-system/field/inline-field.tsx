@@ -18,7 +18,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 			tone = 'neutral',
 			...consumerProps
 		},
-		forwardedRef
+		forwardedRef,
 	) {
 		const { descriptionId, inputId, messageId } = useFieldIds(idProp);
 		const invalid = Boolean(message && tone === 'critical');
@@ -28,7 +28,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 				{
 					'aria-describedby': mergeIds(
 						message && messageId,
-						description && descriptionId
+						description && descriptionId,
 					),
 					'aria-invalid': invalid || undefined,
 					id: inputId,
@@ -42,7 +42,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 				invalid,
 				message,
 				messageId,
-			]
+			],
 		);
 		return (
 			<FieldContextProvider value={fieldContext}>
@@ -57,7 +57,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 							<label
 								className={clsx(
 									'select-none',
-									disabled ? 'text-gray-400' : 'text-gray-700'
+									disabled ? 'text-gray-400' : 'text-gray-700',
 								)}
 								htmlFor={inputId}
 							>
@@ -71,7 +71,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 				</div>
 			</FieldContextProvider>
 		);
-	}
+	},
 );
 
 export type InlineFieldProps = Omit<FieldProps, 'label'> & {
