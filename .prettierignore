@@ -1,7 +1,7 @@
 __generated__
 .env
 .sanity
-apps/web/api/index.js
+apps/web/api
 apps/web/app/styles/tailwind.css
 build
 dist
