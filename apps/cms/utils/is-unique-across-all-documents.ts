@@ -2,7 +2,7 @@ import { type SlugIsUniqueValidator } from 'sanity';
 
 export const isUniqueAcrossAllDocuments: SlugIsUniqueValidator = async (
 	slug,
-	context
+	context,
 ) => {
 	const { document, getClient } = context;
 	const client = getClient({ apiVersion: '2022-12-07' });

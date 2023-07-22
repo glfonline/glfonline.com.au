@@ -2,7 +2,7 @@ import { forwardRef, useCallback, useRef } from 'react';
 
 import { mergeRefs } from '../../../lib/merge-refs';
 import { Spinner } from '../spinner';
-import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
+import { getButtonStyles, type ButtonVariantProps } from './get-button-styles';
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 	function Button(
@@ -16,7 +16,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 			variant,
 			...consumerProps
 		},
-		forwardedRef
+		forwardedRef,
 	) {
 		const internalRef = useRef<HTMLButtonElement>(null);
 		const handleOnClick = useCallback(
@@ -25,7 +25,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				if (isLoading) return;
 				onClick?.(event);
 			},
-			[isLoading, onClick]
+			[isLoading, onClick],
 		);
 
 		return (
@@ -46,7 +46,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				</span>
 			</button>
 		);
-	}
+	},
 );
 
 type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;

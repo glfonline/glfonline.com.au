@@ -10,6 +10,6 @@ export const mainNavigation = defineStructure<ListItemBuilder>((S) =>
 			S.editor()
 				.title('Navigation')
 				.schemaType('mainNavigation')
-				.documentId('mainNavigation')
-		)
+				.documentId('mainNavigation'),
+		),
 );

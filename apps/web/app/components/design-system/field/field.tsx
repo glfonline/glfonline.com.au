@@ -18,7 +18,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 		tone = 'critical',
 		...consumerProps
 	},
-	forwardedRef
+	forwardedRef,
 ) {
 	const { descriptionId, inputId, messageId } = useFieldIds(idProp);
 	const invalid = Boolean(message && tone === 'critical');
@@ -28,13 +28,21 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 			{
 				'aria-describedby': mergeIds(
 					message && messageId,
-					description && descriptionId
+					description && descriptionId,
 				),
 				'aria-invalid': invalid || undefined,
 				id: inputId,
 			},
 		],
-		[description, descriptionId, disabled, inputId, invalid, message, messageId]
+		[
+			description,
+			descriptionId,
+			disabled,
+			inputId,
+			invalid,
+			message,
+			messageId,
+		],
 	);
 	return (
 		<FieldContextProvider value={fieldContext}>
@@ -47,7 +55,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 					<span
 						className={clsx(
 							'text-sm',
-							disabled ? 'text-gray-400' : 'text-gray-700'
+							disabled ? 'text-gray-400' : 'text-gray-700',
 						)}
 					>
 						{label}{' '}
@@ -98,7 +106,7 @@ export function FieldMessage({ message, id, tone }: FieldMessageProps) {
 				tone === 'critical' && 'text-red-600',
 				tone === 'positive' && 'text-green-600',
 				tone === 'neutral' && 'text-gray-600',
-				'flex items-center gap-1 text-sm'
+				'flex items-center gap-1 text-sm',
 			)}
 		>
 			{Icon && <Icon className="h-5 w-5" />}

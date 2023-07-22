@@ -36,7 +36,7 @@ const HomePageSchema = z.object({
 			label: z.string(),
 			image: imageWithAltSchema,
 			theme: z.enum(['ladies', 'mens']),
-		})
+		}),
 	),
 });
 
@@ -158,7 +158,7 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 				breakpoints={[1264, 1080, 960, 828, 750, 640, 632]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
-					objectPositionMap[image.objectPosition ?? 'top']
+					objectPositionMap[image.objectPosition ?? 'top'],
 				)}
 				layout="fullWidth"
 				priority

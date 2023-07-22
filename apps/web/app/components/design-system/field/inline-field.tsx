@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from 'react';
 
 import { mergeIds } from '../../../lib/merge-ids';
 import { FieldContextProvider, type FieldContextType } from './context';
-import { FieldMessage, type FieldProps, useFieldIds } from './field';
+import { FieldMessage, useFieldIds, type FieldProps } from './field';
 
 export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 	function Field(
@@ -18,7 +18,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 			tone = 'neutral',
 			...consumerProps
 		},
-		forwardedRef
+		forwardedRef,
 	) {
 		const { descriptionId, inputId, messageId } = useFieldIds(idProp);
 		const invalid = Boolean(message && tone === 'critical');
@@ -28,7 +28,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 				{
 					'aria-describedby': mergeIds(
 						message && messageId,
-						description && descriptionId
+						description && descriptionId,
 					),
 					'aria-invalid': invalid || undefined,
 					id: inputId,
@@ -42,13 +42,13 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 				invalid,
 				message,
 				messageId,
-			]
+			],
 		);
 		return (
 			<FieldContextProvider value={fieldContext}>
 				<div
 					{...consumerProps}
-					className="flex flex-col gap-1"
+					className={clsx('flex flex-col gap-1', className)}
 					ref={forwardedRef}
 				>
 					<div className="relative flex items-start gap-3">
@@ -57,7 +57,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 							<label
 								className={clsx(
 									'select-none',
-									disabled ? 'text-gray-400' : 'text-gray-700'
+									disabled ? 'text-gray-400' : 'text-gray-700',
 								)}
 								htmlFor={inputId}
 							>
@@ -71,7 +71,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(
 				</div>
 			</FieldContextProvider>
 		);
-	}
+	},
 );
 
 export type InlineFieldProps = Omit<FieldProps, 'label'> & {

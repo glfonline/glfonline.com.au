@@ -5,8 +5,7 @@ import type { loader } from 'app/root';
 import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 
-import { type NavItem } from '../lib/constants';
-import { socialLinks } from '../lib/constants';
+import { socialLinks, type NavItem } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
 export function MobileMenu({
@@ -74,7 +73,7 @@ export function MobileMenu({
 														selected
 															? 'border-brand-primary text-brand-primary'
 															: 'border-transparent text-gray-900',
-														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase'
+														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase',
 													)
 												}
 												data-theme={category.theme}

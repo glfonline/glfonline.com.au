@@ -26,11 +26,13 @@
 	},
 	"dependencies": {
 		"@glfonline/eslint-config": "0.0.0",
+		"@glfonline/prettier-config": "0.0.0",
+		"@glfonline/tsconfig": "0.0.0",
 		"@manypkg/cli": "^0.21.0",
-		"prettier": "^2.8.8",
-		"prettier-plugin-tailwindcss": "^0.3.0",
-		"stale-dep": "^0.6.0",
-		"turbo": "^1.10.6"
+		"eslint": "^8.45.0",
+		"prettier": "^3.0.0",
+		"stale-dep": "^0.7.0",
+		"turbo": "^1.10.9"
 	},
 	"packageManager": "pnpm@8.6.5",
 	"engines": {

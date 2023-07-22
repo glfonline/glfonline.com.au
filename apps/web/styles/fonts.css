@@ -34,7 +34,8 @@
 	font-display: swap;
 	font-style: normal;
 	font-weight: 400;
-	src: url('/fonts/CentGothWGL/font.woff2') format('woff2'),
+	src:
+		url('/fonts/CentGothWGL/font.woff2') format('woff2'),
 		url('/fonts/CentGothWGL/font.woff') format('woff');
 }
 @font-face {
@@ -42,7 +43,8 @@
 	font-display: swap;
 	font-style: italic;
 	font-weight: 700;
-	src: url('/fonts/CentGothWGL-BdIt/font.woff2') format('woff2'),
+	src:
+		url('/fonts/CentGothWGL-BdIt/font.woff2') format('woff2'),
 		url('/fonts/CentGothWGL-BdIt/font.woff') format('woff');
 }
 @font-face {
@@ -50,7 +52,8 @@
 	font-display: swap;
 	font-style: italic;
 	font-weight: 400;
-	src: url('/fonts/CentGothWGL-Italic/font.woff2') format('woff2'),
+	src:
+		url('/fonts/CentGothWGL-Italic/font.woff2') format('woff2'),
 		url('/fonts/CentGothWGL-Italic/font.woff') format('woff');
 }
 @font-face {
@@ -58,6 +61,7 @@
 	font-display: swap;
 	font-style: normal;
 	font-weight: 700;
-	src: url('/fonts/CentGothWGL-Bold/font.woff2') format('woff2'),
+	src:
+		url('/fonts/CentGothWGL-Bold/font.woff2') format('woff2'),
 		url('/fonts/CentGothWGL-Bold/font.woff') format('woff');
 }

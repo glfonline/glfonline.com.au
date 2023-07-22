@@ -1,6 +1,5 @@
 import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction } from '@remix-run/node';
-import { json } from '@remix-run/node';
+import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
@@ -31,7 +30,7 @@ export async function loader() {
 			headers: {
 				'Cache-Control': CACHE_LONG,
 			},
-		}
+		},
 	);
 }
 

@@ -2,16 +2,16 @@ import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import {
-	type DataFunctionArgs,
 	json,
+	type DataFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node';
 import {
 	Link,
-	type Location,
 	useLoaderData,
 	useLocation,
 	useNavigate,
+	type Location,
 } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
@@ -45,7 +45,7 @@ export async function loader({ params, request }: DataFunctionArgs) {
 	const paramsResult = CollectionSchema.safeParse(params);
 	const url = new URL(request.url);
 	const { sort, after, ...filterOptions } = SortSchema.parse(
-		Object.fromEntries(url.searchParams.entries())
+		Object.fromEntries(url.searchParams.entries()),
 	);
 
 	if (paramsResult.success) {
@@ -278,7 +278,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 	const isOnSale = node.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
 			compareAtPrice &&
-			parseFloat(price.amount) < parseFloat(compareAtPrice.amount)
+			parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
 	);
 
 	return (
@@ -319,7 +319,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 						<span className="font-bold">
 							{formatMoney(
 								node.priceRange.minVariantPrice.amount,
-								node.priceRange.minVariantPrice.currencyCode
+								node.priceRange.minVariantPrice.currencyCode,
 							)}
 						</span>
 					</p>
@@ -347,7 +347,7 @@ function DisplayOptions() {
 	const location = useLocation();
 	const params = new URLSearchParams(location.search);
 	const searchParamsArray = Object.entries(
-		Object.fromEntries(params.entries())
+		Object.fromEntries(params.entries()),
 	);
 
 	return (

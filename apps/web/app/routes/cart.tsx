@@ -6,11 +6,11 @@ import {
 	XMarkIcon,
 } from '@heroicons/react/20/solid';
 import {
-	type ActionArgs,
 	json,
+	redirect,
+	type ActionArgs,
 	type LoaderArgs,
 	type MetaFunction,
-	redirect,
 } from '@remix-run/node';
 import {
 	Form,
@@ -36,7 +36,7 @@ export async function loader({ request }: LoaderArgs) {
 	const cartInfo = await getCartInfo(cart);
 	return json(
 		{ cartInfo },
-		{ headers: { 'Set-Cookie': await session.commitSession() } }
+		{ headers: { 'Set-Cookie': await session.commitSession() } },
 	);
 }
 
@@ -69,7 +69,7 @@ export async function action({ request }: ActionArgs) {
 	switch (intent) {
 		case CHECKOUT_ACTION: {
 			const { webUrl } = CheckoutScheme.parse(
-				Object.fromEntries(formData.entries())
+				Object.fromEntries(formData.entries()),
 			);
 			return redirect(webUrl);
 		}
@@ -77,27 +77,27 @@ export async function action({ request }: ActionArgs) {
 		case INCREMENT_ACTION:
 		case DECREMENT_ACTION: {
 			const { quantity, variantId } = QuantityScheme.parse(
-				Object.fromEntries(formData.entries())
+				Object.fromEntries(formData.entries()),
 			);
 			const cart = await session.getCart();
 			const newCart = updateCartItem(cart, variantId, quantity);
 			await session.setCart(newCart);
 			return json(
 				{},
-				{ headers: { 'Set-Cookie': await session.commitSession() } }
+				{ headers: { 'Set-Cookie': await session.commitSession() } },
 			);
 		}
 
 		case REMOVE_ACTION: {
 			const { variantId } = RemoveScheme.parse(
-				Object.fromEntries(formData.entries())
+				Object.fromEntries(formData.entries()),
 			);
 			const cart = await session.getCart();
 			const newCart = removeCartItem(cart, variantId);
 			await session.setCart(newCart);
 			return json(
 				{},
-				{ headers: { 'Set-Cookie': await session.commitSession() } }
+				{ headers: { 'Set-Cookie': await session.commitSession() } },
 			);
 		}
 
@@ -316,7 +316,7 @@ function QuantityPicker({
 							'hover:bg-gray-50',
 							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
 							'disabled:opacity-50',
-							fetcher.state === 'loading' && 'opacity-50'
+							fetcher.state === 'loading' && 'opacity-50',
 						)}
 						disabled={quantity <= 1}
 						name={INTENT}
@@ -329,7 +329,7 @@ function QuantityPicker({
 				<span
 					className={clsx(
 						fetcher.state === 'loading' && 'opacity-50',
-						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700'
+						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700',
 					)}
 				>
 					{quantity}
@@ -343,7 +343,7 @@ function QuantityPicker({
 							'hover:bg-gray-50',
 							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
 							'disabled:opacity-50',
-							fetcher.state === 'loading' && 'opacity-50'
+							fetcher.state === 'loading' && 'opacity-50',
 						)}
 						disabled={quantity + 1 >= quantityAvailable}
 						name={INTENT}
@@ -367,7 +367,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 			<button
 				className={clsx(
 					'-m-2 inline-flex bg-white p-2 text-gray-400',
-					'focus:ring-brand-primary hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2'
+					'focus:ring-brand-primary hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2',
 				)}
 				name={INTENT}
 				type="submit"

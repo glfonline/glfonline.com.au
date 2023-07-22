@@ -11,7 +11,7 @@ export const imageWithAltSchema = z.object({
 					bottom: z.number(),
 					left: z.number(),
 					right: z.number(),
-				})
+				}),
 			)
 			.optional(),
 		hotspot: z.nullable(
@@ -22,7 +22,7 @@ export const imageWithAltSchema = z.object({
 					height: z.number(),
 					width: z.number(),
 				})
-				.optional()
+				.optional(),
 		),
 		path: z.string(),
 	}),

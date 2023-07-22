@@ -1,8 +1,11 @@
 {
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"display": "React Library",
-	"extends": "./dom.json",
+	"extends": "./base.json",
 	"compilerOptions": {
-		"jsx": "react-jsx"
+		"jsx": "react-jsx",
+		"lib": ["ES2022", "DOM", "DOM.Iterable"],
+		"module": "ESNext",
+		"noUnusedLocals": false
 	}
 }

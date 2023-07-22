@@ -10,7 +10,7 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId, useState } from 'react';
 
-import { CHANTALE_PHONE, type NavItem, socialLinks } from '../lib/constants';
+import { CHANTALE_PHONE, socialLinks, type NavItem } from '../lib/constants';
 import { urlFor } from '../lib/sanity-image';
 import { type loader } from '../root';
 import { ButtonLink } from './design-system/button';
@@ -175,7 +175,7 @@ function MegaMenu() {
 								<Popover.Button
 									className={clsx(
 										open && 'bg-brand-primary text-white',
-										navItemClasses
+										navItemClasses,
 									)}
 								>
 									{category.label}
@@ -318,7 +318,7 @@ function CategorySection({
 						aria-labelledby={id}
 						className={clsx(
 							'mt-6 space-y-6 sm:mt-4 sm:space-y-4',
-							section.items.length === 1 && 'col-span-2'
+							section.items.length === 1 && 'col-span-2',
 						)}
 						key={itemIdx}
 						role="list"

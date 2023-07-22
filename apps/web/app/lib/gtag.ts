@@ -3,7 +3,7 @@ declare global {
 		gtag: (
 			option: string,
 			gaTrackingId: string,
-			options: Record<string, unknown>
+			options: Record<string, unknown>,
 		) => void;
 	}
 }
@@ -20,7 +20,7 @@ export const trackingIds = [
 export function pageview(url: string, trackingId: string) {
 	if (!window.gtag) {
 		console.warn(
-			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.'
+			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.',
 		);
 		return;
 	}
@@ -40,7 +40,7 @@ export function event({
 }: Record<string, string>) {
 	if (!window.gtag) {
 		console.warn(
-			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.'
+			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.',
 		);
 		return;
 	}
@@ -52,6 +52,6 @@ export function event({
 			event_category: category,
 			event_label: label,
 			value: value,
-		}
+		},
 	);
 }

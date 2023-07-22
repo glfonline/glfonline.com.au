@@ -1,4 +1,4 @@
-import { type ActionArgs, json } from '@remix-run/node';
+import { json, type ActionArgs } from '@remix-run/node';
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
 import { AkismetClient } from 'akismet-api';
@@ -63,7 +63,7 @@ export async function action({ request }: ActionArgs) {
 					'Content-Type': 'application/json',
 				},
 				method: 'POST',
-			}
+			},
 		);
 		const challengeJson = await challengeResponse.json();
 		if (!challengeJson.success) {
@@ -89,7 +89,7 @@ export async function action({ request }: ActionArgs) {
 			},
 			(_err, _isSpam) => {
 				isSpam = _isSpam;
-			}
+			},
 		);
 		if (isSpam) {
 			throw new Error('Spam detected');
@@ -116,7 +116,7 @@ export async function action({ request }: ActionArgs) {
 
 		/** Send email with Sendgrid */
 		sendgrid.setApiKey(
-			requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY)
+			requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY),
 		);
 		const sendgridResponse = await sendgrid.send(mailOptions);
 		console.log({ sendgridResponse });
@@ -181,14 +181,14 @@ export function ContactForm() {
 						label="Email"
 						message={form.errors.email()?.message}
 					>
-						<TextInput name={form.fields.email()} />
+						<TextInput name={form.fields.email()} type="email" />
 					</Field>
 					<Field
 						className="sm:col-span-2"
 						label="Phone number"
 						message={form.errors.phone_number()?.message}
 					>
-						<TextInput name={form.fields.phone_number()} />
+						<TextInput name={form.fields.phone_number()} type="tel" />
 					</Field>
 					<Field
 						className="sm:col-span-2"

@@ -25,7 +25,7 @@ export async function loader({ params }: LoaderArgs) {
 			headers: {
 				'Cache-Control': CACHE_LONG,
 			},
-		}
+		},
 	);
 }
 

@@ -28,7 +28,7 @@ export function CollectionCard({
 				breakpoints={[640, 768, 1024, 1280]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
-					objectPositionMap[image.objectPosition ?? 'center']
+					objectPositionMap[image.objectPosition ?? 'center'],
 				)}
 				layout="fullWidth"
 				priority={priority}
@@ -38,7 +38,7 @@ export function CollectionCard({
 			<div
 				className={clsx(
 					'from-true-black/75 isolate h-full w-full flex-1 justify-end gap-4 bg-gradient-to-t via-transparent p-8',
-					span === '5' ? 'grid justify-center lg:grid-cols-5' : 'flex'
+					span === '5' ? 'grid justify-center lg:grid-cols-5' : 'flex',
 				)}
 			>
 				<span className="mt-auto flex flex-1 flex-col items-center">

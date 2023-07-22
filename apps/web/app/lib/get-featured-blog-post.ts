@@ -11,6 +11,6 @@ const PostsSchema = z.array(PostSchema);
 export async function getFeaturedBlogPost() {
 	const { allPost } = await sanityClient(FEATURED_BLOG_POST_QUERY);
 	return PostsSchema.parse(allPost).find((post) =>
-		post.categories.find((category) => category.title === 'Featured')
+		post.categories.find((category) => category.title === 'Featured'),
 	);
 }

@@ -3,9 +3,9 @@ import {
 	AnalyticsEventName,
 	getClientBrowserParameters,
 	sendShopifyAnalytics,
+	useShopifyCookies,
 	type ShopifyAddToCartPayload,
 	type ShopifyPageViewPayload,
-	useShopifyCookies,
 } from '@shopify/hydrogen';
 import { useEffect } from 'react';
 
@@ -22,7 +22,7 @@ export function useAnalytics({
 	useShopifyCookies({ hasUserConsent });
 	const location = useLocation();
 	const analyticsFromMatches = useDataFromMatches(
-		'analytics'
+		'analytics',
 	) as unknown as ShopifyPageViewPayload;
 
 	const pageAnalytics = {
@@ -49,7 +49,7 @@ export function useAnalytics({
 				eventName: AnalyticsEventName.PAGE_VIEW,
 				payload,
 			},
-			PUBLIC_STORE_DOMAIN
+			PUBLIC_STORE_DOMAIN,
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [location]);
@@ -72,7 +72,7 @@ export function useAnalytics({
 				eventName: AnalyticsEventName.ADD_TO_CART,
 				payload: addToCartPayload,
 			},
-			PUBLIC_STORE_DOMAIN
+			PUBLIC_STORE_DOMAIN,
 		);
 	}
 }

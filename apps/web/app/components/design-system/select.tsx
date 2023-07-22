@@ -14,7 +14,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 			value,
 			...consumerProps
 		},
-		forwardedRef
+		forwardedRef,
 	) {
 		const [{ disabled, invalid }, a11yProps] = useFieldContext();
 
@@ -24,7 +24,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 					{opt.label}
 				</option>
 			),
-			[]
+			[],
 		);
 
 		return (
@@ -40,7 +40,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 						invalid
 							? 'border-red-300 focus:border-red-300 focus:ring-red-400'
 							: 'focus:border-brand-300 focus:ring-brand-400 border-gray-300',
-						className
+						className,
 					)}
 					defaultValue={defaultValue}
 					disabled={disabled}
@@ -65,7 +65,7 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
 				</select>
 			</span>
 		);
-	}
+	},
 );
 
 type NativeSelectProps = React.SelectHTMLAttributes<HTMLSelectElement>;

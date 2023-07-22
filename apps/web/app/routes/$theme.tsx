@@ -1,7 +1,7 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
 import {
-	type DataFunctionArgs,
 	json,
+	type DataFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
@@ -33,7 +33,7 @@ const CollectionSchema = z.object({
 								bottom: z.number(),
 								left: z.number(),
 								right: z.number(),
-							})
+							}),
 						)
 						.optional(),
 					hotspot: z.nullable(
@@ -44,7 +44,7 @@ const CollectionSchema = z.object({
 								height: z.number(),
 								width: z.number(),
 							})
-							.optional()
+							.optional(),
 					),
 					path: z.string(),
 				}),

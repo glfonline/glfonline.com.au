@@ -10,6 +10,6 @@ export const testimonialsPage = defineStructure<ListItemBuilder>((S) =>
 			S.editor()
 				.title('Testimonials')
 				.schemaType('testimonialsPage')
-				.documentId('testimonials')
-		)
+				.documentId('testimonials'),
+		),
 );

@@ -7,6 +7,9 @@ export const aboutPage = defineStructure<ListItemBuilder>((S) =>
 		.title('About Page')
 		.schemaType('aboutPage')
 		.child(
-			S.editor().title('About Page').schemaType('aboutPage').documentId('about')
-		)
+			S.editor()
+				.title('About Page')
+				.schemaType('aboutPage')
+				.documentId('about'),
+		),
 );

@@ -42,7 +42,7 @@ export async function loader() {
 			headers: {
 				'Cache-Control': CACHE_LONG,
 			},
-		}
+		},
 	);
 }
 
@@ -132,7 +132,7 @@ function Testimonials() {
 							</blockquote>
 						</div>
 					</li>
-				)
+				),
 			)}
 		</ul>
 	);

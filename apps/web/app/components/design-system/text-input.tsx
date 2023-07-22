@@ -12,7 +12,7 @@ export const TextInput = forwardRef<
 		type = 'text',
 		...consumerProps
 	}: React.InputHTMLAttributes<HTMLInputElement>,
-	forwardedRef
+	forwardedRef,
 ) {
 	const [{ disabled, invalid }, a11yProps] = useFieldContext();
 	return (
@@ -24,11 +24,11 @@ export const TextInput = forwardRef<
 				invalid
 					? 'border-red-300 focus:border-red-300 focus:ring-red-400'
 					: 'focus:border-brand-300 focus:ring-brand-400 border-gray-300',
-				className
+				className,
 			)}
 			disabled={disabled}
 			ref={forwardedRef}
-			type="text"
+			type={type}
 		/>
 	);
 });

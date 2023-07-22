@@ -24,15 +24,15 @@ export const mainNavigationSchema = z.object({
 								_key: z.string(),
 								label: z.string(),
 								href: z.string(),
-							})
+							}),
 						)
 						.transform((items) => chunk(items, 11)),
-				})
+				}),
 			),
-		})
+		}),
 	),
 	pages: z.array(
-		z.object({ _key: z.string(), label: z.string(), href: z.string() })
+		z.object({ _key: z.string(), label: z.string(), href: z.string() }),
 	),
 });
 
