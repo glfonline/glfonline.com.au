@@ -116,7 +116,7 @@ function App() {
 					persistOptions={{ persister }}
 				>
 					<MainLayout>
-						<Outlet />
+						<Outlet key={location.pathname} />
 					</MainLayout>
 				</PersistQueryClientProvider>
 				<ScrollRestoration />
