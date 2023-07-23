@@ -408,6 +408,10 @@ function DisplayOptions() {
 				if (!['Size', PRODUCT_TYPE].includes(option.name)) {
 					return null;
 				}
+				if (option.name === PRODUCT_TYPE && option.values.length <= 1) {
+					return null;
+				}
+
 				return (
 					<Disclosure as="div" className="py-2" key={option.name}>
 						{({ open }) => (
