@@ -1,3 +1,4 @@
+import { clsx } from 'clsx';
 import { forwardRef, useCallback, useRef } from 'react';
 
 import { mergeRefs } from '../../../lib/merge-refs';
@@ -37,7 +38,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 				type={type}
 			>
 				{children}
-				<span aria-live="assertive">
+				<span
+					aria-live="assertive"
+					className={clsx(isLoading ? undefined : 'sr-only')}
+				>
 					{isLoading && (
 						<span aria-label="Loading">
 							<Spinner />
