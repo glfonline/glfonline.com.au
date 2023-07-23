@@ -59,7 +59,6 @@
 	"devDependencies": {
 		"@babel/core": "^7.22.9",
 		"@glfonline/eslint-config": "0.0.0",
-		"@glfonline/tailwindcss": "0.0.0",
 		"@glfonline/tsconfig": "0.0.0",
 		"@remix-run/dev": "^1.19.1",
 		"@remix-run/serve": "^1.19.1",
