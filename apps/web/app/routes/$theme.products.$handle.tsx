@@ -6,7 +6,7 @@ import {
 	type DataFunctionArgs,
 	type MetaFunction,
 } from '@remix-run/node';
-import { Form, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
@@ -92,11 +92,11 @@ export default function ProductPage() {
 
 	const form = useZorm('cart_form', CartSchema);
 
-	const transition = useTransition();
+	const navigation = useNavigation();
 
 	let buttonText = 'Add to cart';
-	if (transition.state === 'submitting') buttonText = 'Adding...';
-	if (transition.state === 'loading') buttonText = 'Added!';
+	if (navigation.state === 'submitting') buttonText = 'Adding...';
+	if (navigation.state === 'loading') buttonText = 'Added!';
 
 	const sizingChart = getSizingChart(product);
 
