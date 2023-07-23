@@ -1,19 +1,16 @@
-const defaultTheme = require('tailwindcss/defaultTheme');
+import formsPlugin from '@tailwindcss/forms';
+import lineClampPlugin from '@tailwindcss/line-clamp';
+import typographyPlugin from '@tailwindcss/typography';
+import { type Config } from 'tailwindcss';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
-/**
- * @type {(variableName: string) => ({opacityValue} :{opacityValue: number}) => string}
- */
-function withOpacity(variableName) {
-	return ({ opacityValue }) => {
-		if (opacityValue !== undefined) {
-			return `rgba(var(${variableName}), ${opacityValue})`;
-		}
-		return `rgb(var(${variableName}))`;
+function withOpacity(variableName: string): any {
+	return ({ opacityValue }: { opacityValue?: number }) => {
+		return `rgba(var(${variableName}), ${opacityValue ?? 0})`;
 	};
 }
 
-/** @type {import('tailwindcss').Config} */
-module.exports = {
+const config = {
 	content: ['./app/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		extend: {
@@ -81,9 +78,5 @@ module.exports = {
 			},
 		},
 	},
-	plugins: [
-		require('@tailwindcss/forms'),
-		require('@tailwindcss/line-clamp'),
-		require('@tailwindcss/typography'),
-	],
-};
+	plugins: [formsPlugin, lineClampPlugin, typographyPlugin],
+} satisfies Config;
