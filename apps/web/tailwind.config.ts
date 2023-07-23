@@ -86,8 +86,11 @@ const glfPlugin = plugin(({ addBase }) => {
 	});
 });
 
-function rgb(variableName: string) {
-	return `rgb(var(${variableName}))`;
+// have to type this as `any` because Config type is wrong
+function withOpacity(variableName: string): any {
+	return ({ opacityValue }: { opacityValue?: number }) => {
+		return `rgba(var(${variableName}), ${opacityValue ?? 0})`;
+	};
 }
 
 export default {
@@ -96,54 +99,54 @@ export default {
 		extend: {
 			colors: {
 				gray: {
-					50: rgb('--color-gray-50'),
-					100: rgb('--color-gray-100'),
-					200: rgb('--color-gray-200'),
-					300: rgb('--color-gray-300'),
-					400: rgb('--color-gray-400'),
-					500: rgb('--color-gray-500'),
-					600: rgb('--color-gray-600'),
-					700: rgb('--color-gray-700'),
-					800: rgb('--color-gray-800'),
-					900: rgb('--color-gray-900'),
+					50: withOpacity('--color-gray-50'),
+					100: withOpacity('--color-gray-100'),
+					200: withOpacity('--color-gray-200'),
+					300: withOpacity('--color-gray-300'),
+					400: withOpacity('--color-gray-400'),
+					500: withOpacity('--color-gray-500'),
+					600: withOpacity('--color-gray-600'),
+					700: withOpacity('--color-gray-700'),
+					800: withOpacity('--color-gray-800'),
+					900: withOpacity('--color-gray-900'),
 				},
 				pink: {
-					50: rgb('--color-pink-50'),
-					100: rgb('--color-pink-100'),
-					200: rgb('--color-pink-200'),
-					300: rgb('--color-pink-300'),
-					400: rgb('--color-pink-400'),
-					500: rgb('--color-pink-500'),
-					600: rgb('--color-pink-600'),
-					700: rgb('--color-pink-700'),
-					800: rgb('--color-pink-800'),
-					900: rgb('--color-pink-900'),
+					50: withOpacity('--color-pink-50'),
+					100: withOpacity('--color-pink-100'),
+					200: withOpacity('--color-pink-200'),
+					300: withOpacity('--color-pink-300'),
+					400: withOpacity('--color-pink-400'),
+					500: withOpacity('--color-pink-500'),
+					600: withOpacity('--color-pink-600'),
+					700: withOpacity('--color-pink-700'),
+					800: withOpacity('--color-pink-800'),
+					900: withOpacity('--color-pink-900'),
 				},
 				blue: {
-					50: rgb('--color-blue-50'),
-					100: rgb('--color-blue-100'),
-					200: rgb('--color-blue-200'),
-					300: rgb('--color-blue-300'),
-					400: rgb('--color-blue-400'),
-					500: rgb('--color-blue-500'),
-					600: rgb('--color-blue-600'),
-					700: rgb('--color-blue-700'),
-					800: rgb('--color-blue-800'),
-					900: rgb('--color-blue-900'),
+					50: withOpacity('--color-blue-50'),
+					100: withOpacity('--color-blue-100'),
+					200: withOpacity('--color-blue-200'),
+					300: withOpacity('--color-blue-300'),
+					400: withOpacity('--color-blue-400'),
+					500: withOpacity('--color-blue-500'),
+					600: withOpacity('--color-blue-600'),
+					700: withOpacity('--color-blue-700'),
+					800: withOpacity('--color-blue-800'),
+					900: withOpacity('--color-blue-900'),
 				},
 				brand: {
-					primary: rgb('--color-brand-primary'),
-					light: rgb('--color-brand-primary-light'),
-					50: rgb('--color-brand-50'),
-					100: rgb('--color-brand-100'),
-					200: rgb('--color-brand-200'),
-					300: rgb('--color-brand-300'),
-					400: rgb('--color-brand-400'),
-					500: rgb('--color-brand-500'),
-					600: rgb('--color-brand-600'),
-					700: rgb('--color-brand-700'),
-					800: rgb('--color-brand-800'),
-					900: rgb('--color-brand-900'),
+					primary: withOpacity('--color-brand-primary'),
+					light: withOpacity('--color-brand-primary-light'),
+					50: withOpacity('--color-brand-50'),
+					100: withOpacity('--color-brand-100'),
+					200: withOpacity('--color-brand-200'),
+					300: withOpacity('--color-brand-300'),
+					400: withOpacity('--color-brand-400'),
+					500: withOpacity('--color-brand-500'),
+					600: withOpacity('--color-brand-600'),
+					700: withOpacity('--color-brand-700'),
+					800: withOpacity('--color-brand-800'),
+					900: withOpacity('--color-brand-900'),
 				},
 				black: '#2c2c2c',
 				'true-black': '#000',
@@ -195,7 +198,7 @@ export default {
 			},
 			ringColor: {
 				brand: {
-					DEFAULT: rgb('--color-brand-focus-ring'),
+					DEFAULT: withOpacity('--color-brand-focus-ring'),
 				},
 			},
 			keyframes: {
