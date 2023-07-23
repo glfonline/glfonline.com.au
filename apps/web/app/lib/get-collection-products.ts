@@ -14,21 +14,23 @@ type ProductCollectionSortKeys =
 	| 'TITLE';
 
 type GetProductsFromCollectionByTag = {
-	handle: string;
 	after?: string;
-	itemsPerPage?: number;
-	theme: string;
-	sortBy?: StringWithAutocomplete<SortBy>;
 	filterOptions?: Record<string, string>;
+	handle: string;
+	itemsPerPage?: number;
+	sortBy?: StringWithAutocomplete<SortBy>;
+	theme: string;
+	productType?: string;
 };
 
 export async function getProductsFromCollectionByTag({
-	handle,
 	after,
-	itemsPerPage,
-	theme,
-	sortBy = 'collection-default',
 	filterOptions,
+	handle,
+	itemsPerPage,
+	sortBy = 'collection-default',
+	theme,
+	productType,
 }: GetProductsFromCollectionByTag) {
 	try {
 		const { collection } = await shopifyClient(COLLECTION_QUERY, {
@@ -39,6 +41,7 @@ export async function getProductsFromCollectionByTag({
 			filters: [
 				{ available: true },
 				{ tag: capitalise(theme) },
+				...(productType ? [{ productType }] : []),
 				...(filterOptions
 					? Object.entries(filterOptions).map(([key, value]) => ({
 							variantOption: { name: key, value: value },

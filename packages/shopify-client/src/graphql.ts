@@ -213,6 +213,7 @@ export const COLLECTION_OPTIONS_QUERY = gql`
 				edges {
 					node {
 						id
+						productType
 						options {
 							id
 							name
