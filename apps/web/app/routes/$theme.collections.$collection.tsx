@@ -20,12 +20,16 @@ import { z } from 'zod';
 import { Button } from '../components/design-system/button';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
+import { capitalise } from '../lib/capitalise';
 import { formatMoney } from '../lib/format-money';
 import {
 	getProductsFromCollectionByTag,
 	type SortBy,
 } from '../lib/get-collection-products';
-import { getProductFilterOptions } from '../lib/get-product-filter-options';
+import {
+	getProductFilterOptions,
+	PRODUCT_TYPE,
+} from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
@@ -36,31 +40,38 @@ const CollectionSchema = z.object({
 const SortSchema = z
 	.object({
 		after: z.string().optional(),
+		[PRODUCT_TYPE]: z.string().optional(),
 		sort: z.string().optional(),
 	})
 	.passthrough();
+
+const RecordSchema = z.record(z.string().min(1), z.string());
 
 const ITEMS_PER_PAGE = 32;
 
 export async function loader({ params, request }: DataFunctionArgs) {
 	const paramsResult = CollectionSchema.safeParse(params);
 	const url = new URL(request.url);
-	const { sort, after, ...filterOptions } = SortSchema.parse(
-		Object.fromEntries(url.searchParams.entries()),
-	);
+	const { after, sort, productType, ...remainingFilterOptions } =
+		SortSchema.parse(Object.fromEntries(url.searchParams.entries()));
+
+	const filterOptionsResult = RecordSchema.safeParse(remainingFilterOptions);
+	const filterOptions = filterOptionsResult.success
+		? filterOptionsResult.data
+		: {};
 
 	if (paramsResult.success) {
 		const { collection: collectionHandle, theme } = paramsResult.data;
 
 		const [collectionPromise, optionsPromise] = await Promise.allSettled([
 			getProductsFromCollectionByTag({
+				after,
+				filterOptions,
 				handle: collectionHandle,
 				itemsPerPage: ITEMS_PER_PAGE,
-				theme: paramsResult.data.theme,
 				sortBy: sort,
-				// @ts-expect-error
-				filterOptions,
-				after,
+				theme: paramsResult.data.theme,
+				productType,
 			}),
 			getProductFilterOptions({ collectionHandle, first: 250, theme }),
 		]);
@@ -169,6 +180,9 @@ function getSearchUrl({
 }) {
 	const params = new URLSearchParams(location.search);
 	params.delete('cursor');
+	if (key === PRODUCT_TYPE) {
+		params.delete('after');
+	}
 	params.set(key, value);
 	return location.pathname + '?' + params.toString();
 }
@@ -357,35 +371,41 @@ function DisplayOptions() {
 				<div className="py-4">
 					<h2 className="font-bold">Clear Filters</h2>
 					<ul className="mt-2">
-						{searchParamsArray.map(([key, value]) => (
-							<li key={key}>
-								<Link
-									className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700"
-									to={clearSearchUrl({ key, location })}
-								>
-									<svg
-										className="h-2 w-2"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 8 8"
+						{searchParamsArray.map(([key, value]) => {
+							if (key === 'after') return null;
+							return (
+								<li key={key}>
+									<Link
+										className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700"
+										to={clearSearchUrl({ key, location })}
 									>
-										<path
-											d="M1 1l6 6m0-6L1 7"
-											strokeLinecap="round"
-											strokeWidth="1.5"
-										/>
-									</svg>
-									<span className="before:mb-[-0.4392em] before:table after:mt-[-0.3425em] after:table">
-										{key}: {value}
-									</span>
-								</Link>
-							</li>
-						))}
+										<svg
+											className="h-2 w-2"
+											fill="none"
+											stroke="currentColor"
+											viewBox="0 0 8 8"
+										>
+											<path
+												d="M1 1l6 6m0-6L1 7"
+												strokeLinecap="round"
+												strokeWidth="1.5"
+											/>
+										</svg>
+										<span className="before:mb-[-0.4392em] before:table after:mt-[-0.3425em] after:table">
+											{key === PRODUCT_TYPE ? 'Type' : capitalise(key)}:{' '}
+											{key === 'sort'
+												? sortOptions.find((o) => o.value === value)?.label
+												: value}
+										</span>
+									</Link>
+								</li>
+							);
+						})}
 					</ul>
 				</div>
 			)}
 			{options.map((option) => {
-				if (option.name !== 'Size') {
+				if (!['Size', PRODUCT_TYPE].includes(option.name)) {
 					return null;
 				}
 				return (
@@ -394,7 +414,9 @@ function DisplayOptions() {
 							<>
 								<h2>
 									<Disclosure.Button className="flex w-full items-center justify-between gap-6 px-4 py-2">
-										<span className="-ml-4 font-bold">{option.name}</span>
+										<span className="-ml-4 font-bold">
+											{option.name === PRODUCT_TYPE ? 'Type' : option.name}
+										</span>
 										<span className="-mr-4 inline-flex items-center">
 											{open ? (
 												<MinusIcon aria-hidden="true" className="h-5 w-5" />

@@ -24,6 +24,7 @@ export async function getProductFilterOptions({
 	theme: string;
 }) {
 	const optionsMap = new Map<string, Set<string>>();
+	const productTypesSet = new Set<string>();
 	let hasNextPage = true;
 	let cursor = after;
 	while (hasNextPage) {
@@ -43,6 +44,7 @@ export async function getProductFilterOptions({
 				}
 				optionsMap.set(name, optionValues);
 			}
+			productTypesSet.add(node.productType);
 		}
 		hasNextPage = products.pageInfo.hasNextPage;
 		cursor = products.pageInfo.endCursor;
@@ -55,6 +57,10 @@ export async function getProductFilterOptions({
 		}
 		options.push({ name: key, values: optionValues });
 	}
+	options.push({
+		name: PRODUCT_TYPE,
+		values: Array.from(productTypesSet).sort(),
+	});
 	return options;
 }
 
@@ -71,8 +77,11 @@ export const schema = z.object({
 							values: z.array(z.string()),
 						}),
 					),
+					productType: z.string(),
 				}),
 			}),
 		),
 	}),
 });
+
+export const PRODUCT_TYPE = 'productType';

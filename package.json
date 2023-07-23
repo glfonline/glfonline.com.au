@@ -15,6 +15,7 @@
 		"deploy:cms": "stale-dep && pnpm --filter @glfonline/cms run deploy && pnpm run generate",
 		"dev": "stale-dep && turbo run dev",
 		"dev:cms": "stale-dep && turbo run dev --filter=@glfonline/cms...",
+		"dev:packages": "stale-dep && turbo run dev --filter=./packages/*",
 		"dev:web": "stale-dep && turbo run dev --filter=@glfonline/web...",
 		"fix": "pnpm run /^fix:/",
 		"fix:format": "pnpm prettier . --cache --write",
