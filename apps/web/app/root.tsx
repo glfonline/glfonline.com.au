@@ -102,7 +102,7 @@ function App() {
 				<Seo />
 				<Links />
 			</head>
-			<body className="relative flex min-h-full flex-col">
+			<body className="bg-background text-foreground relative flex min-h-full flex-col">
 				{process.env.NODE_ENV === 'production' && (
 					<Fragment>
 						<GoogleAnalytics />
@@ -138,7 +138,7 @@ export function CatchBoundary() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex h-full flex-col">
+			<body className="bg-background text-foreground relative flex h-full flex-col">
 				{isNotFound ? (
 					<NotFound />
 				) : (
@@ -160,7 +160,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex h-full flex-col">
+			<body className="bg-background text-foreground relative flex h-full flex-col">
 				<GenericError error={error} />
 				<Scripts />
 			</body>
