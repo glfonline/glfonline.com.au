@@ -1,4 +1,5 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import { cssBundleHref } from '@remix-run/css-bundle';
 import {
 	json,
 	type LinksFunction,
@@ -29,10 +30,11 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
+import fontStylestylesheetUrl from './font.css';
 import { getSession } from './lib/cart';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import styles from './styles/tailwind.css';
+import tailwindStylesheetUrl from './tailwind.css';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
 	title: data.shop.name,
@@ -48,7 +50,9 @@ export const handle = {
 
 export const links: LinksFunction = () => {
 	return [
-		{ rel: 'stylesheet', href: styles },
+		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
+		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
+		...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },

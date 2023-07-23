@@ -4,7 +4,6 @@ __generated__
 .output
 .vercel
 api
-app/styles/tailwind.css
 build/
 node_modules
 public/build
