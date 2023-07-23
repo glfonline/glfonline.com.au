@@ -52,6 +52,8 @@
 		"remeda": "^1.24.0",
 		"remix-seo": "^0.1.0",
 		"remix-utils": "^6.6.0",
+		"tailwind-merge": "^1.14.0",
+		"tailwindcss-animate": "^1.0.6",
 		"zod": "^3.21.4"
 	},
 	"devDependencies": {
