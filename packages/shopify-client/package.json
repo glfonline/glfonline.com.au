@@ -31,7 +31,7 @@
 		"@babel/core": "^7.22.9",
 		"@glfonline/eslint-config": "0.0.0",
 		"@glfonline/tsconfig": "0.0.0",
-		"@graphql-codegen/cli": "^4.0.1",
+		"@graphql-codegen/cli": "^5.0.0",
 		"@graphql-codegen/schema-ast": "^4.0.0",
 		"@types/node": "^18.17.0",
 		"cosmiconfig-toml-loader": "^1.0.0",
