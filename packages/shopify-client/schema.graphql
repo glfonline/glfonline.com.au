@@ -56,6 +56,62 @@ type ApiVersion {
 	supported: Boolean!
 }
 
+"The input fields for submitting Apple Pay payment method information for checkout.\n"
+input ApplePayWalletContentInput {
+	"""
+	The customer's billing address.
+	"""
+	billingAddress: MailingAddressInput!
+
+	"""
+	The data for the Apple Pay wallet.
+	"""
+	data: String!
+
+	"""
+	The header data for the Apple Pay wallet.
+	"""
+	header: ApplePayWalletHeaderInput!
+
+	"""
+	The last digits of the card used to create the payment.
+	"""
+	lastDigits: String
+
+	"""
+	The signature for the Apple Pay wallet.
+	"""
+	signature: String!
+
+	"""
+	The version for the Apple Pay wallet.
+	"""
+	version: String!
+}
+
+"The input fields for submitting wallet payment method information for checkout.\n"
+input ApplePayWalletHeaderInput {
+	"""
+	The application data for the Apple Pay wallet.
+	"""
+	applicationData: String
+
+	"""
+	The ephemeral public key for the Apple Pay wallet.
+	"""
+	ephemeralPublicKey: String!
+
+	"""
+	The public key hash for the Apple Pay wallet.
+	"""
+	publicKeyHash: String!
+
+	"""
+	The transaction ID for the Apple Pay wallet.
+	"""
+	transactionId: String!
+}
+
 """
 Details about the gift card used on the checkout.
 """
@@ -99,7 +155,7 @@ type AppliedGiftCard implements Node {
 """
 An article in an online store blog.
 """
-type Article implements HasMetafields & Node & OnlineStorePublishable {
+type Article implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	The article's author.
 	"""
@@ -235,6 +291,11 @@ type Article implements HasMetafields & Node & OnlineStorePublishable {
 	The article’s name.
 	"""
 	title: String!
+
+	"""
+	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	"""
+	trackingParameters: String
 }
 
 """
@@ -405,6 +466,93 @@ type AvailableShippingRates {
 	The fetched shipping rates. `null` until the `ready` field is `true`.
 	"""
 	shippingRates: [ShippingRate!]
+}
+
+"""
+Represents a cart line common fields.
+"""
+interface BaseCartLine implements Node {
+	"""
+	An attribute associated with the cart line.
+	"""
+	attribute(
+		"""
+		The key of the attribute.
+		"""
+		key: String!
+	): Attribute
+
+	"""
+	The attributes associated with the cart line. Attributes are represented as key-value pairs.
+	"""
+	attributes: [Attribute!]!
+
+	"""
+	The cost of the merchandise that the buyer will pay for at checkout. The costs are subject to change and changes will be reflected at checkout.
+	"""
+	cost: CartLineCost!
+
+	"""
+	The discounts that have been applied to the cart line.
+	"""
+	discountAllocations: [CartDiscountAllocation!]!
+
+	"""
+	The estimated cost of the merchandise that the buyer will pay for at checkout. The estimated costs are subject to change and changes will be reflected at checkout.
+	"""
+	estimatedCost: CartLineEstimatedCost!
+		@deprecated(reason: "Use `cost` instead.")
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The merchandise that the buyer intends to purchase.
+	"""
+	merchandise: Merchandise!
+
+	"""
+	The quantity of the merchandise that the customer intends to purchase.
+	"""
+	quantity: Int!
+
+	"""
+	The selling plan associated with the cart line and the effect that each selling plan has on variants when they're purchased.
+	"""
+	sellingPlanAllocation: SellingPlanAllocation
+}
+
+"An auto-generated type for paginating through multiple BaseCartLines.\n"
+type BaseCartLineConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [BaseCartLineEdge!]!
+
+	"""
+	A list of the nodes contained in BaseCartLineEdge.
+	"""
+	nodes: [BaseCartLine!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one BaseCartLine and a cursor during pagination.\n"
+type BaseCartLineEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of BaseCartLineEdge.
+	"""
+	node: BaseCartLine!
 }
 
 """
@@ -660,7 +808,7 @@ enum CardBrand {
 }
 
 "A cart represents the merchandise that a buyer intends to purchase,\nand the estimated cost associated with the cart. Learn how to\n[interact with a cart](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nduring a customer's session.\n"
-type Cart implements Node {
+type Cart implements HasMetafields & Node {
 	"""
 	An attribute associated with the cart.
 	"""
@@ -768,7 +916,30 @@ type Cart implements Node {
 		Reverse the order of the underlying list.
 		"""
 		reverse: Boolean = false
-	): CartLineConnection!
+	): BaseCartLineConnection!
+
+	"""
+	Returns a metafield found by namespace and key.
+	"""
+	metafield(
+		"""
+		The identifier for the metafield.
+		"""
+		key: String!
+
+		"""
+		A container for a set of metafields.
+		"""
+		namespace: String!
+	): Metafield
+
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
+	metafields(
+		"""
+		The list of metafields to retrieve by namespace and key.
+		"""
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	A note that is associated with the cart. For example, the note can be a personalized message to the buyer.
@@ -842,6 +1013,9 @@ type CartBuyerIdentity {
 	The phone number of the buyer that is interacting with the cart.
 	"""
 	phone: String
+
+	"A set of wallet preferences tied to the buyer that is interacting with the cart.\nPreferences can be used to populate relevant payment fields in the checkout flow.\n"
+	walletPreferences: [String!]!
 }
 
 "Specifies the input fields to update the buyer information associated with a cart.\nBuyer identity is used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nand should match the customer's shipping address.\n"
@@ -868,6 +1042,9 @@ input CartBuyerIdentityInput {
 	The phone number of the buyer that is interacting with the cart.
 	"""
 	phone: String
+
+	"A set of wallet preferences tied to the buyer that is interacting with the cart.\nPreferences can be used to populate relevant payment fields in the checkout flow.\n  Accepted value: `[\"shop_pay\"]`.\n"
+	walletPreferences: [String!]
 }
 
 """
@@ -885,6 +1062,12 @@ type CartBuyerIdentityUpdatePayload {
 	userErrors: [CartUserError!]!
 }
 
+"Represents how credit card details are provided for a direct payment.\n"
+enum CartCardSource {
+	"The credit card was provided by a third party and vaulted on their system.\nUsing this value requires a separate permission from Shopify.\n"
+	SAVED_CREDIT_CARD
+}
+
 """
 The discount that has been applied to the cart line using a discount code.
 """
@@ -898,6 +1081,90 @@ type CartCodeDiscountAllocation implements CartDiscountAllocation {
 	The discounted amount that has been applied to the cart line.
 	"""
 	discountedAmount: MoneyV2!
+}
+
+"""
+The completion action to checkout a cart.
+"""
+union CartCompletionAction = CompletePaymentChallenge
+
+"""
+The required completion action to checkout a cart.
+"""
+type CartCompletionActionRequired {
+	"""
+	The action required to complete the cart completion attempt.
+	"""
+	action: CartCompletionAction
+
+	"""
+	The ID of the cart completion attempt.
+	"""
+	id: String!
+}
+
+"""
+The result of a cart completion attempt.
+"""
+union CartCompletionAttemptResult =
+	  CartCompletionActionRequired
+	| CartCompletionFailed
+	| CartCompletionProcessing
+	| CartCompletionSuccess
+
+"""
+A failed completion to checkout a cart.
+"""
+type CartCompletionFailed {
+	"""
+	The errors that caused the checkout to fail.
+	"""
+	errors: [CompletionError!]!
+
+	"""
+	The ID of the cart completion attempt.
+	"""
+	id: String!
+}
+
+"""
+A cart checkout completion that's still processing.
+"""
+type CartCompletionProcessing {
+	"""
+	The ID of the cart completion attempt.
+	"""
+	id: String!
+
+	"""
+	The number of milliseconds to wait before polling again.
+	"""
+	pollDelay: Int!
+}
+
+"""
+A successful completion to checkout a cart and a created order.
+"""
+type CartCompletionSuccess {
+	"""
+	The date and time when the job completed.
+	"""
+	completedAt: DateTime
+
+	"""
+	The ID of the cart completion attempt.
+	"""
+	id: String!
+
+	"""
+	The ID of the order that's created in Shopify.
+	"""
+	orderId: ID!
+
+	"""
+	The URL of the order confirmation in Shopify.
+	"""
+	orderUrl: URL!
 }
 
 "The costs that the buyer will pay at checkout.\nThe cart cost uses [`CartBuyerIdentity`](https://shopify.dev/api/storefront/reference/cart/cartbuyeridentity) to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\n"
@@ -1010,7 +1277,7 @@ type CartDeliveryGroup {
 		Reverse the order of the underlying list.
 		"""
 		reverse: Boolean = false
-	): CartLineConnection!
+	): BaseCartLineConnection!
 
 	"""
 	The destination address for the delivery group.
@@ -1099,6 +1366,24 @@ type CartDeliveryOption {
 	title: String
 }
 
+"The input fields for submitting direct payment method information for checkout.\n"
+input CartDirectPaymentMethodInput {
+	"""
+	The customer's billing address.
+	"""
+	billingAddress: MailingAddressInput!
+
+	"""
+	The source of the credit card payment.
+	"""
+	cardSource: CartCardSource
+
+	"""
+	The session ID for the direct payment method used to create the payment.
+	"""
+	sessionId: String!
+}
+
 """
 The discounts that have been applied to the cart line.
 """
@@ -1149,9 +1434,34 @@ enum CartErrorCode {
 	INVALID
 
 	"""
+	Delivery group was not found in cart.
+	"""
+	INVALID_DELIVERY_GROUP
+
+	"""
+	Delivery option was not valid.
+	"""
+	INVALID_DELIVERY_OPTION
+
+	"""
 	Merchandise line was not found in cart.
 	"""
 	INVALID_MERCHANDISE_LINE
+
+	"""
+	The metafields were not valid.
+	"""
+	INVALID_METAFIELDS
+
+	"""
+	The payment wasn't valid.
+	"""
+	INVALID_PAYMENT
+
+	"""
+	Cannot update payment on an empty cart
+	"""
+	INVALID_PAYMENT_EMPTY_CART
 
 	"""
 	The input value should be less than the maximum value allowed.
@@ -1167,6 +1477,11 @@ enum CartErrorCode {
 	Missing note.
 	"""
 	MISSING_NOTE
+
+	"""
+	The payment method is not supported.
+	"""
+	PAYMENT_METHOD_NOT_SUPPORTED
 }
 
 "The estimated costs that the buyer will pay at checkout.\nThe estimated cost uses\n[`CartBuyerIdentity`](https://shopify.dev/api/storefront/reference/cart/cartbuyeridentity)\nto determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\n"
@@ -1197,6 +1512,14 @@ type CartEstimatedCost {
 	totalTaxAmount: MoneyV2
 }
 
+"The input fields for submitting a billing address without a selected payment method.\n"
+input CartFreePaymentMethodInput {
+	"""
+	The customer's billing address.
+	"""
+	billingAddress: MailingAddressInput!
+}
+
 """
 The input fields to create a cart.
 """
@@ -1218,15 +1541,36 @@ input CartInput {
 	lines: [CartLineInput!]
 
 	"""
+	The metafields to associate with this cart.
+	"""
+	metafields: [CartInputMetafieldInput!]
+
+	"""
 	A note that is associated with the cart. For example, the note can be a personalized message to the buyer.
 	"""
 	note: String
 }
 
 """
+The input fields for a cart metafield value to set.
+"""
+input CartInputMetafieldInput {
+	"""
+	The key name of the metafield.
+	"""
+	key: String!
+
+	"The type of data that the cart metafield stores.\nThe type of data must be a [supported type](https://shopify.dev/apps/metafields/types).\n"
+	type: String!
+
+	"The data to store in the cart metafield. The data is always stored as a string, regardless of the metafield's type.\n"
+	value: String!
+}
+
+"""
 Represents information about the merchandise in the cart.
 """
-type CartLine implements Node {
+type CartLine implements BaseCartLine & Node {
 	"""
 	An attribute associated with the cart line.
 	"""
@@ -1279,24 +1623,6 @@ type CartLine implements Node {
 	sellingPlanAllocation: SellingPlanAllocation
 }
 
-"An auto-generated type for paginating through multiple CartLines.\n"
-type CartLineConnection {
-	"""
-	A list of edges.
-	"""
-	edges: [CartLineEdge!]!
-
-	"""
-	A list of the nodes contained in CartLineEdge.
-	"""
-	nodes: [CartLine!]!
-
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-}
-
 """
 The cost of the merchandise line that the buyer will pay at checkout.
 """
@@ -1320,19 +1646,6 @@ type CartLineCost {
 	The total cost of the merchandise line.
 	"""
 	totalAmount: MoneyV2!
-}
-
-"An auto-generated type which holds one CartLine and a cursor during pagination.\n"
-type CartLineEdge {
-	"""
-	A cursor for use in pagination.
-	"""
-	cursor: String!
-
-	"""
-	The item at the end of CartLineEdge.
-	"""
-	node: CartLine!
 }
 
 """
@@ -1461,9 +1774,108 @@ type CartLinesUpdatePayload {
 }
 
 """
+The input fields to delete a cart metafield.
+"""
+input CartMetafieldDeleteInput {
+	"The key name of the cart metafield. Can either be a composite key (`namespace.key`) or a simple key\n that relies on the default app-reserved namespace.\n"
+	key: String!
+
+	"""
+	The ID of the cart resource.
+	"""
+	ownerId: ID!
+}
+
+"""
+Return type for `cartMetafieldDelete` mutation.
+"""
+type CartMetafieldDeletePayload {
+	"""
+	The ID of the deleted cart metafield.
+	"""
+	deletedId: ID
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [MetafieldDeleteUserError!]!
+}
+
+"""
+The input fields for a cart metafield value to set.
+"""
+input CartMetafieldsSetInput {
+	"""
+	The key name of the cart metafield.
+	"""
+	key: String!
+
+	"""
+	The ID of the cart resource.
+	"""
+	ownerId: ID!
+
+	"The type of data that the cart metafield stores.\nThe type of data must be a [supported type](https://shopify.dev/apps/metafields/types).\n"
+	type: String!
+
+	"The data to store in the cart metafield. The data is always stored as a string, regardless of the metafield's type.\n"
+	value: String!
+}
+
+"""
+Return type for `cartMetafieldsSet` mutation.
+"""
+type CartMetafieldsSetPayload {
+	"""
+	The list of cart metafields that were set.
+	"""
+	metafields: [Metafield!]
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [MetafieldsSetUserError!]!
+}
+
+"""
 Return type for `cartNoteUpdate` mutation.
 """
 type CartNoteUpdatePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+}
+
+"The input fields for updating the payment method that will be used to checkout.\n"
+input CartPaymentInput {
+	"""
+	The amount that the customer will be charged at checkout.
+	"""
+	amount: MoneyInput!
+
+	"The input fields to use when checking out a cart with a direct payment method (like a credit card).\n"
+	directPaymentMethod: CartDirectPaymentMethodInput
+
+	"The input fields to use to checkout a cart without providing a payment method.\nUse this payment method input if the total cost of the cart is 0.\n"
+	freePaymentMethod: CartFreePaymentMethodInput
+
+	"An ID of the order placed on the originating platform.\nNote that this value doesn't correspond to the Shopify Order ID.\n"
+	sourceIdentifier: String
+
+	"The input fields to use when checking out a cart with a wallet payment method (like Shop Pay or Apple Pay).\n"
+	walletPaymentMethod: CartWalletPaymentMethodInput
+}
+
+"""
+Return type for `cartPaymentUpdate` mutation.
+"""
+type CartPaymentUpdatePayload {
 	"""
 	The updated cart.
 	"""
@@ -1504,6 +1916,30 @@ type CartSelectedDeliveryOptionsUpdatePayload {
 }
 
 """
+Return type for `cartSubmitForCompletion` mutation.
+"""
+type CartSubmitForCompletionPayload {
+	"""
+	The result of cart submission for completion.
+	"""
+	result: CartSubmitForCompletionResult
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+}
+
+"""
+The result of cart submit completion.
+"""
+union CartSubmitForCompletionResult =
+	  SubmitAlreadyAccepted
+	| SubmitFailed
+	| SubmitSuccess
+	| SubmitThrottled
+
+"""
 Represents an error that happens during execution of a cart mutation.
 """
 type CartUserError implements DisplayableError {
@@ -1521,6 +1957,19 @@ type CartUserError implements DisplayableError {
 	The error message.
 	"""
 	message: String!
+}
+
+"The input fields for submitting wallet payment method information for checkout.\n"
+input CartWalletPaymentMethodInput {
+	"""
+	The payment method information for the Apple Pay wallet.
+	"""
+	applePayWalletContent: ApplePayWalletContentInput
+
+	"""
+	The payment method information for the Shop Pay wallet.
+	"""
+	shopPayWalletContent: ShopPayWalletContentInput
 }
 
 """
@@ -2246,6 +2695,11 @@ enum CheckoutErrorCode {
 	PRESENT
 
 	"""
+	Product is not published for this customer.
+	"""
+	PRODUCT_NOT_AVAILABLE
+
+	"""
 	Shipping rate expired.
 	"""
 	SHIPPING_RATE_EXPIRED
@@ -2572,7 +3026,7 @@ type CheckoutUserError implements DisplayableError {
 """
 A collection represents a grouping of products that a shop owner can create to organize them or make their shops easier to browse.
 """
-type Collection implements HasMetafields & Node & OnlineStorePublishable {
+type Collection implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	Stripped description of the collection, single line with HTML tags removed.
 	"""
@@ -2680,6 +3134,11 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable {
 	title: String!
 
 	"""
+	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	"""
+	trackingParameters: String
+
+	"""
 	The date and time when the collection was last modified.
 	"""
 	updatedAt: DateTime!
@@ -2701,6 +3160,11 @@ type CollectionConnection {
 	Information to aid in pagination.
 	"""
 	pageInfo: PageInfo!
+
+	"""
+	The total count of Collections.
+	"""
+	totalCount: UnsignedInt64!
 }
 
 "An auto-generated type which holds one Collection and a cursor during pagination.\n"
@@ -2819,6 +3283,111 @@ type CommentEdge {
 }
 
 """
+The action for the 3DS payment redirect.
+"""
+type CompletePaymentChallenge {
+	"""
+	The URL for the 3DS payment redirect.
+	"""
+	redirectUrl: URL
+}
+
+"""
+An error that occurred during a cart completion attempt.
+"""
+type CompletionError {
+	"""
+	The error code.
+	"""
+	code: CompletionErrorCode!
+
+	"""
+	The error message.
+	"""
+	message: String
+}
+
+"""
+The code of the error that occurred during a cart completion attempt.
+"""
+enum CompletionErrorCode {
+	ERROR
+	INVENTORY_RESERVATION_ERROR
+	PAYMENT_AMOUNT_TOO_SMALL
+	PAYMENT_CALL_ISSUER
+	PAYMENT_CARD_DECLINED
+	PAYMENT_ERROR
+	PAYMENT_GATEWAY_NOT_ENABLED_ERROR
+	PAYMENT_INSUFFICIENT_FUNDS
+	PAYMENT_INVALID_BILLING_ADDRESS
+	PAYMENT_INVALID_CREDIT_CARD
+	PAYMENT_INVALID_CURRENCY
+	PAYMENT_INVALID_PAYMENT_METHOD
+	PAYMENT_TRANSIENT_ERROR
+}
+
+"""
+Represents information about the grouped merchandise in the cart.
+"""
+type ComponentizableCartLine implements BaseCartLine & Node {
+	"""
+	An attribute associated with the cart line.
+	"""
+	attribute(
+		"""
+		The key of the attribute.
+		"""
+		key: String!
+	): Attribute
+
+	"""
+	The attributes associated with the cart line. Attributes are represented as key-value pairs.
+	"""
+	attributes: [Attribute!]!
+
+	"""
+	The cost of the merchandise that the buyer will pay for at checkout. The costs are subject to change and changes will be reflected at checkout.
+	"""
+	cost: CartLineCost!
+
+	"""
+	The discounts that have been applied to the cart line.
+	"""
+	discountAllocations: [CartDiscountAllocation!]!
+
+	"""
+	The estimated cost of the merchandise that the buyer will pay for at checkout. The estimated costs are subject to change and changes will be reflected at checkout.
+	"""
+	estimatedCost: CartLineEstimatedCost!
+		@deprecated(reason: "Use `cost` instead.")
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The components of the line item.
+	"""
+	lineComponents: [CartLine!]!
+
+	"""
+	The merchandise that the buyer intends to purchase.
+	"""
+	merchandise: Merchandise!
+
+	"""
+	The quantity of the merchandise that the customer intends to purchase.
+	"""
+	quantity: Int!
+
+	"""
+	The selling plan associated with the cart line and the effect that each selling plan has on variants when they're purchased.
+	"""
+	sellingPlanAllocation: SellingPlanAllocation
+}
+
+"""
 A country.
 """
 type Country {
@@ -2836,6 +3405,11 @@ type Country {
 	The ISO code of the country.
 	"""
 	isoCode: CountryCode!
+
+	"""
+	The market that includes this country.
+	"""
+	market: Market
 
 	"""
 	The name of the country.
@@ -5728,6 +6302,9 @@ union DeliveryAddress = MailingAddress
 
 "The input fields for delivery address preferences.\n"
 input DeliveryAddressInput {
+	"The ID of a customer address that is associated with the buyer that is interacting with the cart.\n"
+	customerAddressId: ID
+
 	"""
 	A delivery address preference of a buyer that is interacting with the cart.
 	"""
@@ -6018,6 +6595,11 @@ type ExternalVideo implements Media & Node {
 	The origin URL of the video on the respective host.
 	"""
 	originUrl: URL!
+
+	"""
+	The presentation for a media.
+	"""
+	presentation: MediaPresentation
 
 	"""
 	The preview image for the media.
@@ -7170,12 +7752,17 @@ type Localization {
 	The language of the active localized experience. Use the `@inContext` directive to change this value.
 	"""
 	language: Language!
+
+	"""
+	The market including the country of the active localized experience. Use the `@inContext` directive to change this value.
+	"""
+	market: Market!
 }
 
 """
 Represents a location where product inventory is held.
 """
-type Location implements Node {
+type Location implements HasMetafields & Node {
 	"""
 	The address of the location.
 	"""
@@ -7185,6 +7772,29 @@ type Location implements Node {
 	A globally-unique ID.
 	"""
 	id: ID!
+
+	"""
+	Returns a metafield found by namespace and key.
+	"""
+	metafield(
+		"""
+		The identifier for the metafield.
+		"""
+		key: String!
+
+		"""
+		A container for a set of metafields.
+		"""
+		namespace: String!
+	): Metafield
+
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
+	metafields(
+		"""
+		The list of metafields to retrieve by namespace and key.
+		"""
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The name of the location.
@@ -7511,6 +8121,42 @@ type ManualDiscountApplication implements DiscountApplication {
 }
 
 """
+A group of one or more regions of the world that a merchant is targeting for sales. To learn more about markets, refer to [the Shopify Markets conceptual overview](/docs/apps/markets).
+"""
+type Market implements HasMetafields & Node {
+	"A human-readable unique string for the market automatically generated from its title.\n"
+	handle: String!
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	Returns a metafield found by namespace and key.
+	"""
+	metafield(
+		"""
+		The identifier for the metafield.
+		"""
+		key: String!
+
+		"""
+		A container for a set of metafields.
+		"""
+		namespace: String!
+	): Metafield
+
+	"The metafields associated with the resource matching the supplied list of namespaces and keys.\n"
+	metafields(
+		"""
+		The list of metafields to retrieve by namespace and key.
+		"""
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
+}
+
+"""
 Represents a media interface.
 """
 interface Media {
@@ -7520,9 +8166,19 @@ interface Media {
 	alt: String
 
 	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
 	The media content type.
 	"""
 	mediaContentType: MediaContentType!
+
+	"""
+	The presentation for a media.
+	"""
+	presentation: MediaPresentation
 
 	"""
 	The preview image for the media.
@@ -7626,9 +8282,49 @@ type MediaImage implements Media & Node {
 	mediaContentType: MediaContentType!
 
 	"""
+	The presentation for a media.
+	"""
+	presentation: MediaPresentation
+
+	"""
 	The preview image for the media.
 	"""
 	previewImage: Image
+}
+
+"""
+A media presentation.
+"""
+type MediaPresentation implements Node {
+	"""
+	A JSON object representing a presentation view.
+	"""
+	asJson(
+		"""
+		The format to transform the settings.
+		"""
+		format: MediaPresentationFormat!
+	): JSON
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+}
+
+"""
+The possible formats for a media presentation.
+"""
+enum MediaPresentationFormat {
+	"""
+	A media image presentation.
+	"""
+	IMAGE
+
+	"""
+	A model viewer presentation.
+	"""
+	MODEL_VIEWER
 }
 
 "A [navigation menu](https://help.shopify.com/manual/online-store/menus-and-links) representing a hierarchy\nof hyperlinks (items).\n"
@@ -7672,6 +8368,11 @@ type MenuItem implements Node {
 	items: [MenuItem!]!
 
 	"""
+	The linked resource.
+	"""
+	resource: MenuItemResource
+
+	"""
 	The ID of the linked resource.
 	"""
 	resourceId: ID
@@ -7696,6 +8397,15 @@ type MenuItem implements Node {
 	"""
 	url: URL
 }
+
+"The list of possible resources a `MenuItem` can reference.\n"
+union MenuItemResource =
+	  Article
+	| Blog
+	| Collection
+	| Page
+	| Product
+	| ShopPolicy
 
 """
 A menu item type.
@@ -7838,6 +8548,41 @@ type Metafield implements Node {
 	value: String!
 }
 
+"""
+Possible error codes that can be returned by `MetafieldDeleteUserError`.
+"""
+enum MetafieldDeleteErrorCode {
+	"""
+	The owner ID is invalid.
+	"""
+	INVALID_OWNER
+
+	"""
+	Metafield not found.
+	"""
+	METAFIELD_DOES_NOT_EXIST
+}
+
+"""
+An error that occurs during the execution of cart metafield deletion.
+"""
+type MetafieldDeleteUserError implements DisplayableError {
+	"""
+	The error code.
+	"""
+	code: MetafieldDeleteErrorCode
+
+	"""
+	The path to the input field that caused the error.
+	"""
+	field: [String!]
+
+	"""
+	The error message.
+	"""
+	message: String!
+}
+
 "A filter used to view a subset of products in a collection matching a specific metafield value.\n\nOnly the following metafield types are currently supported:\n- `number_integer`\n- `number_decimal`\n- `single_line_text_field`\n- `boolean` as of 2022-04.\n"
 input MetafieldFilter {
 	"""
@@ -7862,8 +8607,11 @@ A resource that the metafield belongs to.
 union MetafieldParentResource =
 	  Article
 	| Blog
+	| Cart
 	| Collection
 	| Customer
+	| Location
+	| Market
 	| Order
 	| Page
 	| Product
@@ -7910,6 +8658,81 @@ type MetafieldReferenceEdge {
 	The item at the end of MetafieldReferenceEdge.
 	"""
 	node: MetafieldReference!
+}
+
+"""
+An error that occurs during the execution of `MetafieldsSet`.
+"""
+type MetafieldsSetUserError implements DisplayableError {
+	"""
+	The error code.
+	"""
+	code: MetafieldsSetUserErrorCode
+
+	"""
+	The index of the array element that's causing the error.
+	"""
+	elementIndex: Int
+
+	"""
+	The path to the input field that caused the error.
+	"""
+	field: [String!]
+
+	"""
+	The error message.
+	"""
+	message: String!
+}
+
+"""
+Possible error codes that can be returned by `MetafieldsSetUserError`.
+"""
+enum MetafieldsSetUserErrorCode {
+	"""
+	The input value is blank.
+	"""
+	BLANK
+
+	"""
+	The input value isn't included in the list.
+	"""
+	INCLUSION
+
+	"""
+	The owner ID is invalid.
+	"""
+	INVALID_OWNER
+
+	"""
+	The type is invalid.
+	"""
+	INVALID_TYPE
+
+	"""
+	The value is invalid for metafield type or for definition options.
+	"""
+	INVALID_VALUE
+
+	"""
+	The input value should be less than or equal to the maximum value allowed.
+	"""
+	LESS_THAN_OR_EQUAL_TO
+
+	"""
+	The input value needs to be blank.
+	"""
+	PRESENT
+
+	"""
+	The input value is too long.
+	"""
+	TOO_LONG
+
+	"""
+	The input value is too short.
+	"""
+	TOO_SHORT
 }
 
 """
@@ -8062,6 +8885,11 @@ type Model3d implements Media & Node {
 	The media content type.
 	"""
 	mediaContentType: MediaContentType!
+
+	"""
+	The presentation for a media.
+	"""
+	presentation: MediaPresentation
 
 	"""
 	The preview image for the media.
@@ -8226,6 +9054,24 @@ type Mutation {
 	): CartLinesUpdatePayload
 
 	"""
+	Deletes a cart metafield.
+	"""
+	cartMetafieldDelete(
+		"""
+		The input fields used to delete a cart metafield.
+		"""
+		input: CartMetafieldDeleteInput!
+	): CartMetafieldDeletePayload
+
+	"Sets cart metafield values. Cart metafield values will be set regardless if they were previously created or not.\n\nAllows a maximum of 25 cart metafields to be set at a time.\n"
+	cartMetafieldsSet(
+		"""
+		The list of Cart metafield values to set. Maximum of 25.
+		"""
+		metafields: [CartMetafieldsSetInput!]!
+	): CartMetafieldsSetPayload
+
+	"""
 	Updates the note on the cart.
 	"""
 	cartNoteUpdate(
@@ -8241,6 +9087,21 @@ type Mutation {
 	): CartNoteUpdatePayload
 
 	"""
+	Update the customer's payment method that will be used to checkout.
+	"""
+	cartPaymentUpdate(
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+
+		"""
+		The payment information for the cart that will be used at checkout.
+		"""
+		payment: CartPaymentInput!
+	): CartPaymentUpdatePayload
+
+	"""
 	Update the selected delivery options for a delivery group.
 	"""
 	cartSelectedDeliveryOptionsUpdate(
@@ -8254,6 +9115,19 @@ type Mutation {
 		"""
 		selectedDeliveryOptions: [CartSelectedDeliveryOptionInput!]!
 	): CartSelectedDeliveryOptionsUpdatePayload
+
+	"""
+	Submit the cart for checkout completion.
+	"""
+	cartSubmitForCompletion(
+		"The attemptToken is used to guarantee an idempotent result.\nIf more than one call uses the same attemptToken within a short period of time, only one will be accepted.\n"
+		attemptToken: String!
+
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartSubmitForCompletionPayload
 
 	"""
 	Updates the attributes of a checkout if `allowPartialAddresses` is `true`.
@@ -8721,6 +9595,11 @@ interface OnlineStorePublishable {
 An order is a customer’s completed request to purchase one or more products from a shop. An order is created when a customer completes the checkout process, during which time they provides an email address, billing address and payment information.
 """
 type Order implements HasMetafields & Node {
+	"""
+	The address associated with the payment method.
+	"""
+	billingAddress: MailingAddress
+
 	"""
 	The reason for the order's cancellation. Returns `null` if the order wasn't canceled.
 	"""
@@ -9238,7 +10117,7 @@ enum OrderSortKeys {
 """
 Shopify merchants can create pages to hold static HTML content. Each Page object represents a custom page on the online store.
 """
-type Page implements HasMetafields & Node & OnlineStorePublishable {
+type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	The description of the page, complete with HTML formatting.
 	"""
@@ -9301,6 +10180,11 @@ type Page implements HasMetafields & Node & OnlineStorePublishable {
 	The title of the page.
 	"""
 	title: String!
+
+	"""
+	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	"""
+	trackingParameters: String
 
 	"""
 	The timestamp of the latest page update.
@@ -9518,6 +10402,79 @@ enum PaymentTokenType {
 	VAULT
 }
 
+"""
+Decides the distribution of results.
+"""
+enum PredictiveSearchLimitScope {
+	"""
+	Return results up to limit across all types.
+	"""
+	ALL
+
+	"""
+	Return results up to limit per type.
+	"""
+	EACH
+}
+
+"A predictive search result represents a list of products, collections, pages, articles, and query suggestions\nthat matches the predictive search query.\n"
+type PredictiveSearchResult {
+	"""
+	The articles that match the search query.
+	"""
+	articles: [Article!]!
+
+	"""
+	The articles that match the search query.
+	"""
+	collections: [Collection!]!
+
+	"""
+	The pages that match the search query.
+	"""
+	pages: [Page!]!
+
+	"""
+	The products that match the search query.
+	"""
+	products: [Product!]!
+
+	"""
+	The query suggestions that are relevant to the search query.
+	"""
+	queries: [SearchQuerySuggestion!]!
+}
+
+"""
+The types of search items to perform predictive search on.
+"""
+enum PredictiveSearchType {
+	"""
+	Returns matching articles.
+	"""
+	ARTICLE
+
+	"""
+	Returns matching collections.
+	"""
+	COLLECTION
+
+	"""
+	Returns matching pages.
+	"""
+	PAGE
+
+	"""
+	Returns matching products.
+	"""
+	PRODUCT
+
+	"""
+	Returns matching query strings.
+	"""
+	QUERY
+}
+
 "The input fields for a filter used to view a subset of products in a collection matching a specific price range.\n"
 input PriceRangeFilter {
 	"""
@@ -9550,7 +10507,7 @@ union PricingValue = MoneyV2 | PricingPercentageValue
 A product represents an individual item for sale in a Shopify store. Products are often physical, but they don't have to be.
 For example, a digital download (such as a movie, music or ebook file) also qualifies as a product, as do services (such as equipment rental, work for hire, customization of another product or an extended warranty).
 """
-type Product implements HasMetafields & Node & OnlineStorePublishable {
+type Product implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	Indicates if at least one product variant is available for sale.
 	"""
@@ -9803,6 +10760,11 @@ type Product implements HasMetafields & Node & OnlineStorePublishable {
 	"""
 	totalInventory: Int
 
+	"""
+	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	"""
+	trackingParameters: String
+
 	"The date and time when the product was last modified.\nA product's `updatedAt` value can change for different reasons. For example, if an order\nis placed for a product that has inventory tracking set up, then the inventory adjustment\nis counted as an update.\n"
 	updatedAt: DateTime!
 
@@ -10049,6 +11011,19 @@ type ProductPriceRange {
 	The lowest variant's price.
 	"""
 	minVariantPrice: MoneyV2!
+}
+
+"The recommendation intent that is used to generate product recommendations.\nYou can use intent to generate product recommendations according to different strategies.\n"
+enum ProductRecommendationIntent {
+	"""
+	Offer customers products that are complementary to a product for which recommendations are to be fetched. An example is add-on products that display in a Pair it with section.
+	"""
+	COMPLEMENTARY
+
+	"""
+	Offer customers a mix of products that are similar or complementary to a product for which recommendations are to be fetched. An example is substitutable products that display in a You may also like section.
+	"""
+	RELATED
 }
 
 """
@@ -10349,6 +11324,16 @@ The schema’s entry-point for queries. This acts as the public, top-level API f
 """
 type QueryRoot {
 	"""
+	Fetch a specific Article by its ID.
+	"""
+	article(
+		"""
+		The ID of the `Article`.
+		"""
+		id: ID!
+	): Article
+
+	"""
 	List of the shop's articles.
 	"""
 	articles(
@@ -10456,6 +11441,16 @@ type QueryRoot {
 		"""
 		id: ID!
 	): Cart
+
+	"""
+	A poll for the status of the cart checkout completion and order creation.
+	"""
+	cartCompletionAttempt(
+		"""
+		The ID of the attempt.
+		"""
+		attemptId: String!
+	): CartCompletionAttemptResult
 
 	"""
 	Fetch a specific `Collection` by one of its unique attributes.
@@ -10718,6 +11713,37 @@ type QueryRoot {
 	): PageConnection!
 
 	"""
+	List of the predictive search results.
+	"""
+	predictiveSearch(
+		"Limits the number of results based on `limit_scope`. The value can range from 1 to 10, and the default is 10.\n"
+		limit: Int
+
+		"""
+		Decides the distribution of results.
+		"""
+		limitScope: PredictiveSearchLimitScope
+
+		"""
+		The search query.
+		"""
+		query: String!
+
+		"Specifies the list of resource fields to use for search. The default fields searched on are TITLE, PRODUCT_TYPE, VARIANT_TITLE, and VENDOR. For the best search experience, you should search on the default field set.\n"
+		searchableFields: [SearchableField!]
+
+		"""
+		The types of resources to search for.
+		"""
+		types: [PredictiveSearchType!]
+
+		"""
+		Specifies how unavailable products are displayed in the search results.
+		"""
+		unavailableProducts: SearchUnavailableProductsType
+	): PredictiveSearchResult
+
+	"""
 	Fetch a specific `Product` by one of its unique attributes.
 	"""
 	product(
@@ -10744,6 +11770,11 @@ type QueryRoot {
 
 	"Find recommended products related to a given `product_id`.\nTo learn more about how recommendations are generated, see\n[*Showing product recommendations on product pages*](https://help.shopify.com/themes/development/recommended-products).\n"
 	productRecommendations(
+		"""
+		The recommendation intent that is used to generate product recommendations. You can use intent to generate product recommendations on various pages across the channels, according to different strategies.
+		"""
+		intent: ProductRecommendationIntent = RELATED
+
 		"""
 		The id of the product.
 		"""
@@ -10810,6 +11841,66 @@ type QueryRoot {
 	The list of public Storefront API versions, including supported, release candidate and unstable versions.
 	"""
 	publicApiVersions: [ApiVersion!]!
+
+	"""
+	List of the search results.
+	"""
+	search(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+
+		"""
+		Specifies whether to perform a partial word match on the last search term.
+		"""
+		prefix: SearchPrefixQueryType
+
+		"""
+		Returns a subset of products matching all product filters.
+		"""
+		productFilters: [ProductFilter!]
+
+		"""
+		The search query.
+		"""
+		query: String!
+
+		"""
+		Reverse the order of the underlying list.
+		"""
+		reverse: Boolean = false
+
+		"""
+		Sort the underlying list by the given key.
+		"""
+		sortKey: SearchSortKeys = RELEVANCE
+
+		"""
+		The types of resources to search for.
+		"""
+		types: [SearchType!]
+
+		"""
+		Specifies how unavailable products are displayed in the search results.
+		"""
+		unavailableProducts: SearchUnavailableProductsType
+	): SearchResultItemConnection!
 
 	"""
 	The shop associated with the storefront access token.
@@ -10891,6 +11982,190 @@ type ScriptDiscountApplication implements DiscountApplication {
 	The value of the discount application.
 	"""
 	value: PricingValue!
+}
+
+"""
+Specifies whether to perform a partial word match on the last search term.
+"""
+enum SearchPrefixQueryType {
+	"""
+	Perform a partial word match on the last search term.
+	"""
+	LAST
+
+	"""
+	Don't perform a partial word match on the last search term.
+	"""
+	NONE
+}
+
+"""
+A search query suggestion.
+"""
+type SearchQuerySuggestion implements Trackable {
+	"""
+	The text of the search query suggestion with highlighted HTML tags.
+	"""
+	styledText: String!
+
+	"""
+	The text of the search query suggestion.
+	"""
+	text: String!
+
+	"""
+	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	"""
+	trackingParameters: String
+}
+
+"A search result that matches the search query.\n"
+union SearchResultItem = Article | Page | Product
+
+"An auto-generated type for paginating through multiple SearchResultItems.\n"
+type SearchResultItemConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [SearchResultItemEdge!]!
+
+	"""
+	A list of the nodes contained in SearchResultItemEdge.
+	"""
+	nodes: [SearchResultItem!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+
+	"""
+	A list of available filters.
+	"""
+	productFilters: [Filter!]!
+
+	"""
+	The total number of results.
+	"""
+	totalCount: Int!
+}
+
+"An auto-generated type which holds one SearchResultItem and a cursor during pagination.\n"
+type SearchResultItemEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of SearchResultItemEdge.
+	"""
+	node: SearchResultItem!
+}
+
+"""
+The set of valid sort keys for the search query.
+"""
+enum SearchSortKeys {
+	"""
+	Sort by the `price` value.
+	"""
+	PRICE
+
+	"""
+	Sort by relevance to the search terms.
+	"""
+	RELEVANCE
+}
+
+"""
+The types of search items to perform search within.
+"""
+enum SearchType {
+	"""
+	Returns matching articles.
+	"""
+	ARTICLE
+
+	"""
+	Returns matching pages.
+	"""
+	PAGE
+
+	"""
+	Returns matching products.
+	"""
+	PRODUCT
+}
+
+"""
+Specifies whether to display results for unavailable products.
+"""
+enum SearchUnavailableProductsType {
+	"""
+	Exclude unavailable products.
+	"""
+	HIDE
+
+	"""
+	Show unavailable products after all other matching results. This is the default.
+	"""
+	LAST
+
+	"""
+	Show unavailable products in the order that they're found.
+	"""
+	SHOW
+}
+
+"""
+Specifies the list of resource fields to search.
+"""
+enum SearchableField {
+	"""
+	Author of the page or article.
+	"""
+	AUTHOR
+
+	"""
+	Body of the page or article or product description or collection description.
+	"""
+	BODY
+
+	"""
+	Product type.
+	"""
+	PRODUCT_TYPE
+
+	"""
+	Tag associated with the product or article.
+	"""
+	TAG
+
+	"""
+	Title of the page or article or product title or collection title.
+	"""
+	TITLE
+
+	"""
+	Variant barcode.
+	"""
+	VARIANTS_BARCODE
+
+	"""
+	Variant SKU.
+	"""
+	VARIANTS_SKU
+
+	"""
+	Variant title.
+	"""
+	VARIANTS_TITLE
+
+	"""
+	Product vendor.
+	"""
+	VENDOR
 }
 
 "Properties used by customers to select a product variant.\nProducts can have multiple options, like different sizes or colors.\n"
@@ -11404,6 +12679,19 @@ type Shop implements HasMetafields & Node {
 	termsOfService: ShopPolicy
 }
 
+"The input fields for submitting Shop Pay payment method information for checkout.\n"
+input ShopPayWalletContentInput {
+	"""
+	The customer's billing address.
+	"""
+	billingAddress: MailingAddressInput!
+
+	"""
+	Session token for transaction.
+	"""
+	sessionToken: String!
+}
+
 """
 Policy that a merchant has configured for their store, such as their refund or privacy policy.
 """
@@ -11478,6 +12766,11 @@ type StoreAvailability {
 	Returns the estimated amount of time it takes for pickup to be ready (Example: Usually ready in 24 hours).
 	"""
 	pickUpTime: String!
+
+	"""
+	The quantity of the product variant in-stock at this location.
+	"""
+	quantityAvailable: Int!
 }
 
 "An auto-generated type for paginating through multiple StoreAvailabilities.\n"
@@ -11537,6 +12830,163 @@ type StringEdge {
 	node: String!
 }
 
+"""
+An error that occurred during cart submit for completion.
+"""
+type SubmissionError {
+	"""
+	The error code.
+	"""
+	code: SubmissionErrorCode!
+
+	"""
+	The error message.
+	"""
+	message: String
+}
+
+"""
+The code of the error that occurred during cart submit for completion.
+"""
+enum SubmissionErrorCode {
+	BUYER_IDENTITY_EMAIL_IS_INVALID
+	BUYER_IDENTITY_EMAIL_REQUIRED
+	BUYER_IDENTITY_PHONE_IS_INVALID
+	DELIVERY_ADDRESS1_INVALID
+	DELIVERY_ADDRESS1_REQUIRED
+	DELIVERY_ADDRESS1_TOO_LONG
+	DELIVERY_ADDRESS2_INVALID
+	DELIVERY_ADDRESS2_REQUIRED
+	DELIVERY_ADDRESS2_TOO_LONG
+	DELIVERY_ADDRESS_REQUIRED
+	DELIVERY_CITY_INVALID
+	DELIVERY_CITY_REQUIRED
+	DELIVERY_CITY_TOO_LONG
+	DELIVERY_COMPANY_INVALID
+	DELIVERY_COMPANY_REQUIRED
+	DELIVERY_COMPANY_TOO_LONG
+	DELIVERY_COUNTRY_REQUIRED
+	DELIVERY_FIRST_NAME_INVALID
+	DELIVERY_FIRST_NAME_REQUIRED
+	DELIVERY_FIRST_NAME_TOO_LONG
+	DELIVERY_INVALID_POSTAL_CODE_FOR_COUNTRY
+	DELIVERY_INVALID_POSTAL_CODE_FOR_ZONE
+	DELIVERY_LAST_NAME_INVALID
+	DELIVERY_LAST_NAME_REQUIRED
+	DELIVERY_LAST_NAME_TOO_LONG
+	DELIVERY_NO_DELIVERY_AVAILABLE
+	DELIVERY_NO_DELIVERY_AVAILABLE_FOR_MERCHANDISE_LINE
+	DELIVERY_OPTIONS_PHONE_NUMBER_INVALID
+	DELIVERY_OPTIONS_PHONE_NUMBER_REQUIRED
+	DELIVERY_PHONE_NUMBER_INVALID
+	DELIVERY_PHONE_NUMBER_REQUIRED
+	DELIVERY_POSTAL_CODE_INVALID
+	DELIVERY_POSTAL_CODE_REQUIRED
+	DELIVERY_ZONE_NOT_FOUND
+	DELIVERY_ZONE_REQUIRED_FOR_COUNTRY
+	ERROR
+	MERCHANDISE_LINE_LIMIT_REACHED
+	MERCHANDISE_NOT_APPLICABLE
+	MERCHANDISE_NOT_ENOUGH_STOCK_AVAILABLE
+	MERCHANDISE_OUT_OF_STOCK
+	MERCHANDISE_PRODUCT_NOT_PUBLISHED
+	NO_DELIVERY_GROUP_SELECTED
+	PAYMENTS_ADDRESS1_INVALID
+	PAYMENTS_ADDRESS1_REQUIRED
+	PAYMENTS_ADDRESS1_TOO_LONG
+	PAYMENTS_ADDRESS2_INVALID
+	PAYMENTS_ADDRESS2_REQUIRED
+	PAYMENTS_ADDRESS2_TOO_LONG
+	PAYMENTS_BILLING_ADDRESS_ZONE_NOT_FOUND
+	PAYMENTS_BILLING_ADDRESS_ZONE_REQUIRED_FOR_COUNTRY
+	PAYMENTS_CITY_INVALID
+	PAYMENTS_CITY_REQUIRED
+	PAYMENTS_CITY_TOO_LONG
+	PAYMENTS_COMPANY_INVALID
+	PAYMENTS_COMPANY_REQUIRED
+	PAYMENTS_COMPANY_TOO_LONG
+	PAYMENTS_COUNTRY_REQUIRED
+	PAYMENTS_CREDIT_CARD_BASE_EXPIRED
+	PAYMENTS_CREDIT_CARD_BASE_GATEWAY_NOT_SUPPORTED
+	PAYMENTS_CREDIT_CARD_BASE_INVALID_START_DATE_OR_ISSUE_NUMBER_FOR_DEBIT
+	PAYMENTS_CREDIT_CARD_BRAND_NOT_SUPPORTED
+	PAYMENTS_CREDIT_CARD_FIRST_NAME_BLANK
+	PAYMENTS_CREDIT_CARD_GENERIC
+	PAYMENTS_CREDIT_CARD_LAST_NAME_BLANK
+	PAYMENTS_CREDIT_CARD_MONTH_INCLUSION
+	PAYMENTS_CREDIT_CARD_NAME_INVALID
+	PAYMENTS_CREDIT_CARD_NUMBER_INVALID
+	PAYMENTS_CREDIT_CARD_NUMBER_INVALID_FORMAT
+	PAYMENTS_CREDIT_CARD_SESSION_ID
+	PAYMENTS_CREDIT_CARD_VERIFICATION_VALUE_BLANK
+	PAYMENTS_CREDIT_CARD_VERIFICATION_VALUE_INVALID_FOR_CARD_TYPE
+	PAYMENTS_CREDIT_CARD_YEAR_EXPIRED
+	PAYMENTS_CREDIT_CARD_YEAR_INVALID_EXPIRY_YEAR
+	PAYMENTS_FIRST_NAME_INVALID
+	PAYMENTS_FIRST_NAME_REQUIRED
+	PAYMENTS_FIRST_NAME_TOO_LONG
+	PAYMENTS_INVALID_POSTAL_CODE_FOR_COUNTRY
+	PAYMENTS_INVALID_POSTAL_CODE_FOR_ZONE
+	PAYMENTS_LAST_NAME_INVALID
+	PAYMENTS_LAST_NAME_REQUIRED
+	PAYMENTS_LAST_NAME_TOO_LONG
+	PAYMENTS_METHOD_REQUIRED
+	PAYMENTS_METHOD_UNAVAILABLE
+	PAYMENTS_PHONE_NUMBER_INVALID
+	PAYMENTS_PHONE_NUMBER_REQUIRED
+	PAYMENTS_POSTAL_CODE_INVALID
+	PAYMENTS_POSTAL_CODE_REQUIRED
+	PAYMENTS_SHOPIFY_PAYMENTS_REQUIRED
+	PAYMENTS_UNACCEPTABLE_PAYMENT_AMOUNT
+	PAYMENTS_WALLET_CONTENT_MISSING
+	TAXES_DELIVERY_GROUP_ID_NOT_FOUND
+	TAXES_LINE_ID_NOT_FOUND
+	TAXES_MUST_BE_DEFINED
+}
+
+"""
+Cart submit for checkout completion is successful.
+"""
+type SubmitAlreadyAccepted {
+	"""
+	The ID of the cart completion attempt that will be used for polling for the result.
+	"""
+	attemptId: String!
+}
+
+"""
+Cart submit for checkout completion failed.
+"""
+type SubmitFailed {
+	"""
+	The URL of the checkout for the cart.
+	"""
+	checkoutUrl: URL
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	errors: [SubmissionError!]!
+}
+
+"""
+Cart submit for checkout completion is already accepted.
+"""
+type SubmitSuccess {
+	"""
+	The ID of the cart completion attempt that will be used for polling for the result.
+	"""
+	attemptId: String!
+}
+
+"""
+Cart submit for checkout completion is throttled.
+"""
+type SubmitThrottled {
+	"UTC date time string that indicates the time after which clients should make their next\npoll request. Any poll requests sent before this time will be ignored. Use this value to schedule the\nnext poll request.\n"
+	pollAfter: DateTime!
+}
+
 "Specifies the fields required to complete a checkout with\na tokenized payment.\n"
 input TokenizedPaymentInputV3 {
 	"""
@@ -11573,6 +13023,16 @@ input TokenizedPaymentInputV3 {
 	The type of payment token.
 	"""
 	type: PaymentTokenType!
+}
+
+"""
+Represents a resource that you can track the origin of the search traffic.
+"""
+interface Trackable {
+	"""
+	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	"""
+	trackingParameters: String
 }
 
 """
@@ -11894,6 +13354,11 @@ type Video implements Media & Node {
 	The media content type.
 	"""
 	mediaContentType: MediaContentType!
+
+	"""
+	The presentation for a media.
+	"""
+	presentation: MediaPresentation
 
 	"""
 	The preview image for the media.
