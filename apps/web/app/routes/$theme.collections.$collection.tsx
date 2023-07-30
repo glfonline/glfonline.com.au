@@ -302,7 +302,6 @@ function ProductCard({ node }: { node: ProductNode }) {
 				{node.featuredImage?.url ? (
 					<Image
 						breakpoints={[320, 640]}
-						cdn="shopify"
 						className="h-full w-full"
 						layout="fullWidth"
 						objectFit="contain"

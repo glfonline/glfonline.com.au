@@ -267,7 +267,6 @@ function ImageGallery({
 											<Image
 												alt={node.altText || ''}
 												breakpoints={[276]}
-												cdn="shopify"
 												className="h-full w-full object-cover object-center"
 												height={192}
 												layout="constrained"

@@ -226,7 +226,6 @@ function MegaMenu() {
 																	alt={
 																		category.featured.image.asset.altText ?? ''
 																	}
-																	cdn="imgix"
 																	className="object-cover object-center"
 																	height={384}
 																	layout="constrained"

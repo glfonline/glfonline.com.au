@@ -170,7 +170,6 @@ export default function CartPage() {
 											{node.variant?.image?.url ? (
 												<Image
 													alt={node.variant.image?.altText ?? ''}
-													cdn="shopify"
 													className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
 													height={192}
 													layout="constrained"
