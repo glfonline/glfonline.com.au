@@ -216,50 +216,50 @@ function MegaMenu() {
 														))}
 													</div>
 													{/* Featured */}
-													<div className="relative col-start-3 grid gap-6">
-														<div
-															className="group relative flex flex-col gap-6 text-base sm:text-sm"
-															key={category.featured.href}
-														>
-															<div className="flex-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
-																<Image
-																	alt={
-																		category.featured.image.asset.altText ?? ''
-																	}
-																	className="object-cover object-center"
-																	height={384}
-																	layout="constrained"
-																	src={urlFor({
-																		_ref: category.featured.image.asset._id,
-																		crop: category.featured.image.crop,
-																		hotspot: category.featured.image.hotspot,
-																	})
-																		.auto('format')
-																		.width(384)
-																		.height(384)
-																		.dpr(3)
-																		.url()}
-																	width={384}
-																/>
-															</div>
-															<div>
-																<Popover.Button
-																	as={NavLink}
-																	className="block font-bold uppercase text-gray-900"
-																	to={category.featured.href}
-																>
-																	<span
-																		aria-hidden="true"
-																		className="absolute inset-0 z-10"
+													<ul className="relative col-start-3 grid gap-6">
+														{category.featuredItems.map((item) => (
+															<li
+																className="group relative flex flex-col gap-6 text-base sm:text-sm"
+																key={item._key}
+															>
+																<div className="flex items-center justify-between bg-gray-100 group-hover:opacity-75">
+																	<div className="p-6">
+																		<Popover.Button
+																			as={NavLink}
+																			className="block font-bold uppercase text-gray-900"
+																			to={item.href}
+																		>
+																			<span
+																				aria-hidden="true"
+																				className="absolute inset-0 z-10"
+																			/>
+																			{item.label}
+																		</Popover.Button>
+																		<p aria-hidden="true" className="mt-1">
+																			Shop now
+																		</p>
+																	</div>
+																	<Image
+																		alt={item.image.asset.altText ?? ''}
+																		className="h-full w-full object-center"
+																		height={196}
+																		layout="constrained"
+																		src={urlFor({
+																			_ref: item.image.asset._id,
+																			crop: item.image.crop,
+																			hotspot: item.image.hotspot,
+																		})
+																			.auto('format')
+																			.width(196)
+																			.height(196)
+																			.dpr(3)
+																			.url()}
+																		width={196}
 																	/>
-																	{category.featured.label}
-																</Popover.Button>
-																<p aria-hidden="true" className="mt-1">
-																	Shop now
-																</p>
-															</div>
-														</div>
-													</div>
+																</div>
+															</li>
+														))}
+													</ul>
 												</div>
 											</div>
 										</div>

@@ -75,6 +75,13 @@ export const navCategory = defineField({
 			validation: (Rule) => Rule.required(),
 		},
 		{
+			title: 'Featured Items',
+			name: 'featuredItems',
+			type: 'array',
+			of: [{ type: 'featuredNavItem' }],
+			validation: (Rule) => Rule.required(),
+		},
+		{
 			title: 'Sections',
 			name: 'navSections',
 			type: 'array',

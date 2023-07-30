@@ -117,7 +117,8 @@ export const MAIN_NAVIGATION_QUERY = gql`
 			navCategories {
 				label
 				theme
-				featured {
+				featuredItems {
+					_key
 					label
 					href
 					image {

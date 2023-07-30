@@ -9,11 +9,14 @@ export const mainNavigationSchema = z.object({
 		z.object({
 			label: z.string(),
 			theme: z.string(),
-			featured: z.object({
-				label: z.string(),
-				href: z.string(),
-				image: imageWithAltSchema,
-			}),
+			featuredItems: z.array(
+				z.object({
+					_key: z.string(),
+					label: z.string(),
+					href: z.string(),
+					image: imageWithAltSchema,
+				}),
+			),
 			navSections: z.array(
 				z.object({
 					_key: z.string(),

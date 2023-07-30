@@ -797,6 +797,7 @@ type NavCategory {
 	_key: String
 	_type: String
 	featured: FeaturedNavItem
+	featuredItems: [FeaturedNavItem]
 	label: String
 	navSections: [NavSection]
 	theme: String
