@@ -9,7 +9,7 @@ import { z } from 'zod';
 
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
-import { brands } from '../lib/constants';
+import { brandsWeLove } from '../lib/brands-we-love';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
@@ -19,15 +19,18 @@ const ThemeSchema = z.object({
 });
 
 const CollectionSchema = z.object({
-	collectionCards: z
-		.object({
+	_id: z.string(),
+	theme: z.string(),
+	collectionCards: z.array(
+		z.object({
 			_key: z.string(),
-			span: z.enum(['2', '3', '5']),
-			image: imageWithAltSchema,
 			href: z.string(),
 			label: z.string(),
-		})
-		.array(),
+			image: imageWithAltSchema,
+			span: z.enum(['2', '3', '5']),
+		}),
+	),
+	brandsWeLove,
 });
 
 export async function loader({ params }: DataFunctionArgs) {
@@ -82,7 +85,7 @@ export default function CollectionsPage() {
 					/>
 				))}
 			</div>
-			<BrandsWeLove brands={brands} />
+			<BrandsWeLove brands={collection.brandsWeLove} />
 		</div>
 	);
 }

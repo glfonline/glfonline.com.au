@@ -163,6 +163,15 @@ export const HOME_PAGE_QUERY = gql`
 				}
 				theme
 			}
+			brandsWeLove {
+				_id
+				label
+				href
+				image {
+					...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+				}
+				theme
+			}
 		}
 	}
 	${IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT}
@@ -216,6 +225,15 @@ export const GET_THEME_PAGE = gql`
 					...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
 				}
 				span
+			}
+			brandsWeLove {
+				_id
+				label
+				href
+				image {
+					...IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT
+				}
+				theme
 			}
 		}
 	}

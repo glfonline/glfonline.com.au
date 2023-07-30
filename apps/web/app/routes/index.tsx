@@ -13,8 +13,8 @@ import { getHeadingStyles } from '../components/design-system/heading/get-headin
 import { Divider } from '../components/divider';
 import { Map } from '../components/map';
 import { VerticalLogo } from '../components/vectors/vertical-logo';
+import { brandsWeLove } from '../lib/brands-we-love';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
-import { brands } from '../lib/constants';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
@@ -38,7 +38,10 @@ const HomePageSchema = z.object({
 			theme: z.enum(['ladies', 'mens']),
 		}),
 	),
+	brandsWeLove,
 });
+
+type HomePageSchema = z.infer<typeof HomePageSchema>;
 
 export async function loader() {
 	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
@@ -50,13 +53,14 @@ export async function loader() {
 }
 
 export default function Index() {
+	const { brandsWeLove } = useLoaderData<typeof loader>();
 	return (
 		<Fragment>
 			<article className="relative flex flex-col gap-4 bg-white">
 				<Hero />
 				<CollectionPromo />
 			</article>
-			<BrandsWeLove brands={brands} />
+			<BrandsWeLove brands={brandsWeLove} />
 			<ContactForm />
 			<NewsletterSignup />
 			<Map />

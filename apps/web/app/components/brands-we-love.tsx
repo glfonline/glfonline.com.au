@@ -1,10 +1,18 @@
 import { Link } from '@remix-run/react';
+import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
+import { type z } from 'zod';
 
+import { type brandsWeLove } from '../lib/brands-we-love';
 import { type BrandCard } from '../lib/constants';
+import { urlFor } from '../lib/sanity-image';
 import { Heading } from './design-system/heading';
 
-export function BrandsWeLove({ brands }: { brands: BrandCard[] }) {
+export function BrandsWeLove({
+	brands,
+}: {
+	brands: z.infer<typeof brandsWeLove>;
+}) {
 	return (
 		<article className="bg-white">
 			<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">
@@ -30,7 +38,14 @@ export function BrandsWeLove({ brands }: { brands: BrandCard[] }) {
 							<img
 								alt=""
 								className="max-h-12 mix-blend-multiply grayscale"
-								src={brand.icon}
+								decoding="async"
+								loading="lazy"
+								role="presentation"
+								src={urlFor({
+									_ref: brand.image.asset._id,
+									crop: brand.image.crop,
+									hotspot: brand.image.hotspot,
+								}).url()}
 							/>
 						</Link>
 					))}
