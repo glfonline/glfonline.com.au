@@ -9,29 +9,40 @@ export const homePage = defineField({
 	fields: [
 		defineField({
 			name: 'heroImage',
-			type: 'imageWithAlt',
 			title: 'Hero Image',
+			type: 'imageWithAlt',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'heading',
+			title: 'Heading',
 			type: 'array',
 			of: [{ type: 'string' }],
-			title: 'Heading',
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
 			name: 'description',
+			title: 'Description',
 			type: 'array',
 			of: [{ type: 'block' }],
-			title: 'Description',
 		}),
 		defineField({
 			name: 'themeCards',
-			type: 'array',
 			title: 'Theme Cards',
+			type: 'array',
 			of: [{ type: 'themeCard.item' }],
 			validation: (Rule) => Rule.required(),
+		}),
+		defineField({
+			name: 'brandsWeLove',
+			title: 'Brands We Love',
+			type: 'array',
+			of: [
+				{
+					type: 'reference',
+					to: [{ type: 'brand' }],
+				},
+			],
 		}),
 	],
 	validation: (Rule) => Rule.required(),

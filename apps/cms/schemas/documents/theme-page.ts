@@ -28,5 +28,16 @@ export const themePage = defineField({
 			of: [{ type: 'collectionCard.item' }],
 			validation: (Rule) => Rule.required(),
 		}),
+		defineField({
+			name: 'brandsWeLove',
+			title: 'Brands We Love',
+			type: 'array',
+			of: [
+				{
+					type: 'reference',
+					to: [{ type: 'brand' }],
+				},
+			],
+		}),
 	],
 });
