@@ -796,7 +796,6 @@ input MainNavigationSorting {
 type NavCategory {
 	_key: String
 	_type: String
-	featured: FeaturedNavItem
 	featuredItems: [FeaturedNavItem]
 	label: String
 	navSections: [NavSection]
@@ -806,7 +805,6 @@ type NavCategory {
 input NavCategoryFilter {
 	_key: StringFilter
 	_type: StringFilter
-	featured: FeaturedNavItemFilter
 	label: StringFilter
 	theme: StringFilter
 }
@@ -814,7 +812,6 @@ input NavCategoryFilter {
 input NavCategorySorting {
 	_key: SortOrder
 	_type: SortOrder
-	featured: FeaturedNavItemSorting
 	label: SortOrder
 	theme: SortOrder
 }
