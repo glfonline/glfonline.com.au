@@ -207,7 +207,7 @@ function MegaMenu() {
 											<div className="mx-auto max-w-7xl px-8">
 												<div className="grid grid-cols-3 gap-x-8 gap-y-10 py-12">
 													{/* Nav sections */}
-													<div className="col-span-2 row-start-1 grid grid-cols-4 gap-x-8 gap-y-10 text-sm">
+													<div className="col-span-2 grid grid-cols-4 gap-x-8 gap-y-10 text-sm">
 														{category.navSections.map((section, sectionIdx) => (
 															<CategorySection
 																key={sectionIdx}
@@ -216,12 +216,12 @@ function MegaMenu() {
 														))}
 													</div>
 													{/* Featured */}
-													<div className="col-start-3 grid">
+													<div className="relative col-start-3 grid gap-6">
 														<div
 															className="group relative flex flex-col gap-6 text-base sm:text-sm"
 															key={category.featured.href}
 														>
-															<div className="aspect-square overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
+															<div className="flex-1 overflow-hidden rounded-lg bg-gray-100 group-hover:opacity-75">
 																<Image
 																	alt={
 																		category.featured.image.asset.altText ?? ''
@@ -232,14 +232,12 @@ function MegaMenu() {
 																	layout="constrained"
 																	src={urlFor({
 																		_ref: category.featured.image.asset._id,
-																		crop: category.featured.image.asset.crop,
-																		hotspot:
-																			category.featured.image.asset.hotspot,
+																		crop: category.featured.image.crop,
+																		hotspot: category.featured.image.hotspot,
 																	})
 																		.auto('format')
 																		.width(384)
 																		.height(384)
-																		.focalPoint(0.5, 0.5)
 																		.dpr(3)
 																		.url()}
 																	width={384}

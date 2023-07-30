@@ -10,6 +10,7 @@ import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
 import { brands } from '../lib/constants';
+import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
@@ -22,33 +23,7 @@ const CollectionSchema = z.object({
 		.object({
 			_key: z.string(),
 			span: z.enum(['2', '3', '5']),
-			image: z.object({
-				asset: z.object({
-					_id: z.string(),
-					altText: z.nullable(z.string()),
-					crop: z
-						.nullable(
-							z.object({
-								top: z.number(),
-								bottom: z.number(),
-								left: z.number(),
-								right: z.number(),
-							}),
-						)
-						.optional(),
-					hotspot: z.nullable(
-						z
-							.object({
-								x: z.number(),
-								y: z.number(),
-								height: z.number(),
-								width: z.number(),
-							})
-							.optional(),
-					),
-					path: z.string(),
-				}),
-			}),
+			image: imageWithAltSchema,
 			href: z.string(),
 			label: z.string(),
 		})
@@ -90,13 +65,12 @@ export default function CollectionsPage() {
 						image={{
 							src: urlFor({
 								_ref: collection.image.asset._id,
-								crop: collection.image.asset.crop,
-								hotspot: collection.image.asset.hotspot,
+								crop: collection.image.crop,
+								hotspot: collection.image.hotspot,
 							})
 								.auto('format')
 								.width((1280 / 5) * Number(collection.span))
 								.height(384)
-								.focalPoint(0.5, 0.5)
 								.dpr(3)
 								.url(),
 							alt: collection.image.asset.altText ?? '',

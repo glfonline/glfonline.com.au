@@ -62,13 +62,12 @@ export default function AboutPage() {
 							image={{
 								url: urlFor({
 									_ref: aboutImage.asset._id,
-									crop: aboutImage.asset.crop,
-									hotspot: aboutImage.asset.hotspot,
+									crop: aboutImage.crop,
+									hotspot: aboutImage.hotspot,
 								})
 									.auto('format')
 									.width(1280)
 									.height(385)
-									.focalPoint(0.5, 0.5)
 									.dpr(3)
 									.url(),
 								alt: aboutImage.asset.altText ?? '',

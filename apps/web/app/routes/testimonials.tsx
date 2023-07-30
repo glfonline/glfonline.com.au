@@ -62,13 +62,12 @@ export default function TestimonialsPage() {
 					image={{
 						url: urlFor({
 							_ref: heroImage.asset._id,
-							crop: heroImage.asset.crop,
-							hotspot: heroImage.asset.hotspot,
+							crop: heroImage.crop,
+							hotspot: heroImage.hotspot,
 						})
 							.auto('format')
 							.width(1280)
 							.height(385)
-							.focalPoint(0.5, 0.5)
 							.dpr(3)
 							.url(),
 						alt: heroImage.asset.altText ?? '',
@@ -101,13 +100,12 @@ function Testimonials() {
 							sizes="(min-width: 767px) 767px, 100vw"
 							src={urlFor({
 								_ref: testimonialImage.asset._id,
-								crop: testimonialImage.asset.crop,
-								hotspot: testimonialImage.asset.hotspot,
+								crop: testimonialImage.crop,
+								hotspot: testimonialImage.hotspot,
 							})
 								.auto('format')
 								.width(767)
 								.height(452)
-								.focalPoint(0.5, 0.5)
 								.dpr(3)
 								.url()}
 						/>

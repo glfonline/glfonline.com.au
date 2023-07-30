@@ -94,13 +94,12 @@ function Hero() {
 					priority
 					src={urlFor({
 						_ref: heroImage.asset._id,
-						crop: heroImage.asset.crop,
-						hotspot: heroImage.asset.hotspot,
+						crop: heroImage.crop,
+						hotspot: heroImage.hotspot,
 					})
 						.auto('format')
 						.width(960)
 						.height(785)
-						.focalPoint(0.5, 0.5)
 						.dpr(3)
 						.url()}
 				/>
@@ -120,13 +119,12 @@ function CollectionPromo() {
 					image={{
 						src: urlFor({
 							_ref: card.image.asset._id,
-							crop: card.image.asset.crop,
-							hotspot: card.image.asset.hotspot,
+							crop: card.image.crop,
+							hotspot: card.image.hotspot,
 						})
 							.auto('format')
 							.width(632)
 							.height(632)
-							.focalPoint(0.5, 0.5)
 							.dpr(3)
 							.url(),
 					}}

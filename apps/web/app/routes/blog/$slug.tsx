@@ -45,13 +45,12 @@ export default function Page() {
 					image={{
 						url: urlFor({
 							_ref: page.mainImage.asset._id,
-							crop: page.mainImage.asset.crop,
-							hotspot: page.mainImage.asset.hotspot,
+							crop: page.mainImage.crop,
+							hotspot: page.mainImage.hotspot,
 						})
 							.auto('format')
 							.width(1280)
 							.height(385)
-							.focalPoint(0.5, 0.5)
 							.dpr(3)
 							.url(),
 						alt: page.mainImage.asset.altText ?? '',

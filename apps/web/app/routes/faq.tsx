@@ -50,13 +50,12 @@ export default function FaqPage() {
 				image={{
 					url: urlFor({
 						_ref: faqPage.heroImage.asset._id,
-						crop: faqPage.heroImage.asset.crop,
-						hotspot: faqPage.heroImage.asset.hotspot,
+						crop: faqPage.heroImage.crop,
+						hotspot: faqPage.heroImage.hotspot,
 					})
 						.auto('format')
 						.width(1280)
 						.height(385)
-						.focalPoint(0.5, 0.5)
 						.dpr(3)
 						.url(),
 					alt: faqPage.heroImage.asset.altText ?? '',

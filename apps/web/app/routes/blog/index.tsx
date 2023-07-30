@@ -114,13 +114,12 @@ function PostList() {
 							href={`/blog/${post.slug.current}`}
 							imgSrc={urlFor({
 								_ref: post.mainImage.asset._id,
-								crop: post.mainImage.asset.crop,
-								hotspot: post.mainImage.asset.hotspot,
+								crop: post.mainImage.crop,
+								hotspot: post.mainImage.hotspot,
 							})
 								.auto('format')
 								.height(256)
 								.width(256)
-								.focalPoint(0.5, 0.5)
 								.dpr(3)
 								.url()}
 							key={postIndex}
@@ -257,13 +256,12 @@ function Sidebar() {
 					href={`/blog/${featuredPost.slug.current}`}
 					imgSrc={urlFor({
 						_ref: featuredPost.mainImage.asset._id,
-						crop: featuredPost.mainImage.asset.crop,
-						hotspot: featuredPost.mainImage.asset.hotspot,
+						crop: featuredPost.mainImage.crop,
+						hotspot: featuredPost.mainImage.hotspot,
 					})
 						.auto('format')
 						.height(256)
 						.width(256)
-						.focalPoint(0.5, 0.5)
 						.dpr(3)
 						.url()}
 					publishDate={featuredPost.publishedAt}
