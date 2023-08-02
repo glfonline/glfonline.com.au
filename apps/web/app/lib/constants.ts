@@ -1,13 +1,5 @@
 import { FacebookIcon } from '../components/vectors/facebook-icon';
 import { InstagramIcon } from '../components/vectors/instagram-icon';
-import corsicanGolf from '../images/brand-logos/corsican-golf.svg';
-import dailySports from '../images/brand-logos/daily-sports.svg';
-import gregNorman from '../images/brand-logos/greg-norman.svg';
-import ibkul from '../images/brand-logos/ibkul.png';
-import jamieSadock from '../images/brand-logos/jamie-sadock.svg';
-import nivo from '../images/brand-logos/nivo.svg';
-import sporteLeisure from '../images/brand-logos/sporte-leisure-logo.png';
-import travisMatthews from '../images/brand-logos/travis-matthews.svg';
 
 export const SENTRY_DSN =
 	'https://a2413a79501942ae9580c3a12c4addb2:a20584dc5ae345e6b8c9b627642ffd94@o4504862915297280.ingest.sentry.io/4504862916476928';
@@ -56,19 +48,6 @@ export const socialLinks: Array<
 	},
 ];
 
-export type MainNavigation = {
-	categories: Array<{
-		label: string;
-		theme: string;
-		featured: NavItem & { image: { src: string; alt: string } };
-		sections: Array<{
-			label: string;
-			items: Array<Array<NavItem>>;
-		}>;
-	}>;
-	pages: Array<NavItem>;
-};
-
 export const footerNavigation: Array<Array<NavItem>> = [
 	[
 		{
@@ -115,8 +94,3 @@ export const footerNavigation: Array<Array<NavItem>> = [
 		},
 	],
 ];
-
-export type BrandCard = NavItem & {
-	icon: string;
-	theme: 'ladies' | 'mens';
-};

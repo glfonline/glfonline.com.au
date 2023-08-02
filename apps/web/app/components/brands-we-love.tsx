@@ -4,7 +4,6 @@ import { clsx } from 'clsx';
 import { type z } from 'zod';
 
 import { type brandsWeLove } from '../lib/brands-we-love';
-import { type BrandCard } from '../lib/constants';
 import { urlFor } from '../lib/sanity-image';
 import { Heading } from './design-system/heading';
 
@@ -35,17 +34,22 @@ export function BrandsWeLove({
 							to={brand.href}
 						>
 							<span className="sr-only">Shop {brand.label}</span>
-							<img
-								alt=""
+							<Image
 								className="max-h-12 mix-blend-multiply grayscale"
-								decoding="async"
-								loading="lazy"
-								role="presentation"
+								height={48}
+								layout="fixed"
+								objectFit="contain"
 								src={urlFor({
 									_ref: brand.image.asset._id,
+									asset: brand.image.asset,
 									crop: brand.image.crop,
 									hotspot: brand.image.hotspot,
-								}).url()}
+								})
+									.auto('format')
+									.fit('max')
+									.width(228)
+									.url()}
+								width={228}
 							/>
 						</Link>
 					))}
