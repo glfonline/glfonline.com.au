@@ -12,7 +12,7 @@
 		"@ts-gql/eslint-plugin": "^0.8.5",
 		"eslint": "^8.45.0",
 		"eslint-config-turbo": "^1.10.9",
-		"eslint-plugin-react": "7.33.0"
+		"eslint-plugin-react": "7.33.1"
 	},
 	"devDependencies": {
 		"@types/eslint": "^8.44.0",
