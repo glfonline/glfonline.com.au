@@ -272,8 +272,8 @@ importers:
         specifier: ^1.10.9
         version: 1.10.9(eslint@8.45.0)
       eslint-plugin-react:
-        specifier: 7.33.0
-        version: 7.33.0(eslint@8.45.0)
+        specifier: 7.33.1
+        version: 7.33.1(eslint@8.45.0)
     devDependencies:
       '@types/eslint':
         specifier: ^8.44.0
@@ -2613,20 +2613,6 @@ packages:
       tslib: 2.4.1
     dev: false
 
-  /@graphql-codegen/plugin-helpers@5.0.0(graphql@16.7.1):
-    resolution: {integrity: sha512-suL2ZMkBAU2a4YbBHaZvUPsV1z0q3cW6S96Z/eYYfkRIsJoe2vN+wNZ9Xdzmqx0JLmeeFCBSoBGC0imFyXlkDQ==}
-    peerDependencies:
-      graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
-    dependencies:
-      '@graphql-tools/utils': 10.0.4(graphql@16.7.1)
-      change-case-all: 1.0.15
-      common-tags: 1.8.2
-      graphql: 16.7.1
-      import-from: 4.0.0
-      lodash: 4.17.21
-      tslib: 2.5.3
-    dev: true
-
   /@graphql-codegen/plugin-helpers@5.0.1(graphql@16.7.1):
     resolution: {integrity: sha512-6L5sb9D8wptZhnhLLBcheSPU7Tg//DGWgc5tQBWX46KYTOTQHGqDpv50FxAJJOyFVJrveN9otWk9UT9/yfY4ww==}
     peerDependencies:
@@ -2657,7 +2643,7 @@ packages:
     peerDependencies:
       graphql: ^0.8.0 || ^0.9.0 || ^0.10.0 || ^0.11.0 || ^0.12.0 || ^0.13.0 || ^14.0.0 || ^15.0.0 || ^16.0.0
     dependencies:
-      '@graphql-codegen/plugin-helpers': 5.0.0(graphql@16.7.1)
+      '@graphql-codegen/plugin-helpers': 5.0.1(graphql@16.7.1)
       '@graphql-tools/utils': 10.0.4(graphql@16.7.1)
       graphql: 16.7.1
       tslib: 2.5.3
@@ -3522,7 +3508,7 @@ packages:
       eslint-plugin-jest-dom: 4.0.3(eslint@8.45.0)
       eslint-plugin-jsx-a11y: 6.7.1(eslint@8.45.0)
       eslint-plugin-node: 11.1.0(eslint@8.45.0)
-      eslint-plugin-react: 7.33.0(eslint@8.45.0)
+      eslint-plugin-react: 7.33.1(eslint@8.45.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.45.0)
       eslint-plugin-testing-library: 5.11.0(eslint@8.45.0)(typescript@5.1.6)
       react: 18.2.0
@@ -7520,8 +7506,8 @@ packages:
       eslint: 8.45.0
     dev: false
 
-  /eslint-plugin-react@7.33.0(eslint@8.45.0):
-    resolution: {integrity: sha512-qewL/8P34WkY8jAqdQxsiL82pDUeT7nhs8IsuXgfgnsEloKCT4miAV9N9kGtx7/KM9NH/NCGUE7Edt9iGxLXFw==}
+  /eslint-plugin-react@7.33.1(eslint@8.45.0):
+    resolution: {integrity: sha512-L093k0WAMvr6VhNwReB8VgOq5s2LesZmrpPdKz/kZElQDzqS7G7+DnKoqT+w4JwuiGeAhAvHO0fvy0Eyk4ejDA==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
