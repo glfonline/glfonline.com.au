@@ -27,8 +27,6 @@ jobs:
         run: pnpm install --prefer-offline --frozen-lockfile
       - name: 📥 Install Playwright Browsers
         run: pnpm dlx playwright install --with-deps
-      - name: 🏗 Build
-        run: pnpm run build:web
       - name: 🎭 Playwright tests
         run: pnpm run test:e2e
         env:
