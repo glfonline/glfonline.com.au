@@ -1,6 +1,6 @@
 import { LEGAL_PAGE_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { json, type MetaFunction } from '@vercel/remix';
 
 import { PageLayout } from '../components/page-layout';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';

@@ -1,4 +1,4 @@
-import { type MetaFunction } from '@remix-run/node';
+import { type MetaFunction } from '@vercel/remix';
 import { Fragment } from 'react';
 
 import { Map } from '../components/map';

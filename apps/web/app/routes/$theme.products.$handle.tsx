@@ -1,8 +1,8 @@
 import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
-import { json, type ActionArgs, type DataFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
+import { json, type ActionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 import { useZorm } from 'react-zorm';

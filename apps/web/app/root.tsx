@@ -1,6 +1,5 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { cssBundleHref } from '@remix-run/css-bundle';
-import { json, type LinksFunction, type LoaderArgs, type MetaFunction } from '@remix-run/node';
 import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch, useLocation } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
 import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
@@ -8,6 +7,7 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { json, type LinksFunction, type LoaderArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment, useEffect } from 'react';
 
 import favicon from '../public/favicon.svg';

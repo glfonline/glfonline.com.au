@@ -1,6 +1,6 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
+import { json, type MetaFunction } from '@vercel/remix';
 import { Fragment } from 'react';
 import { z } from 'zod';
 
