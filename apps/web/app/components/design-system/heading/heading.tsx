@@ -2,37 +2,24 @@ import { assert } from 'emery/assertions';
 import { isDefined } from 'emery/guards';
 import { forwardRef } from 'react';
 
-import {
-	getHeadingStyles,
-	type HeadingVariantProps,
-} from './get-heading-styles';
+import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';
 
-export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(
-	function Heading(
-		{
-			children,
-			className,
-			color,
-			headingElement,
-			size,
-			weight,
-			...consumerProps
-		},
-		forwardedRef,
-	) {
-		assert(isDefined(size), 'Heading level must be defined');
-		const HeadingElement = headingElement || headingLevelMap[size];
-		return (
-			<HeadingElement
-				{...consumerProps}
-				className={getHeadingStyles({ className, color, size, weight })}
-				ref={forwardedRef}
-			>
-				{children}
-			</HeadingElement>
-		);
-	},
-);
+export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
+	{ children, className, color, headingElement, size, weight, ...consumerProps },
+	forwardedRef,
+) {
+	assert(isDefined(size), 'Heading level must be defined');
+	const HeadingElement = headingElement || headingLevelMap[size];
+	return (
+		<HeadingElement
+			{...consumerProps}
+			className={getHeadingStyles({ className, color, size, weight })}
+			ref={forwardedRef}
+		>
+			{children}
+		</HeadingElement>
+	);
+});
 
 const headingLevelMap = {
 	'1': 'h1',

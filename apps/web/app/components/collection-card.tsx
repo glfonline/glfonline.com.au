@@ -14,12 +14,7 @@ export type CollectionCardProps = {
 	priority?: boolean;
 };
 
-export function CollectionCard({
-	cta,
-	image,
-	span = '5',
-	priority,
-}: CollectionCardProps) {
+export function CollectionCard({ cta, image, span = '5', priority }: CollectionCardProps) {
 	return (
 		<div className={clsx('relative flex h-96', spanMap[span])}>
 			{/* @ts-expect-error */}
@@ -42,11 +37,7 @@ export function CollectionCard({
 				)}
 			>
 				<span className="mt-auto flex flex-1 flex-col items-center">
-					<ButtonLink
-						className="before:absolute before:inset-0"
-						href={cta.href}
-						variant="outline"
-					>
+					<ButtonLink className="before:absolute before:inset-0" href={cta.href} variant="outline">
 						{cta.text}
 					</ButtonLink>
 				</span>

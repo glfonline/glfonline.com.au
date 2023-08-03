@@ -1,7 +1,4 @@
-import {
-	sanityClient,
-	TESTIMONIALS_PAGE_QUERY,
-} from '@glfonline/sanity-client';
+import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
 import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
@@ -34,8 +31,7 @@ export async function loader() {
 	const { TestimonialsPage } = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
 		id: 'testimonials',
 	});
-	const { testimonials, heroImage } =
-		TestimonialsSchema.parse(TestimonialsPage);
+	const { testimonials, heroImage } = TestimonialsSchema.parse(TestimonialsPage);
 	return json(
 		{ heroImage, testimonials, title: 'Testimonials' },
 		{
@@ -88,10 +84,7 @@ function Testimonials() {
 		<ul className="grid grid-flow-row-dense gap-10 pb-10 md:grid-cols-2">
 			{testimonials.map(({ _key, author, quoteRaw, testimonialImage }) =>
 				testimonialImage ? (
-					<li
-						className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12"
-						key={_key}
-					>
+					<li className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12" key={_key}>
 						<Image
 							alt={testimonialImage.asset.altText ?? ''}
 							breakpoints={[640, 750, 767, 828, 960, 1080, 1280, 1534]}

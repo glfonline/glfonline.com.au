@@ -8,13 +8,7 @@ function wait(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function NewsletterDialog({
-	isOpen,
-	onClose,
-}: {
-	isOpen: boolean;
-	onClose: () => void;
-}) {
+export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
 	const fetchers = useFetchers();
 	const fetcher = fetchers.find((f) => f.formAction === '/api/newsletter');
 	useEffect(() => {

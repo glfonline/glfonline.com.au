@@ -13,12 +13,7 @@ export function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
 			viewBox="0 0 24 24"
 			{...props}
 		>
-			<path
-				d="M4 6h16M4 12h16M4 18h16"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-				strokeWidth={2}
-			/>
+			<path d="M4 6h16M4 12h16M4 18h16" strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} />
 		</svg>
 	);
 }

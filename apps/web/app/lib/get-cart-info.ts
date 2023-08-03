@@ -1,7 +1,4 @@
-import {
-	CREATE_CHECKOUT_MUTATION,
-	shopifyClient,
-} from '@glfonline/shopify-client';
+import { CREATE_CHECKOUT_MUTATION, shopifyClient } from '@glfonline/shopify-client';
 
 import { type CartItem } from './cart';
 

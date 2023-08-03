@@ -1,9 +1,6 @@
 export function SplitBackground() {
 	return (
-		<div
-			aria-hidden="true"
-			className="absolute inset-0 grid grid-cols-2 overflow-hidden"
-		>
+		<div aria-hidden="true" className="absolute inset-0 grid grid-cols-2 overflow-hidden">
 			<div className="bg-brand-primary" data-theme="ladies" />
 			<div className="bg-brand-primary" data-theme="mens" />
 			<div className="absolute inset-0">

@@ -15,9 +15,7 @@ export const headers = routeHeaders;
 
 const FaqSchema = z.object({
 	heroImage: imageWithAltSchema,
-	faqs: z
-		.object({ question: z.nullable(z.string().min(1)), answerRaw: z.any() })
-		.array(),
+	faqs: z.object({ question: z.nullable(z.string().min(1)), answerRaw: z.any() }).array(),
 });
 
 export async function loader() {

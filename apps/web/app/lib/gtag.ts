@@ -1,10 +1,6 @@
 declare global {
 	interface Window {
-		gtag: (
-			option: string,
-			gaTrackingId: string,
-			options: Record<string, unknown>,
-		) => void;
+		gtag: (option: string, gaTrackingId: string, options: Record<string, unknown>) => void;
 	}
 }
 
@@ -32,12 +28,7 @@ export function pageview(url: string, trackingId: string) {
 /**
  * @see https://developers.google.com/analytics/devguides/collection/gtagjs/events
  */
-export function event({
-	action,
-	category,
-	label,
-	value,
-}: Record<string, string>) {
+export function event({ action, category, label, value }: Record<string, string>) {
 	if (!window.gtag) {
 		console.warn(
 			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.',

@@ -8,13 +8,7 @@ import { Fragment, useEffect, useId } from 'react';
 import { socialLinks, type NavItem } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
-export function MobileMenu({
-	open,
-	setOpen,
-}: {
-	open: boolean;
-	setOpen: (open: boolean) => void;
-}) {
+export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
 	useEffect(() => {
 		if (open) {
 			const onClose = () => setOpen(false);
@@ -70,9 +64,7 @@ export function MobileMenu({
 											<Tab
 												className={({ selected }) =>
 													clsx(
-														selected
-															? 'border-brand-primary text-brand-primary'
-															: 'border-transparent text-gray-900',
+														selected ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-900',
 														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase',
 													)
 												}
@@ -86,10 +78,7 @@ export function MobileMenu({
 								</div>
 								<Tab.Panels as={Fragment}>
 									{mainNavigation.navCategories.map((category) => (
-										<Tab.Panel
-											className="flex flex-col gap-1 px-4 pt-6"
-											key={category.label}
-										>
+										<Tab.Panel className="flex flex-col gap-1 px-4 pt-6" key={category.label}>
 											{category.navSections.map((section) => (
 												<Section key={section.label} section={section} />
 											))}
@@ -102,10 +91,7 @@ export function MobileMenu({
 							<div className="flex flex-col gap-1 border-gray-200 px-4 pb-6 pt-1">
 								{mainNavigation.pages.map((page) => (
 									<div className="flow-root" key={page.label}>
-										<NavLink
-											className="block p-2 font-bold uppercase text-gray-900"
-											to={page.href}
-										>
+										<NavLink className="block p-2 font-bold uppercase text-gray-900" to={page.href}>
 											{page.label}
 										</NavLink>
 									</div>
@@ -135,11 +121,7 @@ export function MobileMenu({
 		</Transition.Root>
 	);
 }
-function Section({
-	section,
-}: {
-	section: { label: string; items: NavItem[][] };
-}) {
+function Section({ section }: { section: { label: string; items: NavItem[][] } }) {
 	const id = useId();
 	return (
 		<Disclosure>
@@ -150,12 +132,7 @@ function Section({
 				{section.label}
 				<ChevronDownIcon className="h-5 w-5" />
 			</Disclosure.Button>
-			<Disclosure.Panel
-				aria-labelledby={id}
-				as="ul"
-				className="flex flex-col gap-1"
-				role="list"
-			>
+			<Disclosure.Panel aria-labelledby={id} as="ul" className="flex flex-col gap-1" role="list">
 				{section.items.map((item, index) => (
 					<Fragment key={index}>
 						{item.map(({ label, href }) => (

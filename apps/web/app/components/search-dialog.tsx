@@ -23,12 +23,7 @@ export function SearchDialog({
 	const { data, isLoading, isPreviousData } = useAlgoliaSearch(query);
 
 	return (
-		<Transition.Root
-			afterLeave={() => setQuery('')}
-			appear
-			as={Fragment}
-			show={isSearchOpen}
-		>
+		<Transition.Root afterLeave={() => setQuery('')} appear as={Fragment} show={isSearchOpen}>
 			<Dialog as="div" className="relative z-30" onClose={setSearchOpen}>
 				<Transition.Child
 					as={Fragment}
@@ -54,9 +49,7 @@ export function SearchDialog({
 					>
 						<Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
 							<Combobox
-								onChange={(
-									product: NonNullable<typeof data>['hits'][number],
-								) => {
+								onChange={(product: NonNullable<typeof data>['hits'][number]) => {
 									navigate(makeProductHref(product));
 									setSearchOpen(false);
 								}}
@@ -118,12 +111,7 @@ function SearchResults({
 			>
 				{data.hits.map((product) => (
 					<Combobox.Option
-						className={({ active }) =>
-							clsx(
-								'flex cursor-default select-none rounded-xl p-3',
-								active && 'bg-gray-100',
-							)
-						}
+						className={({ active }) => clsx('flex cursor-default select-none rounded-xl p-3', active && 'bg-gray-100')}
 						key={product.objectID}
 						value={product}
 					>
@@ -146,10 +134,7 @@ function SearchResults({
 											width={imageWidth}
 										/>
 									) : (
-										<span
-											aria-hidden="true"
-											className="aspect-square w-11 bg-gray-200"
-										/>
+										<span aria-hidden="true" className="aspect-square w-11 bg-gray-200" />
 									)}
 									<span
 										className={clsx(
@@ -172,15 +157,9 @@ function SearchResults({
 	if (query !== '' && data?.hits.length === 0) {
 		return (
 			<div className="px-6 py-14 text-center text-sm sm:px-14">
-				<ExclamationCircleIcon
-					className="mx-auto h-6 w-6 text-gray-400"
-					name="exclamation-circle"
-					type="outline"
-				/>
+				<ExclamationCircleIcon className="mx-auto h-6 w-6 text-gray-400" name="exclamation-circle" type="outline" />
 				<p className="mt-4 font-semibold text-gray-900">No results found</p>
-				<p className="mt-2 text-gray-500">
-					No components found for this search term. Please try again.
-				</p>
+				<p className="mt-2 text-gray-500">No components found for this search term. Please try again.</p>
 			</div>
 		);
 	}

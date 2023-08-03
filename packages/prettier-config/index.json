@@ -1,15 +1,12 @@
 {
 	"$schema": "http://json.schemastore.org/prettierrc",
-	"proseWrap": "always",
-	"singleQuote": true,
-	"tabWidth": 2,
-	"useTabs": true,
 	"importOrder": ["<THIRD_PARTY_MODULES>", "", "^~/(.*)$", "", "^[./]"],
 	"importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
 	"importOrderTypeScriptVersion": "5.0.0",
-	"plugins": [
-		"prettier-plugin-packagejson",
-		"@ianvs/prettier-plugin-sort-imports",
-		"prettier-plugin-tailwindcss"
-	]
+	"plugins": ["prettier-plugin-packagejson", "@ianvs/prettier-plugin-sort-imports", "prettier-plugin-tailwindcss"],
+	"printWidth": 120,
+	"proseWrap": "always",
+	"singleQuote": true,
+	"tabWidth": 2,
+	"useTabs": true
 }

@@ -22,8 +22,7 @@ const sessionStorage = createCookieSessionStorage({
 const cartSessionKey = 'cart';
 
 export async function getSession(input: Request | string | null | undefined) {
-	const cookieHeader =
-		!input || typeof input === 'string' ? input : input.headers.get('Cookie');
+	const cookieHeader = !input || typeof input === 'string' ? input : input.headers.get('Cookie');
 	const session = await sessionStorage.getSession(cookieHeader);
 
 	return {
@@ -41,11 +40,7 @@ export async function getSession(input: Request | string | null | undefined) {
 	};
 }
 
-export function addToCart(
-	cart: CartItem[],
-	variantId: string,
-	quantity: number,
-) {
+export function addToCart(cart: CartItem[], variantId: string, quantity: number) {
 	let added = false;
 	for (const item of cart) {
 		if (item.variantId === variantId) {
@@ -60,11 +55,7 @@ export function addToCart(
 	return cart;
 }
 
-export function updateCartItem(
-	cart: CartItem[],
-	variantId: string,
-	quantity: number,
-) {
+export function updateCartItem(cart: CartItem[], variantId: string, quantity: number) {
 	let updated = false;
 	for (const item of cart) {
 		if (item.variantId === variantId) {

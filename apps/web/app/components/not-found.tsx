@@ -5,10 +5,7 @@ import { SplitBackground } from './split-background';
 export function NotFound() {
 	return (
 		<main className="relative grid min-h-full place-items-center">
-			<div
-				aria-hidden="true"
-				className="absolute inset-0 flex h-full w-full overflow-hidden"
-			>
+			<div aria-hidden="true" className="absolute inset-0 flex h-full w-full overflow-hidden">
 				<SplitBackground />
 			</div>
 			<div className="isolate flex flex-col gap-4 border bg-white px-6 py-24 text-center lg:px-8">
@@ -19,9 +16,7 @@ export function NotFound() {
 					</Heading>
 				</div>
 				<div className="flex flex-col gap-6">
-					<p className="text-base leading-7 text-gray-600">
-						Sorry, we couldn’t find the page you’re looking for.
-					</p>
+					<p className="text-base leading-7 text-gray-600">Sorry, we couldn’t find the page you’re looking for.</p>
 					<div className="flex items-center justify-center gap-x-6">
 						<ButtonLink href="/" variant="neutral">
 							Go back home

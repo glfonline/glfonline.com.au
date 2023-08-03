@@ -197,12 +197,7 @@ export const COLLECTION_QUERY = gql`
 ` as import('../__generated__/ts-gql/COLLECTION_QUERY').type;
 
 export const COLLECTION_OPTIONS_QUERY = gql`
-	query COLLECTION_OPTIONS_QUERY(
-		$after: String
-		$filters: [ProductFilter!]
-		$first: Int = 250
-		$handle: String
-	) {
+	query COLLECTION_OPTIONS_QUERY($after: String, $filters: [ProductFilter!], $first: Int = 250, $handle: String) {
 		collection(handle: $handle) {
 			id
 			products(after: $after, filters: $filters, first: $first) {
@@ -234,13 +229,7 @@ export const ALL_PRODUCTS_QUERY = gql`
 		$reverse: Boolean = false
 		$cursor: String = null
 	) {
-		products(
-			first: $first
-			sortKey: $sortKey
-			reverse: $reverse
-			query: $query
-			after: $cursor
-		) {
+		products(first: $first, sortKey: $sortKey, reverse: $reverse, query: $query, after: $cursor) {
 			...PRODUCT_CONNECTION_FRAGMENT
 		}
 	}

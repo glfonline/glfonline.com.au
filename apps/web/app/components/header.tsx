@@ -1,10 +1,6 @@
 import { Popover, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
-import {
-	Bars3Icon,
-	MagnifyingGlassIcon,
-	ShoppingCartIcon,
-} from '@heroicons/react/24/outline';
+import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { NavLink, useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -43,11 +39,7 @@ function TopNav() {
 				</p>
 
 				<div className="hidden lg:flex lg:flex-1 lg:items-center lg:justify-end lg:gap-6">
-					<ButtonLink
-						href={`tel:${CHANTALE_PHONE}`}
-						size="small"
-						variant="outline"
-					>
+					<ButtonLink href={`tel:${CHANTALE_PHONE}`} size="small" variant="outline">
 						Phone: {CHANTALE_PHONE}
 					</ButtonLink>
 					<div className="inline-flex gap-3">
@@ -79,10 +71,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 			<div className="mx-auto max-w-7xl border-y border-gray-200">
 				<div className="flex h-14 items-center justify-between">
 					{/* Logo (lg+) */}
-					<NavLink
-						className="hidden h-full items-center lg:flex lg:px-8 xl:w-80"
-						to="/"
-					>
+					<NavLink className="hidden h-full items-center lg:flex lg:px-8 xl:w-80" to="/">
 						<span className="sr-only">GLF Online</span>
 						<HorizontalLogo className="h-8 w-auto" />
 					</NavLink>
@@ -92,20 +81,13 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 
 					{/* Mobile menu and search (lg-) */}
 					<div className="flex items-center px-4 sm:px-6 lg:hidden">
-						<button
-							className="-ml-2 rounded-md bg-white p-2 text-gray-400"
-							onClick={() => setOpen(true)}
-							type="button"
-						>
+						<button className="-ml-2 rounded-md bg-white p-2 text-gray-400" onClick={() => setOpen(true)} type="button">
 							<span className="sr-only">Open menu</span>
 							<Bars3Icon aria-hidden="true" className="h-6 w-6" />
 						</button>
 
 						{/* Search */}
-						<button
-							className="ml-2 p-2 text-gray-600 hover:text-gray-800"
-							onClick={toggleSearch}
-						>
+						<button className="ml-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
 							<span className="sr-only">Search</span>
 							<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 						</button>
@@ -121,31 +103,20 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						<div className="flex items-center gap-8 lg:ml-8">
 							<div className="flex">
 								<div className="hidden lg:flex">
-									<button
-										className="-m-2 p-2 text-gray-600 hover:text-gray-800"
-										onClick={toggleSearch}
-									>
+									<button className="-m-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
 										<span className="sr-only">Search</span>
-										<MagnifyingGlassIcon
-											aria-hidden="true"
-											className="h-6 w-6"
-										/>
+										<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 									</button>
 								</div>
 							</div>
 
 							<div className="flow-root">
-								<NavLink
-									className="group -m-2 flex items-center gap-2 p-2"
-									to="/cart"
-								>
+								<NavLink className="group -m-2 flex items-center gap-2 p-2" to="/cart">
 									<ShoppingCartIcon
 										aria-hidden="true"
 										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
 									/>
-									<span className="text-sm text-gray-700 group-hover:text-gray-800">
-										{cartCount}
-									</span>
+									<span className="text-sm text-gray-700 group-hover:text-gray-800">{cartCount}</span>
 									<span className="sr-only">items in cart, view bag</span>
 								</NavLink>
 							</div>
@@ -172,12 +143,7 @@ function MegaMenu() {
 					<Popover className="flex" data-theme={category.theme} key={index}>
 						{({ open }) => (
 							<Fragment>
-								<Popover.Button
-									className={clsx(
-										open && 'bg-brand-primary text-white',
-										navItemClasses,
-									)}
-								>
+								<Popover.Button className={clsx(open && 'bg-brand-primary text-white', navItemClasses)}>
 									{category.label}
 									<ChevronDownIcon className="-mr-5 h-5 w-5" />
 								</Popover.Button>
@@ -198,10 +164,7 @@ function MegaMenu() {
 										 * pokes out the top, so we use this shorter element
 										 * to hide the top of the shadow.
 										 */}
-										<div
-											aria-hidden="true"
-											className="absolute inset-0 top-1/2 bg-white shadow"
-										/>
+										<div aria-hidden="true" className="absolute inset-0 top-1/2 bg-white shadow" />
 
 										<div className="relative bg-white">
 											<div className="mx-auto max-w-7xl px-8">
@@ -209,19 +172,13 @@ function MegaMenu() {
 													{/* Nav sections */}
 													<div className="col-span-2 grid grid-cols-4 gap-x-8 gap-y-10 text-sm">
 														{category.navSections.map((section, sectionIdx) => (
-															<CategorySection
-																key={sectionIdx}
-																section={section}
-															/>
+															<CategorySection key={sectionIdx} section={section} />
 														))}
 													</div>
 													{/* Featured */}
 													<ul className="relative col-start-3 grid gap-6">
 														{category.featuredItems.map((item) => (
-															<li
-																className="group relative flex flex-col gap-6 text-base sm:text-sm"
-																key={item._key}
-															>
+															<li className="group relative flex flex-col gap-6 text-base sm:text-sm" key={item._key}>
 																<div className="flex items-center justify-between bg-gray-100 group-hover:opacity-75">
 																	<div className="p-6">
 																		<Popover.Button
@@ -229,10 +186,7 @@ function MegaMenu() {
 																			className="block font-bold uppercase text-gray-900"
 																			to={item.href}
 																		>
-																			<span
-																				aria-hidden="true"
-																				className="absolute inset-0 z-10"
-																			/>
+																			<span aria-hidden="true" className="absolute inset-0 z-10" />
 																			{item.label}
 																		</Popover.Button>
 																		<p aria-hidden="true" className="mt-1">
@@ -298,11 +252,7 @@ function getSpan(value: number) {
 	return 1;
 }
 
-function CategorySection({
-	section,
-}: {
-	section: { label: string; items: NavItem[][] };
-}) {
+function CategorySection({ section }: { section: { label: string; items: NavItem[][] } }) {
 	const id = useId();
 	return (
 		<div className={spanMap[getSpan(section.items.length)]}>
@@ -313,20 +263,13 @@ function CategorySection({
 				{section.items.map((item, itemIdx) => (
 					<ul
 						aria-labelledby={id}
-						className={clsx(
-							'mt-6 space-y-6 sm:mt-4 sm:space-y-4',
-							section.items.length === 1 && 'col-span-2',
-						)}
+						className={clsx('mt-6 space-y-6 sm:mt-4 sm:space-y-4', section.items.length === 1 && 'col-span-2')}
 						key={itemIdx}
 						role="list"
 					>
 						{item.map(({ label, href }) => (
 							<li className="flex" key={label}>
-								<Popover.Button
-									as={NavLink}
-									className="text-gray-700 hover:text-gray-900"
-									to={href}
-								>
+								<Popover.Button as={NavLink} className="text-gray-700 hover:text-gray-900" to={href}>
 									{label}
 								</Popover.Button>
 							</li>

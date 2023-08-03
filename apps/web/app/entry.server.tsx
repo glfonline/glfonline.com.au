@@ -5,11 +5,7 @@
  */
 
 import { PassThrough } from 'node:stream';
-import {
-	Response,
-	type AppLoadContext,
-	type EntryContext,
-} from '@remix-run/node';
+import { Response, type AppLoadContext, type EntryContext } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
 import * as Sentry from '@sentry/remix';
 import isbot from 'isbot';
@@ -32,18 +28,8 @@ export default function handleRequest(
 	_loadContext: AppLoadContext,
 ) {
 	return isbot(request.headers.get('user-agent'))
-		? handleBotRequest(
-				request,
-				responseStatusCode,
-				responseHeaders,
-				remixContext,
-		  )
-		: handleBrowserRequest(
-				request,
-				responseStatusCode,
-				responseHeaders,
-				remixContext,
-		  );
+		? handleBotRequest(request, responseStatusCode, responseHeaders, remixContext)
+		: handleBrowserRequest(request, responseStatusCode, responseHeaders, remixContext);
 }
 
 function handleBotRequest(
@@ -55,11 +41,7 @@ function handleBotRequest(
 	return new Promise((resolve, reject) => {
 		let shellRendered = false;
 		const { pipe, abort } = renderToPipeableStream(
-			<RemixServer
-				abortDelay={ABORT_DELAY}
-				context={remixContext}
-				url={request.url}
-			/>,
+			<RemixServer abortDelay={ABORT_DELAY} context={remixContext} url={request.url} />,
 			{
 				onAllReady() {
 					shellRendered = true;
@@ -106,11 +88,7 @@ function handleBrowserRequest(
 	return new Promise((resolve, reject) => {
 		let shellRendered = false;
 		const { pipe, abort } = renderToPipeableStream(
-			<RemixServer
-				abortDelay={ABORT_DELAY}
-				context={remixContext}
-				url={request.url}
-			/>,
+			<RemixServer abortDelay={ABORT_DELAY} context={remixContext} url={request.url} />,
 			{
 				onShellReady() {
 					shellRendered = true;

@@ -32,14 +32,7 @@ const hiddenDocTypes = (listItem: ListItemBuilder) => {
 		return false;
 	}
 
-	return ![
-		'aboutPage',
-		'faqPage',
-		'homePage',
-		'mainNavigation',
-		'testimonialsPage',
-		'themePage',
-	].includes(id);
+	return !['aboutPage', 'faqPage', 'homePage', 'mainNavigation', 'testimonialsPage', 'themePage'].includes(id);
 };
 
 export const structure: StructureResolver = (S, context) =>

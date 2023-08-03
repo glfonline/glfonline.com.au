@@ -6,11 +6,7 @@ export function GoogleAnalytics() {
 	return (
 		<Fragment>
 			{gtag.trackingIds.map((id) => (
-				<script
-					async
-					key={id}
-					src={`https://www.googletagmanager.com/gtag/js?id=${id}`}
-				/>
+				<script async key={id} src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
 			))}
 			<script
 				async
@@ -27,11 +23,7 @@ const gtagInitScript = `
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-${gtag.trackingIds
-	.map(
-		(id) => `gtag('config', '${id}', {page_path: window.location.pathname});`,
-	)
-	.join('\n')}
+${gtag.trackingIds.map((id) => `gtag('config', '${id}', {page_path: window.location.pathname});`).join('\n')}
 `;
 
 export function MetaAnalytics() {

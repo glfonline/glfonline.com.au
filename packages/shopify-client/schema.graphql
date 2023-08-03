@@ -500,8 +500,7 @@ interface BaseCartLine implements Node {
 	"""
 	The estimated cost of the merchandise that the buyer will pay for at checkout. The estimated costs are subject to change and changes will be reflected at checkout.
 	"""
-	estimatedCost: CartLineEstimatedCost!
-		@deprecated(reason: "Use `cost` instead.")
+	estimatedCost: CartLineEstimatedCost! @deprecated(reason: "Use `cost` instead.")
 
 	"""
 	A globally-unique ID.
@@ -1599,8 +1598,7 @@ type CartLine implements BaseCartLine & Node {
 	"""
 	The estimated cost of the merchandise that the buyer will pay for at checkout. The estimated costs are subject to change and changes will be reflected at checkout.
 	"""
-	estimatedCost: CartLineEstimatedCost!
-		@deprecated(reason: "Use `cost` instead.")
+	estimatedCost: CartLineEstimatedCost! @deprecated(reason: "Use `cost` instead.")
 
 	"""
 	A globally-unique ID.
@@ -1933,11 +1931,7 @@ type CartSubmitForCompletionPayload {
 """
 The result of cart submit completion.
 """
-union CartSubmitForCompletionResult =
-	  SubmitAlreadyAccepted
-	| SubmitFailed
-	| SubmitSuccess
-	| SubmitThrottled
+union CartSubmitForCompletionResult = SubmitAlreadyAccepted | SubmitFailed | SubmitSuccess | SubmitThrottled
 
 """
 Represents an error that happens during execution of a cart mutation.
@@ -2221,8 +2215,7 @@ type CheckoutAttributesUpdateV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2260,8 +2253,7 @@ type CheckoutCompleteFreePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2286,8 +2278,7 @@ type CheckoutCompleteWithCreditCardV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2312,8 +2303,7 @@ type CheckoutCompleteWithTokenizedPaymentV3Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2376,8 +2366,7 @@ type CheckoutCreatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2402,8 +2391,7 @@ type CheckoutCustomerAssociateV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2423,8 +2411,7 @@ type CheckoutCustomerDisassociateV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2444,8 +2431,7 @@ type CheckoutDiscountCodeApplyV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2465,8 +2451,7 @@ type CheckoutDiscountCodeRemovePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2486,8 +2471,7 @@ type CheckoutEmailUpdateV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2742,8 +2726,7 @@ type CheckoutGiftCardRemoveV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2763,8 +2746,7 @@ type CheckoutGiftCardsAppendPayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2900,8 +2882,7 @@ type CheckoutLineItemsAddPayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2921,8 +2902,7 @@ type CheckoutLineItemsRemovePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2957,8 +2937,7 @@ type CheckoutLineItemsUpdatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2978,8 +2957,7 @@ type CheckoutShippingAddressUpdateV2Payload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -2999,8 +2977,7 @@ type CheckoutShippingLineUpdatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `checkoutUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
 }
 
 """
@@ -3358,8 +3335,7 @@ type ComponentizableCartLine implements BaseCartLine & Node {
 	"""
 	The estimated cost of the merchandise that the buyer will pay for at checkout. The estimated costs are subject to change and changes will be reflected at checkout.
 	"""
-	estimatedCost: CartLineEstimatedCost!
-		@deprecated(reason: "Use `cost` instead.")
+	estimatedCost: CartLineEstimatedCost! @deprecated(reason: "Use `cost` instead.")
 
 	"""
 	A globally-unique ID.
@@ -4898,10 +4874,7 @@ enum CurrencyCode {
 	"""
 	Belarusian Ruble (BYR).
 	"""
-	BYR
-		@deprecated(
-			reason: "`BYR` is deprecated. Use `BYN` available from version `2021-01` onwards instead."
-		)
+	BYR @deprecated(reason: "`BYR` is deprecated. Use `BYN` available from version `2021-01` onwards instead.")
 
 	"""
 	Belize Dollar (BZD).
@@ -5426,10 +5399,7 @@ enum CurrencyCode {
 	"""
 	Sao Tome And Principe Dobra (STD).
 	"""
-	STD
-		@deprecated(
-			reason: "`STD` is deprecated. Use `STN` available from version `2022-07` onwards instead."
-		)
+	STD @deprecated(reason: "`STD` is deprecated. Use `STN` available from version `2022-07` onwards instead.")
 
 	"""
 	Sao Tome And Principe Dobra (STN).
@@ -5524,10 +5494,7 @@ enum CurrencyCode {
 	"""
 	Venezuelan Bolivares (VEF).
 	"""
-	VEF
-		@deprecated(
-			reason: "`VEF` is deprecated. Use `VES` available from version `2020-10` onwards instead."
-		)
+	VEF @deprecated(reason: "`VEF` is deprecated. Use `VES` available from version `2020-10` onwards instead.")
 
 	"""
 	Venezuelan Bolivares (VES).
@@ -5796,8 +5763,7 @@ type CustomerAccessTokenCreatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -5907,8 +5873,7 @@ type CustomerActivatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -5928,8 +5893,7 @@ type CustomerAddressCreatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -5949,8 +5913,7 @@ type CustomerAddressDeletePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -5970,8 +5933,7 @@ type CustomerAddressUpdatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -6024,8 +5986,7 @@ type CustomerCreatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -6045,8 +6006,7 @@ type CustomerDefaultAddressUpdatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -6141,8 +6101,7 @@ type CustomerRecoverPayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -6167,8 +6126,7 @@ type CustomerResetByUrlPayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -6208,8 +6166,7 @@ type CustomerResetPayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -6265,8 +6222,7 @@ type CustomerUpdatePayload {
 	"""
 	The list of errors that occurred from executing the mutation.
 	"""
-	userErrors: [UserError!]!
-		@deprecated(reason: "Use `customerUserErrors` instead.")
+	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
 """
@@ -8399,13 +8355,7 @@ type MenuItem implements Node {
 }
 
 "The list of possible resources a `MenuItem` can reference.\n"
-union MenuItemResource =
-	  Article
-	| Blog
-	| Collection
-	| Page
-	| Product
-	| ShopPolicy
+union MenuItemResource = Article | Blog | Collection | Page | Product | ShopPolicy
 
 """
 A menu item type.
@@ -8619,15 +8569,7 @@ union MetafieldParentResource =
 	| Shop
 
 "Returns the resource which is being referred to by a metafield.\n"
-union MetafieldReference =
-	  Collection
-	| GenericFile
-	| MediaImage
-	| Metaobject
-	| Page
-	| Product
-	| ProductVariant
-	| Video
+union MetafieldReference = Collection | GenericFile | MediaImage | Metaobject | Page | Product | ProductVariant | Video
 
 "An auto-generated type for paginating through multiple MetafieldReferences.\n"
 type MetafieldReferenceConnection {
@@ -9845,8 +9787,7 @@ type Order implements HasMetafields & Node {
 	"""
 	The total cost of shipping.
 	"""
-	totalShippingPriceV2: MoneyV2!
-		@deprecated(reason: "Use `totalShippingPrice` instead.")
+	totalShippingPriceV2: MoneyV2! @deprecated(reason: "Use `totalShippingPrice` instead.")
 
 	"""
 	The total cost of taxes.
@@ -12360,9 +12301,7 @@ enum SellingPlanCheckoutChargeType {
 """
 The portion of the price to be charged at checkout.
 """
-union SellingPlanCheckoutChargeValue =
-	  MoneyV2
-	| SellingPlanCheckoutChargePercentageValue
+union SellingPlanCheckoutChargeValue = MoneyV2 | SellingPlanCheckoutChargePercentageValue
 
 "An auto-generated type for paginating through multiple SellingPlans.\n"
 type SellingPlanConnection {

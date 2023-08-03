@@ -1,10 +1,5 @@
 import { json, type LoaderArgs, type MetaFunction } from '@remix-run/node';
-import {
-	Link,
-	useLoaderData,
-	useLocation,
-	useNavigate,
-} from '@remix-run/react';
+import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment } from 'react';
 import { z } from 'zod';
@@ -39,9 +34,7 @@ const BlogSchema = z
 
 export async function loader({ request }: LoaderArgs) {
 	const url = new URL(request.url);
-	const { after = 0 } = BlogSchema.parse(
-		Object.fromEntries(url.searchParams.entries()),
-	);
+	const { after = 0 } = BlogSchema.parse(Object.fromEntries(url.searchParams.entries()));
 	const [posts, featuredPost, count] = await Promise.all([
 		getBlogPosts({
 			limit: POSTS_LIMIT,
@@ -97,9 +90,7 @@ function PostList() {
 	return (
 		<div className="mx-auto flex max-w-7xl flex-col gap-8">
 			<div className="flex">
-				<h1 className={getHeadingStyles({ size: '2' })}>
-					Stay connected with our blogs
-				</h1>
+				<h1 className={getHeadingStyles({ size: '2' })}>Stay connected with our blogs</h1>
 			</div>
 			<section aria-labelledby="gallery-heading">
 				<h2 className="sr-only" id="gallery-heading">
@@ -127,22 +118,13 @@ function PostList() {
 						/>
 					))}
 				</ul>
-				<Pagination
-					hasNextPage={after + POSTS_LIMIT <= count}
-					hasPrevPage={after > POSTS_LIMIT}
-				/>
+				<Pagination hasNextPage={after + POSTS_LIMIT <= count} hasPrevPage={after > POSTS_LIMIT} />
 			</section>
 		</div>
 	);
 }
 
-export function Pagination({
-	hasNextPage,
-	hasPrevPage,
-}: {
-	hasNextPage: boolean;
-	hasPrevPage: boolean;
-}) {
+export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean; hasPrevPage: boolean }) {
 	const { after } = useLoaderData<typeof loader>();
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -192,21 +174,10 @@ type PostProps = {
 	publishDate: string;
 };
 
-function Post({
-	imgSrc,
-	href,
-	heading,
-	excerpt,
-	author,
-	publishDate,
-}: PostProps) {
+function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps) {
 	return (
 		<li className="flex" key={imgSrc}>
-			<Link
-				className="flex w-full flex-col sm:flex-row"
-				prefetch="intent"
-				to={href}
-			>
+			<Link className="flex w-full flex-col sm:flex-row" prefetch="intent" to={href}>
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<Image
 						alt=""
@@ -225,13 +196,9 @@ function Post({
 						</div>
 					</div>
 					<div className="mt-6 max-w-prose">
-						<p className="text-sm font-bold leading-5 text-gray-900">
-							{author}
-						</p>
+						<p className="text-sm font-bold leading-5 text-gray-900">{author}</p>
 						<div className="text-sm font-bold italic text-gray-700">
-							<time dateTime={publishDate}>
-								{new Date(publishDate).toDateString()}
-							</time>
+							<time dateTime={publishDate}>{new Date(publishDate).toDateString()}</time>
 						</div>
 					</div>
 				</div>
@@ -244,10 +211,7 @@ function Sidebar() {
 	const { featuredPost } = useLoaderData<typeof loader>();
 
 	return (
-		<aside
-			aria-labelledby="featured-posts"
-			className="flex w-80 flex-col gap-8"
-		>
+		<aside aria-labelledby="featured-posts" className="flex w-80 flex-col gap-8">
 			{featuredPost && (
 				<FeaturedPost
 					author={featuredPost.author.name}
@@ -319,9 +283,7 @@ function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 						|
 					</span>
 					<span className="text-sm font-bold italic text-gray-700">
-						<time dateTime={publishDate}>
-							{new Date(publishDate).toDateString()}
-						</time>
+						<time dateTime={publishDate}>{new Date(publishDate).toDateString()}</time>
 					</span>
 				</div>
 			</div>
@@ -359,9 +321,7 @@ function CTA({
 				className="bg-true-black/50 relative flex flex-1 flex-col items-center gap-2 px-8 py-16 text-center text-white"
 				data-theme={theme}
 			>
-				<h2 className={getHeadingStyles({ size: '2', color: 'light' })}>
-					{heading}
-				</h2>
+				<h2 className={getHeadingStyles({ size: '2', color: 'light' })}>{heading}</h2>
 				<p className="tex-lg font-bold uppercase">{subHeading}</p>
 				<ButtonLink href={cta.href} variant="brand">
 					{cta.text}

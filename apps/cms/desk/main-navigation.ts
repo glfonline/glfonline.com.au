@@ -6,10 +6,5 @@ export const mainNavigation = defineStructure<ListItemBuilder>((S) =>
 	S.listItem()
 		.title('Navigation')
 		.schemaType('mainNavigation')
-		.child(
-			S.editor()
-				.title('Navigation')
-				.schemaType('mainNavigation')
-				.documentId('mainNavigation'),
-		),
+		.child(S.editor().title('Navigation').schemaType('mainNavigation').documentId('mainNavigation')),
 );

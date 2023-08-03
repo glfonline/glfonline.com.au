@@ -1,9 +1,4 @@
-import {
-	CacheLong,
-	CacheNone,
-	CacheShort,
-	generateCacheControlHeader,
-} from '@shopify/hydrogen';
+import { CacheLong, CacheNone, CacheShort, generateCacheControlHeader } from '@shopify/hydrogen';
 
 export function routeHeaders({ loaderHeaders }: { loaderHeaders: Headers }) {
 	// Keep the same cache-control headers when loading the page directly

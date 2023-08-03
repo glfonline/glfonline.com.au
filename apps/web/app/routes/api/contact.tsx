@@ -28,16 +28,10 @@ export async function action({ request }: ActionArgs) {
 		/** Get the form data out of the request */
 		const formData = await request.formData();
 		/** Parse the data to ensure it's in the expected format */
-		const {
-			agree_to_privacy_policy,
-			first_name,
-			email,
-			last_name,
-			message,
-			phone_number,
-			subject,
-			token,
-		} = parseForm(ContactFormSchema, formData);
+		const { agree_to_privacy_policy, first_name, email, last_name, message, phone_number, subject, token } = parseForm(
+			ContactFormSchema,
+			formData,
+		);
 
 		/** Make sure the user agrees to the Privacy Policy */
 		if (!agree_to_privacy_policy) {
@@ -51,20 +45,17 @@ export async function action({ request }: ActionArgs) {
 		 * Validate Cloudflare Turnstyle token server-side
 		 * @see https://developers.cloudflare.com/turnstile/get-started/server-side-validation/
 		 */
-		const challengeResponse = await fetch(
-			'https://challenges.cloudflare.com/turnstile/v0/siteverify',
-			{
-				body: JSON.stringify({
-					secret: process.env.TURNSTILE_SECRET_KEY,
-					response: token,
-					...(clientIPAddress && { remoteip: clientIPAddress }),
-				}),
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				method: 'POST',
+		const challengeResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
+			body: JSON.stringify({
+				secret: process.env.TURNSTILE_SECRET_KEY,
+				response: token,
+				...(clientIPAddress && { remoteip: clientIPAddress }),
+			}),
+			headers: {
+				'Content-Type': 'application/json',
 			},
-		);
+			method: 'POST',
+		});
 		const challengeJson = await challengeResponse.json();
 		if (!challengeJson.success) {
 			throw new Error('Failed to verify token');
@@ -115,9 +106,7 @@ export async function action({ request }: ActionArgs) {
 		};
 
 		/** Send email with Sendgrid */
-		sendgrid.setApiKey(
-			requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY),
-		);
+		sendgrid.setApiKey(requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY));
 		const sendgridResponse = await sendgrid.send(mailOptions);
 		console.log({ sendgridResponse });
 		return json({ ok: true });
@@ -136,10 +125,7 @@ export const ContactFormSchema = z.object({
 	first_name: z.string().min(1, 'First name is required'),
 	last_name: z.string().min(1, 'Last name is required'),
 	email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
-	phone_number: z
-		.string()
-		.min(1, 'Phone number is required')
-		.min(8, 'Invalid phone number'),
+	phone_number: z.string().min(1, 'Phone number is required').min(8, 'Invalid phone number'),
 	subject: z.string().min(1, 'Subject is required'),
 	message: z.string().min(1, 'Message is required'),
 	token: z.string(),
@@ -152,10 +138,7 @@ export function ContactForm() {
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
-			<div
-				aria-hidden="true"
-				className="absolute inset-0 flex h-full w-full overflow-hidden"
-			>
+			<div aria-hidden="true" className="absolute inset-0 flex h-full w-full overflow-hidden">
 				<SplitBackground />
 			</div>
 			<div className="relative mx-auto flex flex-col gap-12 bg-gray-50 px-4 py-12 sm:max-w-xl sm:px-6 lg:px-8">
@@ -176,39 +159,20 @@ export function ContactForm() {
 					<Field label="Last name" message={form.errors.last_name()?.message}>
 						<TextInput name={form.fields.last_name()} />
 					</Field>
-					<Field
-						className="sm:col-span-2"
-						label="Email"
-						message={form.errors.email()?.message}
-					>
+					<Field className="sm:col-span-2" label="Email" message={form.errors.email()?.message}>
 						<TextInput name={form.fields.email()} type="email" />
 					</Field>
-					<Field
-						className="sm:col-span-2"
-						label="Phone number"
-						message={form.errors.phone_number()?.message}
-					>
+					<Field className="sm:col-span-2" label="Phone number" message={form.errors.phone_number()?.message}>
 						<TextInput name={form.fields.phone_number()} type="tel" />
 					</Field>
-					<Field
-						className="sm:col-span-2"
-						label="Subject"
-						message={form.errors.subject()?.message}
-					>
+					<Field className="sm:col-span-2" label="Subject" message={form.errors.subject()?.message}>
 						<TextInput name={form.fields.subject()} />
 					</Field>
-					<Field
-						className="sm:col-span-2"
-						label="Message"
-						message={form.errors.message()?.message}
-					>
+					<Field className="sm:col-span-2" label="Message" message={form.errors.message()?.message}>
 						<TextArea name={form.fields.message()} />
 					</Field>
 					<div className="sm:col-span-2">
-						<InlineField
-							label={<PrivacyPolicyLabel />}
-							message={form.errors.agree_to_privacy_policy()?.message}
-						>
+						<InlineField label={<PrivacyPolicyLabel />} message={form.errors.agree_to_privacy_policy()?.message}>
 							<Checkbox name={form.fields.agree_to_privacy_policy()} />
 						</InlineField>
 					</div>
@@ -223,19 +187,10 @@ export function ContactForm() {
 						/>
 						<input name={form.fields.token()} type="hidden" value={token} />
 					</div>
-					<Button
-						className="sm:col-span-2"
-						isLoading={fetcher.state === 'loading'}
-						type="submit"
-						variant="neutral"
-					>
+					<Button className="sm:col-span-2" isLoading={fetcher.state === 'loading'} type="submit" variant="neutral">
 						Submit
 					</Button>
-					{fetcher.data?.ok === true && (
-						<p className="text-center sm:col-span-2">
-							Thank you for your message!
-						</p>
-					)}
+					{fetcher.data?.ok === true && <p className="text-center sm:col-span-2">Thank you for your message!</p>}
 					{fetcher.data?.ok === false && (
 						<p className="text-center sm:col-span-2">
 							There was an error sending your message. Please try again later.

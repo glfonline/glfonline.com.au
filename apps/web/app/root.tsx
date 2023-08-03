@@ -1,21 +1,7 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { cssBundleHref } from '@remix-run/css-bundle';
-import {
-	json,
-	type LinksFunction,
-	type LoaderArgs,
-	type MetaFunction,
-} from '@remix-run/node';
-import {
-	Links,
-	LiveReload,
-	Meta,
-	Outlet,
-	Scripts,
-	ScrollRestoration,
-	useCatch,
-	useLocation,
-} from '@remix-run/react';
+import { json, type LinksFunction, type LoaderArgs, type MetaFunction } from '@remix-run/node';
+import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch, useLocation } from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
 import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
@@ -38,8 +24,7 @@ import tailwindStylesheetUrl from './tailwind.css';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
 	title: data.shop.name,
-	titleTemplate:
-		'%s | Ladies and Mens golf clothing and apparel, skorts and clearance items',
+	titleTemplate: '%s | Ladies and Mens golf clothing and apparel, skorts and clearance items',
 	description: data.shop.description,
 	url: `https://www.glfonline.com.au${pathname}`,
 });
@@ -111,10 +96,7 @@ function App() {
 					</Fragment>
 				)}
 				<LoadingProgress />
-				<PersistQueryClientProvider
-					client={queryClient}
-					persistOptions={{ persister }}
-				>
+				<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
 					<MainLayout>
 						<Outlet key={location.pathname} />
 					</MainLayout>
@@ -139,13 +121,7 @@ export function CatchBoundary() {
 				<Links />
 			</head>
 			<body className="bg-background text-foreground relative flex h-full flex-col">
-				{isNotFound ? (
-					<NotFound />
-				) : (
-					<GenericError
-						error={{ message: `${caught.status} ${caught.data}` }}
-					/>
-				)}
+				{isNotFound ? <NotFound /> : <GenericError error={{ message: `${caught.status} ${caught.data}` }} />}
 				<Scripts />
 			</body>
 		</html>

@@ -1,9 +1,5 @@
 import { type Storefront as HydrogenStorefront } from '@shopify/hydrogen';
-import {
-	type CountryCode,
-	type CurrencyCode,
-	type LanguageCode,
-} from '@shopify/hydrogen/storefront-api-types';
+import { type CountryCode, type CurrencyCode, type LanguageCode } from '@shopify/hydrogen/storefront-api-types';
 import { type ZodIssue } from 'zod';
 
 /**

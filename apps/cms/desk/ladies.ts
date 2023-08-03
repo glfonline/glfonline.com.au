@@ -6,7 +6,5 @@ export const ladiesPage = defineStructure<ListItemBuilder>((S) =>
 	S.listItem()
 		.title('Ladies Page')
 		.schemaType('themePage')
-		.child(
-			S.editor().title('Ladies').schemaType('themePage').documentId('ladies'),
-		),
+		.child(S.editor().title('Ladies').schemaType('themePage').documentId('ladies')),
 );

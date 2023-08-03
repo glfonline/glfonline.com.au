@@ -26,40 +26,18 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 		() => [
 			{ disabled, invalid },
 			{
-				'aria-describedby': mergeIds(
-					message && messageId,
-					description && descriptionId,
-				),
+				'aria-describedby': mergeIds(message && messageId, description && descriptionId),
 				'aria-invalid': invalid || undefined,
 				id: inputId,
 			},
 		],
-		[
-			description,
-			descriptionId,
-			disabled,
-			inputId,
-			invalid,
-			message,
-			messageId,
-		],
+		[description, descriptionId, disabled, inputId, invalid, message, messageId],
 	);
 	return (
 		<FieldContextProvider value={fieldContext}>
-			<div
-				{...consumerProps}
-				className={clsx('flex flex-col gap-1', className)}
-				ref={forwardedRef}
-			>
+			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={forwardedRef}>
 				<label htmlFor={inputId}>
-					<span
-						className={clsx(
-							'text-sm',
-							disabled ? 'text-gray-400' : 'text-gray-700',
-						)}
-					>
-						{label}{' '}
-					</span>
+					<span className={clsx('text-sm', disabled ? 'text-gray-400' : 'text-gray-700')}>{label} </span>
 				</label>
 				{description && (
 					<span className="text-gray-600" id={descriptionId}>
@@ -67,9 +45,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 					</span>
 				)}
 				{children}
-				{message && (
-					<FieldMessage id={messageId} message={message} tone={tone} />
-				)}
+				{message && <FieldMessage id={messageId} message={message} tone={tone} />}
 			</div>
 		</FieldContextProvider>
 	);

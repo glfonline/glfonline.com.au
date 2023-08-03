@@ -7,11 +7,7 @@ import { type brandsWeLove } from '../lib/brands-we-love';
 import { urlFor } from '../lib/sanity-image';
 import { Heading } from './design-system/heading';
 
-export function BrandsWeLove({
-	brands,
-}: {
-	brands: z.infer<typeof brandsWeLove>;
-}) {
+export function BrandsWeLove({ brands }: { brands: z.infer<typeof brandsWeLove> }) {
 	return (
 		<article className="bg-white">
 			<div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-16 lg:px-8">

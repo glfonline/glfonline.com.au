@@ -1,11 +1,6 @@
 import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
-import {
-	json,
-	type ActionArgs,
-	type DataFunctionArgs,
-	type MetaFunction,
-} from '@remix-run/node';
+import { json, type ActionArgs, type DataFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -53,13 +48,8 @@ export async function loader({ params }: DataFunctionArgs) {
 }
 
 export async function action({ request }: ActionArgs) {
-	const [formData, session] = await Promise.all([
-		request.formData(),
-		getSession(request),
-	]);
-	const { variantId } = CartSchema.parse(
-		Object.fromEntries(formData.entries()),
-	);
+	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
+	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
 	let cart = await session.getCart();
 	cart = addToCart(cart, variantId, 1);
 	await session.setCart(cart);
@@ -79,15 +69,12 @@ export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 
 	const [variant, setVariant] = useState(
-		product.variants.edges.find(
-			({ node: { availableForSale } }) => availableForSale,
-		),
+		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
 	);
 
 	const isOnSale = product.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
-			compareAtPrice &&
-			parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
+			compareAtPrice && parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
 	);
 
 	const form = useZorm('cart_form', CartSchema);
@@ -100,20 +87,16 @@ export default function ProductPage() {
 
 	const sizingChart = getSizingChart(product);
 
-	const hasNoVariants = product.variants.edges.some(
-		({ node }) => node.title === 'Default Title',
-	);
+	const hasNoVariants = product.variants.edges.some(({ node }) => node.title === 'Default Title');
 
 	return (
 		<div className="bg-white" data-theme={theme}>
 			<div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
 				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
 					<ImageGallery
-						images={product.images.edges.map(
-							({ node: { id, altText, url, height, width } }) => ({
-								node: { id, altText, url, height, width },
-							}),
-						)}
+						images={product.images.edges.map(({ node: { id, altText, url, height, width } }) => ({
+							node: { id, altText, url, height, width },
+						}))}
 						isOnSale={isOnSale}
 					/>
 
@@ -132,28 +115,16 @@ export default function ProductPage() {
 											{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
 										</del>
 									)}
-									{isOnSale && <span className="sr-only">now</span>}{' '}
-									{formatMoney(variant.node.price.amount, 'AUD')}{' '}
+									{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price.amount, 'AUD')}{' '}
 									<small className="font-normal">{'AUD'}</small>
 								</p>
 							)}
 						</div>
 
-						<Form
-							className="flex flex-col gap-6"
-							method="post"
-							ref={form.ref}
-							replace
-						>
-							<fieldset
-								className={clsx(
-									hasNoVariants ? 'sr-only' : 'flex flex-col gap-3',
-								)}
-							>
+						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
+							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
-									<legend className="text-sm font-bold text-gray-900">
-										Options
-									</legend>
+									<legend className="text-sm font-bold text-gray-900">Options</legend>
 								</div>
 								<div className="flex flex-wrap gap-3">
 									{product.variants.edges.map(({ node }) => (
@@ -165,11 +136,7 @@ export default function ProductPage() {
 												id={node.id}
 												name={form.fields.variantId()}
 												onChange={(event) => {
-													setVariant(
-														product.variants.edges.find(
-															({ node }) => node.id === event.target.value,
-														),
-													);
+													setVariant(product.variants.edges.find(({ node }) => node.id === event.target.value));
 												}}
 												type="radio"
 												value={node.id}
@@ -178,9 +145,7 @@ export default function ProductPage() {
 												className={clsx(
 													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
 													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-													node.availableForSale
-														? 'cursor-pointer focus:outline-none'
-														: 'cursor-not-allowed opacity-25',
+													node.availableForSale ? 'cursor-pointer focus:outline-none' : 'cursor-not-allowed opacity-25',
 													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
 													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white',
 												)}
@@ -194,23 +159,13 @@ export default function ProductPage() {
 
 							<div className="flex flex-col gap-4">
 								{sizingChart && (
-									<ButtonLink
-										href={sizingChart.href}
-										rel="noreferrer noopener"
-										target="_blank"
-									>
+									<ButtonLink href={sizingChart.href} rel="noreferrer noopener" target="_blank">
 										{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
 									</ButtonLink>
 								)}
 
-								<Button
-									disabled={!product.availableForSale}
-									type="submit"
-									variant="neutral"
-								>
-									{product.availableForSale
-										? form.errors.variantId()?.message || buttonText
-										: 'Sold Out'}
+								<Button disabled={!product.availableForSale} type="submit" variant="neutral">
+									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
 								</Button>
 							</div>
 						</Form>
@@ -250,11 +205,7 @@ function ImageGallery({
 		<Tab.Group as="div" className="flex flex-col-reverse gap-6">
 			{/* Image selector */}
 			<div className="mx-auto hidden w-full max-w-2xl sm:block lg:max-w-none">
-				<Tab.List
-					className={clsx(
-						images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only',
-					)}
-				>
+				<Tab.List className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
 							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
@@ -292,10 +243,7 @@ function ImageGallery({
 			<Tab.Panels className="relative aspect-square w-full bg-gray-200">
 				{images.map(({ node }) => {
 					return (
-						<Tab.Panel
-							className="absolute inset-0 overflow-hidden"
-							key={node.id}
-						>
+						<Tab.Panel className="absolute inset-0 overflow-hidden" key={node.id}>
 							<Image
 								alt={node.altText || ''}
 								breakpoints={[640, 768, 1024, 1280]}

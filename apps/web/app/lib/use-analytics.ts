@@ -21,9 +21,7 @@ export function useAnalytics({
 }) {
 	useShopifyCookies({ hasUserConsent });
 	const location = useLocation();
-	const analyticsFromMatches = useDataFromMatches(
-		'analytics',
-	) as unknown as ShopifyPageViewPayload;
+	const analyticsFromMatches = useDataFromMatches('analytics') as unknown as ShopifyPageViewPayload;
 
 	const pageAnalytics = {
 		...analyticsFromMatches,
@@ -195,12 +193,7 @@ function useDataFromFetchers({
 	for (const fetcher of fetchers) {
 		const formData = fetcher.submission?.formData;
 		const fetcherData = fetcher.data;
-		if (
-			formData &&
-			formData.get(formDataKey) === formDataValue &&
-			fetcherData &&
-			fetcherData[dataKey]
-		) {
+		if (formData && formData.get(formDataKey) === formDataValue && fetcherData && fetcherData[dataKey]) {
 			Object.assign(data, fetcherData[dataKey]);
 
 			try {

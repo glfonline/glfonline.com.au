@@ -75,31 +75,17 @@ export function NewsletterSignup() {
 					replace
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
-						<Field
-							className="sm:col-span-2"
-							label="First name"
-							message={form.errors.first_name()?.message}
-						>
+						<Field className="sm:col-span-2" label="First name" message={form.errors.first_name()?.message}>
 							<TextInput name={form.fields.first_name()} />
 						</Field>
-						<Field
-							className="sm:col-span-2"
-							label="Last name"
-							message={form.errors.last_name()?.message}
-						>
+						<Field className="sm:col-span-2" label="Last name" message={form.errors.last_name()?.message}>
 							<TextInput name={form.fields.last_name()} />
 						</Field>
-						<Field
-							className="sm:col-span-4"
-							label="Email address"
-							message={form.errors.email()?.message}
-						>
+						<Field className="sm:col-span-4" label="Email address" message={form.errors.email()?.message}>
 							<TextInput name={form.fields.email()} />
 						</Field>
 						<div className="flex flex-col gap-4 sm:col-span-4">
-							<label className="text-sm text-gray-700">
-								Which list would you like to sign up to?
-							</label>
+							<label className="text-sm text-gray-700">Which list would you like to sign up to?</label>
 							<fieldset>
 								<legend className="sr-only">Email list</legend>
 								<div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
@@ -112,10 +98,7 @@ export function NewsletterSignup() {
 												type="radio"
 												value={options}
 											/>
-											<label
-												className="block text-sm font-medium text-gray-700"
-												htmlFor={options}
-											>
+											<label className="block text-sm font-medium text-gray-700" htmlFor={options}>
 												{options}
 											</label>
 										</div>
@@ -124,22 +107,14 @@ export function NewsletterSignup() {
 							</fieldset>
 						</div>
 
-						<Button
-							className="sm:col-span-4"
-							isLoading={fetcher.state === 'loading'}
-							type="submit"
-							variant="neutral"
-						>
+						<Button className="sm:col-span-4" isLoading={fetcher.state === 'loading'} type="submit" variant="neutral">
 							Join
 						</Button>
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">
 					{fetcher.data?.ok && <p>Thank you for subscribing!</p>}
-					<p>
-						* by clicking join, you agree to receive our newsletter as well as
-						top tips to improve your game
-					</p>
+					<p>* by clicking join, you agree to receive our newsletter as well as top tips to improve your game</p>
 				</div>
 			</div>
 		</article>

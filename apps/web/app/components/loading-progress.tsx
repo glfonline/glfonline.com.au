@@ -13,9 +13,9 @@ export function LoadingProgress() {
 		if (!ref.current) return;
 		if (active) setAnimationComplete(false);
 
-		Promise.allSettled(
-			ref.current.getAnimations().map(({ finished }) => finished),
-		).then(() => !active && setAnimationComplete(true));
+		Promise.allSettled(ref.current.getAnimations().map(({ finished }) => finished)).then(
+			() => !active && setAnimationComplete(true),
+		);
 	}, [active]);
 
 	return (
@@ -28,9 +28,7 @@ export function LoadingProgress() {
 			<div
 				className={clsx(
 					'bg-brand-primary h-full transition-all duration-500 ease-in-out',
-					transition.state === 'idle' &&
-						animationComplete &&
-						'w-0 transition-none',
+					transition.state === 'idle' && animationComplete && 'w-0 transition-none',
 					transition.state === 'submitting' && 'w-4/12',
 					transition.state === 'loading' && 'w-10/12',
 					transition.state === 'idle' && !animationComplete && 'w-full',

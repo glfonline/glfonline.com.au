@@ -23,9 +23,7 @@ export function SignupBanner() {
 							<Heading color="light" size="3">
 								US Masters Now On
 							</Heading>
-							<p>
-								Sign up to our email newsletter for 10% off your first order
-							</p>
+							<p>Sign up to our email newsletter for 10% off your first order</p>
 						</div>
 						<Button
 							aria-label="Sign up to our email newsletter for 10% off your first order"

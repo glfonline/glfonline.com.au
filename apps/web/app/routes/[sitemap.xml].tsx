@@ -3,8 +3,7 @@ import dedent from 'dedent';
 
 import { WEB_ADDRESS } from '../lib/constants';
 
-type Products =
-	(typeof ALL_PRODUCTS_QUERY)['___type']['result']['products']['edges'];
+type Products = (typeof ALL_PRODUCTS_QUERY)['___type']['result']['products']['edges'];
 
 export async function loader() {
 	async function getAllProductPages() {
@@ -18,10 +17,7 @@ export async function loader() {
 
 			pages = pages.concat(newPages.products.edges);
 
-			if (
-				newPages.products.pageInfo.hasNextPage &&
-				newPages.products.pageInfo.endCursor
-			) {
+			if (newPages.products.pageInfo.hasNextPage && newPages.products.pageInfo.endCursor) {
 				await getProductPages(newPages.products.pageInfo.endCursor);
 			}
 
@@ -31,9 +27,7 @@ export async function loader() {
 		const allProductPage = await getProductPages();
 
 		return allProductPage.map(({ node }) => {
-			const theme = node.tags.map((tag) => tag.toLowerCase()).includes('ladies')
-				? 'ladies'
-				: 'mens';
+			const theme = node.tags.map((tag) => tag.toLowerCase()).includes('ladies') ? 'ladies' : 'mens';
 			return {
 				loc: `${WEB_ADDRESS}/${theme}/products/${node.handle}`,
 				changefreq: 'monthly',

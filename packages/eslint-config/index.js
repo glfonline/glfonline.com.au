@@ -16,10 +16,7 @@ module.exports = {
 	rules: {
 		'@ts-gql/ts-gql': ERROR,
 		'@typescript-eslint/ban-ts-comment': OFF,
-		'@typescript-eslint/consistent-type-imports': [
-			WARN,
-			{ prefer: 'type-imports', fixStyle: 'inline-type-imports' },
-		],
+		'@typescript-eslint/consistent-type-imports': [WARN, { prefer: 'type-imports', fixStyle: 'inline-type-imports' }],
 		'@typescript-eslint/no-empty-function': OFF,
 		'@typescript-eslint/no-explicit-any': OFF,
 		'@typescript-eslint/no-unused-vars': [WARN, { argsIgnorePattern: '^_' }],

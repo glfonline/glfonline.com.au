@@ -1,24 +1,6 @@
-import {
-	CheckIcon,
-	ChevronLeftIcon,
-	ChevronRightIcon,
-	ClockIcon,
-	XMarkIcon,
-} from '@heroicons/react/20/solid';
-import {
-	json,
-	redirect,
-	type ActionArgs,
-	type LoaderArgs,
-	type MetaFunction,
-} from '@remix-run/node';
-import {
-	Form,
-	Link,
-	useFetcher,
-	useLoaderData,
-	useTransition,
-} from '@remix-run/react';
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { json, redirect, type ActionArgs, type LoaderArgs, type MetaFunction } from '@remix-run/node';
+import { Form, Link, useFetcher, useLoaderData, useTransition } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
@@ -34,10 +16,7 @@ export async function loader({ request }: LoaderArgs) {
 	const session = await getSession(request);
 	const cart = await session.getCart();
 	const cartInfo = await getCartInfo(cart);
-	return json(
-		{ cartInfo },
-		{ headers: { 'Set-Cookie': await session.commitSession() } },
-	);
+	return json({ cartInfo }, { headers: { 'Set-Cookie': await session.commitSession() } });
 }
 
 const INTENT = 'intent';
@@ -60,45 +39,30 @@ const RemoveScheme = z.object({
 });
 
 export async function action({ request }: ActionArgs) {
-	const [formData, session] = await Promise.all([
-		request.formData(),
-		getSession(request),
-	]);
+	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const intent = formData.get(INTENT);
 
 	switch (intent) {
 		case CHECKOUT_ACTION: {
-			const { webUrl } = CheckoutScheme.parse(
-				Object.fromEntries(formData.entries()),
-			);
+			const { webUrl } = CheckoutScheme.parse(Object.fromEntries(formData.entries()));
 			return redirect(webUrl);
 		}
 
 		case INCREMENT_ACTION:
 		case DECREMENT_ACTION: {
-			const { quantity, variantId } = QuantityScheme.parse(
-				Object.fromEntries(formData.entries()),
-			);
+			const { quantity, variantId } = QuantityScheme.parse(Object.fromEntries(formData.entries()));
 			const cart = await session.getCart();
 			const newCart = updateCartItem(cart, variantId, quantity);
 			await session.setCart(newCart);
-			return json(
-				{},
-				{ headers: { 'Set-Cookie': await session.commitSession() } },
-			);
+			return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
 		}
 
 		case REMOVE_ACTION: {
-			const { variantId } = RemoveScheme.parse(
-				Object.fromEntries(formData.entries()),
-			);
+			const { variantId } = RemoveScheme.parse(Object.fromEntries(formData.entries()));
 			const cart = await session.getCart();
 			const newCart = removeCartItem(cart, variantId);
 			await session.setCart(newCart);
-			return json(
-				{},
-				{ headers: { 'Set-Cookie': await session.commitSession() } },
-			);
+			return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
 		}
 
 		default: {
@@ -150,22 +114,13 @@ export default function CartPage() {
 							Items in your shopping cart
 						</h2>
 
-						<ul
-							className="divide-y divide-gray-200 border-b border-t border-gray-200"
-							role="list"
-						>
+						<ul className="divide-y divide-gray-200 border-b border-t border-gray-200" role="list">
 							{cartInfo?.lineItems.edges.map(({ node }) => {
-								const theme = node.variant?.product.tags
-									.map((tag) => tag.toLocaleLowerCase())
-									.includes('ladies')
+								const theme = node.variant?.product.tags.map((tag) => tag.toLocaleLowerCase()).includes('ladies')
 									? 'ladies'
 									: 'mens';
 								return (
-									<li
-										className="flex py-6 sm:py-10"
-										data-theme={theme}
-										key={node.id}
-									>
+									<li className="flex py-6 sm:py-10" data-theme={theme} key={node.id}>
 										<div className="flex-shrink-0">
 											{node.variant?.image?.url ? (
 												<Image
@@ -197,49 +152,31 @@ export default function CartPage() {
 													</div>
 													{node.variant?.title !== 'Default Title' && (
 														<div className="mt-1 flex text-sm">
-															<p className="text-gray-500">
-																{node.variant?.title}
-															</p>
+															<p className="text-gray-500">{node.variant?.title}</p>
 														</div>
 													)}
-													<p className="mt-1 text-sm text-gray-900">
-														{formatMoney(node.variant?.price.amount, 'AUD')}
-													</p>
+													<p className="mt-1 text-sm text-gray-900">{formatMoney(node.variant?.price.amount, 'AUD')}</p>
 												</div>
 
 												<div className="mt-4 sm:mt-0 sm:pr-9">
 													<QuantityPicker
 														quantity={node.quantity}
-														quantityAvailable={
-															node.variant?.quantityAvailable as number
-														}
+														quantityAvailable={node.variant?.quantityAvailable as number}
 														variantId={node.variant?.id as string}
 													/>
 
-													<RemoveFromCart
-														variantId={node.variant?.id as string}
-													/>
+													<RemoveFromCart variantId={node.variant?.id as string} />
 												</div>
 											</div>
 
 											<p className="mt-4 flex space-x-2 text-sm text-gray-700">
 												{node.variant?.currentlyNotInStock ? (
-													<ClockIcon
-														aria-hidden="true"
-														className="h-5 w-5 flex-shrink-0 text-gray-300"
-													/>
+													<ClockIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-gray-300" />
 												) : (
-													<CheckIcon
-														aria-hidden="true"
-														className="h-5 w-5 flex-shrink-0 text-green-500"
-													/>
+													<CheckIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-green-500" />
 												)}
 
-												<span>
-													{node.variant?.currentlyNotInStock
-														? 'Out of stock'
-														: 'In stock'}
-												</span>
+												<span>{node.variant?.currentlyNotInStock ? 'Out of stock' : 'In stock'}</span>
 											</p>
 										</div>
 									</li>
@@ -261,15 +198,11 @@ export default function CartPage() {
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
-								<dd className="text-sm text-gray-900">
-									{formatMoney(cartInfo?.subtotalPrice.amount, 'AUD')}
-								</dd>
+								<dd className="text-sm text-gray-900">{formatMoney(cartInfo?.subtotalPrice.amount, 'AUD')}</dd>
 							</div>
 						</dl>
 
-						<p className="text-sm text-gray-600">
-							Taxes and shipping are calculated at checkout
-						</p>
+						<p className="text-sm text-gray-600">Taxes and shipping are calculated at checkout</p>
 
 						<input name="webUrl" type="hidden" value={cartInfo?.webUrl} />
 
@@ -302,9 +235,7 @@ function QuantityPicker({
 
 	return (
 		<div className="flex flex-col items-start gap-2">
-			<span className="text-sm text-gray-700 hover:text-gray-800">
-				Quantity
-			</span>
+			<span className="text-sm text-gray-700 hover:text-gray-800">Quantity</span>
 			<span className="isolate inline-flex shadow-sm">
 				<fetcher.Form method="post" replace>
 					<input name="variantId" type="hidden" value={variantId} />

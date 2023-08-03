@@ -1,18 +1,8 @@
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import {
-	json,
-	type DataFunctionArgs,
-	type MetaFunction,
-} from '@remix-run/node';
-import {
-	Link,
-	useLoaderData,
-	useLocation,
-	useNavigate,
-	type Location,
-} from '@remix-run/react';
+import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node';
+import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
 import { z } from 'zod';
@@ -22,14 +12,8 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { capitalise } from '../lib/capitalise';
 import { formatMoney } from '../lib/format-money';
-import {
-	getProductsFromCollectionByTag,
-	type SortBy,
-} from '../lib/get-collection-products';
-import {
-	getProductFilterOptions,
-	PRODUCT_TYPE,
-} from '../lib/get-product-filter-options';
+import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collection-products';
+import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
@@ -52,13 +36,12 @@ const ITEMS_PER_PAGE = 32;
 export async function loader({ params, request }: DataFunctionArgs) {
 	const paramsResult = CollectionSchema.safeParse(params);
 	const url = new URL(request.url);
-	const { after, sort, productType, ...remainingFilterOptions } =
-		SortSchema.parse(Object.fromEntries(url.searchParams.entries()));
+	const { after, sort, productType, ...remainingFilterOptions } = SortSchema.parse(
+		Object.fromEntries(url.searchParams.entries()),
+	);
 
 	const filterOptionsResult = RecordSchema.safeParse(remainingFilterOptions);
-	const filterOptions = filterOptionsResult.success
-		? filterOptionsResult.data
-		: {};
+	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};
 
 	if (paramsResult.success) {
 		const { collection: collectionHandle, theme } = paramsResult.data;
@@ -86,8 +69,7 @@ export async function loader({ params, request }: DataFunctionArgs) {
 		}
 
 		/** Options data */
-		const options =
-			optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
+		const options = optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
 
 		return json({
 			after,
@@ -114,45 +96,31 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function CollectionPage() {
-	const { after, image, pageInfo, products, theme, title } =
-		useLoaderData<typeof loader>();
+	const { after, image, pageInfo, products, theme, title } = useLoaderData<typeof loader>();
 
 	const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
 	return (
 		<div className="flex flex-col gap-12 py-9" data-theme={theme}>
-			<Hero
-				image={{ url: imageMap[theme], alt: image?.altText ?? '' }}
-				title={title}
-			/>
+			<Hero image={{ url: imageMap[theme], alt: image?.altText ?? '' }} title={title} />
 
 			<div>
-				<MobileFilters
-					mobileFiltersOpen={mobileFiltersOpen}
-					setMobileFiltersOpen={setMobileFiltersOpen}
-				/>
+				<MobileFilters mobileFiltersOpen={mobileFiltersOpen} setMobileFiltersOpen={setMobileFiltersOpen} />
 
 				<main className="mx-auto max-w-2xl px-4 lg:max-w-7xl lg:px-8 xl:px-0">
 					<div className="pb-24 pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
 						<Filters setMobileFiltersOpen={setMobileFiltersOpen} />
 
-						<section
-							aria-labelledby="product-heading"
-							className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3"
-						>
+						<section aria-labelledby="product-heading" className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
 							<h2 className="sr-only" id="product-heading">
 								Products
 							</h2>
 
 							<div className="grid grid-cols-1 gap-y-4 sm:grid-cols-2 sm:gap-x-6 sm:gap-y-10 lg:gap-x-8 xl:grid-cols-3">
 								{products.length > 0 ? (
-									products.map(({ node }) => (
-										<ProductCard key={node.id} node={node as ProductNode} />
-									))
+									products.map(({ node }) => <ProductCard key={node.id} node={node as ProductNode} />)
 								) : (
-									<p className="col-start-1 col-end-[-1] text-center text-xl font-bold uppercase">
-										No products found
-									</p>
+									<p className="col-start-1 col-end-[-1] text-center text-xl font-bold uppercase">No products found</p>
 								)}
 							</div>
 							<Pagination
@@ -169,15 +137,7 @@ export default function CollectionPage() {
 	);
 }
 
-function getSearchUrl({
-	location,
-	value,
-	key,
-}: {
-	location: Location;
-	value: string;
-	key: string;
-}) {
+function getSearchUrl({ location, value, key }: { location: Location; value: string; key: string }) {
 	const params = new URLSearchParams(location.search);
 	params.delete('cursor');
 	if (key === PRODUCT_TYPE) {
@@ -187,11 +147,7 @@ function getSearchUrl({
 	return location.pathname + '?' + params.toString();
 }
 
-function Filters({
-	setMobileFiltersOpen,
-}: {
-	setMobileFiltersOpen: React.Dispatch<React.SetStateAction<boolean>>;
-}) {
+function Filters({ setMobileFiltersOpen }: { setMobileFiltersOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
 	const id = useId();
 
 	return (
@@ -207,10 +163,7 @@ function Filters({
 				type="button"
 			>
 				<span className="text-sm font-medium text-gray-700">Filters</span>
-				<PlusIcon
-					aria-hidden="true"
-					className="ml-1 h-5 w-5 flex-shrink-0 text-gray-400"
-				/>
+				<PlusIcon aria-hidden="true" className="ml-1 h-5 w-5 flex-shrink-0 text-gray-400" />
 			</button>
 
 			<div className="hidden lg:block">
@@ -230,12 +183,7 @@ function MobileFilters({
 	const { theme } = useLoaderData<typeof loader>();
 	return (
 		<Transition.Root as={Fragment} show={mobileFiltersOpen}>
-			<Dialog
-				as="div"
-				className="relative z-40 lg:hidden"
-				data-theme={theme}
-				onClose={setMobileFiltersOpen}
-			>
+			<Dialog as="div" className="relative z-40 lg:hidden" data-theme={theme} onClose={setMobileFiltersOpen}>
 				<Transition.Child
 					as={Fragment}
 					enter="transition-opacity ease-linear duration-300"
@@ -280,11 +228,7 @@ function MobileFilters({
 }
 
 type ProductNode = NonNullable<
-	NonNullable<
-		NonNullable<
-			Awaited<ReturnType<typeof getProductsFromCollectionByTag>>
-		>['products']
-	>[number]['node']
+	NonNullable<NonNullable<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>['products']>[number]['node']
 >;
 
 function ProductCard({ node }: { node: ProductNode }) {
@@ -292,8 +236,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 
 	const isOnSale = node.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
-			compareAtPrice &&
-			parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
+			compareAtPrice && parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
 	);
 
 	return (
@@ -309,10 +252,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 						src={node.featuredImage?.url}
 					/>
 				) : (
-					<span
-						aria-hidden="true"
-						className="block h-full w-full bg-gray-200"
-					/>
+					<span aria-hidden="true" className="block h-full w-full bg-gray-200" />
 				)}
 				{isOnSale && (
 					<div className="pointer-events-none absolute left-0 right-0 top-0 aspect-square">
@@ -331,10 +271,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 					<p className="text-gray-900">
 						<small>{node.priceRange.minVariantPrice.currencyCode}</small>{' '}
 						<span className="font-bold">
-							{formatMoney(
-								node.priceRange.minVariantPrice.amount,
-								node.priceRange.minVariantPrice.currencyCode,
-							)}
+							{formatMoney(node.priceRange.minVariantPrice.amount, node.priceRange.minVariantPrice.currencyCode)}
 						</span>
 					</p>
 				</div>
@@ -343,13 +280,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 	);
 }
 
-function clearSearchUrl({
-	location,
-	key,
-}: {
-	location: Location;
-	key: string;
-}) {
+function clearSearchUrl({ location, key }: { location: Location; key: string }) {
 	const params = new URLSearchParams(location.search);
 	params.delete('cursor');
 	params.delete(key);
@@ -360,9 +291,7 @@ function DisplayOptions() {
 	const { options } = useLoaderData<typeof loader>();
 	const location = useLocation();
 	const params = new URLSearchParams(location.search);
-	const searchParamsArray = Object.entries(
-		Object.fromEntries(params.entries()),
-	);
+	const searchParamsArray = Object.entries(Object.fromEntries(params.entries()));
 
 	return (
 		<div className="flex flex-col divide-y">
@@ -378,23 +307,12 @@ function DisplayOptions() {
 										className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700"
 										to={clearSearchUrl({ key, location })}
 									>
-										<svg
-											className="h-2 w-2"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 8 8"
-										>
-											<path
-												d="M1 1l6 6m0-6L1 7"
-												strokeLinecap="round"
-												strokeWidth="1.5"
-											/>
+										<svg className="h-2 w-2" fill="none" stroke="currentColor" viewBox="0 0 8 8">
+											<path d="M1 1l6 6m0-6L1 7" strokeLinecap="round" strokeWidth="1.5" />
 										</svg>
 										<span className="before:mb-[-0.4392em] before:table after:mt-[-0.3425em] after:table">
 											{key === PRODUCT_TYPE ? 'Type' : capitalise(key)}:{' '}
-											{key === 'sort'
-												? sortOptions.find((o) => o.value === value)?.label
-												: value}
+											{key === 'sort' ? sortOptions.find((o) => o.value === value)?.label : value}
 										</span>
 									</Link>
 								</li>
@@ -417,9 +335,7 @@ function DisplayOptions() {
 							<>
 								<h2>
 									<Disclosure.Button className="flex w-full items-center justify-between gap-6 px-4 py-2">
-										<span className="-ml-4 font-bold">
-											{option.name === PRODUCT_TYPE ? 'Type' : option.name}
-										</span>
+										<span className="-ml-4 font-bold">{option.name === PRODUCT_TYPE ? 'Type' : option.name}</span>
 										<span className="-mr-4 inline-flex items-center">
 											{open ? (
 												<MinusIcon aria-hidden="true" className="h-5 w-5" />
@@ -557,7 +473,6 @@ const sortOptions = [
 }>;
 
 const imageMap = {
-	ladies:
-		'https://cdn.shopify.com/s/files/1/1080/9832/files/hero-default-ladies.jpg?v=1614314620&width=1200',
+	ladies: 'https://cdn.shopify.com/s/files/1/1080/9832/files/hero-default-ladies.jpg?v=1614314620&width=1200',
 	mens: 'https://cdn.shopify.com/s/files/1/1080/9832/files/hero-default-mens.jpg?v=1676795688&width=1200',
 };

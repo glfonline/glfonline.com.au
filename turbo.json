@@ -2,24 +2,12 @@
 	"$schema": "https://turbo.build/schema.json",
 	"pipeline": {
 		"build": {
-			"outputs": [
-				".sanity/**",
-				"api/**",
-				"build/**",
-				"dist/**",
-				"public/build/**"
-			],
+			"outputs": [".sanity/**", "api/**", "build/**", "dist/**", "public/build/**"],
 			"dependsOn": ["^build", "^generate"]
 		},
 		"@glfonline/web#build": {
 			"dependsOn": ["^build"],
-			"env": [
-				"AKISMET_API_KEY",
-				"ENCRYPTION_KEY",
-				"NODE_ENV",
-				"SENDGRID_API_KEY",
-				"TURNSTILE_SECRET_KEY"
-			],
+			"env": ["AKISMET_API_KEY", "ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_API_KEY", "TURNSTILE_SECRET_KEY"],
 			"outputs": ["api/index.js", "api/build/**", "public/build/**"]
 		},
 		"check:types": {

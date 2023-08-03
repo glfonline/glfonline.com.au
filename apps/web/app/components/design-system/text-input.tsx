@@ -3,15 +3,8 @@ import { forwardRef } from 'react';
 
 import { useFieldContext } from './field/context';
 
-export const TextInput = forwardRef<
-	HTMLInputElement,
-	React.InputHTMLAttributes<HTMLInputElement>
->(function TextInput(
-	{
-		className,
-		type = 'text',
-		...consumerProps
-	}: React.InputHTMLAttributes<HTMLInputElement>,
+export const TextInput = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(function TextInput(
+	{ className, type = 'text', ...consumerProps }: React.InputHTMLAttributes<HTMLInputElement>,
 	forwardedRef,
 ) {
 	const [{ disabled, invalid }, a11yProps] = useFieldContext();
