@@ -204,7 +204,7 @@ function ImageGallery({
 	return (
 		<Tab.Group as="div" className="flex flex-col-reverse gap-6">
 			{/* Image selector */}
-			<div className="mx-auto hidden w-full max-w-2xl sm:block lg:max-w-none">
+			<div className="mx-auto w-full max-w-2xl lg:max-w-none">
 				<Tab.List className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
