@@ -33,6 +33,9 @@ jobs:
           BASE_URL: ${{ github.event.deployment_status.target_url }}
       - name: 📊 Upload report
         uses: actions/upload-artifact@v3
+        env:
+          TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+          TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
         if: always()
         with:
           name: playwright-report
