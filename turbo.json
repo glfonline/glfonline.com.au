@@ -1,5 +1,6 @@
 {
 	"$schema": "https://turbo.build/schema.json",
+	"globalDependencies": ["**/.env.*local"],
 	"pipeline": {
 		"build": {
 			"outputs": [".sanity/**", "api/**", "build/**", "dist/**", "public/build/**"],
@@ -21,6 +22,9 @@
 			"outputs": ["schema.graphql"]
 		},
 		"lint": {
+			"dependsOn": ["^build"]
+		},
+		"test:e2e": {
 			"dependsOn": ["^build"]
 		}
 	}

@@ -23,7 +23,8 @@
 		"fresh": "pnpm run clean && pnpm install",
 		"generate": "stale-dep && turbo run generate",
 		"preinstall": "npx only-allow pnpm",
-		"postinstall": "manypkg check && stale-dep -u"
+		"postinstall": "manypkg check && stale-dep -u",
+		"test:e2e": "turbo run test:e2e"
 	},
 	"dependencies": {
 		"@glfonline/eslint-config": "0.0.0",
@@ -38,7 +39,7 @@
 	"packageManager": "pnpm@8.6.11",
 	"engines": {
 		"node": ">=18.16.1",
-		"pnpm": ">=8.6.10"
+		"pnpm": ">=8.6.11"
 	},
 	"volta": {
 		"node": "18.17.0"
