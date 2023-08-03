@@ -1,6 +1,6 @@
-import { json, type ActionArgs } from '@remix-run/node';
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
+import { json, type ActionArgs } from '@vercel/remix';
 import { AkismetClient } from 'akismet-api';
 import { requiredEnv } from 'app/lib/required-env';
 import dedent from 'dedent';

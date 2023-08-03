@@ -1,9 +1,9 @@
 import { Dialog, Disclosure, Transition } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { json, type DataFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@remix-run/react';
 import { Image } from '@unpic/react';
+import { json, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment, useId, useState } from 'react';
 import { z } from 'zod';
 

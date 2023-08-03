@@ -141,6 +141,9 @@ importers:
       '@vercel/node':
         specifier: ^2.15.8
         version: 2.15.8
+      '@vercel/remix':
+        specifier: ^1.19.1
+        version: 1.19.1(react-dom@18.2.0)(react@18.2.0)
       akismet-api:
         specifier: ^6.0.0
         version: 6.0.0
@@ -5045,6 +5048,20 @@ packages:
       - '@swc/core'
       - '@swc/wasm'
       - encoding
+    dev: false
+
+  /@vercel/remix@1.19.1(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-lIiLbXq5y8g2vQmDkxBsYEWvr38LCqU45ThZ+v1as8P6U6PEBtVFtdWq9YRsG1IaOP15sgJyXglB43gpIJol4Q==}
+    engines: {node: '>=14'}
+    peerDependencies:
+      react: '*'
+      react-dom: '*'
+    dependencies:
+      '@remix-run/node': 1.19.1
+      '@remix-run/server-runtime': 1.19.1
+      isbot: 3.6.13
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
     dev: false
 
   /@vercel/routing-utils@2.2.1:

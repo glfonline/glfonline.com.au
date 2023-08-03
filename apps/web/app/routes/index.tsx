@@ -1,7 +1,7 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { json } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
+import { json } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
 import { z } from 'zod';

@@ -1,7 +1,7 @@
 import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
-import { json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
+import { json, type MetaFunction } from '@vercel/remix';
 import { z } from 'zod';
 
 import { Hero } from '../components/hero';
