@@ -31,6 +31,7 @@ export function BrandsWeLove({ brands }: { brands: z.infer<typeof brandsWeLove> 
 						>
 							<span className="sr-only">Shop {brand.label}</span>
 							<Image
+								alt=""
 								className="max-h-12 mix-blend-multiply grayscale"
 								height={48}
 								layout="fixed"
