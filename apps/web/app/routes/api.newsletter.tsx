@@ -3,11 +3,11 @@ import { json, type ActionArgs } from '@vercel/remix';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
-import { Button } from '../../components/design-system/button';
-import { Field } from '../../components/design-system/field';
-import { Heading } from '../../components/design-system/heading';
-import { TextInput } from '../../components/design-system/text-input';
-import { type FormResponse } from '../../types';
+import { Button } from '../components/design-system/button';
+import { Field } from '../components/design-system/field';
+import { Heading } from '../components/design-system/heading';
+import { TextInput } from '../components/design-system/text-input';
+import { type FormResponse } from '../types';
 
 export const NewsletterSchema = z.object({
 	first_name: z.string().min(1, 'First name is required'),
