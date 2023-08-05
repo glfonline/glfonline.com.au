@@ -3,12 +3,12 @@ import { useLoaderData } from '@remix-run/react';
 import { json, type LoaderArgs, type MetaFunction } from '@vercel/remix';
 import { assert, isString } from 'emery';
 
-import { Hero } from '../../components/hero';
-import { CACHE_LONG, routeHeaders } from '../../lib/cache';
-import { PortableText } from '../../lib/portable-text';
-import { PostSchema } from '../../lib/post-schema';
-import { urlFor } from '../../lib/sanity-image';
-import { getSeoMeta } from '../../seo';
+import { Hero } from '../components/hero';
+import { CACHE_LONG, routeHeaders } from '../lib/cache';
+import { PortableText } from '../lib/portable-text';
+import { PostSchema } from '../lib/post-schema';
+import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
 

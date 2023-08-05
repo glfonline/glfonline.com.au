@@ -3,8 +3,8 @@ import { Fragment } from 'react';
 
 import { Map } from '../components/map';
 import { getSeoMeta } from '../seo';
-import { ContactForm } from './api/contact';
-import { NewsletterSignup } from './api/newsletter';
+import { ContactForm } from './api.contact';
+import { NewsletterSignup } from './api.newsletter';
 
 export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({

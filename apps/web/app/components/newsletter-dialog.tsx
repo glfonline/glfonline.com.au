@@ -2,7 +2,7 @@ import { Dialog, Transition } from '@headlessui/react';
 import { useFetchers } from '@remix-run/react';
 import { Fragment, useEffect } from 'react';
 
-import { NewsletterSignup } from '../routes/api/newsletter';
+import { NewsletterSignup } from '../routes/api.newsletter';
 
 function wait(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));

@@ -4,15 +4,15 @@ import { json, type LoaderArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment } from 'react';
 import { z } from 'zod';
 
-import { ButtonLink } from '../../components/design-system/button';
-import { getHeadingStyles } from '../../components/design-system/heading';
-import { Hero } from '../../components/hero';
-import { getBlogPostCount, getBlogPosts } from '../../lib/get-blog-posts';
-import { getFeaturedBlogPost } from '../../lib/get-featured-blog-post';
-import { PortableText, type PortableTextProps } from '../../lib/portable-text';
-import { urlFor } from '../../lib/sanity-image';
-import { getSeoMeta } from '../../seo';
-import { type Theme } from '../../types';
+import { ButtonLink } from '../components/design-system/button';
+import { getHeadingStyles } from '../components/design-system/heading';
+import { Hero } from '../components/hero';
+import { getBlogPostCount, getBlogPosts } from '../lib/get-blog-posts';
+import { getFeaturedBlogPost } from '../lib/get-featured-blog-post';
+import { PortableText, type PortableTextProps } from '../lib/portable-text';
+import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
+import { type Theme } from '../types';
 
 const POSTS_LIMIT = 5;
 

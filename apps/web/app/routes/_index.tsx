@@ -19,8 +19,8 @@ import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { type Theme } from '../types';
-import { ContactForm } from './api/contact';
-import { NewsletterSignup } from './api/newsletter';
+import { ContactForm } from './api.contact';
+import { NewsletterSignup } from './api.newsletter';
 
 export const headers = routeHeaders;
 

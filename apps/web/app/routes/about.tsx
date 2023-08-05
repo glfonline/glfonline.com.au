@@ -13,7 +13,7 @@ import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
-import { NewsletterSignup } from './api/newsletter';
+import { NewsletterSignup } from './api.newsletter';
 
 export const headers = routeHeaders;
 
