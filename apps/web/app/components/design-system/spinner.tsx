@@ -1,7 +1,14 @@
-export function Spinner(props: React.SVGProps<SVGSVGElement>) {
-	const { className = 'h-5 w-5 animate-spin text-white' } = props;
+import { cn } from '../../lib/utils';
+
+export function Spinner({ className, ...consumerProps }: React.SVGProps<SVGSVGElement>) {
 	return (
-		<svg {...props} className={className} fill="none" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+		<svg
+			{...consumerProps}
+			className={cn('h-5 w-5 animate-spin text-white', className)}
+			fill="none"
+			viewBox="0 0 24 24"
+			xmlns="http://www.w3.org/2000/svg"
+		>
 			<circle className="opacity-25" cx={12} cy={12} r={10} stroke="currentColor" strokeWidth={4} />
 			<path
 				className="opacity-75"

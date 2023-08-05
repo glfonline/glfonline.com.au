@@ -48,6 +48,7 @@
 		"isbot": "^3.6.13",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"react-intersection-observer": "^9.5.2",
 		"react-turnstile": "^1.1.1",
 		"react-zorm": "^0.9.0",
 		"remeda": "^1.24.0",
