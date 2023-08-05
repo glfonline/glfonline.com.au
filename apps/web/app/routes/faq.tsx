@@ -54,7 +54,7 @@ export default function FaqPage() {
 						.auto('format')
 						.width(1280)
 						.height(385)
-						.dpr(3)
+						.dpr(2)
 						.url(),
 					alt: faqPage.heroImage.asset.altText ?? '',
 				}}

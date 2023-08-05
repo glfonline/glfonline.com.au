@@ -51,7 +51,7 @@ export default function Page() {
 							.auto('format')
 							.width(1280)
 							.height(385)
-							.dpr(3)
+							.dpr(2)
 							.url(),
 						alt: page.mainImage.asset.altText ?? '',
 					}}

@@ -206,7 +206,7 @@ function MegaMenu() {
 																			.auto('format')
 																			.width(196)
 																			.height(196)
-																			.dpr(3)
+																			.dpr(2)
 																			.url()}
 																		width={196}
 																	/>

@@ -111,7 +111,7 @@ function PostList() {
 								.auto('format')
 								.height(256)
 								.width(256)
-								.dpr(3)
+								.dpr(2)
 								.url()}
 							key={postIndex}
 							publishDate={post.publishedAt}
@@ -226,7 +226,7 @@ function Sidebar() {
 						.auto('format')
 						.height(256)
 						.width(256)
-						.dpr(3)
+						.dpr(2)
 						.url()}
 					publishDate={featuredPost.publishedAt}
 				/>

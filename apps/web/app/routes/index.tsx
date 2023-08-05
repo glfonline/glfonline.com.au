@@ -104,7 +104,7 @@ function Hero() {
 						.auto('format')
 						.width(960)
 						.height(785)
-						.dpr(3)
+						.dpr(2)
 						.url()}
 				/>
 			</div>
@@ -129,7 +129,7 @@ function CollectionPromo() {
 							.auto('format')
 							.width(632)
 							.height(632)
-							.dpr(3)
+							.dpr(2)
 							.url(),
 					}}
 					key={card._key}

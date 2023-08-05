@@ -70,7 +70,7 @@ export default function CollectionsPage() {
 								.auto('format')
 								.width((1280 / 5) * Number(collection.span))
 								.height(384)
-								.dpr(3)
+								.dpr(2)
 								.url(),
 							alt: collection.image.asset.altText ?? '',
 							objectPosition: 'top',

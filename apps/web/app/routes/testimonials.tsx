@@ -64,7 +64,7 @@ export default function TestimonialsPage() {
 							.auto('format')
 							.width(1280)
 							.height(385)
-							.dpr(3)
+							.dpr(2)
 							.url(),
 						alt: heroImage.asset.altText ?? '',
 					}}
@@ -99,7 +99,7 @@ function Testimonials() {
 								.auto('format')
 								.width(767)
 								.height(452)
-								.dpr(3)
+								.dpr(2)
 								.url()}
 						/>
 						<div className="md:col-span-7 md:col-start-6 md:py-16">
