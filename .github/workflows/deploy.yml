@@ -21,17 +21,21 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-      - name: Setup pnpm
+
+      - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      - name: Setup node.js
+
+      - name: 🌐 Setup node.js
         uses: actions/setup-node@v3
         with:
           node-version-file: package.json
           cache: pnpm
+
       - name: 📥 Download deps
         run: pnpm install --frozen-lockfile
+
       - name: 💅 Format
         run: pnpm run check:format
 
@@ -41,17 +45,21 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-      - name: Setup pnpm
+
+      - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      - name: Setup node.js
+
+      - name: 🌐 Setup node.js
         uses: actions/setup-node@v3
         with:
           node-version-file: package.json
           cache: pnpm
+
       - name: 📥 Download deps
         run: pnpm install --frozen-lockfile
+
       - name: 🔬 Lint
         run: pnpm run check:lint
 
@@ -61,16 +69,20 @@ jobs:
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
-      - name: Setup pnpm
+
+      - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
-      - name: Setup node.js
+
+      - name: 🌐 Setup node.js
         uses: actions/setup-node@v3
         with:
           node-version-file: package.json
           cache: pnpm
+
       - name: 📥 Download deps
         run: pnpm install --frozen-lockfile
+
       - name: 🔎 Type check
         run: pnpm run check:types
