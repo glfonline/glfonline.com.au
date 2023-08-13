@@ -13,15 +13,15 @@ jobs:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v3
 
-      - name: 🏄 Copy test env vars
+      - name: 🧪 Copy test env vars
         run: cp apps/web/.env.example apps/web/.env
 
-      - name: Setup pnpm
+      - name: 📦 Setup pnpm
         uses: pnpm/action-setup@v2
         with:
           version: 8
 
-      - name: Setup node.js
+      - name: 🌐 Setup node.js
         uses: actions/setup-node@v3
         with:
           node-version-file: package.json
