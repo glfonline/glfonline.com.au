@@ -8,7 +8,7 @@
 		"clean": "pnpm clean:outputs && rm -rf node_modules",
 		"clean:outputs": "rm -rf .turbo && rm -rf playwright-report && rm -rf test-results",
 		"lint": "TIMING=1 eslint \"e2e/**/*.{js,ts,jsx,tsx}\" --max-warnings 0 --report-unused-disable-directives",
-		"test:e2e": "playwright test"
+		"test:e2e": "npx playwright install && playwright test"
 	},
 	"devDependencies": {
 		"@glfonline/eslint-config": "0.0.0",
