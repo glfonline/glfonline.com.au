@@ -37,7 +37,7 @@
 		"@tanstack/react-query-persist-client": "^4.32.1",
 		"@unpic/react": "^0.0.34",
 		"@vercel/analytics": "^1.0.1",
-		"@vercel/node": "^2.15.8",
+		"@vercel/node": "^3.0.0",
 		"@vercel/remix": "^1.19.1",
 		"akismet-api": "^6.0.0",
 		"algoliasearch": "^4.19.1",
