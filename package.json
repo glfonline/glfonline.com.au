@@ -31,10 +31,10 @@
 		"@glfonline/prettier-config": "0.0.0",
 		"@glfonline/tsconfig": "0.0.0",
 		"@manypkg/cli": "^0.21.0",
-		"eslint": "^8.46.0",
-		"prettier": "^3.0.0",
+		"eslint": "^8.48.0",
+		"prettier": "^3.0.3",
 		"stale-dep": "^0.7.0",
-		"turbo": "^1.10.12"
+		"turbo": "^1.10.13"
 	},
 	"packageManager": "pnpm@8.7.0",
 	"engines": {

@@ -1,7 +1,6 @@
 import formsPlugin from '@tailwindcss/forms';
 import typographyPlugin from '@tailwindcss/typography';
 import { type Config } from 'tailwindcss';
-// @ts-expect-error: no types for this plugin
 import animatePlugin from 'tailwindcss-animate';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
