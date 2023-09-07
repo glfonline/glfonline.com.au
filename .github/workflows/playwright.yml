@@ -14,7 +14,7 @@ jobs:
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - name: ⬇️ Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: 🧪 Copy test env vars
         run: cp apps/web/.env.example apps/web/.env
