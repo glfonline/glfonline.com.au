@@ -22,7 +22,7 @@
 		"@headlessui/react": "^1.7.17",
 		"@heroicons/react": "^2.0.18",
 		"@portabletext/react": "^3.0.7",
-		"@remix-run/css-bundle": "^1.19.3",
+		"@remix-run/css-bundle": "^2.0.0",
 		"@remix-run/node": "^1.19.3",
 		"@remix-run/react": "^1.19.3",
 		"@remix-run/vercel": "^1.19.3",
