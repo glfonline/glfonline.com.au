@@ -1,13 +1,23 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { cssBundleHref } from '@remix-run/css-bundle';
-import { Links, LiveReload, Meta, Outlet, Scripts, ScrollRestoration, useCatch, useLocation } from '@remix-run/react';
+import {
+	isRouteErrorResponse,
+	Links,
+	LiveReload,
+	Meta,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+	useLocation,
+	useRouteError,
+} from '@remix-run/react';
 import { withSentry } from '@sentry/remix';
 import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { json, type LinksFunction, type LoaderArgs, type MetaFunction } from '@vercel/remix';
+import { json, type LinksFunction, type LoaderFunctionArgs } from '@vercel/remix';
 import { Fragment, useEffect } from 'react';
 
 import favicon from '../public/favicon.svg';
@@ -44,12 +54,7 @@ export const links: LinksFunction = () => {
 	];
 };
 
-export const meta: MetaFunction = () => ({
-	charset: 'utf-8',
-	viewport: 'width=device-width,initial-scale=1',
-});
-
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request);
 	const [cart, { shop }, mainNavigation] = await Promise.all([
 		session.getCart(),
@@ -83,6 +88,8 @@ function App() {
 	return (
 		<html className="h-full" lang="en">
 			<head>
+				<meta charSet="utf-8" />
+				<meta content="width=device-width,initial-scale=1" name="viewport" />
 				<Meta />
 				<Seo />
 				<Links />
@@ -109,35 +116,30 @@ function App() {
 	);
 }
 
-export function CatchBoundary() {
-	const caught = useCatch();
-	const isNotFound = caught.status === 404;
+export function ErrorBoundary() {
+	const error = useRouteError();
 
-	return (
-		<html className="h-full" lang="en">
-			<head>
-				<title>{isNotFound ? 'Not found' : 'Error'}</title>
-				<Meta />
-				<Links />
-			</head>
-			<body className="bg-background text-foreground relative flex h-full flex-col">
-				{isNotFound ? <NotFound /> : <GenericError error={{ message: `${caught.status} ${caught.data}` }} />}
-				<Scripts />
-			</body>
-		</html>
+	const main = isRouteErrorResponse(error) ? (
+		error.status === 404 ? (
+			<NotFound />
+		) : (
+			<GenericError error={error} />
+		)
+	) : (
+		<GenericError error={{ statusText: 'Unknown error' }} />
 	);
-}
 
-export function ErrorBoundary({ error }: { error: Error }) {
 	return (
 		<html className="h-full" lang="en">
 			<head>
 				<title>Error</title>
+				<meta charSet="utf-8" />
+				<meta content="width=device-width,initial-scale=1" name="viewport" />
 				<Meta />
 				<Links />
 			</head>
 			<body className="bg-background text-foreground relative flex h-full flex-col">
-				<GenericError error={error} />
+				{main}
 				<Scripts />
 			</body>
 		</html>
