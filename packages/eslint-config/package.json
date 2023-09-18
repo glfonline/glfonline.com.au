@@ -8,10 +8,10 @@
 		"clean": "rm -rf node_modules"
 	},
 	"dependencies": {
-		"@remix-run/eslint-config": "^1.19.3",
+		"@remix-run/eslint-config": "^2.0.0",
 		"@ts-gql/eslint-plugin": "^0.9.0",
-		"eslint": "^8.48.0",
-		"eslint-config-turbo": "^1.10.13",
+		"eslint": "^8.49.0",
+		"eslint-config-turbo": "^1.10.14",
 		"eslint-plugin-react": "7.33.2"
 	},
 	"devDependencies": {
