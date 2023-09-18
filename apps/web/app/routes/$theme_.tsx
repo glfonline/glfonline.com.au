@@ -38,7 +38,10 @@ export async function loader({ params }: DataFunctionArgs) {
 		const collection = CollectionSchema.parse(ThemePage);
 		return json({ collection, theme: result.data.theme });
 	}
-	throw json('Not Found', { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Not Found',
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {

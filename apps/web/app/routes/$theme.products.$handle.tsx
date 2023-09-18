@@ -34,7 +34,12 @@ export async function loader({ params }: DataFunctionArgs) {
 		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {
 			handle: result.data.handle,
 		});
-		if (!product) throw json('Product not found', { status: 404 });
+		if (!product) {
+			throw new Response(null, {
+				status: 404,
+				statusText: 'Product Not Found',
+			});
+		}
 		return json(
 			{ product, theme: result.data.theme },
 			{
@@ -44,7 +49,10 @@ export async function loader({ params }: DataFunctionArgs) {
 			},
 		);
 	}
-	throw json('Product not found', { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Product Not Found',
+	});
 }
 
 export async function action({ request }: ActionArgs) {

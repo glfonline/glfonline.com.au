@@ -1,10 +1,10 @@
-import { useTransition } from '@remix-run/react';
+import { useNavigation } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 
 export function LoadingProgress() {
-	const transition = useTransition();
-	const active = transition.state !== 'idle';
+	const navigation = useNavigation();
+	const active = navigation.state !== 'idle';
 
 	const ref = useRef<HTMLDivElement>(null);
 	const [animationComplete, setAnimationComplete] = useState(true);
@@ -28,10 +28,10 @@ export function LoadingProgress() {
 			<div
 				className={clsx(
 					'bg-brand-primary h-full transition-all duration-500 ease-in-out',
-					transition.state === 'idle' && animationComplete && 'w-0 transition-none',
-					transition.state === 'submitting' && 'w-4/12',
-					transition.state === 'loading' && 'w-10/12',
-					transition.state === 'idle' && !animationComplete && 'w-full',
+					navigation.state === 'idle' && animationComplete && 'w-0 transition-none',
+					navigation.state === 'submitting' && 'w-4/12',
+					navigation.state === 'loading' && 'w-10/12',
+					navigation.state === 'idle' && !animationComplete && 'w-full',
 				)}
 				ref={ref}
 			/>

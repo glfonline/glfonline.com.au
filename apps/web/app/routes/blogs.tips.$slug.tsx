@@ -8,7 +8,10 @@ export async function loader({ params }: LoaderArgs) {
 	if (obj) {
 		return redirect(obj.destination);
 	}
-	throw new Response('Not found', { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Not Found',
+	});
 }
 
 const redirects = [

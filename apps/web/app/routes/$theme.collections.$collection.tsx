@@ -61,11 +61,17 @@ export async function loader({ params, request }: DataFunctionArgs) {
 
 		/** Collection data */
 		if (collectionPromise.status === 'rejected') {
-			throw json('Collection not found', { status: 404 });
+			throw new Response(null, {
+				status: 404,
+				statusText: 'Collection Not Found',
+			});
 		}
 		const collection = collectionPromise.value;
 		if (!collection || !Array.isArray(collection.products)) {
-			throw json('Collection not found', { status: 404 });
+			throw new Response(null, {
+				status: 404,
+				statusText: 'Collection Not Found',
+			});
 		}
 
 		/** Options data */
@@ -83,7 +89,10 @@ export async function loader({ params, request }: DataFunctionArgs) {
 		});
 	}
 
-	throw json(paramsResult.error, { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Not Found',
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

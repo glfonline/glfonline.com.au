@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { Form, Link, useFetcher, useLoaderData, useTransition } from '@remix-run/react';
+import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { json, redirect, type ActionArgs, type LoaderArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
@@ -80,7 +80,7 @@ export const meta: MetaFunction = () => {
 
 export default function CartPage() {
 	const { cartInfo } = useLoaderData<typeof loader>();
-	const transition = useTransition();
+	const navigation = useNavigation();
 
 	if (!cartInfo?.lineItems.edges.length) {
 		return (
@@ -207,7 +207,7 @@ export default function CartPage() {
 						<input name="webUrl" type="hidden" value={cartInfo?.webUrl} />
 
 						<Button
-							disabled={transition.state !== 'idle'}
+							disabled={navigation.state !== 'idle'}
 							name={INTENT}
 							type="submit"
 							value={CHECKOUT_ACTION}
@@ -237,7 +237,7 @@ function QuantityPicker({
 		<div className="flex flex-col items-start gap-2">
 			<span className="text-sm text-gray-700 hover:text-gray-800">Quantity</span>
 			<span className="isolate inline-flex shadow-sm">
-				<fetcher.Form method="post" replace>
+				<fetcher.Form method="post">
 					<input name="variantId" type="hidden" value={variantId} />
 					<input name="quantity" type="hidden" value={quantity - 1} />
 					<button
@@ -264,7 +264,7 @@ function QuantityPicker({
 				>
 					{quantity}
 				</span>
-				<fetcher.Form method="post" replace>
+				<fetcher.Form method="post">
 					<input name="variantId" type="hidden" value={variantId} />
 					<input name="quantity" type="hidden" value={quantity + 1} />
 					<button
@@ -292,7 +292,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
 
 	return (
-		<fetcher.Form className="absolute right-0 top-0" method="post" replace>
+		<fetcher.Form className="absolute right-0 top-0" method="post">
 			<input name="variantId" type="hidden" value={variantId} />
 			<button
 				className={clsx(
