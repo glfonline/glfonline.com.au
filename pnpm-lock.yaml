@@ -185,7 +185,7 @@ importers:
         version: 1.25.2
       remix-seo:
         specifier: ^0.1.0
-        version: 0.1.0(@remix-run/react@1.19.3)(remix@1.19.3)
+        version: 0.1.0(@remix-run/react@1.19.3)(remix@2.0.0)
       remix-utils:
         specifier: ^6.6.0
         version: 6.6.0(@remix-run/react@1.19.3)(@remix-run/server-runtime@1.19.3)(react@18.2.0)(typescript@5.2.2)(zod@3.22.2)
@@ -251,8 +251,8 @@ importers:
         specifier: ^3.0.3
         version: 3.0.3
       remix:
-        specifier: ^1.19.3
-        version: 1.19.3
+        specifier: ^2.0.0
+        version: 2.0.0
       tailwindcss:
         specifier: ^3.3.3
         version: 3.3.3(ts-node@10.9.1)
@@ -12289,7 +12289,7 @@ packages:
     resolution: {integrity: sha512-/62tYiOe6DzS5BqVsNpH/nkGlX45C/Sp6V+NtiN6JQNS1Viay7cWkazmRkrQrdFj2eshDe96SIQNIoMxqhzBOg==}
     dev: true
 
-  /remix-seo@0.1.0(@remix-run/react@1.19.3)(remix@1.19.3):
+  /remix-seo@0.1.0(@remix-run/react@1.19.3)(remix@2.0.0):
     resolution: {integrity: sha512-Dr51sNdOIjAqE62Xc7D2prNAowzudwB3fU1Lr9IxM2vUWGu+gdPIoo8duNA+qg+FYAuFJJJk11skJXD8+8p4pw==}
     peerDependencies:
       '@remix-run/react': '>=1.0.0'
@@ -12297,7 +12297,7 @@ packages:
     dependencies:
       '@remix-run/react': 1.19.3(react-dom@18.2.0)(react@18.2.0)
       just-merge: 3.2.0
-      remix: 1.19.3
+      remix: 2.0.0
     dev: false
 
   /remix-utils@6.6.0(@remix-run/react@1.19.3)(@remix-run/server-runtime@1.19.3)(react@18.2.0)(typescript@5.2.2)(zod@3.22.2):
@@ -12322,9 +12322,9 @@ packages:
       - typescript
     dev: false
 
-  /remix@1.19.3:
-    resolution: {integrity: sha512-r6zA1NFWgzKof2XZPyKr5C6MINrSEhehcA8+M9vaAGwIAB3FTm4dd37PM8ojPDPhZ2QCVN0ZvsipP+0Vkw3wdQ==}
-    engines: {node: '>=14.0.0'}
+  /remix@2.0.0:
+    resolution: {integrity: sha512-pkU4OHKC954APjaxqnReAu9mEsUHYuBSPaitExOVqDrlafD6b4jh9LkX/I/L634leR3BeBom9cSyk5/fSVkSow==}
+    engines: {node: '>=18.0.0'}
 
   /remove-accents@0.4.2:
     resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
