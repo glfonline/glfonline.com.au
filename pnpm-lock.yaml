@@ -116,7 +116,7 @@ importers:
         version: 7.65.0(@remix-run/node@1.19.3)(@remix-run/react@1.19.3)(react@18.2.0)
       '@shopify/hydrogen':
         specifier: ^2023.7.3
-        version: 2023.7.3(@remix-run/react@1.19.3)(@remix-run/server-runtime@1.19.3)(@types/react@18.2.21)(react-dom@18.2.0)
+        version: 2023.7.3(@remix-run/react@1.19.3)(@remix-run/server-runtime@2.0.0)(@types/react@18.2.21)(react-dom@18.2.0)
       '@tanstack/query-core':
         specifier: ^4.33.0
         version: 4.33.0
@@ -188,7 +188,7 @@ importers:
         version: 0.1.0(@remix-run/react@1.19.3)(remix@1.19.3)
       remix-utils:
         specifier: ^6.6.0
-        version: 6.6.0(@remix-run/react@1.19.3)(@remix-run/server-runtime@1.19.3)(react@18.2.0)(typescript@5.2.2)(zod@3.22.2)
+        version: 6.6.0(@remix-run/react@1.19.3)(@remix-run/server-runtime@2.0.0)(react@18.2.0)(typescript@5.2.2)(zod@3.22.2)
       tailwind-merge:
         specifier: ^1.14.0
         version: 1.14.0
@@ -215,8 +215,8 @@ importers:
         specifier: ^1.19.3
         version: 1.19.3
       '@remix-run/server-runtime':
-        specifier: ^1.19.3
-        version: 1.19.3
+        specifier: ^2.0.0
+        version: 2.0.0(typescript@5.2.2)
       '@sendgrid/mail':
         specifier: ^7.7.0
         version: 7.7.0
@@ -3782,6 +3782,10 @@ packages:
     resolution: {integrity: sha512-7Lcn7IqGMV+vizMPoEl5F0XDshcdDYtMI6uJLQdQz5CfZAwy3vvGKYSUk789qndt5dEC4HfSjviSYlSoHGL2+A==}
     engines: {node: '>=14'}
 
+  /@remix-run/router@1.9.0:
+    resolution: {integrity: sha512-bV63itrKBC0zdT27qYm6SDZHlkXwFL1xMBuhkn+X7l0+IIhNaH5wuuvZKp6eKhCD4KFhujhfhCT1YxXW6esUIA==}
+    engines: {node: '>=14.0.0'}
+
   /@remix-run/serve@1.19.3:
     resolution: {integrity: sha512-RUVEy7EBYvHO1hIuyVQJyIYZeFfXecC+Uaw6GvZscLywIGnhcAj+5dpeK6HVayNuV4kKLvBp0F4ZGHbwW1oWaA==}
     engines: {node: '>=14.0.0'}
@@ -3807,6 +3811,24 @@ packages:
       cookie: 0.4.2
       set-cookie-parser: 2.6.0
       source-map: 0.7.4
+
+  /@remix-run/server-runtime@2.0.0(typescript@5.2.2):
+    resolution: {integrity: sha512-HaNszj/mp/A1Qz5sVupVIXqDyeEni3nwW5iKDqGAqv0n8E6FRkzEhOtAJypRABcKWBq0M9VM3fm6IO0vaMti8Q==}
+    engines: {node: '>=18.0.0'}
+    peerDependencies:
+      typescript: ^5.1.0
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+    dependencies:
+      '@remix-run/router': 1.9.0
+      '@types/cookie': 0.4.1
+      '@web3-storage/multipart-parser': 1.0.0
+      cookie: 0.4.2
+      set-cookie-parser: 2.6.0
+      source-map: 0.7.4
+      type-fest: 4.3.1
+      typescript: 5.2.2
 
   /@remix-run/vercel@1.19.3(@vercel/node@3.0.3):
     resolution: {integrity: sha512-LoWffUns8u9oqOHSvZtH0LMXWm4NuZ2hUldLx7TAw19lfif1liwa8WrqxRyMItuUp1xEo6shTDCNEUNdQtsEGg==}
@@ -4342,14 +4364,14 @@ packages:
       - xstate
     dev: false
 
-  /@shopify/hydrogen@2023.7.3(@remix-run/react@1.19.3)(@remix-run/server-runtime@1.19.3)(@types/react@18.2.21)(react-dom@18.2.0):
+  /@shopify/hydrogen@2023.7.3(@remix-run/react@1.19.3)(@remix-run/server-runtime@2.0.0)(@types/react@18.2.21)(react-dom@18.2.0):
     resolution: {integrity: sha512-1JHMWgOtiEh6v7fC//2vejhadRGikGCol34tLiy8BtQ1GSU9zbUr7hYDnohjSULJvBjhdSYXvvsTUwwsp1B8EA==}
     peerDependencies:
       '@remix-run/react': 1.19.1
       '@remix-run/server-runtime': 1.19.1
     dependencies:
       '@remix-run/react': 1.19.3(react-dom@18.2.0)(react@18.2.0)
-      '@remix-run/server-runtime': 1.19.3
+      '@remix-run/server-runtime': 2.0.0(typescript@5.2.2)
       '@shopify/hydrogen-react': 2023.7.2(@types/react@18.2.21)(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
     transitivePeerDependencies:
@@ -12300,7 +12322,7 @@ packages:
       remix: 1.19.3
     dev: false
 
-  /remix-utils@6.6.0(@remix-run/react@1.19.3)(@remix-run/server-runtime@1.19.3)(react@18.2.0)(typescript@5.2.2)(zod@3.22.2):
+  /remix-utils@6.6.0(@remix-run/react@1.19.3)(@remix-run/server-runtime@2.0.0)(react@18.2.0)(typescript@5.2.2)(zod@3.22.2):
     resolution: {integrity: sha512-4r4ifahU61Aa54m6Yu8B8GTzXyo+9RUzkFZdBNZOErpZ1LUMQ/ng4LeCJX2M6m4obdMjq0ot0pPlnAzeZOSttg==}
     engines: {node: '>=14'}
     peerDependencies:
@@ -12310,7 +12332,7 @@ packages:
       zod: ^3.19.1
     dependencies:
       '@remix-run/react': 1.19.3(react-dom@18.2.0)(react@18.2.0)
-      '@remix-run/server-runtime': 1.19.3
+      '@remix-run/server-runtime': 2.0.0(typescript@5.2.2)
       intl-parse-accept-language: 1.0.0
       is-ip: 3.1.0
       react: 18.2.0
@@ -13775,6 +13797,10 @@ packages:
     resolution: {integrity: sha512-tLq3bSNx+xSpwvAJnzrK0Ep5CLNWjvFTOp71URMaAEWBfRb9nnJiBoUe0tF8bI4ZFO3omgBR6NvnbzVUT3Ly4g==}
     engines: {node: '>=14.16'}
     dev: false
+
+  /type-fest@4.3.1:
+    resolution: {integrity: sha512-pphNW/msgOUSkJbH58x8sqpq8uQj6b0ZKGxEsLKMUnGorRcDjrUaLS+39+/ub41JNTwrrMyJcUB8+YZs3mbwqw==}
+    engines: {node: '>=16'}
 
   /type-is@1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
