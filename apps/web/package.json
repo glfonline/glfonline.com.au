@@ -38,7 +38,7 @@
 		"@unpic/react": "^0.0.34",
 		"@vercel/analytics": "^1.0.2",
 		"@vercel/node": "^3.0.3",
-		"@vercel/remix": "^1.19.3",
+		"@vercel/remix": "^2.0.0",
 		"akismet-api": "^6.0.0",
 		"algoliasearch": "^4.19.1",
 		"class-variance-authority": "^0.7.0",
