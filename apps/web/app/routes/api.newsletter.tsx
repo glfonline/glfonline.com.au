@@ -1,5 +1,5 @@
 import { useFetcher } from '@remix-run/react';
-import { json, type ActionArgs } from '@vercel/remix';
+import { json, type ActionFunctionArgs } from '@vercel/remix';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
@@ -16,7 +16,7 @@ export const NewsletterSchema = z.object({
 	gender: z.string().min(1, 'Gender is required'),
 });
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	try {
 		const data = parseForm(NewsletterSchema, formData);
@@ -56,7 +56,7 @@ export async function action({ request }: ActionArgs) {
 }
 
 export function NewsletterSignup() {
-	const fetcher = useFetcher();
+	const fetcher = useFetcher<typeof action>();
 	const form = useZorm('contact_form', NewsletterSchema);
 
 	return (
@@ -72,7 +72,6 @@ export function NewsletterSignup() {
 					method="post"
 					name="newsletter_signup_form"
 					ref={form.ref}
-					replace
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
 						<Field className="sm:col-span-2" label="First name" message={form.errors.first_name()?.message}>

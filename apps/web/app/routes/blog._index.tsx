@@ -1,7 +1,8 @@
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type LoaderArgs, type MetaFunction } from '@vercel/remix';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment } from 'react';
+import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { ButtonLink } from '../components/design-system/button';
@@ -32,7 +33,7 @@ const BlogSchema = z
 		};
 	});
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
 	const { after = 0 } = BlogSchema.parse(Object.fromEntries(url.searchParams.entries()));
 	const [posts, featuredPost, count] = await Promise.all([
@@ -53,10 +54,11 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function Blog() {

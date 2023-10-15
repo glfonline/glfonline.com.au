@@ -8,11 +8,11 @@
 		"forceConsistentCasingInFileNames": true,
 		"isolatedModules": true,
 		"jsx": "react-jsx",
-		"lib": ["DOM", "DOM.Iterable", "ES2019"],
-		"moduleResolution": "node",
+		"lib": ["DOM", "DOM.Iterable", "ES2022"],
+		"moduleResolution": "Bundler",
 		"noEmit": true,
 		"resolveJsonModule": true,
 		"strict": true,
-		"target": "ES2019"
+		"target": "ES2022"
 	}
 }

@@ -1,13 +1,13 @@
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
-import { json, type ActionArgs } from '@vercel/remix';
+import { json, type ActionFunctionArgs } from '@vercel/remix';
 import { AkismetClient } from 'akismet-api';
 import { requiredEnv } from 'app/lib/required-env';
 import dedent from 'dedent';
 import { Fragment, useState } from 'react';
 import Turnstile from 'react-turnstile';
 import { parseForm, useZorm } from 'react-zorm';
-import { getClientIPAddress } from 'remix-utils';
+import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import { z } from 'zod';
 
 import { Button } from '../components/design-system/button';
@@ -23,7 +23,7 @@ export default function () {
 	return null;
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	try {
 		/** Get the form data out of the request */
 		const formData = await request.formData();
@@ -151,7 +151,6 @@ export function ContactForm() {
 					method="post"
 					name="contact_form"
 					ref={form.ref}
-					replace
 				>
 					<Field label="First name" message={form.errors.first_name()?.message}>
 						<TextInput name={form.fields.first_name()} />

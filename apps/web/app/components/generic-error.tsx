@@ -1,10 +1,11 @@
+import { type ErrorResponse } from '@remix-run/react';
 import { Fragment } from 'react';
 
 import { ButtonLink } from './design-system/button';
 import { Heading } from './design-system/heading';
 import { SplitBackground } from './split-background';
 
-export function GenericError({ error }: { error?: Partial<Error> }) {
+export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 	return (
 		<main className="relative grid min-h-full place-items-center">
 			<div aria-hidden="true" className="absolute inset-0 flex h-full w-full overflow-hidden">
@@ -21,11 +22,11 @@ export function GenericError({ error }: { error?: Partial<Error> }) {
 					{process.env.NODE_ENV === 'development' && error && (
 						<Fragment>
 							<code className="text-base leading-7 text-gray-600">
-								<span>{error.message}</span>
-								{error?.stack && (
+								<span>{error.statusText}</span>
+								{error.data && (
 									<pre
 										dangerouslySetInnerHTML={{
-											__html: addLinksToStackTrace(error.stack),
+											__html: addLinksToStackTrace(error.data),
 										}}
 										style={{
 											padding: '2rem',

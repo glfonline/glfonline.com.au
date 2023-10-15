@@ -2,10 +2,11 @@ import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type ActionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { json, type ActionFunctionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 import { useZorm } from 'react-zorm';
+import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { Button, ButtonLink } from '../components/design-system/button';
@@ -34,7 +35,12 @@ export async function loader({ params }: DataFunctionArgs) {
 		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {
 			handle: result.data.handle,
 		});
-		if (!product) throw json('Product not found', { status: 404 });
+		if (!product) {
+			throw new Response(null, {
+				status: 404,
+				statusText: 'Product Not Found',
+			});
+		}
 		return json(
 			{ product, theme: result.data.theme },
 			{
@@ -44,10 +50,13 @@ export async function loader({ params }: DataFunctionArgs) {
 			},
 		);
 	}
-	throw json('Product not found', { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Product Not Found',
+	});
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
 	let cart = await session.getCart();
@@ -57,12 +66,12 @@ export async function action({ request }: ActionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data.product) return { title: 'Product not found' };
+	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
 		title: data.product.title,
 		description: data.product.description,
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function ProductPage() {

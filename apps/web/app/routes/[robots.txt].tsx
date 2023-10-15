@@ -1,8 +1,8 @@
 import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import { parseGid } from '@shopify/hydrogen';
-import { type LoaderArgs } from '@vercel/remix';
+import { type LoaderFunctionArgs } from '@vercel/remix';
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
 	/** @todo get gid from query */
 	const shopId = parseGid('gid://shopify/Shop/10809832').id;

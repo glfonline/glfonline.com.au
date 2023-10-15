@@ -5,6 +5,7 @@ import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@r
 import { Image } from '@unpic/react';
 import { json, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment, useId, useState } from 'react';
+import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { Button } from '../components/design-system/button';
@@ -61,11 +62,17 @@ export async function loader({ params, request }: DataFunctionArgs) {
 
 		/** Collection data */
 		if (collectionPromise.status === 'rejected') {
-			throw json('Collection not found', { status: 404 });
+			throw new Response(null, {
+				status: 404,
+				statusText: 'Collection Not Found',
+			});
 		}
 		const collection = collectionPromise.value;
 		if (!collection || !Array.isArray(collection.products)) {
-			throw json('Collection not found', { status: 404 });
+			throw new Response(null, {
+				status: 404,
+				statusText: 'Collection Not Found',
+			});
 		}
 
 		/** Options data */
@@ -83,16 +90,19 @@ export async function loader({ params, request }: DataFunctionArgs) {
 		});
 	}
 
-	throw json(paramsResult.error, { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Not Found',
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data?.title) return { title: 'Product not found' };
+	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
 		title: `Shop ${data.title}`,
 	});
 
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function CollectionPage() {

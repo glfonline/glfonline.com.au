@@ -1,14 +1,17 @@
-import { redirect, type LoaderArgs } from '@vercel/remix';
+import { redirect, type LoaderFunctionArgs } from '@vercel/remix';
 import { assert, isString } from 'emery';
 
-export async function loader({ params }: LoaderArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const { slug } = params;
 	assert(isString(slug));
 	const obj = redirects.find((r) => r.slug === slug);
 	if (obj) {
 		return redirect(obj.destination);
 	}
-	throw new Response('Not found', { status: 404 });
+	throw new Response(null, {
+		status: 404,
+		statusText: 'Not Found',
+	});
 }
 
 const redirects = [

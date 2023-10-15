@@ -48,7 +48,7 @@ export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
 		title: 'About',
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function AboutPage() {

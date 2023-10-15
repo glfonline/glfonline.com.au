@@ -25,14 +25,16 @@ function ImageComponent({ value }: { value: SanityAsset }) {
 	const { width, height } = getImageDimensions(value);
 	return (
 		<Image
-			// @ts-ignore
-			alt={value?.alt ?? ''}
+			alt={
+				// @ts-ignore
+				value?.alt ?? ''
+			}
+			aspectRatio={width / height}
 			className="mx-auto block"
 			height={height}
 			layout="constrained"
 			loading="lazy"
 			src={urlFor(value).width(580).fit('max').auto('format').url()}
-			style={{ aspectRatio: width / height }}
 			width={width}
 		/>
 	);
