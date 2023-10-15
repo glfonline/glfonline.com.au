@@ -1,7 +1,7 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, redirect, type ActionArgs, type LoaderArgs, type MetaFunction } from '@vercel/remix';
+import { json, redirect, type ActionFunctionArgs, type LoaderArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 
@@ -38,7 +38,7 @@ const RemoveScheme = z.object({
 	variantId: z.string().min(1),
 });
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const intent = formData.get(INTENT);
 

@@ -1,5 +1,5 @@
 import { useFetcher } from '@remix-run/react';
-import { json, type ActionArgs } from '@vercel/remix';
+import { json, type ActionFunctionArgs } from '@vercel/remix';
 import { parseForm, useZorm } from 'react-zorm';
 import { z } from 'zod';
 
@@ -16,7 +16,7 @@ export const NewsletterSchema = z.object({
 	gender: z.string().min(1, 'Gender is required'),
 });
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const formData = await request.formData();
 	try {
 		const data = parseForm(NewsletterSchema, formData);

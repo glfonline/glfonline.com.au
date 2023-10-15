@@ -132,7 +132,7 @@ function useDataFromMatches(dataKey: string): Record<string, unknown> {
  *   useDataFromFetchers
  * } from '@shopify/hydrogen';
  *
- * export async function action({request, context}: ActionArgs) {
+ * export async function action({request, context}: ActionFunctionArgs) {
  *   const cartId = await session.get('cartId');
  *   ...
  *   return json({

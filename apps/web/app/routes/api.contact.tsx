@@ -1,6 +1,6 @@
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
-import { json, type ActionArgs } from '@vercel/remix';
+import { json, type ActionFunctionArgs } from '@vercel/remix';
 import { AkismetClient } from 'akismet-api';
 import { requiredEnv } from 'app/lib/required-env';
 import dedent from 'dedent';
@@ -23,7 +23,7 @@ export default function () {
 	return null;
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	try {
 		/** Get the form data out of the request */
 		const formData = await request.formData();

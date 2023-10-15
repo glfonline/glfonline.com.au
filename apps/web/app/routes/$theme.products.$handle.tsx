@@ -2,7 +2,7 @@ import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type ActionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { json, type ActionFunctionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 import { useZorm } from 'react-zorm';
@@ -55,7 +55,7 @@ export async function loader({ params }: DataFunctionArgs) {
 	});
 }
 
-export async function action({ request }: ActionArgs) {
+export async function action({ request }: ActionFunctionArgs) {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
 	let cart = await session.getCart();
