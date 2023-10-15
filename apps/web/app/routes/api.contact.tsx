@@ -7,7 +7,7 @@ import dedent from 'dedent';
 import { Fragment, useState } from 'react';
 import Turnstile from 'react-turnstile';
 import { parseForm, useZorm } from 'react-zorm';
-import { getClientIPAddress } from 'remix-utils';
+import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import { z } from 'zod';
 
 import { Button } from '../components/design-system/button';
@@ -151,7 +151,6 @@ export function ContactForm() {
 					method="post"
 					name="contact_form"
 					ref={form.ref}
-					replace
 				>
 					<Field label="First name" message={form.errors.first_name()?.message}>
 						<TextInput name={form.fields.first_name()} />

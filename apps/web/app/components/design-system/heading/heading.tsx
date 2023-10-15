@@ -1,5 +1,4 @@
-import { assert } from 'emery/assertions';
-import { isDefined } from 'emery/guards';
+import { assert, isDefined } from 'emery';
 import { forwardRef } from 'react';
 
 import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';

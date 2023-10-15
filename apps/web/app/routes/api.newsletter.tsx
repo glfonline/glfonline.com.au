@@ -56,7 +56,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export function NewsletterSignup() {
-	const fetcher = useFetcher();
+	const fetcher = useFetcher<typeof action>();
 	const form = useZorm('contact_form', NewsletterSchema);
 
 	return (
@@ -72,7 +72,6 @@ export function NewsletterSignup() {
 					method="post"
 					name="newsletter_signup_form"
 					ref={form.ref}
-					replace
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
 						<Field className="sm:col-span-2" label="First name" message={form.errors.first_name()?.message}>

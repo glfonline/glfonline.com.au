@@ -5,7 +5,7 @@
  */
 
 import { PassThrough } from 'node:stream';
-import { Response, type AppLoadContext, type EntryContext } from '@remix-run/node';
+import { createReadableStreamFromReadable, type AppLoadContext, type EntryContext } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
 import * as Sentry from '@sentry/remix';
 import isbot from 'isbot';
@@ -50,7 +50,7 @@ function handleBotRequest(
 					responseHeaders.set('Content-Type', 'text/html');
 
 					resolve(
-						new Response(body, {
+						new Response(createReadableStreamFromReadable(body), {
 							headers: responseHeaders,
 							status: responseStatusCode,
 						}),
@@ -97,7 +97,7 @@ function handleBrowserRequest(
 					responseHeaders.set('Content-Type', 'text/html');
 
 					resolve(
-						new Response(body, {
+						new Response(createReadableStreamFromReadable(body), {
 							headers: responseHeaders,
 							status: responseStatusCode,
 						}),

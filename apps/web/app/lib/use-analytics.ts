@@ -86,7 +86,7 @@ export function useAnalytics({
  *   useDataFromMatches
  * } from '@shopify/hydrogen';
  *
- * export async function loader({request, context}: LoaderArgs) {
+ * export async function loader({request, context}: LoaderFunctionArgs) {
  *   return defer({
  *     analytics: {
  *       shopId: 'gid://shopify/Shop/1',
@@ -109,7 +109,9 @@ function useDataFromMatches(dataKey: string): Record<string, unknown> {
 
 	matches.forEach((event) => {
 		const eventData = event?.data;
+		// @ts-ignore
 		if (eventData && eventData[dataKey]) {
+			// @ts-ignore
 			Object.assign(data, eventData[dataKey]);
 		}
 	});
@@ -191,7 +193,7 @@ function useDataFromFetchers({
 	const data: Record<string, unknown> = {};
 
 	for (const fetcher of fetchers) {
-		const formData = fetcher.submission?.formData;
+		const { formData } = fetcher;
 		const fetcherData = fetcher.data;
 		if (formData && formData.get(formDataKey) === formDataValue && fetcherData && fetcherData[dataKey]) {
 			Object.assign(data, fetcherData[dataKey]);

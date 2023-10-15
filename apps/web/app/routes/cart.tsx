@@ -1,7 +1,7 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, redirect, type ActionFunctionArgs, type LoaderArgs, type MetaFunction } from '@vercel/remix';
+import { json, redirect, type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 
@@ -12,7 +12,7 @@ import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
 import { getSeoMeta } from '../seo';
 
-export async function loader({ request }: LoaderArgs) {
+export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request);
 	const cart = await session.getCart();
 	const cartInfo = await getCartInfo(cart);

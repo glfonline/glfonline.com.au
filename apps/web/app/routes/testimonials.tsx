@@ -2,6 +2,7 @@ import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client'
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { json, type MetaFunction } from '@vercel/remix';
+import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { Hero } from '../components/hero';
@@ -43,6 +44,7 @@ export async function loader() {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});

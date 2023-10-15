@@ -6,6 +6,7 @@ import { json, type ActionFunctionArgs, type DataFunctionArgs, type MetaFunction
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 import { useZorm } from 'react-zorm';
+import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { Button, ButtonLink } from '../components/design-system/button';
@@ -65,7 +66,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data.product) return { title: 'Product not found' };
+	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
 		title: data.product.title,
 		description: data.product.description,
