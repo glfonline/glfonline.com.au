@@ -1,5 +1,5 @@
 import { type Hit } from '@algolia/client-search';
-import algoliasearch from 'algoliasearch';
+import { default as algoliasearch } from 'algoliasearch/lite';
 
 const ALGOLIA_APP_ID = 'SF44VDBM4X';
 const ALGOLIA_SEARCH_API_KEY = '6c771cb2cc3cdbc88f093f7b76231e7d';
