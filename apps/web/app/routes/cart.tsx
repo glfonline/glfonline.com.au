@@ -75,7 +75,7 @@ export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
 		title: 'Cart',
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function CartPage() {

@@ -71,7 +71,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		title: data.product.title,
 		description: data.product.description,
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function ProductPage() {

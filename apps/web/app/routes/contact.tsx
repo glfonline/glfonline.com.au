@@ -10,7 +10,7 @@ export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
 		title: 'Contact Us',
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function ContactPage() {

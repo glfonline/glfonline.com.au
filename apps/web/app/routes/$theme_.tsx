@@ -49,7 +49,7 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 		title: `Shop ${params.theme === 'ladies' ? 'Ladies' : 'Mens'}`,
 	});
 
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function CollectionsPage() {

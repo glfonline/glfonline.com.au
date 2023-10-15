@@ -38,7 +38,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function FaqPage() {

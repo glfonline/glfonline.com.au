@@ -5,6 +5,7 @@ import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@r
 import { Image } from '@unpic/react';
 import { json, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment, useId, useState } from 'react';
+import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { Button } from '../components/design-system/button';
@@ -96,12 +97,12 @@ export async function loader({ params, request }: DataFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	if (!data?.title) return { title: 'Product not found' };
+	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
 		title: `Shop ${data.title}`,
 	});
 
-	return { ...seoMeta };
+	return [seoMeta];
 };
 
 export default function CollectionPage() {
