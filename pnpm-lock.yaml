@@ -124,8 +124,8 @@ importers:
         specifier: ^4.36.1
         version: 4.36.1(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-devtools':
-        specifier: ^4.36.1
-        version: 4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^5.0.0
+        version: 5.0.3(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/react-query-persist-client':
         specifier: ^4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1)
@@ -3831,15 +3831,12 @@ packages:
       tailwindcss: 3.3.3(ts-node@10.9.1)
     dev: true
 
-  /@tanstack/match-sorter-utils@8.8.4:
-    resolution: {integrity: sha512-rKH8LjZiszWEvmi01NR72QWZ8m4xmXre0OOwlRGnjU01Eqz/QnN+cqpty2PJ0efHblq09+KilvyR7lsbzmXVEw==}
-    engines: {node: '>=12'}
-    dependencies:
-      remove-accents: 0.4.2
-    dev: false
-
   /@tanstack/query-core@4.36.1:
     resolution: {integrity: sha512-DJSilV5+ytBP1FbFcEJovv4rnnm/CokuVvrBEtW/Va9DvuJ3HksbXUJEpI0aV1KtuL4ZoO9AVE6PyNLzF7tLeA==}
+    dev: false
+
+  /@tanstack/query-devtools@5.0.3:
+    resolution: {integrity: sha512-SSMdlbkqBsQXL4fE62LNgJGUj5x88DS2k/lBbrA7xn8l1j050hqiAzSO+SzG75T+oKGwwINapTJ8IjWAIdPqmw==}
     dev: false
 
   /@tanstack/query-persist-client-core@4.36.1:
@@ -3854,19 +3851,17 @@ packages:
       '@tanstack/query-persist-client-core': 4.36.1
     dev: false
 
-  /@tanstack/react-query-devtools@4.36.1(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-WYku83CKP3OevnYSG8Y/QO9g0rT75v1om5IvcWUwiUZJ4LanYGLVCZ8TdFG5jfsq4Ej/lu2wwDAULEUnRIMBSw==}
+  /@tanstack/react-query-devtools@5.0.3(@tanstack/react-query@4.36.1)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-Q/SmDwV596+BFG+qZWABXG1jOjCtZrnZW+4AXm9xQMCsyM6EiPg97+xD05o5KYcKdvqlAu8o3fi7HKjefTi76Q==}
     peerDependencies:
-      '@tanstack/react-query': ^4.36.1
-      react: ^16.8.0 || ^17.0.0 || ^18.0.0
-      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
+      '@tanstack/react-query': ^5.0.0
+      react: ^18.0.0
+      react-dom: ^18.0.0
     dependencies:
-      '@tanstack/match-sorter-utils': 8.8.4
+      '@tanstack/query-devtools': 5.0.3
       '@tanstack/react-query': 4.36.1(react-dom@18.2.0)(react@18.2.0)
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      superjson: 1.13.3
-      use-sync-external-store: 1.2.0(react@18.2.0)
     dev: false
 
   /@tanstack/react-query-persist-client@4.36.1(@tanstack/react-query@4.36.1):
@@ -5904,13 +5899,6 @@ packages:
 
   /cookiejar@2.1.4:
     resolution: {integrity: sha512-LDx6oHrK+PhzLKJU9j5S7/Y3jM/mUHvD/DeI1WQmJn652iPC5Y4TBzC9l+5OMOXlyTTA+SmVUPm0HQUwpD5Jqw==}
-    dev: false
-
-  /copy-anything@3.0.5:
-    resolution: {integrity: sha512-yCEafptTtb4bk7GLEQoM8KVJpxAfdBJYaXyzQEgQQQgYrZiDp8SJmGKlYza6CYjEDNstAdNdKA3UuoULlEbS6w==}
-    engines: {node: '>=12.13'}
-    dependencies:
-      is-what: 4.1.15
     dev: false
 
   /copy-to-clipboard@3.3.3:
@@ -8881,11 +8869,6 @@ packages:
       get-intrinsic: 1.2.1
     dev: false
 
-  /is-what@4.1.15:
-    resolution: {integrity: sha512-uKua1wfy3Yt+YqsD6mTUEa2zSi3G1oPlqTflgaPJ7z63vUGN5pxFpnQfeSLMFnJDEsdvOtkp1rUWkYjB4YfhgA==}
-    engines: {node: '>=12.13'}
-    dev: false
-
   /is-windows@1.0.2:
     resolution: {integrity: sha512-eXK1UInq2bPmjyX6e3VHIzMLobc4J94i4AWn+Hpq3OU5KkrRC96OAcR3PRJ/pGu6m8TRnBHP9dkXQVsT/COVIA==}
     engines: {node: '>=0.10.0'}
@@ -11645,10 +11628,6 @@ packages:
     resolution: {integrity: sha512-Y3s+1JYsaqtnZj13k62U0XRJoBlJPJyhbNK8O+tQVMxtaZWsZr5lbfLMKl8jIRKgG+Jmag+1/D9aOeYhm3xTwQ==}
     engines: {node: '>=18.0.0'}
 
-  /remove-accents@0.4.2:
-    resolution: {integrity: sha512-7pXIJqJOq5tFgG1A2Zxti3Ht8jJF337m4sowbuHsW30ZnkQFnDzy9qBNhgzX8ZLW4+UBcXiiR7SwR6pokHsxiA==}
-    dev: false
-
   /remove-trailing-separator@1.1.0:
     resolution: {integrity: sha512-/hS+Y0u3aOfIETiaiirUFwDBDzmXPvO+jAfKTitUngIPzdKc6Z0LoFjM/CK5PL4C+eKwHohlHAb6H0VFfmmUsw==}
     dev: true
@@ -12553,13 +12532,6 @@ packages:
       semver: 7.5.4
     transitivePeerDependencies:
       - supports-color
-    dev: false
-
-  /superjson@1.13.3:
-    resolution: {integrity: sha512-mJiVjfd2vokfDxsQPOwJ/PtanO87LhpYY88ubI5dUB1Ab58Txbyje3+jpm+/83R/fevaq/107NNhtYBLuoTrFg==}
-    engines: {node: '>=10'}
-    dependencies:
-      copy-anything: 3.0.5
     dev: false
 
   /superstruct@0.10.13:
