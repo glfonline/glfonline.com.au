@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 import { search } from './algolia';
 
@@ -33,7 +33,7 @@ export function useAlgoliaSearch(query: string) {
 				hits: [],
 			};
 		},
-		keepPreviousData: true,
+		placeholderData: keepPreviousData,
 		// staleTime: 5 * 60 * 1000,
 	});
 }
