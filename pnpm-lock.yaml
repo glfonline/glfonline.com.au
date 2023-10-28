@@ -130,8 +130,8 @@ importers:
         specifier: ^4.36.1
         version: 4.36.1(@tanstack/react-query@4.36.1)
       '@unpic/react':
-        specifier: ^0.0.36
-        version: 0.0.36(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^0.0.37
+        version: 0.0.37(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics':
         specifier: ^1.1.1
         version: 1.1.1
@@ -4508,14 +4508,14 @@ packages:
       - '@codemirror/search'
     dev: false
 
-  /@unpic/core@0.0.31:
-    resolution: {integrity: sha512-y3LwXIZdLUGhV46KLYU+r1ZPFmGkRwpdM2JCeTvatHYFjqlYQTK+K3Cb/QEIbOVWlDQZHwu9k2/SZK2n+hki7w==}
+  /@unpic/core@0.0.32:
+    resolution: {integrity: sha512-n/7Ym+mksDlNTekbSgoUgxJQ6P6VtrcyMRFLgW+fsvyJoM1a87BBZQsp/SYO+N0apPX8m8eFGHhoS+us9FKbFg==}
     dependencies:
       unpic: 3.10.1
     dev: false
 
-  /@unpic/react@0.0.36(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-HITDvifa6/0u5GxgTeqlo/QsW1sTpyCPN81z2upfQAtmwKWLY8SeAH5sOzchVlHDlc/QU/dLcs4j9ZI1H/6c4A==}
+  /@unpic/react@0.0.37(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-9+XEN48JaIw9F2267cjkJHTTHlrPUlrYPYhug1xQAlx5EXLOyctFGjrnNxJhGjeG7c3Ja9pkCH4zNlzY9Q+IEA==}
     peerDependencies:
       next: '>=12'
       react: '>=17'
@@ -4524,7 +4524,7 @@ packages:
       next:
         optional: true
     dependencies:
-      '@unpic/core': 0.0.31
+      '@unpic/core': 0.0.32
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
     dev: false
