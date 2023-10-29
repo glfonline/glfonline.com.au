@@ -8,11 +8,12 @@ module.exports = {
 	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
+		'plugin:@tanstack/eslint-plugin-query/recommended',
 		'@remix-run/eslint-config',
 		'@remix-run/eslint-config/node',
 		'turbo',
 	],
-	plugins: ['@ts-gql'],
+	plugins: ['@tanstack/query', '@ts-gql'],
 	rules: {
 		'@ts-gql/ts-gql': ERROR,
 		'@typescript-eslint/ban-ts-comment': OFF,

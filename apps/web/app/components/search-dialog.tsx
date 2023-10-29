@@ -20,7 +20,7 @@ export function SearchDialog({
 }) {
 	const navigate = useNavigate();
 	const [query, setQuery] = useState('');
-	const { data, isLoading, isPreviousData } = useAlgoliaSearch(query);
+	const { data, isLoading, isPlaceholderData } = useAlgoliaSearch(query);
 
 	return (
 		<Transition.Root afterLeave={() => setQuery('')} appear as={Fragment} show={isSearchOpen}>
@@ -69,7 +69,7 @@ export function SearchDialog({
 								<SearchResults
 									data={data}
 									isLoading={isLoading}
-									isPreviousData={isPreviousData}
+									isPreviousData={isPlaceholderData}
 									query={query}
 									setSearchOpen={setSearchOpen}
 								/>

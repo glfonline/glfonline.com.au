@@ -8,14 +8,15 @@
 		"clean": "rm -rf node_modules"
 	},
 	"dependencies": {
-		"@remix-run/eslint-config": "^2.0.1",
+		"@remix-run/eslint-config": "^2.1.0",
+		"@tanstack/eslint-plugin-query": "^5.0.5",
 		"@ts-gql/eslint-plugin": "^0.9.0",
-		"eslint": "^8.51.0",
-		"eslint-config-turbo": "^1.10.15",
+		"eslint": "^8.52.0",
+		"eslint-config-turbo": "^1.10.16",
 		"eslint-plugin-react": "7.33.2"
 	},
 	"devDependencies": {
-		"@types/eslint": "^8.44.4",
+		"@types/eslint": "^8.44.6",
 		"graphql": "^16.8.1",
 		"react": "^18.2.0",
 		"typescript": "^5.2.2"
