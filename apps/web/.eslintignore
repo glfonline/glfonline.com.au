@@ -1,7 +1,8 @@
 .cache
 .turbo
 api
-node_modules
-tsconfig.tsbuildinfo
 app/styles/tailwind.css
+build
+node_modules
 public/build
+tsconfig.tsbuildinfo
