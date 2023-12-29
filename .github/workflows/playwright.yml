@@ -42,7 +42,7 @@ jobs:
           BASE_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 📊 Upload report
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
