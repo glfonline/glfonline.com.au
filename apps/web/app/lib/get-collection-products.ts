@@ -45,7 +45,7 @@ export async function getProductsFromCollectionByTag({
 				...(filterOptions
 					? Object.entries(filterOptions).map(([key, value]) => ({
 							variantOption: { name: key, value: value },
-					  }))
+						}))
 					: []),
 			],
 		});

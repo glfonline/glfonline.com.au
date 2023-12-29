@@ -28,8 +28,8 @@ const BlogSchema = z
 				after === undefined
 					? undefined
 					: afterAsNumber >= 0 && !Number.isNaN(afterAsNumber)
-					  ? afterAsNumber
-					  : undefined,
+						? afterAsNumber
+						: undefined,
 		};
 	});
 
