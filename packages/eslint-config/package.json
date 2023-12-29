@@ -8,18 +8,18 @@
 		"clean": "rm -rf node_modules"
 	},
 	"dependencies": {
-		"@remix-run/eslint-config": "^2.3.0",
-		"@tanstack/eslint-plugin-query": "^5.8.4",
+		"@remix-run/eslint-config": "^2.4.1",
+		"@tanstack/eslint-plugin-query": "^5.14.6",
 		"@ts-gql/eslint-plugin": "^0.9.0",
-		"eslint": "^8.53.0",
-		"eslint-config-turbo": "^1.10.16",
+		"eslint": "^8.56.0",
+		"eslint-config-turbo": "^1.11.2",
 		"eslint-plugin-react": "7.33.2"
 	},
 	"devDependencies": {
-		"@types/eslint": "^8.44.7",
+		"@types/eslint": "^8.56.0",
 		"graphql": "^16.8.1",
 		"react": "^18.2.0",
-		"typescript": "^5.2.2"
+		"typescript": "^5.3.3"
 	},
 	"publishConfig": {
 		"access": "public"
