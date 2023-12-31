@@ -9,7 +9,7 @@ const PORT = process.env.PORT || 3000;
  * Set webServer.url and use.baseURL with the location of the web server
  * respecting the correct port.
  */
-const baseUrl = `http://localhost:${PORT}`;
+const baseUrl = process.env.CI ? process.env.BASE_URL : `http://localhost:${PORT}`;
 
 /**
  * @see https://playwright.dev/docs/test-configuration

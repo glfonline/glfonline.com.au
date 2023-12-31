@@ -1,8 +1,9 @@
 {
+	"$schema": "https://turbo.build/schema.json",
 	"extends": ["//"],
 	"pipeline": {
 		"build": {
-			"env": ["CI", "PORT"]
+			"env": ["BASE_URL", "CI", "PORT"]
 		}
 	}
 }
