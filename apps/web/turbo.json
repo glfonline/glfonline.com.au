@@ -1,0 +1,11 @@
+{
+	"$schema": "https://turbo.build/schema.json",
+	"extends": ["//"],
+	"pipeline": {
+		"build": {
+			"dependsOn": ["^build"],
+			"env": ["AKISMET_API_KEY", "ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_API_KEY", "TURNSTILE_SECRET_KEY", "VERCEL"],
+			"outputs": ["api/index.js", "api/build/**", "public/build/**"]
+		}
+	}
+}

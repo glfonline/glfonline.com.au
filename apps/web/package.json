@@ -4,7 +4,7 @@
 	"private": true,
 	"sideEffects": false,
 	"scripts": {
-		"build": "remix build",
+		"build": "tsx ./build.ts",
 		"check": "pnpm run /^check:/",
 		"check:format": "pnpm prettier . --cache --check",
 		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
@@ -73,6 +73,7 @@
 		"@types/node": "^20.10.5",
 		"@types/react": "^18.2.46",
 		"@types/react-dom": "^18.2.18",
+		"dotenv": "^16.3.1",
 		"dotenv-cli": "^7.3.0",
 		"eslint": "^8.56.0",
 		"prettier": "^3.1.1",
@@ -80,6 +81,7 @@
 		"tailwindcss": "^3.4.0",
 		"tailwindcss-animate": "^1.0.7",
 		"ts-node": "^10.9.2",
+		"tsx": "^4.7.0",
 		"typescript": "^5.3.3"
 	}
 }

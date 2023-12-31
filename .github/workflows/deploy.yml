@@ -42,6 +42,9 @@ jobs:
   eslint:
     name: ⬣ ESLint
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -66,6 +69,9 @@ jobs:
   typecheck:
     name: ʦ TypeScript
     runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
