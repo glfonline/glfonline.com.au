@@ -4,7 +4,15 @@
 	"pipeline": {
 		"build": {
 			"dependsOn": ["^build"],
-			"env": ["AKISMET_API_KEY", "ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_API_KEY", "TURNSTILE_SECRET_KEY", "VERCEL"],
+			"env": [
+				"AKISMET_API_KEY",
+				"ENCRYPTION_KEY",
+				"NODE_ENV",
+				"SENDGRID_API_KEY",
+				"SENTRY_AUTH_TOKEN",
+				"TURNSTILE_SECRET_KEY",
+				"VERCEL"
+			],
 			"outputs": ["api/index.js", "api/build/**", "public/build/**"]
 		}
 	}
