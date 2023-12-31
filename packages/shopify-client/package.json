@@ -28,12 +28,12 @@
 		"@ts-gql/tag": "^0.7.0"
 	},
 	"devDependencies": {
-		"@babel/core": "^7.23.6",
+		"@babel/core": "^7.23.7",
 		"@glfonline/eslint-config": "0.0.0",
 		"@glfonline/tsconfig": "0.0.0",
 		"@graphql-codegen/cli": "^5.0.0",
 		"@graphql-codegen/schema-ast": "^4.0.0",
-		"@types/node": "^20.10.5",
+		"@types/node": "^20.10.6",
 		"cosmiconfig-toml-loader": "^1.0.0",
 		"eslint": "^8.56.0",
 		"graphql": "^16.8.1",
