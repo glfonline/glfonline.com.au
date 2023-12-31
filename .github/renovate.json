@@ -1,8 +1,0 @@
-{
-	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
-	"automerge": false,
-	"internalChecksFilter": "strict",
-	"labels": ["dependencies"],
-	"postUpdateOptions": ["pnpmDedupe"],
-	"stabilityDays": 3
-}

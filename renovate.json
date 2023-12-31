@@ -1,0 +1,59 @@
+{
+	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
+	"automerge": false,
+	"dependencyDashboard": true,
+	"extends": ["config:recommended", "schedule:earlyMondays"],
+	"internalChecksFilter": "strict",
+	"ignoreDeps": [
+		"@glfonline/eslint-config",
+		"@glfonline/prettier-config",
+		"@glfonline/sanity-client",
+		"@glfonline/shopify-client",
+		"@glfonline/tsconfig",
+		"@glfonline/web"
+	],
+	"labels": ["dependencies"],
+	"lockFileMaintenance": {
+		"enabled": true
+	},
+	"rebaseWhen": "conflicted",
+	"baseBranches": ["main"],
+	"packageRules": [
+		{
+			"description": "Automatically merge minor and patch-level updates",
+			"matchUpdateTypes": ["minor", "patch", "digest"],
+			"automerge": false,
+			"automergeType": "branch"
+		},
+		{
+			"groupName": "react",
+			"matchPackageNames": ["react", "react-dom"]
+		},
+		{
+			"groupName": "eslint",
+			"matchPackagePatterns": ["eslint*"]
+		},
+		{
+			"groupName": "storybook",
+			"matchPackagePatterns": ["@storybook*"]
+		},
+		{
+			"groupName": "changesets",
+			"matchPackagePatterns": ["@changesets*"]
+		},
+		{
+			"groupName": "babel",
+			"matchPackagePatterns": ["@babel*"]
+		}
+	],
+	"postUpdateOptions": ["pnpmDedupe"],
+	"prConcurrentLimit": 0,
+	"prHourlyLimit": 3,
+	"rangeStrategy": "replace",
+	"schedule": ["before 7am on Monday"],
+	"separateMajorMinor": true,
+	"separateMinorPatch": false,
+	"stabilityDays": 3,
+	"timezone": "Australia/Sydney",
+	"updateNotScheduled": false
+}
