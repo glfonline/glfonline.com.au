@@ -108,9 +108,9 @@ function useDataFromMatches(dataKey: string): Record<string, unknown> {
 	const data: Record<string, unknown> = {};
 
 	matches.forEach((event) => {
-		const eventData = event?.data;
+		const eventData = event.data;
 		// @ts-ignore
-		if (eventData && eventData[dataKey]) {
+		if (eventData?.[dataKey]) {
 			// @ts-ignore
 			Object.assign(data, eventData[dataKey]);
 		}
@@ -195,7 +195,7 @@ function useDataFromFetchers({
 	for (const fetcher of fetchers) {
 		const { formData } = fetcher;
 		const fetcherData = fetcher.data;
-		if (formData && formData.get(formDataKey) === formDataValue && fetcherData && fetcherData[dataKey]) {
+		if (formData && formData.get(formDataKey) === formDataValue && fetcherData?.[dataKey]) {
 			Object.assign(data, fetcherData[dataKey]);
 
 			try {

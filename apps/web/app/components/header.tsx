@@ -63,7 +63,9 @@ function TopNav() {
 function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 	const { cartCount } = useLoaderData<typeof loader>();
 	const [isSearchOpen, setSearchOpen] = useState(false);
-	const toggleSearch = () => setSearchOpen((prev) => !prev);
+	const toggleSearch = () => {
+		setSearchOpen((prev) => !prev);
+	};
 
 	return (
 		<div className="bg-white">
@@ -81,7 +83,13 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 
 					{/* Mobile menu and search (lg-) */}
 					<div className="flex items-center px-4 sm:px-6 lg:hidden">
-						<button className="-ml-2 rounded-md bg-white p-2 text-gray-400" onClick={() => setOpen(true)} type="button">
+						<button
+							className="-ml-2 rounded-md bg-white p-2 text-gray-400"
+							onClick={() => {
+								setOpen(true);
+							}}
+							type="button"
+						>
 							<span className="sr-only">Open menu</span>
 							<Bars3Icon aria-hidden="true" className="h-6 w-6" />
 						</button>

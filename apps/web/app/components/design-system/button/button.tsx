@@ -11,7 +11,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 ) {
 	const internalRef = useRef<HTMLButtonElement>(null);
 	const handleOnClick = useCallback(
-		(event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+		(event: React.MouseEvent<HTMLButtonElement>) => {
 			internalRef.current?.focus();
 			if (isLoading) return;
 			onClick?.(event);

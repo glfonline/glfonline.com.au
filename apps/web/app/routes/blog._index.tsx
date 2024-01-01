@@ -156,7 +156,7 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 						onClick={() => {
 							const params = new URLSearchParams(location.search);
 							params.set('after', (after + POSTS_LIMIT).toString());
-							navigate(location.pathname + '?' + params.toString());
+							navigate(`${location.pathname}?${params.toString()}`);
 						}}
 					>
 						Next

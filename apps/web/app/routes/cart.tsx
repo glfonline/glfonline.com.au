@@ -115,7 +115,7 @@ export default function CartPage() {
 						</h2>
 
 						<ul className="divide-y divide-gray-200 border-b border-t border-gray-200" role="list">
-							{cartInfo?.lineItems.edges.map(({ node }) => {
+							{cartInfo.lineItems.edges.map(({ node }) => {
 								const theme = node.variant?.product.tags.map((tag) => tag.toLocaleLowerCase()).includes('ladies')
 									? 'ladies'
 									: 'mens';
@@ -124,11 +124,11 @@ export default function CartPage() {
 										<div className="flex-shrink-0">
 											{node.variant?.image?.url ? (
 												<Image
-													alt={node.variant.image?.altText ?? ''}
+													alt={node.variant.image.altText ?? ''}
 													className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
 													height={192}
 													layout="constrained"
-													src={node.variant.image?.url}
+													src={node.variant.image.url}
 													width={192}
 												/>
 											) : (
@@ -161,11 +161,10 @@ export default function CartPage() {
 												<div className="mt-4 sm:mt-0 sm:pr-9">
 													<QuantityPicker
 														quantity={node.quantity}
-														quantityAvailable={node.variant?.quantityAvailable as number}
-														variantId={node.variant?.id as string}
+														quantityAvailable={node.variant?.quantityAvailable ?? 0}
+														variantId={node.variant?.id ?? ''}
 													/>
-
-													<RemoveFromCart variantId={node.variant?.id as string} />
+													<RemoveFromCart variantId={node.variant?.id ?? ''} />
 												</div>
 											</div>
 
@@ -198,13 +197,13 @@ export default function CartPage() {
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
-								<dd className="text-sm text-gray-900">{formatMoney(cartInfo?.subtotalPrice.amount, 'AUD')}</dd>
+								<dd className="text-sm text-gray-900">{formatMoney(cartInfo.subtotalPrice.amount, 'AUD')}</dd>
 							</div>
 						</dl>
 
 						<p className="text-sm text-gray-600">Taxes and shipping are calculated at checkout</p>
 
-						<input name="webUrl" type="hidden" value={cartInfo?.webUrl} />
+						<input name="webUrl" type="hidden" value={cartInfo.webUrl} />
 
 						<Button
 							disabled={navigation.state !== 'idle'}

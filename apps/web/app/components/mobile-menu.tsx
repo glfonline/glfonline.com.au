@@ -11,9 +11,13 @@ import { ChevronDownIcon } from './vectors/chevron-down-icon';
 export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
 	useEffect(() => {
 		if (open) {
-			const onClose = () => setOpen(false);
+			const onClose = () => {
+				setOpen(false);
+			};
 			document.addEventListener('click', onClose);
-			return () => document.removeEventListener('click', onClose);
+			return () => {
+				document.removeEventListener('click', onClose);
+			};
 		}
 	}, [open, setOpen]);
 
@@ -48,7 +52,9 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 							<div className="flex px-4 pb-2 pt-5">
 								<button
 									className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
-									onClick={() => setOpen(false)}
+									onClick={() => {
+										setOpen(false);
+									}}
 									type="button"
 								>
 									<span className="sr-only">Close menu</span>

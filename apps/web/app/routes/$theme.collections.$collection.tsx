@@ -112,7 +112,7 @@ export default function CollectionPage() {
 
 	return (
 		<div className="flex flex-col gap-12 py-9" data-theme={theme}>
-			<Hero image={{ url: imageMap[theme], alt: image?.altText ?? '' }} title={title} />
+			<Hero image={{ url: imageMap[theme], alt: image.altText ?? '' }} title={title} />
 
 			<div>
 				<MobileFilters mobileFiltersOpen={mobileFiltersOpen} setMobileFiltersOpen={setMobileFiltersOpen} />
@@ -154,7 +154,7 @@ function getSearchUrl({ location, value, key }: { location: Location; value: str
 		params.delete('after');
 	}
 	params.set(key, value);
-	return location.pathname + '?' + params.toString();
+	return `${location.pathname}?${params.toString()}`;
 }
 
 function Filters({ setMobileFiltersOpen }: { setMobileFiltersOpen: React.Dispatch<React.SetStateAction<boolean>> }) {
@@ -169,7 +169,9 @@ function Filters({ setMobileFiltersOpen }: { setMobileFiltersOpen: React.Dispatc
 			<button
 				aria-labelledby={id}
 				className="inline-flex items-center lg:hidden"
-				onClick={() => setMobileFiltersOpen(true)}
+				onClick={() => {
+					setMobileFiltersOpen(true);
+				}}
 				type="button"
 			>
 				<span className="text-sm font-medium text-gray-700">Filters</span>
@@ -221,7 +223,9 @@ function MobileFilters({
 								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
 								<button
 									className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
-									onClick={() => setMobileFiltersOpen(false)}
+									onClick={() => {
+										setMobileFiltersOpen(false);
+									}}
 									type="button"
 								>
 									<span className="sr-only">Close menu</span>
@@ -259,7 +263,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 						layout="fullWidth"
 						objectFit="contain"
 						sizes="(min-width: 605px) 605px, 100vw"
-						src={node.featuredImage?.url}
+						src={node.featuredImage.url}
 					/>
 				) : (
 					<span aria-hidden="true" className="block h-full w-full bg-gray-200" />
@@ -294,7 +298,7 @@ function clearSearchUrl({ location, key }: { location: Location; key: string }) 
 	const params = new URLSearchParams(location.search);
 	params.delete('cursor');
 	params.delete(key);
-	return location.pathname + '?' + params.toString();
+	return `${location.pathname}?${params.toString()}`;
 }
 
 function DisplayOptions() {
@@ -457,7 +461,7 @@ export function Pagination({
 						onClick={() => {
 							const params = new URLSearchParams(location.search);
 							params.set('after', endCursor);
-							navigate(location.pathname + '?' + params.toString());
+							navigate(`${location.pathname}?${params.toString()}`);
 						}}
 					>
 						Next

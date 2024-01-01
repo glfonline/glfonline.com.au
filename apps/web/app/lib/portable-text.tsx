@@ -27,7 +27,7 @@ function ImageComponent({ value }: { value: SanityAsset }) {
 		<Image
 			alt={
 				// @ts-ignore
-				value?.alt ?? ''
+				value.alt ?? ''
 			}
 			aspectRatio={width / height}
 			className="mx-auto block"

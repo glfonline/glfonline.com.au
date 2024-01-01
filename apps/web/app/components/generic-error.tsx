@@ -51,8 +51,9 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 	);
 }
 
-function addLinksToStackTrace(stackTrace: string) {
-	return stackTrace?.replace(/^\s*at\s?.*?[(\s]((\/|\w:).+)\)\n/gim, (all, m1) =>
+function addLinksToStackTrace(stackTrace: unknown) {
+	if (typeof stackTrace !== 'string') return '';
+	return stackTrace.replace(/^\s*at\s?.*?[(\s]((\/|\w:).+)\)\n/gim, (all, m1) =>
 		all.replace(m1, `<a href="vscode://file${m1}" class="hover:underline">${m1}</a>`),
 	);
 }

@@ -72,11 +72,11 @@ export async function action({ request }: ActionFunctionArgs) {
 		client.checkSpam(
 			{
 				content: message,
-				email: email,
-				name: first_name + ' ' + last_name,
+				email,
+				name: `${first_name} ${last_name}`,
 				permalink: WEB_ADDRESS,
-				user_agent: request.headers.get('user-agent') as string,
-				user_ip: getClientIPAddress(request) as string,
+				user_agent: request.headers.get('user-agent')!,
+				user_ip: getClientIPAddress(request)!,
 			},
 			(_err, _isSpam) => {
 				isSpam = _isSpam;
@@ -121,7 +121,7 @@ export const ContactFormSchema = z.object({
 	agree_to_privacy_policy: z
 		.string()
 		.transform(Boolean)
-		.refine((val) => val === true, 'You must agree to the privacy policy'),
+		.refine((val) => val, 'You must agree to the privacy policy'),
 	first_name: z.string().min(1, 'First name is required'),
 	last_name: z.string().min(1, 'Last name is required'),
 	email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
@@ -178,7 +178,9 @@ export function ContactForm() {
 					<div className="sm:col-span-2">
 						<Turnstile
 							className="[&>*]:!w-full"
-							onVerify={(token) => setToken(token)}
+							onVerify={(token) => {
+								setToken(token);
+							}}
 							sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 							size="normal"
 							style={{ width: '100%' }}

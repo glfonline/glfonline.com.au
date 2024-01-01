@@ -95,6 +95,5 @@ export function getSizingChart({ productType, vendor, tags }: { productType: str
 			};
 
 		default:
-			return;
 	}
 }

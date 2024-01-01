@@ -27,7 +27,9 @@ export function SignupBanner() {
 						</div>
 						<Button
 							aria-label="Sign up to our email newsletter for 10% off your first order"
-							onClick={() => setDialogOpen(true)}
+							onClick={() => {
+								setDialogOpen(true);
+							}}
 							variant="neutral"
 						>
 							Sign up <span aria-hidden="true">&rarr;</span>
@@ -37,7 +39,9 @@ export function SignupBanner() {
 				<div className="flex flex-1 justify-end">
 					<button
 						className="-m-3 p-3 focus-visible:outline-offset-[-4px]"
-						onClick={() => setShowBanner(false)}
+						onClick={() => {
+							setShowBanner(false);
+						}}
 						type="button"
 					>
 						<span className="sr-only">Dismiss</span>

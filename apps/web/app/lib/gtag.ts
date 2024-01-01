@@ -42,7 +42,7 @@ export function event({ action, category, label, value }: Record<string, string>
 		{
 			event_category: category,
 			event_label: label,
-			value: value,
+			value,
 		},
 	);
 }

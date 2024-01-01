@@ -23,7 +23,14 @@ export function SearchDialog({
 	const { data, isLoading, isPlaceholderData } = useAlgoliaSearch(query);
 
 	return (
-		<Transition.Root afterLeave={() => setQuery('')} appear as={Fragment} show={isSearchOpen}>
+		<Transition.Root
+			afterLeave={() => {
+				setQuery('');
+			}}
+			appear
+			as={Fragment}
+			show={isSearchOpen}
+		>
 			<Dialog as="div" className="relative z-30" onClose={setSearchOpen}>
 				<Transition.Child
 					as={Fragment}
@@ -61,7 +68,9 @@ export function SearchDialog({
 									/>
 									<Combobox.Input
 										className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
-										onChange={(event) => setQuery(event.target.value)}
+										onChange={(event) => {
+											setQuery(event.target.value);
+										}}
 										placeholder="Search..."
 									/>
 								</div>
@@ -120,7 +129,9 @@ function SearchResults({
 							return (
 								<NavLink
 									className="flex flex-auto items-center gap-3"
-									onClick={() => setSearchOpen(false)}
+									onClick={() => {
+										setSearchOpen(false);
+									}}
 									prefetch="intent"
 									to={makeProductHref(product)}
 								>

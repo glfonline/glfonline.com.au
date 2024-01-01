@@ -7,7 +7,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 	{ className, children, href, size, variant, ...consumerProps },
 	forwardedRef,
 ) {
-	const shouldUseLink = href[0] === '/';
+	const shouldUseLink = href.startsWith('/');
 	if (shouldUseLink) {
 		return (
 			<Link
