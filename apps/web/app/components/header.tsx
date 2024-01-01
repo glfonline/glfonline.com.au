@@ -20,12 +20,12 @@ export function Header() {
 	return (
 		<header className="sticky top-0 z-20 flex-shrink-0 bg-white">
 			<MobileMenu open={open} setOpen={setOpen} />
-			<header className="relative">
+			<div className="relative">
 				<nav aria-label="Top">
 					<TopNav />
 					<MainNav setOpen={setOpen} />
 				</nav>
-			</header>
+			</div>
 		</header>
 	);
 }
