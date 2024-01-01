@@ -18,6 +18,7 @@ import { TextArea } from '../components/design-system/text-area';
 import { TextInput } from '../components/design-system/text-input';
 import { SplitBackground } from '../components/split-background';
 import { EMAIL_ADDRESS, WEB_ADDRESS } from '../lib/constants';
+import { useClientOnlyMount } from '../lib/use-client-only-mount';
 
 export default function () {
 	return null;
@@ -136,6 +137,8 @@ export function ContactForm() {
 	const form = useZorm('contact_form', ContactFormSchema);
 	const [token, setToken] = useState('');
 
+	const { isMounted } = useClientOnlyMount();
+
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
 			<div aria-hidden="true" className="absolute inset-0 flex h-full w-full overflow-hidden">
@@ -175,17 +178,19 @@ export function ContactForm() {
 							<Checkbox name={form.fields.agree_to_privacy_policy()} />
 						</InlineField>
 					</div>
-					<div className="sm:col-span-2">
-						<Turnstile
-							className="[&>*]:!w-full"
-							onVerify={(token) => {
-								setToken(token);
-							}}
-							sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
-							size="normal"
-							style={{ width: '100%' }}
-							theme="light"
-						/>
+					<div className="flex min-h-[65px] items-center sm:col-span-2">
+						{isMounted && (
+							<Turnstile
+								className="[&>*]:!w-full"
+								onVerify={(token) => {
+									setToken(token);
+								}}
+								sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
+								size="normal"
+								style={{ width: '100%' }}
+								theme="light"
+							/>
+						)}
 						<input name={form.fields.token()} type="hidden" value={token} />
 					</div>
 					<Button className="sm:col-span-2" isLoading={fetcher.state === 'loading'} type="submit" variant="neutral">
