@@ -3,6 +3,21 @@ schema {
 }
 
 """
+Field references one or more document in another dataset
+"""
+directive @crossDatasetReference(
+	"""
+	Dataset name
+	"""
+	dataset: String!
+
+	"""
+	Strings of the target types names enabled for this reference
+	"""
+	typeNames: [String!]!
+) on FIELD_DEFINITION | OBJECT
+
+"""
 Field is a "raw" JSON alias for a different field
 """
 directive @jsonAlias(
