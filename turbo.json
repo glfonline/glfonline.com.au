@@ -3,11 +3,12 @@
 	"globalDependencies": ["**/.env.*local"],
 	"pipeline": {
 		"build": {
-			"outputs": [".sanity/**", "api/**", "build/**", "dist/**", "public/build/**"],
+			"outputs": ["dist/**"],
 			"dependsOn": ["^build", "^generate"]
 		},
 		"check:types": {
-			"dependsOn": ["^build"]
+			"dependsOn": ["^build"],
+			"outputs": ["tsconfig.tsbuildinfo"]
 		},
 		"dev": {
 			"cache": false,
