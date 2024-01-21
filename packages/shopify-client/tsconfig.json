@@ -1,5 +1,8 @@
 {
 	"extends": "@glfonline/tsconfig/base.json",
+	"compilerOptions": {
+		"noUnusedLocals": false
+	},
 	"include": ["src"],
 	"exclude": ["build", "dist", "node_modules"]
 }

@@ -4,18 +4,14 @@
 	"pipeline": {
 		"build": {
 			"outputs": ["dist/**"],
-			"dependsOn": ["^build", "^generate"]
+			"dependsOn": ["^build"]
 		},
 		"check:types": {
-			"dependsOn": ["^build"],
-			"outputs": ["tsconfig.tsbuildinfo"]
+			"dependsOn": ["^build"]
 		},
 		"dev": {
 			"cache": false,
 			"persistent": true
-		},
-		"generate": {
-			"outputs": ["schema.graphql"]
 		},
 		"lint": {
 			"dependsOn": ["^build"]
