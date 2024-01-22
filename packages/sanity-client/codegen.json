@@ -6,6 +6,6 @@
 		}
 	},
 	"hooks": {
-		"afterAllFileWrite": ["prettier --write"]
+		"afterAllFileWrite": ["prettier --write --use-tabs"]
 	}
 }

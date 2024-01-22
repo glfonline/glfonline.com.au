@@ -1134,7 +1134,7 @@ type CartCompletionActionRequired {
 The result of a cart completion attempt.
 """
 union CartCompletionAttemptResult =
-	  CartCompletionActionRequired
+	| CartCompletionActionRequired
 	| CartCompletionFailed
 	| CartCompletionProcessing
 	| CartCompletionSuccess
@@ -8686,7 +8686,7 @@ input MetafieldFilter {
 A resource that the metafield belongs to.
 """
 union MetafieldParentResource =
-	  Article
+	| Article
 	| Blog
 	| Cart
 	| Collection
@@ -12678,7 +12678,7 @@ type SellingPlanPriceAdjustment {
 Represents by how much the price of a variant associated with a selling plan is adjusted. Each variant can have up to two price adjustments.
 """
 union SellingPlanPriceAdjustmentValue =
-	  SellingPlanFixedAmountPriceAdjustment
+	| SellingPlanFixedAmountPriceAdjustment
 	| SellingPlanFixedPriceAdjustment
 	| SellingPlanPercentagePriceAdjustment
 

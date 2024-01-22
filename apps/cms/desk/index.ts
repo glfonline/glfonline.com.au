@@ -1,7 +1,7 @@
 /**
  * Desk structure overrides
  */
-import { type ListItemBuilder, type StructureResolver } from 'sanity/desk';
+import { type ListItemBuilder, type StructureResolver } from 'sanity/structure';
 
 import { aboutPage } from './about';
 import { faqPage } from './faq';
