@@ -4,7 +4,7 @@ import { z } from 'zod';
 
 import { imageWithAltSchema } from './image-with-alt-schema';
 
-export const mainNavigationSchema = z.object({
+const mainNavigationSchema = z.object({
 	navCategories: z.array(
 		z.object({
 			label: z.string(),

@@ -34,16 +34,8 @@
 			"matchPackagePatterns": ["eslint*"]
 		},
 		{
-			"groupName": "storybook",
-			"matchPackagePatterns": ["@storybook*"]
-		},
-		{
-			"groupName": "changesets",
-			"matchPackagePatterns": ["@changesets*"]
-		},
-		{
-			"groupName": "babel",
-			"matchPackagePatterns": ["@babel*"]
+			"groupName": "tanstack",
+			"matchPackagePatterns": ["@tanstack*"]
 		}
 	],
 	"postUpdateOptions": ["pnpmDedupe"],

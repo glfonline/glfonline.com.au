@@ -61,7 +61,7 @@ export async function getProductFilterOptions({
 	return options;
 }
 
-export const schema = z.object({
+const schema = z.object({
 	products: z.object({
 		pageInfo: z.object({ endCursor: z.string(), hasNextPage: z.boolean() }),
 		edges: z.array(

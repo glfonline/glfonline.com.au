@@ -5,6 +5,9 @@
 		"build": {
 			"dependsOn": ["^build", "generate"],
 			"outputs": ["__generated__/**", "dist/**"]
+		},
+		"generate": {
+			"outputs": ["schema.graphql"]
 		}
 	}
 }

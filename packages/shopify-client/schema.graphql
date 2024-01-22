@@ -7037,15 +7037,15 @@ input ImageTransformInput {
 """
 Provide details about the contexts influenced by the @inContext directive on a field.
 """
-type InContext {
+type InContextAnnotation {
 	description: String!
-	type: InContextType!
+	type: InContextAnnotationType!
 }
 
 """
 This gives information about the type of context that impacts a field. For example, for a query with @inContext(language: "EN"), the type would point to the name: LanguageCode and kind: ENUM.
 """
-type InContextType {
+type InContextAnnotationType {
 	kind: String!
 	name: String!
 }
