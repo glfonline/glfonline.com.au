@@ -109,8 +109,8 @@ importers:
         specifier: ^7.91.0
         version: 7.94.1(@remix-run/node@2.5.1)(@remix-run/react@2.5.1)(react@18.2.0)
       '@shopify/hydrogen':
-        specifier: ^2023.10.3
-        version: 2023.10.4(@remix-run/react@2.5.1)(@remix-run/server-runtime@2.5.1)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
+        specifier: ^2024.0.0
+        version: 2024.1.0(@remix-run/react@2.5.1)(@remix-run/server-runtime@2.5.1)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
       '@tanstack/query-core':
         specifier: ^5.15.5
         version: 5.17.19
@@ -3980,8 +3980,8 @@ packages:
       '@sentry/types': 7.94.1
     dev: false
 
-  /@shopify/hydrogen-react@2023.10.1(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-RHyo+Fc1tBUmFTHmKGPFWF2BqDfHHqefv9JHr/j3ovGgJGSefk30zIS1OtQkm6UFj2VPLu3bZJM8chgUQnXJ9w==}
+  /@shopify/hydrogen-react@2024.1.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-WHqBhDlGt7ehrryn7KrSSMRrFA+oaDajgipOmkN62ekM/XRGWeEdL19l9yuiEaU6kSK36xznous56HF4+bEBfg==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0.0
@@ -4000,8 +4000,8 @@ packages:
       - xstate
     dev: false
 
-  /@shopify/hydrogen@2023.10.4(@remix-run/react@2.5.1)(@remix-run/server-runtime@2.5.1)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
-    resolution: {integrity: sha512-yR33VlhjkO1QzpJZFvUXNW4coW3vOJ40ze3kZ5ppeQugwi65NuHOM35W5NTcq3cLiIGNM0ra85/JFWMjdl5qgQ==}
+  /@shopify/hydrogen@2024.1.0(@remix-run/react@2.5.1)(@remix-run/server-runtime@2.5.1)(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-R9hvYqHpgwrQmqikVAHtbxWCFjA9WRn8waszBAQG+9K/UUjzjq9TNUJGewFqsXLyV3fDJ3hpR+b6k6yiNZj1dQ==}
     peerDependencies:
       '@remix-run/react': ^2.1.0
       '@remix-run/server-runtime': ^2.1.0
@@ -4009,7 +4009,7 @@ packages:
     dependencies:
       '@remix-run/react': 2.5.1(react-dom@18.2.0)(react@18.2.0)(typescript@5.3.3)
       '@remix-run/server-runtime': 2.5.1(typescript@5.3.3)
-      '@shopify/hydrogen-react': 2023.10.1(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
+      '@shopify/hydrogen-react': 2024.1.0(@types/react@18.2.48)(react-dom@18.2.0)(react@18.2.0)
       content-security-policy-builder: 2.1.1
       react: 18.2.0
       type-fest: 4.9.0
