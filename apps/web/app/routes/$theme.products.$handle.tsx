@@ -230,6 +230,7 @@ function ImageGallery({
 												className="h-full w-full object-cover object-center"
 												height={192}
 												layout="constrained"
+												priority
 												src={node.url}
 												width={276}
 											/>

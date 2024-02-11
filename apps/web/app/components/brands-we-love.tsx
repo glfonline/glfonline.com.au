@@ -36,6 +36,7 @@ export function BrandsWeLove({ brands }: { brands: z.infer<typeof brandsWeLove> 
 								height={48}
 								layout="fixed"
 								objectFit="contain"
+								priority={false}
 								src={urlFor({
 									_ref: brand.image.asset._id,
 									asset: brand.image.asset,

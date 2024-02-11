@@ -50,5 +50,10 @@
 		"ignoredRules": [
 			"UNSORTED_DEPENDENCIES"
 		]
+	},
+	"pnpm": {
+		"patchedDependencies": {
+			"@unpic/react@0.1.10": "patches/@unpic__react@0.1.10.patch"
+		}
 	}
 }

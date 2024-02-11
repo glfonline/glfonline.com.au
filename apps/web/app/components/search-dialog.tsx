@@ -141,6 +141,7 @@ function SearchResults({
 											className="aspect-square w-11 bg-white object-contain"
 											height={imageWidth}
 											layout="constrained"
+											priority={false}
 											src={product.image}
 											width={imageWidth}
 										/>

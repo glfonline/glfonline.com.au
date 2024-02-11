@@ -262,6 +262,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 						className="h-full w-full"
 						layout="fullWidth"
 						objectFit="contain"
+						priority={false}
 						sizes="(min-width: 605px) 605px, 100vw"
 						src={node.featuredImage.url}
 					/>

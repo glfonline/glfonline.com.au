@@ -92,6 +92,7 @@ function Testimonials() {
 							breakpoints={[640, 750, 767, 828, 960, 1080, 1280, 1534]}
 							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 							layout="fullWidth"
+							priority={false}
 							sizes="(min-width: 767px) 767px, 100vw"
 							src={urlFor({
 								_ref: testimonialImage.asset._id,

@@ -163,7 +163,7 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 					objectPositionMap[image.objectPosition ?? 'top'],
 				)}
 				layout="fullWidth"
-				priority
+				priority={false}
 				sizes="(min-width: 632px) 632px, 100vw"
 				src={image.src}
 			/>

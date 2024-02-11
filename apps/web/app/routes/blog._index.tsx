@@ -186,6 +186,7 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 						breakpoints={[512]}
 						className="h-full w-full object-cover sm:absolute sm:inset-0"
 						layout="fullWidth"
+						priority={false}
 						sizes="(min-width: 256px) 256px, 100vw"
 						src={imgSrc}
 					/>
@@ -273,6 +274,7 @@ function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 					className="aspect-square object-cover"
 					height={320}
 					layout="constrained"
+					priority={false}
 					src={imgSrc}
 					width={320}
 				/>

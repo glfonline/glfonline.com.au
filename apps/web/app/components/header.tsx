@@ -206,6 +206,7 @@ function MegaMenu() {
 																		className="h-full w-full object-center"
 																		height={196}
 																		layout="constrained"
+																		priority
 																		src={urlFor({
 																			_ref: item.image.asset._id,
 																			crop: item.image.crop,

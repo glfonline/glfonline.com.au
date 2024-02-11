@@ -17,7 +17,6 @@ export type CollectionCardProps = {
 export function CollectionCard({ cta, image, span = '5', priority }: CollectionCardProps) {
 	return (
 		<div className={clsx('relative flex h-96', spanMap[span])}>
-			{/* @ts-expect-error */}
 			<Image
 				alt={image.alt || ''}
 				breakpoints={[640, 768, 1024, 1280]}
@@ -28,7 +27,6 @@ export function CollectionCard({ cta, image, span = '5', priority }: CollectionC
 				layout="fullWidth"
 				priority={priority}
 				src={image.src}
-				width={widthMap[span]}
 			/>
 			<div
 				className={clsx(
@@ -45,12 +43,6 @@ export function CollectionCard({ cta, image, span = '5', priority }: CollectionC
 		</div>
 	);
 }
-
-const widthMap = {
-	'2': (1280 / 5) * 2,
-	'3': (1280 / 5) * 3,
-	'5': 1280,
-};
 
 const spanMap = {
 	'2': 'lg:col-span-2',
