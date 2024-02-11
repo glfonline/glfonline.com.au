@@ -26,16 +26,16 @@
 	"dependencies": {
 		"@ts-gql/compiler": "^0.16.4",
 		"@ts-gql/fetch": "^0.1.2",
-		"@ts-gql/tag": "^0.7.0"
+		"@ts-gql/tag": "^0.7.3"
 	},
 	"devDependencies": {
 		"@glfonline/eslint-config": "0.0.0",
 		"@glfonline/tsconfig": "0.0.0",
-		"@graphql-codegen/cli": "^5.0.0",
-		"@graphql-codegen/schema-ast": "^4.0.0",
+		"@graphql-codegen/cli": "^5.0.2",
+		"@graphql-codegen/schema-ast": "^4.0.2",
 		"graphql": "^16.8.1",
 		"react": "^18.2.0",
-		"tsup": "^8.0.0",
+		"tsup": "^8.0.2",
 		"typescript": "^5.3.3"
 	},
 	"ts-gql": {

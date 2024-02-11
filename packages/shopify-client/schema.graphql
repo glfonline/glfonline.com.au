@@ -12020,7 +12020,7 @@ type QueryRoot {
 		types: [SearchType!]
 
 		"""
-		Specifies how unavailable products are displayed in the search results.
+		Specifies how unavailable products or variants are displayed in the search results.
 		"""
 		unavailableProducts: SearchUnavailableProductsType
 	): SearchResultItemConnection!
