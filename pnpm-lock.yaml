@@ -6,7 +6,7 @@ settings:
 
 patchedDependencies:
   '@unpic/react@0.1.10':
-    hash: 4hmogyie4un5jxrarw4q3xa4qa
+    hash: dc6n2tx36bp5mir4jjfo4pjtbe
     path: patches/@unpic__react@0.1.10.patch
 
 importers:
@@ -133,7 +133,7 @@ importers:
         version: 5.20.1(@tanstack/react-query@5.20.1)(react@18.2.0)
       '@unpic/react':
         specifier: ^0.1.10
-        version: 0.1.10(patch_hash=4hmogyie4un5jxrarw4q3xa4qa)(react-dom@18.2.0)(react@18.2.0)
+        version: 0.1.10(patch_hash=dc6n2tx36bp5mir4jjfo4pjtbe)(react-dom@18.2.0)(react@18.2.0)
       '@vercel/analytics':
         specifier: ^1.1.3
         version: 1.1.3
@@ -4981,7 +4981,7 @@ packages:
       unpic: 3.17.0
     dev: false
 
-  /@unpic/react@0.1.10(patch_hash=4hmogyie4un5jxrarw4q3xa4qa)(react-dom@18.2.0)(react@18.2.0):
+  /@unpic/react@0.1.10(patch_hash=dc6n2tx36bp5mir4jjfo4pjtbe)(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-FQ8O2JxRm2aaR/uZkE6DlbXGdSYfFcO6y1v+SapqiT2thUSQKPp1Yy/8/1q80GAqoCrdgM/EJxdQBGo0jqDLtg==}
     peerDependencies:
       next: '>=14'

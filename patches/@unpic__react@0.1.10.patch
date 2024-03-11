@@ -22,3 +22,39 @@ index 7c0eebba1352f63d6fee2d20ac7c00813f2d646c..716cda22031249fa35eb8bdc21fc58a7
  };
  var camelize = (key) => {
    if (key.startsWith("data-") || key.startsWith("aria-")) {
+diff --git a/dist/next-legacy.js b/dist/next-legacy.js
+index 6d4e68a94db0ab9dbb3a90c94f141aa1fe912bad..dffd141b1be0e82245ea65bc8fead964483f6f0e 100644
+--- a/dist/next-legacy.js
++++ b/dist/next-legacy.js
+@@ -43,7 +43,6 @@ var import_core = require("@unpic/core");
+ var nestedKeys = /* @__PURE__ */ new Set(["style"]);
+ var fixedMap = {
+   srcset: "srcSet",
+-  fetchpriority: "fetchPriority"
+ };
+ var camelize = (key) => {
+   if (key.startsWith("data-") || key.startsWith("aria-")) {
+diff --git a/dist/next.js b/dist/next.js
+index a04ca94983c379a5302a186b2ceafa9bd5557d8b..78ba79d1040df5943883424abb9c4638e2b9f28a 100644
+--- a/dist/next.js
++++ b/dist/next.js
+@@ -46,7 +46,6 @@ var import_core = require("@unpic/core");
+ var nestedKeys = /* @__PURE__ */ new Set(["style"]);
+ var fixedMap = {
+   srcset: "srcSet",
+-  fetchpriority: "fetchPriority"
+ };
+ var camelize = (key) => {
+   if (key.startsWith("data-") || key.startsWith("aria-")) {
+diff --git a/dist/nextjs.js b/dist/nextjs.js
+index 6864ca5ce02da7e8faee16311d772c1af1f69a05..e6a582a10a1f191911af84f051db0d8ebff15fa9 100644
+--- a/dist/nextjs.js
++++ b/dist/nextjs.js
+@@ -43,7 +43,6 @@ var import_core = require("@unpic/core");
+ var nestedKeys = /* @__PURE__ */ new Set(["style"]);
+ var fixedMap = {
+   srcset: "srcSet",
+-  fetchpriority: "fetchPriority"
+ };
+ var camelize = (key) => {
+   if (key.startsWith("data-") || key.startsWith("aria-")) {
