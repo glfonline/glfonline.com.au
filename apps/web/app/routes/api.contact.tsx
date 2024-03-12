@@ -1,7 +1,6 @@
 import { Link, useFetcher } from '@remix-run/react';
 import sendgrid from '@sendgrid/mail';
 import { json, type ActionFunctionArgs } from '@vercel/remix';
-import { AkismetClient } from 'akismet-api';
 import { requiredEnv } from 'app/lib/required-env';
 import dedent from 'dedent';
 import { Fragment, useState } from 'react';
@@ -17,7 +16,7 @@ import { Heading } from '../components/design-system/heading';
 import { TextArea } from '../components/design-system/text-area';
 import { TextInput } from '../components/design-system/text-input';
 import { SplitBackground } from '../components/split-background';
-import { EMAIL_ADDRESS, WEB_ADDRESS } from '../lib/constants';
+import { EMAIL_ADDRESS } from '../lib/constants';
 import { useClientOnlyMount } from '../lib/use-client-only-mount';
 
 export default function () {
@@ -60,31 +59,6 @@ export async function action({ request }: ActionFunctionArgs) {
 		const challengeJson = await challengeResponse.json();
 		if (!challengeJson.success) {
 			throw new Error('Failed to verify token');
-		}
-
-		/** Set up Akismet client for spam filtering */
-		const client = new AkismetClient({
-			blog: WEB_ADDRESS,
-			key: requiredEnv('AKISMET_API_KEY', process.env.AKISMET_API_KEY),
-		});
-
-		/** Check that the content of the form is not spam */
-		let isSpam = false;
-		client.checkSpam(
-			{
-				content: message,
-				email,
-				name: `${first_name} ${last_name}`,
-				permalink: WEB_ADDRESS,
-				user_agent: request.headers.get('user-agent')!,
-				user_ip: getClientIPAddress(request)!,
-			},
-			(_err, _isSpam) => {
-				isSpam = _isSpam;
-			},
-		);
-		if (isSpam) {
-			throw new Error('Spam detected');
 		}
 
 		/** Format HTML for contact form notification email */
