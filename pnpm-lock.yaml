@@ -268,8 +268,8 @@ importers:
         specifier: ^1.12.3
         version: 1.12.3(eslint@8.56.0)
       eslint-plugin-react:
-        specifier: 7.34.0
-        version: 7.34.0(eslint@8.56.0)
+        specifier: 7.34.1
+        version: 7.34.1(eslint@8.56.0)
     devDependencies:
       graphql:
         specifier: ^16.8.1
@@ -3293,7 +3293,7 @@ packages:
       eslint-plugin-jest-dom: 4.0.3(eslint@8.56.0)
       eslint-plugin-jsx-a11y: 6.8.0(eslint@8.56.0)
       eslint-plugin-node: 11.1.0(eslint@8.56.0)
-      eslint-plugin-react: 7.34.0(eslint@8.56.0)
+      eslint-plugin-react: 7.34.1(eslint@8.56.0)
       eslint-plugin-react-hooks: 4.6.0(eslint@8.56.0)
       eslint-plugin-testing-library: 5.11.1(eslint@8.56.0)(typescript@5.3.3)
       react: 18.2.0
@@ -7674,8 +7674,8 @@ packages:
       eslint: 8.56.0
     dev: false
 
-  /eslint-plugin-react@7.34.0(eslint@8.56.0):
-    resolution: {integrity: sha512-MeVXdReleBTdkz/bvcQMSnCXGi+c9kvy51IpinjnJgutl3YTHWsDdke7Z1ufZpGfDG8xduBDKyjtB9JH1eBKIQ==}
+  /eslint-plugin-react@7.34.1(eslint@8.56.0):
+    resolution: {integrity: sha512-N97CxlouPT1AHt8Jn0mhhN2RrADlUAsk1/atcT2KyA/l9Q/E6ll7OIGwNumFmWfZ9skV3XXccYS19h80rHtgkw==}
     engines: {node: '>=4'}
     peerDependencies:
       eslint: ^3 || ^4 || ^5 || ^6 || ^7 || ^8
