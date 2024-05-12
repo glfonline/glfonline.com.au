@@ -19,7 +19,7 @@
 		"@algolia/transporter": "^4.22.0",
 		"@glfonline/sanity-client": "0.0.0",
 		"@glfonline/shopify-client": "0.0.0",
-		"@headlessui/react": "^1.7.17",
+		"@headlessui/react": "^2.0.0",
 		"@heroicons/react": "^2.1.1",
 		"@portabletext/react": "^3.0.11",
 		"@remix-run/css-bundle": "^2.6.0",
