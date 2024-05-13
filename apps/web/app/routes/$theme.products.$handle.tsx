@@ -1,5 +1,5 @@
 import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
-import { Tab } from '@headlessui/react';
+import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { json, type ActionFunctionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
@@ -211,10 +211,10 @@ function ImageGallery({
 	isOnSale: boolean;
 }) {
 	return (
-		<Tab.Group as="div" className="flex flex-col-reverse gap-6">
+		<TabGroup as="div" className="flex flex-col-reverse gap-6">
 			{/* Image selector */}
 			<div className="mx-auto w-full max-w-2xl lg:max-w-none">
-				<Tab.List className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
+				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
 							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
@@ -247,13 +247,13 @@ function ImageGallery({
 							}}
 						</Tab>
 					))}
-				</Tab.List>
+				</TabList>
 			</div>
 
-			<Tab.Panels className="relative aspect-square w-full bg-gray-200">
+			<TabPanels className="relative aspect-square w-full bg-gray-200">
 				{images.map(({ node }) => {
 					return (
-						<Tab.Panel className="absolute inset-0 overflow-hidden" key={node.id}>
+						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
 							<Image
 								alt={node.altText || ''}
 								breakpoints={[640, 768, 1024, 1280]}
@@ -265,10 +265,10 @@ function ImageGallery({
 								width={624}
 							/>
 							{isOnSale && <DiagonalBanner>On Sale</DiagonalBanner>}
-						</Tab.Panel>
+						</TabPanel>
 					);
 				})}
-			</Tab.Panels>
-		</Tab.Group>
+			</TabPanels>
+		</TabGroup>
 	);
 }

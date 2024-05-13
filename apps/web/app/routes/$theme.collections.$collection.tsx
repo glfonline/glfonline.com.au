@@ -1,4 +1,12 @@
-import { Dialog, Disclosure, Transition } from '@headlessui/react';
+import {
+	Dialog,
+	DialogPanel,
+	Disclosure,
+	DisclosureButton,
+	DisclosurePanel,
+	Transition,
+	TransitionChild,
+} from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@remix-run/react';
@@ -194,9 +202,9 @@ function MobileFilters({
 }) {
 	const { theme } = useLoaderData<typeof loader>();
 	return (
-		<Transition.Root as={Fragment} show={mobileFiltersOpen}>
+		<Transition as={Fragment} show={mobileFiltersOpen}>
 			<Dialog as="div" className="relative z-40 lg:hidden" data-theme={theme} onClose={setMobileFiltersOpen}>
-				<Transition.Child
+				<TransitionChild
 					as={Fragment}
 					enter="transition-opacity ease-linear duration-300"
 					enterFrom="opacity-0"
@@ -206,10 +214,10 @@ function MobileFilters({
 					leaveTo="opacity-0"
 				>
 					<div className="fixed inset-0 bg-black bg-opacity-25" />
-				</Transition.Child>
+				</TransitionChild>
 
 				<div className="fixed inset-0 z-40 flex">
-					<Transition.Child
+					<TransitionChild
 						as={Fragment}
 						enter="transition ease-in-out duration-300 transform"
 						enterFrom="translate-x-full"
@@ -218,7 +226,7 @@ function MobileFilters({
 						leaveFrom="translate-x-0"
 						leaveTo="translate-x-full"
 					>
-						<Dialog.Panel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl">
+						<DialogPanel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl">
 							<div className="flex items-center justify-between">
 								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
 								<button
@@ -233,11 +241,11 @@ function MobileFilters({
 								</button>
 							</div>
 							<DisplayOptions />
-						</Dialog.Panel>
-					</Transition.Child>
+						</DialogPanel>
+					</TransitionChild>
 				</div>
 			</Dialog>
-		</Transition.Root>
+		</Transition>
 	);
 }
 
@@ -349,7 +357,7 @@ function DisplayOptions() {
 						{({ open }) => (
 							<>
 								<h2>
-									<Disclosure.Button className="flex w-full items-center justify-between gap-6 px-4 py-2">
+									<DisclosureButton className="flex w-full items-center justify-between gap-6 px-4 py-2">
 										<span className="-ml-4 font-bold">{option.name === PRODUCT_TYPE ? 'Type' : option.name}</span>
 										<span className="-mr-4 inline-flex items-center">
 											{open ? (
@@ -358,9 +366,9 @@ function DisplayOptions() {
 												<PlusIcon aria-hidden="true" className="h-5 w-5" />
 											)}
 										</span>
-									</Disclosure.Button>
+									</DisclosureButton>
 								</h2>
-								<Disclosure.Panel className="flex flex-col">
+								<DisclosurePanel className="flex flex-col">
 									{option.values.map((value) => (
 										<Link
 											className="-mx-4 px-4 py-2"
@@ -375,7 +383,7 @@ function DisplayOptions() {
 											{value}
 										</Link>
 									))}
-								</Disclosure.Panel>
+								</DisclosurePanel>
 							</>
 						)}
 					</Disclosure>
@@ -386,7 +394,7 @@ function DisplayOptions() {
 				{({ open }) => (
 					<Fragment>
 						<h2>
-							<Disclosure.Button className="flex w-full items-center justify-between gap-6 px-4 py-2">
+							<DisclosureButton className="flex w-full items-center justify-between gap-6 px-4 py-2">
 								<span className="-ml-4 font-bold">Sort</span>
 								<span className="-mr-4 inline-flex items-center">
 									{open ? (
@@ -395,9 +403,9 @@ function DisplayOptions() {
 										<PlusIcon aria-hidden="true" className="h-5 w-5" />
 									)}
 								</span>
-							</Disclosure.Button>
+							</DisclosureButton>
 						</h2>
-						<Disclosure.Panel className="flex flex-col">
+						<DisclosurePanel className="flex flex-col">
 							{sortOptions.map((option) => (
 								<Link
 									className="-mx-4 px-4 py-2"
@@ -412,7 +420,7 @@ function DisplayOptions() {
 									{option.label}
 								</Link>
 							))}
-						</Disclosure.Panel>
+						</DisclosurePanel>
 					</Fragment>
 				)}
 			</Disclosure>

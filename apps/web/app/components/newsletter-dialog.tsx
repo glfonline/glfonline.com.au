@@ -1,4 +1,4 @@
-import { Dialog, Transition } from '@headlessui/react';
+import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
 import { useFetchers } from '@remix-run/react';
 import { Fragment, useEffect } from 'react';
 
@@ -22,9 +22,9 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 	}, [fetcher, onClose]);
 
 	return (
-		<Transition.Root appear as={Fragment} show={isOpen}>
+		<Transition appear show={isOpen}>
 			<Dialog as="div" className="relative z-30" onClose={onClose}>
-				<Transition.Child
+				<TransitionChild
 					as={Fragment}
 					enter="ease-out duration-300"
 					enterFrom="opacity-0"
@@ -34,10 +34,10 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 					leaveTo="opacity-0"
 				>
 					<div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
-				</Transition.Child>
+				</TransitionChild>
 
 				<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-					<Transition.Child
+					<TransitionChild
 						as={Fragment}
 						enter="ease-out duration-300"
 						enterFrom="opacity-0 scale-95"
@@ -46,12 +46,12 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 						leaveFrom="opacity-100 scale-100"
 						leaveTo="opacity-0 scale-95"
 					>
-						<Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
 							<NewsletterSignup />
-						</Dialog.Panel>
-					</Transition.Child>
+						</DialogPanel>
+					</TransitionChild>
 				</div>
 			</Dialog>
-		</Transition.Root>
+		</Transition>
 	);
 }

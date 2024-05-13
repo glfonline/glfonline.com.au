@@ -1,4 +1,17 @@
-import { Dialog, Disclosure, Tab, Transition } from '@headlessui/react';
+import {
+	Dialog,
+	DialogPanel,
+	Disclosure,
+	DisclosureButton,
+	DisclosurePanel,
+	Tab,
+	TabGroup,
+	TabList,
+	TabPanel,
+	TabPanels,
+	Transition,
+	TransitionChild,
+} from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { NavLink, useLoaderData } from '@remix-run/react';
 import type { loader } from 'app/root';
@@ -24,9 +37,9 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 	const { mainNavigation } = useLoaderData<typeof loader>();
 
 	return (
-		<Transition.Root as={Fragment} show={open}>
+		<Transition show={open}>
 			<Dialog as="div" className="relative z-40 lg:hidden" onClose={setOpen}>
-				<Transition.Child
+				<TransitionChild
 					as={Fragment}
 					enter="transition-opacity ease-linear duration-300"
 					enterFrom="opacity-0"
@@ -36,10 +49,10 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 					leaveTo="opacity-0"
 				>
 					<div className="fixed inset-0 bg-black bg-opacity-25" />
-				</Transition.Child>
+				</TransitionChild>
 
 				<div className="fixed inset-0 z-40 flex">
-					<Transition.Child
+					<TransitionChild
 						as={Fragment}
 						enter="transition ease-in-out duration-300 transform"
 						enterFrom="-translate-x-full"
@@ -48,7 +61,7 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 						leaveFrom="translate-x-0"
 						leaveTo="-translate-x-full"
 					>
-						<Dialog.Panel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white shadow-xl">
+						<DialogPanel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white shadow-xl">
 							<div className="flex px-4 pb-2 pt-5">
 								<button
 									className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
@@ -63,9 +76,9 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 							</div>
 
 							{/* NavLinks */}
-							<Tab.Group as="div" className="mt-2">
+							<TabGroup as="div" className="mt-2">
 								<div className="border-b border-gray-200">
-									<Tab.List className="-mb-px flex space-x-8 px-4">
+									<TabList className="-mb-px flex space-x-8 px-4">
 										{mainNavigation.navCategories.map((category) => (
 											<Tab
 												className={({ selected }) =>
@@ -80,18 +93,18 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 												{category.label}
 											</Tab>
 										))}
-									</Tab.List>
+									</TabList>
 								</div>
-								<Tab.Panels as={Fragment}>
+								<TabPanels as={Fragment}>
 									{mainNavigation.navCategories.map((category) => (
-										<Tab.Panel className="flex flex-col gap-1 px-4 pt-6" key={category.label}>
+										<TabPanel className="flex flex-col gap-1 px-4 pt-6" key={category.label}>
 											{category.navSections.map((section) => (
 												<Section key={section.label} section={section} />
 											))}
-										</Tab.Panel>
+										</TabPanel>
 									))}
-								</Tab.Panels>
-							</Tab.Group>
+								</TabPanels>
+							</TabGroup>
 
 							{/* More Nav Links */}
 							<div className="flex flex-col gap-1 border-gray-200 px-4 pb-6 pt-1">
@@ -120,25 +133,25 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 									))}
 								</div>
 							</div>
-						</Dialog.Panel>
-					</Transition.Child>
+						</DialogPanel>
+					</TransitionChild>
 				</div>
 			</Dialog>
-		</Transition.Root>
+		</Transition>
 	);
 }
 function Section({ section }: { section: { label: string; items: NavItem[][] } }) {
 	const id = useId();
 	return (
 		<Disclosure>
-			<Disclosure.Button
+			<DisclosureButton
 				className="relative flex items-center justify-between gap-1 rounded-md p-2 font-bold uppercase text-gray-900 hover:bg-gray-50 focus:z-10 focus:bg-gray-100"
 				id={id}
 			>
 				{section.label}
 				<ChevronDownIcon className="h-5 w-5" />
-			</Disclosure.Button>
-			<Disclosure.Panel aria-labelledby={id} as="ul" className="flex flex-col gap-1" role="list">
+			</DisclosureButton>
+			<DisclosurePanel aria-labelledby={id} as="ul" className="flex flex-col gap-1" role="list">
 				{section.items.map((item, index) => (
 					<Fragment key={index}>
 						{item.map(({ label, href }) => (
@@ -153,7 +166,7 @@ function Section({ section }: { section: { label: string; items: NavItem[][] } }
 						))}
 					</Fragment>
 				))}
-			</Disclosure.Panel>
+			</DisclosurePanel>
 		</Disclosure>
 	);
 }

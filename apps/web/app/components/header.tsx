@@ -1,4 +1,4 @@
-import { Popover, Transition } from '@headlessui/react';
+import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { NavLink, useLoaderData } from '@remix-run/react';
@@ -145,16 +145,16 @@ function MegaMenu() {
 
 	const { mainNavigation } = useLoaderData<typeof loader>();
 	return (
-		<Popover.Group className="hidden h-full lg:flex lg:flex-1">
+		<div className="hidden h-full lg:flex lg:flex-1">
 			<div className="grid h-full w-full auto-cols-fr grid-flow-col justify-center divide-x divide-gray-200 border-l border-gray-200">
 				{mainNavigation.navCategories.map((category, index) => (
 					<Popover className="flex" data-theme={category.theme} key={index}>
 						{({ open }) => (
 							<Fragment>
-								<Popover.Button className={clsx(open && 'bg-brand-primary text-white', navItemClasses)}>
+								<PopoverButton className={clsx(open && 'bg-brand-primary text-white', navItemClasses)}>
 									{category.label}
 									<ChevronDownIcon className="-mr-5 h-5 w-5" />
-								</Popover.Button>
+								</PopoverButton>
 
 								<Transition
 									as={Fragment}
@@ -165,7 +165,7 @@ function MegaMenu() {
 									leaveFrom="opacity-100"
 									leaveTo="opacity-0"
 								>
-									<Popover.Panel className="absolute inset-x-0 top-full sm:text-sm">
+									<PopoverPanel className="absolute inset-x-0 top-full sm:text-sm">
 										{/**
 										 * Presentational element used to render the bottom
 										 * shadow, if we put the shadow on the actual panel it
@@ -189,14 +189,14 @@ function MegaMenu() {
 															<li className="group relative flex flex-col gap-6 text-base sm:text-sm" key={item._key}>
 																<div className="flex items-center justify-between bg-gray-100 group-hover:opacity-75">
 																	<div className="p-6">
-																		<Popover.Button
+																		<PopoverButton
 																			as={NavLink}
 																			className="block font-bold uppercase text-gray-900"
 																			to={item.href}
 																		>
 																			<span aria-hidden="true" className="absolute inset-0 z-10" />
 																			{item.label}
-																		</Popover.Button>
+																		</PopoverButton>
 																		<p aria-hidden="true" className="mt-1">
 																			Shop now
 																		</p>
@@ -226,7 +226,7 @@ function MegaMenu() {
 												</div>
 											</div>
 										</div>
-									</Popover.Panel>
+									</PopoverPanel>
 								</Transition>
 							</Fragment>
 						)}
@@ -238,7 +238,7 @@ function MegaMenu() {
 					</NavLink>
 				))}
 			</div>
-		</Popover.Group>
+		</div>
 	);
 }
 
@@ -278,9 +278,9 @@ function CategorySection({ section }: { section: { label: string; items: NavItem
 					>
 						{item.map(({ label, href }) => (
 							<li className="flex" key={label}>
-								<Popover.Button as={NavLink} className="text-gray-700 hover:text-gray-900" to={href}>
+								<PopoverButton as={NavLink} className="text-gray-700 hover:text-gray-900" to={href}>
 									{label}
-								</Popover.Button>
+								</PopoverButton>
 							</li>
 						))}
 					</ul>
