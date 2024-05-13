@@ -1,5 +1,14 @@
 import { type Hit } from '@algolia/client-search';
-import { Combobox, Dialog, Transition } from '@headlessui/react';
+import {
+	Combobox,
+	ComboboxInput,
+	ComboboxOption,
+	ComboboxOptions,
+	Dialog,
+	DialogPanel,
+	Transition,
+	TransitionChild,
+} from '@headlessui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { NavLink, useNavigate } from '@remix-run/react';
@@ -23,7 +32,7 @@ export function SearchDialog({
 	const { data, isLoading, isPlaceholderData } = useAlgoliaSearch(query);
 
 	return (
-		<Transition.Root
+		<Transition
 			afterLeave={() => {
 				setQuery('');
 			}}
@@ -32,7 +41,7 @@ export function SearchDialog({
 			show={isSearchOpen}
 		>
 			<Dialog as="div" className="relative z-30" onClose={setSearchOpen}>
-				<Transition.Child
+				<TransitionChild
 					as={Fragment}
 					enter="ease-out duration-300"
 					enterFrom="opacity-0"
@@ -42,10 +51,10 @@ export function SearchDialog({
 					leaveTo="opacity-0"
 				>
 					<div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
-				</Transition.Child>
+				</TransitionChild>
 
 				<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-					<Transition.Child
+					<TransitionChild
 						as={Fragment}
 						enter="ease-out duration-300"
 						enterFrom="opacity-0 scale-95"
@@ -54,7 +63,7 @@ export function SearchDialog({
 						leaveFrom="opacity-100 scale-100"
 						leaveTo="opacity-0 scale-95"
 					>
-						<Dialog.Panel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
 							<Combobox
 								onChange={(product: NonNullable<typeof data>['hits'][number]) => {
 									navigate(makeProductHref(product));
@@ -66,7 +75,8 @@ export function SearchDialog({
 										aria-hidden="true"
 										className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
 									/>
-									<Combobox.Input
+									<ComboboxInput
+										autoFocus
 										className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
 										onChange={(event) => {
 											setQuery(event.target.value);
@@ -83,11 +93,11 @@ export function SearchDialog({
 									setSearchOpen={setSearchOpen}
 								/>
 							</Combobox>
-						</Dialog.Panel>
-					</Transition.Child>
+						</DialogPanel>
+					</TransitionChild>
 				</div>
 			</Dialog>
-		</Transition.Root>
+		</Transition>
 	);
 }
 
@@ -113,18 +123,18 @@ function SearchResults({
 	}
 	if (data?.hits && data.hits.length > 0) {
 		return (
-			<Combobox.Options
+			<ComboboxOptions
 				className="max-h-96 scroll-py-3 overflow-y-auto p-3"
 				static
 				style={{ opacity: isPreviousData ? 0.5 : 1 }}
 			>
 				{data.hits.map((product) => (
-					<Combobox.Option
-						className={({ active }) => clsx('flex cursor-default select-none rounded-xl p-3', active && 'bg-gray-100')}
+					<ComboboxOption
+						className={({ focus }) => clsx('flex cursor-default select-none rounded-xl p-3', focus && 'bg-gray-100')}
 						key={product.objectID}
 						value={product}
 					>
-						{({ active }) => {
+						{({ focus }) => {
 							const imageWidth = 44;
 							return (
 								<NavLink
@@ -151,7 +161,7 @@ function SearchResults({
 									<span
 										className={clsx(
 											'text-sm font-medium [&>em]:bg-black [&>em]:not-italic [&>em]:text-white',
-											active ? 'text-gray-900' : 'text-gray-700',
+											focus ? 'text-gray-900' : 'text-gray-700',
 										)}
 										dangerouslySetInnerHTML={{
 											__html: product._highlightResult.title.value,
@@ -160,9 +170,9 @@ function SearchResults({
 								</NavLink>
 							);
 						}}
-					</Combobox.Option>
+					</ComboboxOption>
 				))}
-			</Combobox.Options>
+			</ComboboxOptions>
 		);
 	}
 
