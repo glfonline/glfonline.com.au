@@ -27,10 +27,10 @@
 		"test:e2e": "turbo run test:e2e"
 	},
 	"dependencies": {
-		"@glfonline/eslint-config": "0.0.0",
-		"@glfonline/prettier-config": "0.0.0",
-		"@glfonline/tsconfig": "0.0.0",
-		"@manypkg/cli": "^0.21.1",
+		"@glfonline/eslint-config": "workspace:^",
+		"@glfonline/prettier-config": "workspace:^",
+		"@glfonline/tsconfig": "workspace:^",
+		"@manypkg/cli": "^0.21.4",
 		"eslint": "^8.56.0",
 		"prettier": "^3.2.5",
 		"stale-dep": "^0.7.0",
@@ -39,17 +39,15 @@
 	},
 	"packageManager": "pnpm@9.1.0",
 	"engines": {
-		"node": ">=18.16.1",
-		"pnpm": ">=8.6.11"
+		"node": ">=20.13.1",
+		"pnpm": ">=9.1.0"
 	},
 	"volta": {
 		"node": "20.13.1"
 	},
 	"manypkg": {
 		"defaultBranch": "main",
-		"ignoredRules": [
-			"UNSORTED_DEPENDENCIES"
-		]
+		"workspaceProtocol": "require"
 	},
 	"pnpm": {
 		"patchedDependencies": {

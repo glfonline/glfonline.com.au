@@ -17,8 +17,8 @@
 	"dependencies": {
 		"@algolia/client-search": "^4.22.0",
 		"@algolia/transporter": "^4.22.0",
-		"@glfonline/sanity-client": "0.0.0",
-		"@glfonline/shopify-client": "0.0.0",
+		"@glfonline/sanity-client": "workspace:^",
+		"@glfonline/shopify-client": "workspace:^",
 		"@headlessui/react": "^2.0.0",
 		"@heroicons/react": "^2.1.1",
 		"@portabletext/react": "^3.0.11",
@@ -58,8 +58,8 @@
 		"zod": "^3.22.4"
 	},
 	"devDependencies": {
-		"@glfonline/eslint-config": "0.0.0",
-		"@glfonline/tsconfig": "0.0.0",
+		"@glfonline/eslint-config": "workspace:^",
+		"@glfonline/tsconfig": "workspace:^",
 		"@remix-run/dev": "^2.6.0",
 		"@remix-run/serve": "^2.6.0",
 		"@remix-run/server-runtime": "^2.6.0",
