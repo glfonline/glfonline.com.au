@@ -2006,9 +2006,7 @@ input CartWalletPaymentMethodInput {
 	shopPayWalletContent: ShopPayWalletContentInput
 }
 
-"""
-A container for all the information required to checkout items and pay.
-"""
+"A container for all the information required to checkout items and pay.\n\nThe Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information.\n"
 type Checkout implements Node {
 	"""
 	The gift cards used on the checkout.
@@ -5684,6 +5682,9 @@ type Customer implements HasMetafields {
 	The customer's most recently updated, incomplete checkout.
 	"""
 	lastIncompleteCheckout: Checkout
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	The customer’s last name.
@@ -9232,6 +9233,9 @@ type Mutation {
 		"""
 		input: CheckoutAttributesUpdateV2Input!
 	): CheckoutAttributesUpdateV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Completes a checkout without providing payment information. You can use this mutation for free items or items whose purchase price is covered by a gift card.
@@ -9242,6 +9246,9 @@ type Mutation {
 		"""
 		checkoutId: ID!
 	): CheckoutCompleteFreePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Completes a checkout using a credit card token from Shopify's card vault. Before you can complete checkouts using CheckoutCompleteWithCreditCardV2, you need to  [_request payment processing_](https://shopify.dev/apps/channels/getting-started#request-payment-processing).
@@ -9257,6 +9264,9 @@ type Mutation {
 		"""
 		payment: CreditCardPaymentInputV2!
 	): CheckoutCompleteWithCreditCardV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Completes a checkout with a tokenized payment.
@@ -9272,6 +9282,9 @@ type Mutation {
 		"""
 		payment: TokenizedPaymentInputV3!
 	): CheckoutCompleteWithTokenizedPaymentV3Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Creates a new checkout.
@@ -9287,6 +9300,9 @@ type Mutation {
 		"""
 		queueToken: String
 	): CheckoutCreatePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Associates a customer to the checkout.
@@ -9302,6 +9318,9 @@ type Mutation {
 		"""
 		customerAccessToken: String!
 	): CheckoutCustomerAssociateV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Disassociates the current checkout customer from the checkout.
@@ -9312,6 +9331,9 @@ type Mutation {
 		"""
 		checkoutId: ID!
 	): CheckoutCustomerDisassociateV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Applies a discount to an existing checkout using a discount code.
@@ -9327,6 +9349,9 @@ type Mutation {
 		"""
 		discountCode: String!
 	): CheckoutDiscountCodeApplyV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Removes the applied discounts from an existing checkout.
@@ -9337,6 +9362,9 @@ type Mutation {
 		"""
 		checkoutId: ID!
 	): CheckoutDiscountCodeRemovePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Updates the email on an existing checkout.
@@ -9352,6 +9380,9 @@ type Mutation {
 		"""
 		email: String!
 	): CheckoutEmailUpdateV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Removes an applied gift card from the checkout.
@@ -9367,6 +9398,9 @@ type Mutation {
 		"""
 		checkoutId: ID!
 	): CheckoutGiftCardRemoveV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Appends gift cards to an existing checkout.
@@ -9384,6 +9418,9 @@ type Mutation {
 		"""
 		giftCardCodes: [String!]!
 	): CheckoutGiftCardsAppendPayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Adds a list of line items to a checkout.
@@ -9401,6 +9438,9 @@ type Mutation {
 		"""
 		lineItems: [CheckoutLineItemInput!]!
 	): CheckoutLineItemsAddPayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Removes line items from an existing checkout.
@@ -9418,6 +9458,9 @@ type Mutation {
 		"""
 		lineItemIds: [ID!]!
 	): CheckoutLineItemsRemovePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Sets a list of line items to a checkout.
@@ -9435,6 +9478,9 @@ type Mutation {
 		"""
 		lineItems: [CheckoutLineItemInput!]!
 	): CheckoutLineItemsReplacePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Updates line items on a checkout.
@@ -9452,6 +9498,9 @@ type Mutation {
 		"""
 		lineItems: [CheckoutLineItemUpdateInput!]!
 	): CheckoutLineItemsUpdatePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Updates the shipping address of an existing checkout.
@@ -9467,6 +9516,9 @@ type Mutation {
 		"""
 		shippingAddress: MailingAddressInput!
 	): CheckoutShippingAddressUpdateV2Payload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"""
 	Updates the shipping lines on an existing checkout.
@@ -9482,6 +9534,9 @@ type Mutation {
 		"""
 		shippingRateHandle: String!
 	): CheckoutShippingLineUpdatePayload
+		@deprecated(
+			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
+		)
 
 	"Creates a customer access token.\nThe customer access token is required to modify the customer object in any way.\n"
 	customerAccessTokenCreate(
