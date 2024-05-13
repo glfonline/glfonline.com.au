@@ -2,7 +2,7 @@ import { shopifyClient, SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab } from '@headlessui/react';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type ActionFunctionArgs, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { json, type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
 import { useZorm } from 'react-zorm';
@@ -29,7 +29,7 @@ const CartSchema = z.object({
 	variantId: z.string({ required_error: 'Please select an option' }).min(1),
 });
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const result = ProductSchema.safeParse(params);
 	if (result.success) {
 		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {

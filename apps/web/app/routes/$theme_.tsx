@@ -1,6 +1,6 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
 import { useLoaderData } from '@remix-run/react';
-import { json, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { z } from 'zod';
 
 import { BrandsWeLove } from '../components/brands-we-love';
@@ -29,7 +29,7 @@ const CollectionSchema = z.object({
 	brandsWeLove,
 });
 
-export async function loader({ params }: DataFunctionArgs) {
+export async function loader({ params }: LoaderFunctionArgs) {
 	const result = ThemeSchema.safeParse(params);
 	if (result.success) {
 		const { ThemePage } = await sanityClient(GET_THEME_PAGE, {

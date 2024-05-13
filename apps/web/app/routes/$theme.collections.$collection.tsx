@@ -3,7 +3,7 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type DataFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { json, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
 import { Fragment, useId, useState } from 'react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -34,7 +34,7 @@ const RecordSchema = z.record(z.string().min(1), z.string());
 
 const ITEMS_PER_PAGE = 32;
 
-export async function loader({ params, request }: DataFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
 	const paramsResult = CollectionSchema.safeParse(params);
 	const url = new URL(request.url);
 	const { after, sort, productType, ...remainingFilterOptions } = SortSchema.parse(
