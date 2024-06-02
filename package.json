@@ -2,7 +2,7 @@
 	"name": "@glfonline/root",
 	"private": true,
 	"scripts": {
-		"build": "stale-dep && turbo run build",
+		"build": "stale-dep && npx pnpm@9.1.4 install && turbo run build",
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
