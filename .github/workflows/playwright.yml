@@ -19,10 +19,14 @@ jobs:
       - name: 🧪 Copy test env vars
         run: cp apps/web/.env.example apps/web/.env
 
+      - name: 🦷 Extract pnpm version from package.json
+        id: extract_version
+        run: echo "PNPM_VERSION=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> $GITHUB_ENV
+
       - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v2
+        uses: pnpm/action-setup@v4
         with:
-          version: 8
+          version: ${{ env.PNPM_VERSION }}
 
       - name: 🌐 Setup node.js
         uses: actions/setup-node@v4
