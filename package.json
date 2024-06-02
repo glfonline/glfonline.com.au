@@ -2,7 +2,7 @@
 	"name": "@glfonline/root",
 	"private": true,
 	"scripts": {
-		"build": "stale-dep && turbo run build",
+		"build": "stale-dep && npx pnpm@9.1.4 install && turbo run build",
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
@@ -37,10 +37,10 @@
 		"turbo": "^1.12.3",
 		"typescript": "^5.3.3"
 	},
-	"packageManager": "pnpm@8.15.8",
+	"packageManager": "pnpm@9.1.4",
 	"engines": {
-		"node": ">=18.16.1",
-		"pnpm": ">=8.6.11"
+		"node": ">=20",
+		"pnpm": ">=9"
 	},
 	"volta": {
 		"node": "20.14.0"

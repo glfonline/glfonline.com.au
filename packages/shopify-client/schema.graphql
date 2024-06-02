@@ -8084,7 +8084,7 @@ type MailingAddress implements Node {
 	"""
 	province: String
 
-	"The two-letter code for the region.\n\nFor example, ON.\n"
+	"The alphanumeric code for the region.\n\nFor example, ON.\n"
 	provinceCode: String
 
 	"""
