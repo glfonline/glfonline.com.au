@@ -11,9 +11,9 @@
 		"test:e2e": "npx playwright install && playwright test"
 	},
 	"devDependencies": {
-		"@glfonline/eslint-config": "0.0.0",
-		"@glfonline/tsconfig": "0.0.0",
-		"@glfonline/web": "0.0.0",
+		"@glfonline/eslint-config": "workspace:^",
+		"@glfonline/tsconfig": "workspace:^",
+		"@glfonline/web": "workspace:^",
 		"@playwright/test": "^1.41.2",
 		"@types/node": "^20.11.17",
 		"dotenv": "^16.4.2",

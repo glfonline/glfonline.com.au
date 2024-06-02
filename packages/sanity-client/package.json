@@ -29,8 +29,8 @@
 		"@ts-gql/tag": "^0.7.3"
 	},
 	"devDependencies": {
-		"@glfonline/eslint-config": "0.0.0",
-		"@glfonline/tsconfig": "0.0.0",
+		"@glfonline/eslint-config": "workspace:^",
+		"@glfonline/tsconfig": "workspace:^",
 		"@graphql-codegen/cli": "^5.0.2",
 		"@graphql-codegen/schema-ast": "^4.0.2",
 		"concurrently": "^8.2.2",
