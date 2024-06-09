@@ -7365,10 +7365,6 @@ packages:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
 
-  type-fest@4.10.2:
-    resolution: {integrity: sha512-anpAG63wSpdEbLwOqH8L84urkL6PiVIov3EMmgIhhThevh9aiMQov+6Btx0wldNcvm4wV+e2/Rt1QdDwKHFbHw==}
-    engines: {node: '>=16'}
-
   type-fest@4.18.3:
     resolution: {integrity: sha512-Q08/0IrpvM+NMY9PA2rti9Jb+JejTddwmwmVQGskAlhtcrw1wsRzoR6ode6mR+OAabNa75w/dxedSUY2mlphaQ==}
     engines: {node: '>=16'}
@@ -10293,7 +10289,7 @@ snapshots:
       graphql: 16.8.1
       react: 18.2.0
       react-dom: 18.2.0(react@18.2.0)
-      type-fest: 4.10.2
+      type-fest: 4.18.3
       worktop: 0.7.3
     transitivePeerDependencies:
       - '@types/react'
@@ -10306,7 +10302,7 @@ snapshots:
       '@shopify/hydrogen-react': 2024.1.0(@types/react@18.2.55)(react-dom@18.2.0(react@18.2.0))(react@18.2.0)
       content-security-policy-builder: 2.1.1
       react: 18.2.0
-      type-fest: 4.10.2
+      type-fest: 4.18.3
     transitivePeerDependencies:
       - '@types/react'
       - react-dom
@@ -15286,7 +15282,7 @@ snapshots:
 
   remix-utils@7.5.0(@remix-run/node@2.6.0(typescript@5.3.3))(@remix-run/react@2.6.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.3.3))(@remix-run/router@1.15.0)(is-ip@5.0.1)(react@18.2.0)(zod@3.22.4):
     dependencies:
-      type-fest: 4.10.2
+      type-fest: 4.18.3
     optionalDependencies:
       '@remix-run/node': 2.6.0(typescript@5.3.3)
       '@remix-run/react': 2.6.0(react-dom@18.2.0(react@18.2.0))(react@18.2.0)(typescript@5.3.3)
@@ -16262,8 +16258,6 @@ snapshots:
   type-fest@0.6.0: {}
 
   type-fest@0.8.1: {}
-
-  type-fest@4.10.2: {}
 
   type-fest@4.18.3: {}
 
