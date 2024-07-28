@@ -43,7 +43,7 @@
 		"pnpm": ">=9"
 	},
 	"volta": {
-		"node": "20.15.0"
+		"node": "20.16.0"
 	},
 	"manypkg": {
 		"defaultBranch": "main",
