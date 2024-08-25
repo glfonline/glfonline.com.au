@@ -1,15 +1,17 @@
-import { defineConfig, devices } from '@playwright/test';
-
 import 'dotenv/config';
 
-/** Use process.env.PORT by default and fallback to port 3000. */
+import { defineConfig, devices } from '@playwright/test';
+
+/**
+ * Use process.env.PORT by default and fallback to port 3000.
+ */
 const PORT = process.env.PORT || 3000;
 
 /**
  * Set webServer.url and use.baseURL with the location of the web server
  * respecting the correct port.
  */
-const baseUrl = process.env.CI ? process.env.BASE_URL : `http://localhost:${PORT}`;
+const baseURL = process.env.BASE_URL ?? `http://localhost:${PORT}`;
 
 /**
  * @see https://playwright.dev/docs/test-configuration
@@ -17,16 +19,24 @@ const baseUrl = process.env.CI ? process.env.BASE_URL : `http://localhost:${PORT
 export default defineConfig({
 	testDir: './e2e',
 
-	/** Run tests in files in parallel. */
+	/**
+	 * Run tests in files in parallel.
+	 */
 	fullyParallel: true,
 
-	/** Fail the build on CI if you accidentally left test.only in the source code. */
-	forbidOnly: !!process.env.CI,
+	/**
+	 * Fail the build on CI if you accidentally left test.only in the source code.
+	 */
+	forbidOnly: Boolean(process.env.CI),
 
-	/** Retry on CI only. */
+	/**
+	 * Retry on CI only.
+	 */
 	retries: process.env.CI ? 2 : 0,
 
-	/** Opt out of parallel tests on CI. */
+	/**
+	 * Opt out of parallel tests on CI.
+	 */
 	workers: process.env.CI ? 1 : undefined,
 
 	/**
@@ -40,8 +50,10 @@ export default defineConfig({
 	 * @see https://playwright.dev/docs/api/class-testoptions.
 	 */
 	use: {
-		/** Base URL to use in actions like `await page.goto('/')`. */
-		baseURL: baseUrl,
+		/**
+		 * Base URL to use in actions like `await page.goto('/')`.
+		 */
+		baseURL,
 
 		/**
 		 * Collect trace when retrying the failed test.
@@ -50,38 +62,57 @@ export default defineConfig({
 		trace: 'on-first-retry',
 	},
 
-	/** Configure projects for major browsers. */
+	/**
+	 * Configure projects for major browsers.
+	 */
 	projects: [
+		/**
+		 * Desktop browsers.
+		 */
 		{
-			name: 'chromium',
-			use: { ...devices['Desktop Chrome'] },
+			name: 'Desktop Chrome',
+			use: {
+				...devices['Desktop Chrome'],
+			},
 		},
 		{
-			name: 'firefox',
-			use: { ...devices['Desktop Firefox'] },
+			name: 'Desktop Firefox',
+			use: {
+				...devices['Desktop Firefox'],
+			},
 		},
 		{
-			name: 'webkit',
-			use: { ...devices['Desktop Safari'] },
+			name: 'Desktop Firefox',
+			use: {
+				...devices['Desktop Safari'],
+			},
 		},
 
-		/** Test against mobile viewports. */
+		/**
+		 * Mobile browsers.
+		 */
 		{
 			name: 'Mobile Chrome',
-			use: { ...devices['Pixel 5'] },
+			use: {
+				...devices['Pixel 5'],
+			},
 		},
 		{
 			name: 'Mobile Safari',
-			use: { ...devices['iPhone 12'] },
+			use: {
+				...devices['iPhone 12'],
+			},
 		},
 	],
 
-	/** Run your local dev server before starting the tests */
-	webServer: process.env.CI
+	/**
+	 * Run your local dev server before starting the tests
+	 */
+	webServer: process.env.BASE_URL
 		? undefined
 		: {
 				command: 'pnpm -w dev:web',
-				url: baseUrl,
+				url: baseURL,
 				reuseExistingServer: true,
 			},
 });
