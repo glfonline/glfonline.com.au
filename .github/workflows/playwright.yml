@@ -12,6 +12,7 @@ jobs:
     env:
       TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
       TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+      BASE_URL: ${{ github.event.deployment_status.target_url }}
     steps:
       - name: ⬇️ Checkout repo
         uses: actions/checkout@v4
@@ -40,10 +41,8 @@ jobs:
       - name: 📥 Install Playwright Browsers
         run: pnpm dlx playwright install --with-deps
 
-      - name: 🎭 Playwright tests
+      - name: 🎭 Run Playwright tests
         run: pnpm run test:e2e
-        env:
-          BASE_URL: ${{ github.event.deployment_status.target_url }}
 
       - name: 📊 Upload report
         uses: actions/upload-artifact@v4

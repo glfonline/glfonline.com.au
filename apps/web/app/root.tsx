@@ -18,6 +18,7 @@ import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { json, type LinksFunction, type LoaderFunctionArgs } from '@vercel/remix';
+import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { Fragment, useEffect } from 'react';
 
 import favicon from '../public/favicon.svg';
@@ -111,6 +112,7 @@ function App() {
 				<ScrollRestoration />
 				<Scripts />
 				<LiveReload />
+				<SpeedInsights />
 			</body>
 		</html>
 	);
