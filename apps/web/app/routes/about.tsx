@@ -8,12 +8,12 @@ import { getHeadingStyles } from '../components/design-system/heading';
 import { Divider } from '../components/divider';
 import { Hero } from '../components/hero';
 import { Map } from '../components/map';
+import { NewsletterSignup } from '../components/newsletter/form';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
-import { NewsletterSignup } from './api.newsletter';
 
 export const headers = routeHeaders;
 

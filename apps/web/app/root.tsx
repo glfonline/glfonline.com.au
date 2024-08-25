@@ -1,9 +1,10 @@
+import './font.css';
+import './tailwind.css';
+
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { cssBundleHref } from '@remix-run/css-bundle';
 import {
 	isRouteErrorResponse,
 	Links,
-	LiveReload,
 	Meta,
 	Outlet,
 	Scripts,
@@ -21,17 +22,15 @@ import { json, type LinksFunction, type LoaderFunctionArgs } from '@vercel/remix
 import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { Fragment, useEffect } from 'react';
 
-import favicon from '../public/favicon.svg';
+import favicon from '../assets/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
 import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-import fontStylestylesheetUrl from './font.css';
 import { getSession } from './lib/cart';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import tailwindStylesheetUrl from './tailwind.css';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
 	title: data.shop.name,
@@ -46,9 +45,6 @@ export const handle = {
 
 export const links: LinksFunction = () => {
 	return [
-		{ rel: 'stylesheet', href: fontStylestylesheetUrl },
-		{ rel: 'stylesheet', href: tailwindStylesheetUrl },
-		...(cssBundleHref ? [{ rel: 'stylesheet', href: cssBundleHref }] : []),
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
@@ -111,7 +107,6 @@ function App() {
 				</PersistQueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
-				<LiveReload />
 				<SpeedInsights />
 			</body>
 		</html>

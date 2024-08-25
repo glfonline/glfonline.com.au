@@ -2,7 +2,7 @@ import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/re
 import { useFetchers } from '@remix-run/react';
 import { Fragment, useEffect } from 'react';
 
-import { NewsletterSignup } from '../routes/api.newsletter';
+import { NewsletterSignup } from './newsletter/form';
 
 function wait(ms: number) {
 	return new Promise((resolve) => setTimeout(resolve, ms));
