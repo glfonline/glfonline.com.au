@@ -4,7 +4,10 @@ const ERROR = 2;
 
 /** @type {import("eslint").Linter.Config} */
 module.exports = {
-	parser: '@typescript-eslint/parser',
+	env: {
+		node: true,
+		browser: true,
+	},
 	extends: [
 		'eslint:recommended',
 		'plugin:@typescript-eslint/recommended',
@@ -13,6 +16,11 @@ module.exports = {
 		'@remix-run/eslint-config/node',
 		'turbo',
 	],
+	globals: {
+		React: true,
+		JSX: true,
+	},
+	parser: '@typescript-eslint/parser',
 	plugins: ['@tanstack/query', '@ts-gql'],
 	rules: {
 		'@ts-gql/ts-gql': ERROR,

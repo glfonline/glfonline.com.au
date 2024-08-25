@@ -2,7 +2,7 @@
 	"name": "@glfonline/root",
 	"private": true,
 	"scripts": {
-		"build": "stale-dep && npx pnpm@9.1.4 install && turbo run build",
+		"build": "stale-dep && npx pnpm@9.8.0 install && turbo run build",
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
@@ -31,27 +31,28 @@
 		"@glfonline/prettier-config": "workspace:^",
 		"@glfonline/tsconfig": "workspace:^",
 		"@manypkg/cli": "^0.21.4",
-		"eslint": "^8.56.0",
-		"prettier": "^3.2.5",
+		"eslint": "^8.57.0",
+		"prettier": "^3.3.3",
 		"stale-dep": "^0.7.0",
-		"turbo": "^1.12.3",
-		"typescript": "^5.3.3"
+		"turbo": "^2.0.14",
+		"typescript": "^5.5.4"
 	},
-	"packageManager": "pnpm@9.7.1",
+	"packageManager": "pnpm@9.8.0",
 	"engines": {
 		"node": ">=20",
 		"pnpm": ">=9"
 	},
 	"volta": {
-		"node": "20.16.0"
-	},
-	"manypkg": {
-		"defaultBranch": "main",
-		"workspaceProtocol": "require"
+		"node": "20.16.0",
+		"pnpm": "9.8.0"
 	},
 	"pnpm": {
 		"patchedDependencies": {
 			"@unpic/react@0.1.10": "patches/@unpic__react@0.1.10.patch"
 		}
+	},
+	"manypkg": {
+		"defaultBranch": "main",
+		"workspaceProtocol": "require"
 	}
 }

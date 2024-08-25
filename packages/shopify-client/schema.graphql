@@ -33,11 +33,6 @@ directive @inContext(
 	preferredLocationId: ID
 ) on MUTATION | QUERY
 
-"""
-Requires that exactly one field must be supplied and that field must not be `null`.
-"""
-directive @oneOf on INPUT_OBJECT
-
 "A version of the API, as defined by [Shopify API versioning](https://shopify.dev/api/usage/versioning).\nVersions are commonly referred to by their handle (for example, `2021-10`).\n"
 type ApiVersion {
 	"""
@@ -256,9 +251,9 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -297,7 +292,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	title: String!
 
 	"""
-	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
 }
@@ -402,17 +397,13 @@ enum ArticleSortKeys {
 }
 
 """
-Represents a generic custom attribute.
+Represents a generic custom attribute, such as whether an order is a customer's first.
 """
 type Attribute {
-	"""
-	Key or name of the attribute.
-	"""
+	"The key or name of the attribute. For example, `\"customersFirstOrder\"`.\n"
 	key: String!
 
-	"""
-	Value of the attribute.
-	"""
+	"The value of the attribute. For example, `\"true\"`.\n"
 	value: String
 }
 
@@ -633,9 +624,9 @@ type Blog implements HasMetafields & Node & OnlineStorePublishable {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -939,9 +930,9 @@ type Cart implements HasMetafields & Node {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -1030,7 +1021,7 @@ type CartBuyerIdentity {
 	phone: String
 
 	"A set of wallet preferences tied to the buyer that is interacting with the cart.\nPreferences can be used to populate relevant payment fields in the checkout flow.\n"
-	walletPreferences: [String!]!
+	walletPreferences: [String!]! @deprecated(reason: "Use `preferences` instead.")
 }
 
 "Specifies the input fields to update the buyer information associated with a cart.\nBuyer identity is used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nand should match the customer's shipping address.\n"
@@ -1063,15 +1054,6 @@ input CartBuyerIdentityInput {
 	The phone number of the buyer that is interacting with the cart.
 	"""
 	phone: String
-
-	"""
-	A set of wallet preferences tied to the buyer that is interacting with the cart.
-	Preferences can be used to populate relevant payment fields in the checkout flow.
-	  Accepted value: `["shop_pay"]`.
-
-	The input must not contain more than `250` values.
-	"""
-	walletPreferences: [String!]
 }
 
 """
@@ -1509,6 +1491,11 @@ enum CartErrorCode {
 	The payment method is not supported.
 	"""
 	PAYMENT_METHOD_NOT_SUPPORTED
+
+	"""
+	Validation failed.
+	"""
+	VALIDATION_CUSTOM
 }
 
 """
@@ -3088,9 +3075,9 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -3163,7 +3150,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 	title: String!
 
 	"""
-	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
 
@@ -5701,9 +5688,9 @@ type Customer implements HasMetafields {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -6864,9 +6851,9 @@ interface HasMetafields {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -6892,9 +6879,9 @@ input HasMetafieldsIdentifier {
 	key: String!
 
 	"""
-	The container the metafield belongs to.
+	The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 	"""
-	namespace: String!
+	namespace: String
 }
 
 """
@@ -7853,9 +7840,9 @@ type Location implements HasMetafields & Node {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -8224,9 +8211,9 @@ type Market implements HasMetafields & Node {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -8812,7 +8799,7 @@ enum MetafieldsSetUserErrorCode {
 """
 An instance of a user-defined model based on a MetaobjectDefinition.
 """
-type Metaobject implements Node {
+type Metaobject implements Node & OnlineStorePublishable {
 	"""
 	Accesses a field of the object by key.
 	"""
@@ -8835,6 +8822,14 @@ type Metaobject implements Node {
 	A globally-unique ID.
 	"""
 	id: ID!
+
+	"""
+	The URL used for viewing the metaobject on the shop's Online Store. Returns `null` if the metaobject definition doesn't have the `online_store` capability.
+	"""
+	onlineStoreUrl: URL
+
+	"The metaobject's SEO information. Returns `null` if the metaobject definition\ndoesn't have the `renderable` capability.\n"
+	seo: MetaobjectSEO
 
 	"""
 	The type of the metaobject. Defines the namespace of its associated metafields.
@@ -8939,6 +8934,21 @@ input MetaobjectHandleInput {
 	The type of the metaobject.
 	"""
 	type: String!
+}
+
+"""
+SEO information for a metaobject.
+"""
+type MetaobjectSEO {
+	"""
+	The meta description.
+	"""
+	description: MetaobjectField
+
+	"""
+	The SEO title.
+	"""
+	title: MetaobjectField
 }
 
 """
@@ -9790,7 +9800,7 @@ type Order implements HasMetafields & Node {
 	currentTotalTax: MoneyV2!
 
 	"""
-	A list of the custom attributes added to the order.
+	A list of the custom attributes added to the order. For example, whether an order is a customer's first.
 	"""
 	customAttributes: [Attribute!]!
 
@@ -9899,9 +9909,9 @@ type Order implements HasMetafields & Node {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -10044,6 +10054,11 @@ enum OrderCancelReason {
 	The order was canceled for an unlisted reason.
 	"""
 	OTHER
+
+	"""
+	Staff made an error.
+	"""
+	STAFF
 }
 
 "An auto-generated type for paginating through multiple Orders.\n"
@@ -10310,9 +10325,9 @@ type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -10343,7 +10358,7 @@ type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	title: String!
 
 	"""
-	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
 
@@ -10820,9 +10835,9 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -10837,9 +10852,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 		identifiers: [HasMetafieldsIdentifier!]!
 	): [Metafield]!
 
-	"""
-	The URL used for viewing the resource on the shop's Online Store. Returns `null` if the resource is currently not published to the Online Store sales channel.
-	"""
+	"The URL used for viewing the resource on the shop's Online Store. Returns\n`null` if the resource is currently not published to the Online Store sales channel.\n"
 	onlineStoreUrl: URL
 
 	"""
@@ -10921,7 +10934,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	totalInventory: Int
 
 	"""
-	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
 
@@ -11157,7 +11170,7 @@ type ProductOption implements Node {
 	"""
 	The corresponding value to the product option name.
 	"""
-	values: [String!]!
+	values: [String!]! @deprecated(reason: "Use `optionValues` instead.")
 }
 
 """
@@ -11283,9 +11296,9 @@ type ProductVariant implements HasMetafields & Node {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -12192,7 +12205,7 @@ type SearchQuerySuggestion implements Trackable {
 	text: String!
 
 	"""
-	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
 }
@@ -12791,9 +12804,9 @@ type Shop implements HasMetafields & Node {
 		key: String!
 
 		"""
-		The container the metafield belongs to.
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
 		"""
-		namespace: String!
+		namespace: String
 	): Metafield
 
 	"""
@@ -13210,7 +13223,7 @@ Represents a resource that you can track the origin of the search traffic.
 """
 interface Trackable {
 	"""
-	A URL parameters to be added to a page URL when it is linked from a GraphQL result. This allows for tracking the origin of the traffic.
+	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
 }
@@ -13303,7 +13316,7 @@ enum TransactionStatus {
 	SUCCESS
 }
 
-"Represents an [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) and\n[RFC 3987](https://datatracker.ietf.org/doc/html/rfc3987)-compliant URI string.\n\nFor example, `\"https://johns-apparel.myshopify.com\"` is a valid URL. It includes a scheme (`https`) and a host\n(`johns-apparel.myshopify.com`).\n"
+"Represents an [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) and\n[RFC 3987](https://datatracker.ietf.org/doc/html/rfc3987)-compliant URI string.\n\nFor example, `\"https://example.myshopify.com\"` is a valid URL. It includes a scheme (`https`) and a host\n(`example.myshopify.com`).\n"
 scalar URL
 
 "The measurement used to calculate a unit price for a product variant (e.g. $9.99 / 100ml).\n"

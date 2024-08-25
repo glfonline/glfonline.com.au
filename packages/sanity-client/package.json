@@ -24,7 +24,7 @@
 		"lint": "TIMING=1 eslint \"src/**/*.{js,ts,jsx,tsx}\""
 	},
 	"dependencies": {
-		"@ts-gql/compiler": "^0.16.4",
+		"@ts-gql/compiler": "^0.16.7",
 		"@ts-gql/fetch": "^0.1.2",
 		"@ts-gql/tag": "^0.7.3"
 	},
@@ -32,12 +32,12 @@
 		"@glfonline/eslint-config": "workspace:^",
 		"@glfonline/tsconfig": "workspace:^",
 		"@graphql-codegen/cli": "^5.0.2",
-		"@graphql-codegen/schema-ast": "^4.0.2",
+		"@graphql-codegen/schema-ast": "^4.1.0",
 		"concurrently": "^8.2.2",
-		"graphql": "^16.8.1",
-		"react": "^18.2.0",
-		"tsup": "^8.0.2",
-		"typescript": "^5.3.3"
+		"graphql": "^16.9.0",
+		"react": "^18.3.1",
+		"tsup": "^8.2.4",
+		"typescript": "^5.5.4"
 	},
 	"ts-gql": {
 		"addTypenames": false,
