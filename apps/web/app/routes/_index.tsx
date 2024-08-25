@@ -7,11 +7,13 @@ import { Fragment, useId } from 'react';
 import { z } from 'zod';
 
 import { BrandsWeLove } from '../components/brands-we-love';
+import { ContactForm } from '../components/contact-form/form';
 import { ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { getHeadingStyles } from '../components/design-system/heading/get-heading-styles';
 import { Divider } from '../components/divider';
 import { Map } from '../components/map';
+import { NewsletterSignup } from '../components/newsletter/form';
 import { VerticalLogo } from '../components/vectors/vertical-logo';
 import { brandsWeLove } from '../lib/brands-we-love';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
@@ -19,8 +21,6 @@ import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { type Theme } from '../types';
-import { ContactForm } from './api.contact';
-import { NewsletterSignup } from './api.newsletter';
 
 export const headers = routeHeaders;
 

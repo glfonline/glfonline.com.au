@@ -13,6 +13,7 @@
 		"noEmit": true,
 		"resolveJsonModule": true,
 		"strict": true,
-		"target": "ES2022"
+		"target": "ES2022",
+		"types": ["@remix-run/node", "vite/client"]
 	}
 }

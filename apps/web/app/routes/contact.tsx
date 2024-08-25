@@ -1,10 +1,10 @@
 import { type MetaFunction } from '@vercel/remix';
 import { Fragment } from 'react';
 
+import { ContactForm } from '../components/contact-form/form';
 import { Map } from '../components/map';
+import { NewsletterSignup } from '../components/newsletter/form';
 import { getSeoMeta } from '../seo';
-import { ContactForm } from './api.contact';
-import { NewsletterSignup } from './api.newsletter';
 
 export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
