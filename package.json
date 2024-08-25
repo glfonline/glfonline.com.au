@@ -2,7 +2,7 @@
 	"name": "@glfonline/root",
 	"private": true,
 	"scripts": {
-		"build": "stale-dep && npx pnpm@9.8.0 install && turbo run build",
+		"build": "stale-dep && npx pnpm@9 install && turbo run build",
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
@@ -43,8 +43,7 @@
 		"pnpm": ">=9"
 	},
 	"volta": {
-		"node": "20.16.0",
-		"pnpm": "9.8.0"
+		"node": "20.16.0"
 	},
 	"pnpm": {
 		"patchedDependencies": {
