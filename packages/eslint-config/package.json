@@ -9,9 +9,9 @@
 	},
 	"dependencies": {
 		"@remix-run/eslint-config": "^2.11.2",
-		"@tanstack/eslint-plugin-query": "^5.52.0",
-		"@ts-gql/eslint-plugin": "^0.9.0",
-		"eslint-config-turbo": "^2.0.14",
+		"@tanstack/eslint-plugin-query": "^5.53.0",
+		"@ts-gql/eslint-plugin": "^0.9.1",
+		"eslint-config-turbo": "^2.1.1",
 		"eslint-plugin-react": "7.35.0"
 	},
 	"devDependencies": {

@@ -18,11 +18,11 @@
 		"start": "sanity start"
 	},
 	"dependencies": {
-		"@sanity/vision": "^3.55.0",
+		"@sanity/vision": "^3.56.0",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"sanity": "^3.55.0",
-		"styled-components": "^6.1.12"
+		"sanity": "^3.56.0",
+		"styled-components": "^6.1.13"
 	},
 	"devDependencies": {
 		"@glfonline/eslint-config": "workspace:^",
