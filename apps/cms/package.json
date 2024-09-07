@@ -20,10 +20,10 @@
 		"start": "sanity start"
 	},
 	"dependencies": {
-		"@sanity/vision": "^3.56.0",
+		"@sanity/vision": "^3.57.1",
 		"react": "^18.3.1",
 		"react-dom": "^18.3.1",
-		"sanity": "^3.56.0",
+		"sanity": "^3.57.1",
 		"styled-components": "^6.1.13"
 	},
 	"devDependencies": {
