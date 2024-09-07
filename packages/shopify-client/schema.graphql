@@ -7062,7 +7062,7 @@ type Language {
 }
 
 """
-ISO 639-1 language codes supported by Shopify.
+Language codes supported by Shopify.
 """
 enum LanguageCode {
 	"""
