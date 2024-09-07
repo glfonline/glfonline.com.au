@@ -20,7 +20,7 @@ import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
-import { type Theme } from '../types';
+import type { Theme } from '../types';
 
 export const headers = routeHeaders;
 
@@ -53,7 +53,7 @@ export async function loader() {
 export default function Index() {
 	const { brandsWeLove } = useLoaderData<typeof loader>();
 	return (
-		<Fragment>
+		<>
 			<article className="relative flex flex-col gap-4 bg-white">
 				<Hero />
 				<CollectionPromo />
@@ -62,7 +62,7 @@ export default function Index() {
 			<ContactForm />
 			<NewsletterSignup />
 			<StoreLocationMap />
-		</Fragment>
+		</>
 	);
 }
 

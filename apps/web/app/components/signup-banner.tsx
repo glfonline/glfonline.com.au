@@ -1,5 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 
 import { Button } from './design-system/button';
 import { Heading } from './design-system/heading';
@@ -14,7 +14,7 @@ export function SignupBanner() {
 		setShowBanner(false);
 	};
 	return (
-		<Fragment>
+		<>
 			<NewsletterDialog isOpen={isDialogOpen} onClose={onClose} />
 			<div className="fixed inset-x-0 bottom-0 isolate flex gap-x-6 overflow-hidden bg-[#006747] p-6 sm:before:flex-1">
 				<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
@@ -49,6 +49,6 @@ export function SignupBanner() {
 					</button>
 				</div>
 			</div>
-		</Fragment>
+		</>
 	);
 }

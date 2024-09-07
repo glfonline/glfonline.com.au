@@ -1,8 +1,8 @@
-import { type LoaderFunctionArgs } from '@remix-run/node';
+import type { LoaderFunctionArgs } from '@remix-run/node';
 import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import { parseGid } from '@shopify/hydrogen';
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
 	/** @todo get gid from query */
 	const shopId = parseGid('gid://shopify/Shop/10809832').id;

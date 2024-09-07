@@ -1,9 +1,9 @@
 import { Link } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { type z } from 'zod';
+import type { z } from 'zod';
 
-import { type brandsWeLove } from '../lib/brands-we-love';
+import type { brandsWeLove } from '../lib/brands-we-love';
 import { urlFor } from '../lib/sanity-image';
 import { Heading } from './design-system/heading';
 

@@ -1,5 +1,4 @@
 import type { MetaFunction } from '@remix-run/react';
-import { Fragment } from 'react';
 
 import { ContactForm } from '../components/contact-form/form';
 import { StoreLocationMap } from '../components/map';
@@ -15,10 +14,10 @@ export const meta: MetaFunction = () => {
 
 export default function ContactPage() {
 	return (
-		<Fragment>
+		<>
 			<ContactForm />
 			<NewsletterSignup />
 			<StoreLocationMap />
-		</Fragment>
+		</>
 	);
 }

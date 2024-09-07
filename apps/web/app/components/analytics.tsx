@@ -1,11 +1,9 @@
-import { Fragment } from 'react';
-
-import * as gtag from '../lib/gtag';
+import { trackingIds } from '../lib/gtag';
 
 export function GoogleAnalytics() {
 	return (
-		<Fragment>
-			{gtag.trackingIds.map((id) => (
+		<>
+			{trackingIds.map((id) => (
 				<script async key={id} src={`https://www.googletagmanager.com/gtag/js?id=${id}`} />
 			))}
 			<script
@@ -15,7 +13,7 @@ export function GoogleAnalytics() {
 				}}
 				id="gtag-init"
 			/>
-		</Fragment>
+		</>
 	);
 }
 
@@ -23,19 +21,19 @@ const gtagInitScript = `
 window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-${gtag.trackingIds.map((id) => `gtag('config', '${id}', {page_path: window.location.pathname});`).join('\n')}
+${trackingIds.map((id) => `gtag('config', '${id}', {page_path: window.location.pathname});`).join('\n')}
 `;
 
 export function MetaAnalytics() {
 	return (
-		<Fragment>
+		<>
 			<script dangerouslySetInnerHTML={{ __html: metaInitScript }} />
 			<noscript
 				dangerouslySetInnerHTML={{
 					__html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"/>`,
 				}}
 			/>
-		</Fragment>
+		</>
 	);
 }
 

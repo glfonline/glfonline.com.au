@@ -1,7 +1,6 @@
 import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { Fragment } from 'react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
@@ -13,7 +12,7 @@ import { getFeaturedBlogPost } from '../lib/get-featured-blog-post';
 import { PortableText, type PortableTextProps } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
-import { type Theme } from '../types';
+import type { Theme } from '../types';
 
 const POSTS_LIMIT = 5;
 
@@ -65,7 +64,7 @@ export default function Blog() {
 	const { title } = useLoaderData<typeof loader>();
 
 	return (
-		<Fragment>
+		<>
 			<Hero
 				image={{
 					url: 'https://cdn.shopify.com/s/files/1/1080/9832/files/blog-hero.jpg?v=1677992122',
@@ -82,7 +81,7 @@ export default function Blog() {
 					<Sidebar />
 				</div>
 			</div>
-		</Fragment>
+		</>
 	);
 }
 
@@ -139,6 +138,7 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
 					<button
+						type="button"
 						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							navigate(-1);
@@ -152,6 +152,7 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 			<div className="flex min-w-0 flex-1 justify-end">
 				{hasNextPage && (
 					<button
+						type="button"
 						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							const params = new URLSearchParams(location.search);

@@ -1,4 +1,4 @@
-import { type Hit } from '@algolia/client-search';
+import type { Hit } from '@algolia/client-search';
 import {
 	Combobox,
 	ComboboxInput,
@@ -108,7 +108,7 @@ function SearchResults({
 	query,
 	setSearchOpen,
 }: {
-	data?: { hits: Hit<Product>[] };
+	data?: { hits: Array<Hit<Product>> };
 	isLoading: boolean;
 	isPreviousData: boolean;
 	query: string;

@@ -1,4 +1,4 @@
-export function sortSizes(uniqueProductSizes: string[]) {
+export function sortSizes(uniqueProductSizes: Array<string>) {
 	const sortedSizes = [
 		'AU6',
 		'AU8',

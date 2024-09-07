@@ -18,12 +18,24 @@ export function LoadingProgress() {
 		);
 	}, [active]);
 
+	const progress = (() => {
+		if (navigation.state === 'idle' && animationComplete) return 0;
+		if (navigation.state === 'submitting') return (4 / 12) * 100;
+		if (navigation.state === 'loading') return (10 / 12) * 100;
+		if (navigation.state === 'idle' && !animationComplete) return 100;
+
+		return 0;
+	})();
+
 	return (
 		<div
 			aria-hidden={!active}
 			aria-valuetext={active ? 'Loading' : undefined}
 			className="fixed inset-x-0 left-0 top-0 z-50 h-1 animate-pulse"
 			role="progressbar"
+			aria-valuenow={progress}
+			aria-valuemin={0}
+			aria-valuemax={100}
 		>
 			<div
 				className={clsx(

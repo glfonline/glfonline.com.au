@@ -1,6 +1,6 @@
 import formsPlugin from '@tailwindcss/forms';
 import typographyPlugin from '@tailwindcss/typography';
-import { type Config } from 'tailwindcss';
+import type { Config } from 'tailwindcss';
 import animatePlugin from 'tailwindcss-animate';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import plugin from 'tailwindcss/plugin';
