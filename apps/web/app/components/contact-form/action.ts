@@ -1,5 +1,5 @@
+import { type ActionFunctionArgs, json } from '@remix-run/node';
 import sendgrid from '@sendgrid/mail';
-import { type ActionFunctionArgs, json } from '@vercel/remix';
 import dedent from 'dedent';
 import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
@@ -24,7 +24,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		}
 
 		/** Attempt to parse users IP address from request object */
-		const clientIPAddress = getClientIPAddress(request);
+		const clientIpAddress = getClientIPAddress(request);
 
 		/**
 		 * Validate Cloudflare Turnstyle token server-side
@@ -34,7 +34,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			body: JSON.stringify({
 				secret: process.env.TURNSTILE_SECRET_KEY,
 				response: token,
-				...(clientIPAddress && { remoteip: clientIPAddress }),
+				...(clientIpAddress && { remoteip: clientIpAddress }),
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -68,6 +68,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		/** Send email with Sendgrid */
 		sendgrid.setApiKey(requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY));
 		const sendgridResponse = await sendgrid.send(mailOptions);
+		// biome-ignore lint/suspicious/noConsoleLog:
 		console.log({ sendgridResponse });
 		return json({ ok: true });
 	} catch (error) {

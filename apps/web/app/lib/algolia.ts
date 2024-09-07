@@ -1,4 +1,4 @@
-import { type Hit, type SearchResponse } from '@algolia/client-search';
+import type { Hit, SearchResponse } from '@algolia/client-search';
 import { liteClient } from 'algoliasearch/lite';
 
 const ALGOLIA_APP_ID = 'SF44VDBM4X';
@@ -12,7 +12,7 @@ type SearchOptions = {
 };
 
 export async function search<TData>({ indexName, query, pageParam, hitsPerPage }: SearchOptions): Promise<{
-	hits: Hit<TData>[];
+	hits: Array<Hit<TData>>;
 	nextPage: number | undefined;
 }> {
 	const client = liteClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY);

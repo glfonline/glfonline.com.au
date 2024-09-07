@@ -1,7 +1,7 @@
-import { type ActionFunctionArgs, json } from '@vercel/remix';
+import { type ActionFunctionArgs, json } from '@remix-run/node';
 import { parseForm } from 'react-zorm';
 
-import { type FormResponse } from '../../types';
+import type { FormResponse } from '../../types';
 import { NewsletterSchema } from './schema';
 
 export async function action({ request }: ActionFunctionArgs) {

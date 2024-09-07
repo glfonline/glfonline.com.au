@@ -6,7 +6,7 @@ export type Product = {
 	handle: string;
 	image: string;
 	objectID: string;
-	tags: string[];
+	tags: Array<string>;
 	title: string;
 	_highlightResult: {
 		title: {
@@ -23,7 +23,7 @@ export function useAlgoliaSearch(query: string) {
 		queryKey: ['products', query],
 		queryFn: async () => {
 			if (query) {
-				return search<Product>({
+				return await search<Product>({
 					hitsPerPage: 10,
 					indexName: 'shopify_products',
 					query,

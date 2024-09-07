@@ -1,10 +1,10 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
+import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, json } from '@vercel/remix';
 import { clsx } from 'clsx';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -83,7 +83,7 @@ export default function ProductPage() {
 
 	const isOnSale = product.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
-			compareAtPrice && parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
+			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
 	);
 
 	const form = useZorm('cart_form', CartSchema);
@@ -222,7 +222,7 @@ function ImageGallery({
 						>
 							{({ selected }) => {
 								return (
-									<Fragment>
+									<>
 										<span className="absolute inset-0 overflow-hidden">
 											<Image
 												alt={node.altText || ''}
@@ -242,7 +242,7 @@ function ImageGallery({
 												'pointer-events-none absolute inset-0 ring-1',
 											)}
 										/>
-									</Fragment>
+									</>
 								);
 							}}
 						</Tab>

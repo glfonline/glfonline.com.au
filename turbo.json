@@ -6,12 +6,8 @@
 			"outputs": ["dist/**"],
 			"dependsOn": ["^build"]
 		},
-		"check:format": {
-			"dependsOn": ["^build"]
-		},
-		"check:lint": {
-			"dependsOn": ["^build"]
-		},
+		"check:format": {},
+		"check:lint": {},
 		"check:types": {
 			"dependsOn": ["^build"]
 		},
@@ -19,12 +15,8 @@
 			"cache": false,
 			"persistent": true
 		},
-		"fix:format": {
-			"dependsOn": ["^build"]
-		},
-		"fix:lint": {
-			"dependsOn": ["^build"]
-		},
+		"fix:format": {},
+		"fix:lint": {},
 		"test:e2e": {
 			"dependsOn": ["^build"]
 		}

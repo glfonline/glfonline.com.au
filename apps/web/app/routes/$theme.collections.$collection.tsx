@@ -9,9 +9,9 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
+import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
 import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { type LoaderFunctionArgs, type MetaFunction, json } from '@vercel/remix';
 import { Fragment, useId, useState } from 'react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -76,7 +76,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 			});
 		}
 		const collection = collectionPromise.value;
-		if (!collection || !Array.isArray(collection.products)) {
+		if (!(collection && Array.isArray(collection.products))) {
 			throw new Response(null, {
 				status: 404,
 				statusText: 'Collection Not Found',
@@ -258,7 +258,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 
 	const isOnSale = node.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
-			compareAtPrice && parseFloat(price.amount) < parseFloat(compareAtPrice.amount),
+			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
 	);
 
 	return (
@@ -392,7 +392,7 @@ function DisplayOptions() {
 
 			<Disclosure as="div" className="py-2">
 				{({ open }) => (
-					<Fragment>
+					<>
 						<h2>
 							<DisclosureButton className="flex w-full items-center justify-between gap-6 px-4 py-2">
 								<span className="-ml-4 font-bold">Sort</span>
@@ -421,7 +421,7 @@ function DisplayOptions() {
 								</Link>
 							))}
 						</DisclosurePanel>
-					</Fragment>
+					</>
 				)}
 			</Disclosure>
 		</div>

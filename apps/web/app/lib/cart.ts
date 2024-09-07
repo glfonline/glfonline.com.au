@@ -1,4 +1,4 @@
-import { createCookieSessionStorage } from '@vercel/remix';
+import { createCookieSessionStorage } from '@remix-run/node';
 
 export type CartItem = {
 	variantId: string;
@@ -26,21 +26,23 @@ export async function getSession(input: Request | string | null | undefined) {
 	const session = await sessionStorage.getSession(cookieHeader);
 
 	return {
-		commitSession() {
-			return sessionStorage.commitSession(session);
+		async commitSession() {
+			return await sessionStorage.commitSession(session);
 		},
-		// TODO: Get and set cart from redis or something if user is logged in (could probably use a storage abstraction)
-		async getCart(): Promise<CartItem[]> {
+
+		// TODO: Get and set cart from Redis or something if user is logged in (could probably use a storage abstraction)
+		getCart(): Promise<Array<CartItem>> {
 			const cart = JSON.parse(session.get(cartSessionKey) || '[]');
 			return cart;
 		},
-		async setCart(cart: CartItem[]) {
+
+		setCart(cart: Array<CartItem>) {
 			session.set(cartSessionKey, JSON.stringify(cart));
 		},
 	};
 }
 
-export function addToCart(cart: CartItem[], variantId: string, quantity: number) {
+export function addToCart(cart: Array<CartItem>, variantId: string, quantity: number) {
 	let added = false;
 	for (const item of cart) {
 		if (item.variantId === variantId) {
@@ -55,7 +57,7 @@ export function addToCart(cart: CartItem[], variantId: string, quantity: number)
 	return cart;
 }
 
-export function updateCartItem(cart: CartItem[], variantId: string, quantity: number) {
+export function updateCartItem(cart: Array<CartItem>, variantId: string, quantity: number) {
 	let updated = false;
 	for (const item of cart) {
 		if (item.variantId === variantId) {
@@ -70,6 +72,6 @@ export function updateCartItem(cart: CartItem[], variantId: string, quantity: nu
 	return cart;
 }
 
-export function removeCartItem(cart: CartItem[], variantId: string) {
+export function removeCartItem(cart: Array<CartItem>, variantId: string) {
 	return cart.filter((item) => item.variantId !== variantId);
 }

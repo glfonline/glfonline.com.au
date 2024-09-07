@@ -1,5 +1,4 @@
-import { type ErrorResponse } from '@remix-run/react';
-import { Fragment } from 'react';
+import type { ErrorResponse } from '@remix-run/react';
 
 import { ButtonLink } from './design-system/button';
 import { Heading } from './design-system/heading';
@@ -20,7 +19,7 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 				<div className="flex flex-col gap-6">
 					<p className="text-base leading-7 text-gray-600">We found an error while loading this page.</p>
 					{process.env.NODE_ENV === 'development' && error && (
-						<Fragment>
+						<>
 							<code className="text-base leading-7 text-gray-600">
 								<span>{error.statusText}</span>
 								{error.data && (
@@ -38,7 +37,7 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 									/>
 								)}
 							</code>
-						</Fragment>
+						</>
 					)}
 					<div className="flex items-center justify-center gap-x-6">
 						<ButtonLink href="/" variant="neutral">

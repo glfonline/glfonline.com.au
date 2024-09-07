@@ -1,5 +1,5 @@
 import { Link, useFetcher } from '@remix-run/react';
-import { Fragment, useState } from 'react';
+import { useState } from 'react';
 import Turnstile from 'react-turnstile';
 import { useZorm } from 'react-zorm';
 
@@ -11,7 +11,7 @@ import { Heading } from '../design-system/heading';
 import { TextArea } from '../design-system/text-area';
 import { TextInput } from '../design-system/text-input';
 import { SplitBackground } from '../split-background';
-import { type action } from './action';
+import type { action } from './action';
 import { ContactFormSchema } from './schema';
 
 export function ContactForm() {
@@ -92,12 +92,12 @@ export function ContactForm() {
 
 function PrivacyPolicyLabel() {
 	return (
-		<Fragment>
+		<>
 			By selecting this, you agree to the{' '}
 			<Link className="underline" prefetch="intent" to="/privacy-policy/">
 				Privacy Policy
 			</Link>
 			.
-		</Fragment>
+		</>
 	);
 }

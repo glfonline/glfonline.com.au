@@ -16,7 +16,11 @@ type Vendor = StringWithAutocomplete<
 
 const noSizingChart = ['Accessories', 'Cart Bags', 'Gift Vouchers', 'Gloves', 'Headwear', 'Shoes & Socks', 'Wedges'];
 
-export function getSizingChart({ productType, vendor, tags }: { productType: string; vendor: Vendor; tags: string[] }):
+export function getSizingChart({
+	productType,
+	vendor,
+	tags,
+}: { productType: string; vendor: Vendor; tags: Array<string> }):
 	| {
 			href: string;
 			useSizing?: boolean;

@@ -140,7 +140,7 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 		</Transition>
 	);
 }
-function Section({ section }: { section: { label: string; items: NavItem[][] } }) {
+function Section({ section }: { section: { label: string; items: Array<Array<NavItem>> } }) {
 	const id = useId();
 	return (
 		<Disclosure>

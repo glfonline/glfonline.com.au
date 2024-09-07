@@ -6,9 +6,10 @@ import { sortSizes } from './sort-sizes';
 
 type Option = {
 	name: string;
-	values: string[];
+	values: Array<string>;
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
 export async function getProductFilterOptions({
 	after,
 	collectionHandle,
@@ -46,7 +47,7 @@ export async function getProductFilterOptions({
 		hasNextPage = products.pageInfo.hasNextPage;
 		cursor = products.pageInfo.endCursor;
 	}
-	const options: Option[] = [];
+	const options: Array<Option> = [];
 	for (const [key, value] of optionsMap) {
 		let optionValues = [...value].sort();
 		if (key === 'Size') {

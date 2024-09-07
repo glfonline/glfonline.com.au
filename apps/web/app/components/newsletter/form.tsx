@@ -5,7 +5,7 @@ import { Button } from '../design-system/button';
 import { Field } from '../design-system/field';
 import { Heading } from '../design-system/heading';
 import { TextInput } from '../design-system/text-input';
-import { type action } from './action';
+import type { action } from './action';
 import { NewsletterSchema } from './schema';
 
 export function NewsletterSignup() {

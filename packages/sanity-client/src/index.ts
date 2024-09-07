@@ -1,3 +1,4 @@
+// biome-ignore lint/performance/noBarrelFile:
 export {
 	ABOUT_PAGE_QUERY,
 	BLOG_PAGE_QUERY,

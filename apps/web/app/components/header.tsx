@@ -8,7 +8,7 @@ import { Fragment, useId, useState } from 'react';
 
 import { CHANTALE_PHONE, type NavItem, socialLinks } from '../lib/constants';
 import { urlFor } from '../lib/sanity-image';
-import { type loader } from '../root';
+import type { loader } from '../root';
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
 import { SearchDialog } from './search-dialog';
@@ -95,7 +95,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						</button>
 
 						{/* Search */}
-						<button className="ml-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
+						<button type="button" className="ml-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
 							<span className="sr-only">Search</span>
 							<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 						</button>
@@ -111,7 +111,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						<div className="flex items-center gap-8 lg:ml-8">
 							<div className="flex">
 								<div className="hidden lg:flex">
-									<button className="-m-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
+									<button type="button" className="-m-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
 										<span className="sr-only">Search</span>
 										<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 									</button>
@@ -150,7 +150,7 @@ function MegaMenu() {
 				{mainNavigation.navCategories.map((category, index) => (
 					<Popover className="flex" data-theme={category.theme} key={index}>
 						{({ open }) => (
-							<Fragment>
+							<>
 								<PopoverButton className={clsx(open && 'bg-brand-primary text-white', navItemClasses)}>
 									{category.label}
 									<ChevronDownIcon className="-mr-5 h-5 w-5" />
@@ -228,7 +228,7 @@ function MegaMenu() {
 										</div>
 									</PopoverPanel>
 								</Transition>
-							</Fragment>
+							</>
 						)}
 					</Popover>
 				))}
@@ -261,7 +261,7 @@ function getSpan(value: number) {
 	return 1;
 }
 
-function CategorySection({ section }: { section: { label: string; items: NavItem[][] } }) {
+function CategorySection({ section }: { section: { label: string; items: Array<Array<NavItem>> } }) {
 	const id = useId();
 	return (
 		<div className={spanMap[getSpan(section.items.length)]}>
