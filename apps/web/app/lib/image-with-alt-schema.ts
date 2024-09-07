@@ -7,19 +7,25 @@ export const imageWithAltSchema = z.object({
 		path: z.string(),
 	}),
 	crop: z
-		.object({
-			top: z.number(),
-			bottom: z.number(),
-			left: z.number(),
-			right: z.number(),
-		})
-		.optional(),
+		.nullable(
+			z.object({
+				top: z.number(),
+				bottom: z.number(),
+				left: z.number(),
+				right: z.number(),
+			}),
+		)
+		.optional()
+		.transform((value) => (value === null ? undefined : value)),
 	hotspot: z
-		.object({
-			x: z.number(),
-			y: z.number(),
-			height: z.number(),
-			width: z.number(),
-		})
-		.optional(),
+		.nullable(
+			z.object({
+				x: z.number(),
+				y: z.number(),
+				height: z.number(),
+				width: z.number(),
+			}),
+		)
+		.optional()
+		.transform((value) => (value === null ? undefined : value)),
 });
