@@ -1,4 +1,4 @@
-import { json, type ActionFunctionArgs } from '@vercel/remix';
+import { type ActionFunctionArgs, json } from '@vercel/remix';
 import { parseForm } from 'react-zorm';
 
 import { type FormResponse } from '../../types';
@@ -37,7 +37,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		});
 
 		return json<FormResponse>({ ok: true });
-	} catch (error) {
+	} catch {
 		/** @todo */
 		return json<FormResponse>({ ok: false });
 	}

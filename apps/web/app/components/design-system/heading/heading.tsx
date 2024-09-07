@@ -1,7 +1,7 @@
 import { assert, isDefined } from 'emery';
 import { forwardRef } from 'react';
 
-import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';
+import { type HeadingVariantProps, getHeadingStyles } from './get-heading-styles';
 
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
 	{ children, className, color, headingElement, size, weight, ...consumerProps },

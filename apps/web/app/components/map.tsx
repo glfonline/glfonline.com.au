@@ -3,7 +3,7 @@ import { useInView } from 'react-intersection-observer';
 
 import { Spinner } from './design-system/spinner';
 
-export function Map() {
+export function StoreLocationMap() {
 	const { ref, inView } = useInView({
 		triggerOnce: true,
 	});

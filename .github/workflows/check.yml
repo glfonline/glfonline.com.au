@@ -1,0 +1,52 @@
+name: 👀 Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  check:
+    name: 🧹 Linting & formatting
+    runs-on: ubuntu-latest
+    env:
+      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+    steps:
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🔍 Extract pnpm version from package.json
+        id: extract_version
+        run: echo "PNPM_VERSION=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> $GITHUB_ENV
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+
+      - name: 🛠️ Setup node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      - name: 🚚 Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: 🚀 Setup Biome
+        uses: biomejs/setup-biome@v2
+        with:
+          version: latest
+
+      - name: 🧹 Run Biome (Lint, Format, Check)
+        run: pnpm run check

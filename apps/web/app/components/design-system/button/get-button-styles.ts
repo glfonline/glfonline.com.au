@@ -1,4 +1,4 @@
-import { cva, type VariantProps } from 'class-variance-authority';
+import { type VariantProps, cva } from 'class-variance-authority';
 
 export const getButtonStyles = cva(
 	'inline-flex gap-2 items-center font-bold justify-center uppercase border focus:outline-none focus:ring-2 transition duration-300 whitespace-nowrap',

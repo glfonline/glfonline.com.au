@@ -4,8 +4,5 @@
 		"./schema.graphql": {
 			"plugins": ["schema-ast"]
 		}
-	},
-	"hooks": {
-		"afterAllFileWrite": ["prettier --write --use-tabs"]
 	}
 }

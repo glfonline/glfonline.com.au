@@ -1,4 +1,0 @@
-{
-	"root": true,
-	"extends": ["@glfonline/eslint-config"]
-}

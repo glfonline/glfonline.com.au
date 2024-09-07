@@ -3,24 +3,24 @@ import './tailwind.css';
 
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import {
-	isRouteErrorResponse,
 	Links,
 	Meta,
+	type MetaFunction,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	isRouteErrorResponse,
 	useLocation,
 	useRouteError,
-	type MetaFunction,
 } from '@remix-run/react';
 import { type LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { withSentry } from '@sentry/remix';
-import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
+import { type SeoHandleFunction, getSeoMeta } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { json, type LinksFunction } from '@vercel/remix';
+import { type LinksFunction, json } from '@vercel/remix';
 import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { Fragment, useEffect } from 'react';
 
@@ -69,7 +69,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data, matches }) => {
-	const seoMeta = getSeoMeta((matches as any)[0].shop, data!.shop);
+	const seoMeta = getSeoMeta((matches as any)[0].shop, data?.shop);
 	console.log('seoMeta', seoMeta);
 	return seoMeta;
 };

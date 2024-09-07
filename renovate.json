@@ -4,14 +4,7 @@
 	"dependencyDashboard": true,
 	"extends": ["config:recommended", "schedule:earlyMondays"],
 	"internalChecksFilter": "strict",
-	"ignoreDeps": [
-		"@glfonline/eslint-config",
-		"@glfonline/prettier-config",
-		"@glfonline/sanity-client",
-		"@glfonline/shopify-client",
-		"@glfonline/tsconfig",
-		"@glfonline/web"
-	],
+	"ignoreDeps": ["@glfonline/sanity-client", "@glfonline/shopify-client", "@glfonline/tsconfig", "@glfonline/web"],
 	"labels": ["dependencies"],
 	"lockFileMaintenance": {
 		"enabled": true
@@ -28,10 +21,6 @@
 		{
 			"groupName": "react",
 			"matchPackageNames": ["react", "react-dom"]
-		},
-		{
-			"groupName": "eslint",
-			"matchPackagePatterns": ["eslint*"]
 		},
 		{
 			"groupName": "tanstack",

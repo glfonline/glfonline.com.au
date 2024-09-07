@@ -6,14 +6,16 @@
 	"type": "module",
 	"scripts": {
 		"build": "remix vite:build",
-		"check": "pnpm run /^check:/",
-		"check:format": "pnpm prettier . --cache --check",
-		"check:lint": "TIMING=1 eslint --cache --cache-location ./node_modules/.cache/eslint .",
+		"check": "pnpm biome check && pnpm run check:types",
+		"check:format": "pnpm biome format",
+		"check:lint": "pnpm biome lint",
 		"check:types": "tsc --noEmit",
 		"clean": "pnpm clean:outputs && rm -rf node_modules",
 		"clean:outputs": "rm -rf .cache && rm -rf .turbo && rm -rf api && rm -rf public/build",
 		"dev": "remix vite:dev",
-		"lint": "TIMING=1 eslint \"./**/*.{js,ts,jsx,tsx}\"",
+		"fix": "pnpm biome check --write",
+		"fix:format": "pnpm biome format --write",
+		"fix:lint": "pnpm biome lint --write",
 		"start": "dotenv -e .env -- remix-serve ./build/server/index.js"
 	},
 	"dependencies": {
@@ -60,7 +62,6 @@
 		"zod": "^3.23.8"
 	},
 	"devDependencies": {
-		"@glfonline/eslint-config": "workspace:^",
 		"@glfonline/tsconfig": "workspace:^",
 		"@remix-run/dev": "^2.11.2",
 		"@remix-run/serve": "^2.11.2",

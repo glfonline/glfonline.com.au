@@ -18,7 +18,7 @@ import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 
 import type { loader } from '../../app/root';
-import { socialLinks, type NavItem } from '../lib/constants';
+import { type NavItem, socialLinks } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
 export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {

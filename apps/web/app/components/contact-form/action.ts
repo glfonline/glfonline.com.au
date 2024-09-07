@@ -1,5 +1,5 @@
 import sendgrid from '@sendgrid/mail';
-import { json, type ActionFunctionArgs } from '@vercel/remix';
+import { type ActionFunctionArgs, json } from '@vercel/remix';
 import dedent from 'dedent';
 import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
@@ -51,7 +51,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			to: EMAIL_ADDRESS,
 			from: 'contact_form@glfonline.com.au',
 			subject: `New GLF Online Contact Form Submission from ${first_name}`,
-			html: dedent/* html */ `
+			html: dedent /* html */`
 				<div>
 					<h1>New GLF Online Contact Form Submission</h1>
 					<ul>

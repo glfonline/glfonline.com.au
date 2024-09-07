@@ -2,7 +2,7 @@ import { type MetaFunction } from '@vercel/remix';
 import { Fragment } from 'react';
 
 import { ContactForm } from '../components/contact-form/form';
-import { Map } from '../components/map';
+import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';
 import { getSeoMeta } from '../seo';
 
@@ -18,7 +18,7 @@ export default function ContactPage() {
 		<Fragment>
 			<ContactForm />
 			<NewsletterSignup />
-			<Map />
+			<StoreLocationMap />
 		</Fragment>
 	);
 }

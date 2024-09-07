@@ -1,9 +1,0 @@
-__generated__
-.env
-.sanity
-apps/web/api
-apps/web/app/styles/tailwind.css
-build
-dist
-node_modules
-pnpm-lock.yaml
