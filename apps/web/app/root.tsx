@@ -2,6 +2,8 @@ import './font.css';
 import './tailwind.css';
 
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import { json } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
 	Links,
 	Meta,
@@ -13,14 +15,12 @@ import {
 	useLocation,
 	useRouteError,
 } from '@remix-run/react';
-import { type LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { withSentry } from '@sentry/remix';
 import { type SeoHandleFunction, getSeoMeta } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { type LinksFunction, json } from '@vercel/remix';
 import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { Fragment, useEffect } from 'react';
 
@@ -70,7 +70,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data, matches }) => {
 	const seoMeta = getSeoMeta((matches as any)[0].shop, data?.shop);
-	console.log('seoMeta', seoMeta);
 	return seoMeta;
 };
 

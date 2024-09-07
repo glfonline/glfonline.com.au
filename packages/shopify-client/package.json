@@ -3,26 +3,32 @@
 	"version": "0.0.0",
 	"private": true,
 	"license": "MIT",
+	"type": "module",
+	"exports": {
+		".": {
+			"import": "./dist/index.js",
+			"types": "./dist/index.d.ts"
+		}
+	},
 	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
 	"files": ["dist/**"],
 	"scripts": {
 		"build": "pnpm run build:ts-gql && pnpm run build:tsup",
 		"build:ts-gql": "ts-gql build",
 		"build:tsup": "tsup",
-		"check:types": "tsc --noEmit",
 		"check": "pnpm biome check && pnpm run check:types",
 		"check:format": "pnpm biome format",
 		"check:lint": "pnpm biome lint",
-		"fix": "pnpm biome check --write",
-		"fix:format": "pnpm biome format --write",
-		"fix:lint": "pnpm biome lint --write",
+		"check:types": "tsc --noEmit",
 		"clean": "pnpm clean:outputs && rm -rf node_modules",
 		"clean:outputs": "rm -rf __generated__ && rm -rf .turbo && rm -rf dist",
 		"dev": "concurrently -n \"ts-gql,tsup\" -c \"bgBlue.bold,bgMagenta.bold\" \"pnpm dev:ts-gql\" \"pnpm dev:tsup\"",
 		"dev:ts-gql": "ts-gql watch",
 		"dev:tsup": "tsup --watch",
+		"fix": "pnpm biome check --write",
+		"fix:format": "pnpm biome format --write",
+		"fix:lint": "pnpm biome lint --write",
 		"generate": "graphql-codegen --config codegen.json",
 		"postinstall": "ts-gql build"
 	},

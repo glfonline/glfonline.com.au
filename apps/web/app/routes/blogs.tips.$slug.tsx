@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs, redirect } from '@vercel/remix';
+import { type LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { assert, isString } from 'emery';
 
 export async function loader({ params }: LoaderFunctionArgs) {

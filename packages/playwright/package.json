@@ -3,6 +3,7 @@
 	"version": "0.0.0",
 	"private": true,
 	"license": "MIT",
+	"type": "module",
 	"scripts": {
 		"check": "pnpm biome check && pnpm run check:types",
 		"check:format": "pnpm biome format",

@@ -2,6 +2,7 @@
 	"name": "@glfonline/cms",
 	"version": "0.0.0",
 	"private": true,
+	"type": "module",
 	"scripts": {
 		"build": "sanity build",
 		"check": "pnpm biome check && pnpm run check:types",

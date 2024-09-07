@@ -1,4 +1,4 @@
-import { type MetaFunction } from '@vercel/remix';
+import type { MetaFunction } from '@remix-run/react';
 import { Fragment } from 'react';
 
 import { ContactForm } from '../components/contact-form/form';

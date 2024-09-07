@@ -3,6 +3,12 @@
 	"version": "0.0.0",
 	"private": true,
 	"license": "MIT",
+	"type": "module",
+	"exports": {
+		"./dom": "./dom.json",
+		"./no-dom": "./no-dom.json",
+		"./react-app": "./react-app.json"
+	},
 	"scripts": {
 		"check": "pnpm biome check",
 		"check:format": "pnpm biome format",

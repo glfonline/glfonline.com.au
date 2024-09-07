@@ -1,5 +1,5 @@
+import type { SanityImageSource } from '@sanity/asset-utils';
 import imageUrlBuilder from '@sanity/image-url';
-import { type SanityImageSource } from '@sanity/image-url/lib/types/types';
 
 export const config = {
 	apiVersion: '2021-08-31',

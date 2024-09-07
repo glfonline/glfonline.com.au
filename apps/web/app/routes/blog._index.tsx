@@ -1,6 +1,6 @@
+import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { type LoaderFunctionArgs, type MetaFunction, json } from '@vercel/remix';
 import { Fragment } from 'react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';

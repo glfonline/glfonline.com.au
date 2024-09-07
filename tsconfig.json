@@ -1,5 +1,5 @@
 {
-	"extends": "@glfonline/tsconfig/base.json",
-	"include": ["**/*.ts", "**/*.tsx", "**/*.cjs", "**/*.mjs"],
+	"extends": "@glfonline/tsconfig/no-dom",
+	"include": ["**/*.ts", "**/*.tsx", "**/*.mjs"],
 	"exclude": ["build", "dist", "node_modules"]
 }

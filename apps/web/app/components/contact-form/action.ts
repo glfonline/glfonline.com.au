@@ -1,5 +1,5 @@
+import { type ActionFunctionArgs, json } from '@remix-run/node';
 import sendgrid from '@sendgrid/mail';
-import { type ActionFunctionArgs, json } from '@vercel/remix';
 import dedent from 'dedent';
 import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
