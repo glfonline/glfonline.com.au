@@ -3,7 +3,7 @@ import { forwardRef, useMemo } from 'react';
 
 import { mergeIds } from '../../../lib/merge-ids';
 import { FieldContextProvider, type FieldContextType } from './context';
-import { FieldMessage, useFieldIds, type FieldProps } from './field';
+import { FieldMessage, type FieldProps, useFieldIds } from './field';
 
 export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function Field(
 	{

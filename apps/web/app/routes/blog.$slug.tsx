@@ -1,6 +1,6 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { useLoaderData } from '@remix-run/react';
-import { json, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { type LoaderFunctionArgs, type MetaFunction, json } from '@vercel/remix';
 import { assert, isString } from 'emery';
 import invariant from 'tiny-invariant';
 

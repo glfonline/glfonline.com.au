@@ -6,9 +6,7 @@
 	"main": "./dist/index.js",
 	"module": "./dist/index.mjs",
 	"types": "./dist/index.d.ts",
-	"files": [
-		"dist/**"
-	],
+	"files": ["dist/**"],
 	"scripts": {
 		"build": "pnpm run build:ts-gql && pnpm run build:tsup",
 		"build:ts-gql": "ts-gql build",
@@ -20,8 +18,7 @@
 		"dev:ts-gql": "ts-gql watch",
 		"dev:tsup": "tsup --watch",
 		"generate": "graphql-codegen --config codegen.json",
-		"postinstall": "ts-gql build",
-		"lint": "TIMING=1 eslint \"src/**/*.{js,ts,jsx,tsx}\""
+		"postinstall": "ts-gql build"
 	},
 	"dependencies": {
 		"@ts-gql/compiler": "^0.16.7",
@@ -29,7 +26,6 @@
 		"@ts-gql/tag": "^0.7.3"
 	},
 	"devDependencies": {
-		"@glfonline/eslint-config": "workspace:^",
 		"@glfonline/tsconfig": "workspace:^",
 		"@graphql-codegen/cli": "^5.0.2",
 		"@graphql-codegen/schema-ast": "^4.1.0",

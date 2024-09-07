@@ -9,9 +9,9 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { Link, useLoaderData, useLocation, useNavigate, type Location } from '@remix-run/react';
+import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { type LoaderFunctionArgs, type MetaFunction, json } from '@vercel/remix';
 import { Fragment, useId, useState } from 'react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -21,8 +21,8 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { capitalise } from '../lib/capitalise';
 import { formatMoney } from '../lib/format-money';
-import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collection-products';
-import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
+import { type SortBy, getProductsFromCollectionByTag } from '../lib/get-collection-products';
+import { PRODUCT_TYPE, getProductFilterOptions } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({

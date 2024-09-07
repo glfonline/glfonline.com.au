@@ -13,7 +13,7 @@
 			"cache": false,
 			"persistent": true
 		},
-		"lint": {
+		"check:lint": {
 			"dependsOn": ["^build"]
 		},
 		"test:e2e": {

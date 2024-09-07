@@ -1,7 +1,7 @@
 import { Link } from '@remix-run/react';
 import { Fragment } from 'react';
 
-import { CONTACT_NUMBERS, EMAIL_ADDRESS, footerNavigation, HOURS, STREET_ADDRESS } from '../lib/constants';
+import { CONTACT_NUMBERS, EMAIL_ADDRESS, HOURS, STREET_ADDRESS, footerNavigation } from '../lib/constants';
 import { ClockIcon } from './vectors/clock-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 import { HouseIcon } from './vectors/house-icon';

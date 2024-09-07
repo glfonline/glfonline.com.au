@@ -1,12 +1,12 @@
-import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
+import { TESTIMONIALS_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, type MetaFunction } from '@vercel/remix';
+import { type MetaFunction, json } from '@vercel/remix';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
 import { Hero } from '../components/hero';
-import { Map } from '../components/map';
+import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
@@ -75,7 +75,7 @@ export default function TestimonialsPage() {
 				<Testimonials />
 			</div>
 			<NewsletterSignup />
-			<Map />
+			<StoreLocationMap />
 		</div>
 	);
 }

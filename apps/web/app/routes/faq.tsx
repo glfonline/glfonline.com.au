@@ -1,6 +1,6 @@
 import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
 import { useLoaderData } from '@remix-run/react';
-import { json, type MetaFunction } from '@vercel/remix';
+import { type MetaFunction, json } from '@vercel/remix';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 

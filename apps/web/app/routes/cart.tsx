@@ -1,7 +1,7 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
-import { json, redirect, type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction } from '@vercel/remix';
+import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, json, redirect } from '@vercel/remix';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 

@@ -1,5 +1,5 @@
-import { GraphQLErrorResult, type Fetcher } from '@ts-gql/fetch';
-import { print, type DocumentNode } from 'graphql';
+import { type Fetcher, GraphQLErrorResult } from '@ts-gql/fetch';
+import { type DocumentNode, print } from 'graphql';
 
 const API_URL = 'https://zah69run.api.sanity.io/v1/graphql/production/default';
 

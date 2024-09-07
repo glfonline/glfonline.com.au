@@ -12,7 +12,7 @@ import { ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { getHeadingStyles } from '../components/design-system/heading/get-heading-styles';
 import { Divider } from '../components/divider';
-import { Map } from '../components/map';
+import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';
 import { VerticalLogo } from '../components/vectors/vertical-logo';
 import { brandsWeLove } from '../lib/brands-we-love';
@@ -41,8 +41,6 @@ const HomePageSchema = z.object({
 	brandsWeLove,
 });
 
-type HomePageSchema = z.infer<typeof HomePageSchema>;
-
 export async function loader() {
 	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
 	return json(HomePageSchema.parse(HomePage), {
@@ -63,7 +61,7 @@ export default function Index() {
 			<BrandsWeLove brands={brandsWeLove} />
 			<ContactForm />
 			<NewsletterSignup />
-			<Map />
+			<StoreLocationMap />
 		</Fragment>
 	);
 }

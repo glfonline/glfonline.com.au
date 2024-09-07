@@ -1,4 +1,4 @@
-name: 🚀 Deploy
+name: 👀 Check
 
 on:
   push:
@@ -15,8 +15,8 @@ permissions:
   contents: read
 
 jobs:
-  prettier:
-    name: ✨ Prettier
+  biome:
+    name: 🧹 Biome
     runs-on: ubuntu-latest
     steps:
       - name: ⬇️ Checkout repo
@@ -40,39 +40,13 @@ jobs:
       - name: 📥 Download deps
         run: pnpm install --frozen-lockfile
 
-      - name: 💅 Format
-        run: pnpm run check:format
-
-  eslint:
-    name: ⬣ ESLint
-    runs-on: ubuntu-latest
-    env:
-      TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
-      TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
-    steps:
-      - name: ⬇️ Checkout repo
-        uses: actions/checkout@v4
-
-      - name: 🦷 Extract pnpm version from package.json
-        id: extract_version
-        run: echo "PNPM_VERSION=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> $GITHUB_ENV
-
-      - name: 📦 Setup pnpm
-        uses: pnpm/action-setup@v4
+      - name: 🚀 Setup Biome
+        uses: biomejs/setup-biome@v2
         with:
-          version: ${{ env.PNPM_VERSION }}
+          version: latest
 
-      - name: 🌐 Setup node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version-file: package.json
-          cache: pnpm
-
-      - name: 📥 Download deps
-        run: pnpm install --frozen-lockfile
-
-      - name: 🔬 Lint
-        run: pnpm run check:lint
+      - name: 🧹 Run Biome (Lint, Format, Check)
+        run: pnpm run check
 
   typecheck:
     name: ʦ TypeScript
