@@ -11,14 +11,16 @@ import {
 	ScrollRestoration,
 	useLocation,
 	useRouteError,
+	type MetaFunction,
 } from '@remix-run/react';
+import { type LoaderFunctionArgs } from '@remix-run/server-runtime';
 import { withSentry } from '@sentry/remix';
-import { Seo, type SeoHandleFunction } from '@shopify/hydrogen';
+import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { json, type LinksFunction, type LoaderFunctionArgs } from '@vercel/remix';
+import { json, type LinksFunction } from '@vercel/remix';
 import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { Fragment, useEffect } from 'react';
 
@@ -66,6 +68,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	});
 }
 
+export const meta: MetaFunction<typeof loader> = ({ data, matches }) => {
+	const seoMeta = getSeoMeta((matches as any)[0].shop, data!.shop);
+	console.log('seoMeta', seoMeta);
+	return seoMeta;
+};
+
 const queryClient = new QueryClient();
 const persister = createSyncStoragePersister({
 	storage: typeof window !== 'undefined' ? window.localStorage : undefined,
@@ -88,7 +96,6 @@ function App() {
 				<meta charSet="utf-8" />
 				<meta content="width=device-width,initial-scale=1" name="viewport" />
 				<Meta />
-				<Seo />
 				<Links />
 			</head>
 			<body className="bg-background text-foreground relative flex min-h-full flex-col">
