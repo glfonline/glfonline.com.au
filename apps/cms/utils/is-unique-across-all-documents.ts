@@ -1,4 +1,4 @@
-import { type SlugIsUniqueValidator } from 'sanity';
+import type { SlugIsUniqueValidator } from 'sanity';
 
 export const isUniqueAcrossAllDocuments: SlugIsUniqueValidator = async (slug, context) => {
 	const { document, getClient } = context;
@@ -9,7 +9,7 @@ export const isUniqueAcrossAllDocuments: SlugIsUniqueValidator = async (slug, co
 		published: id,
 		slug,
 	};
-	const query = `!defined(*[!(_id in [$draft, $published]) && slug.current == $slug][0]._id)`;
+	const query = '!defined(*[!(_id in [$draft, $published]) && slug.current == $slug][0]._id)';
 	const result = await client.fetch(query, params);
 	return result;
 };

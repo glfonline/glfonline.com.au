@@ -1,3 +1,4 @@
+// biome-ignore lint/performance/noBarrelFile:
 export { aboutPage } from './about-page';
 export { author } from './author';
 export { blogPosts } from './blog-posts';

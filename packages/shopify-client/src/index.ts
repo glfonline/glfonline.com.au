@@ -1,3 +1,4 @@
+// biome-ignore lint/performance/noBarrelFile:
 export {
 	ALL_PRODUCTS_QUERY,
 	CART_QUERY,
