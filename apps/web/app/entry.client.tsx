@@ -12,25 +12,28 @@ import { hydrateRoot } from 'react-dom/client';
 import { SENTRY_DSN } from './lib/constants';
 
 Sentry.init({
+	autoInstrumentRemix: true,
 	dsn: SENTRY_DSN,
-	tracesSampleRate: 1,
-
-	// This sets the sample rate to be 10%. You may want this to be 100% while
-	// in development and sample at a lower rate in production
-	replaysSessionSampleRate: 0.1,
-
-	// If the entire session is not sampled, use the below sample rate to sample
-	// sessions when an error occurs.
-	replaysOnErrorSampleRate: 1.0,
-
+	environment: process.env.NODE_ENV,
 	integrations: [
-		Sentry.replayIntegration(),
 		Sentry.browserTracingIntegration({
 			useEffect,
 			useLocation,
 			useMatches,
 		}),
+
+		// Replay is only available in the client.
+		Sentry.replayIntegration(),
 	],
+
+	// Capture Replay for 10% of all sessions, plus for 100% of sessions with an
+	// error.
+	replaysOnErrorSampleRate: 1.0,
+	replaysSessionSampleRate: 0.1,
+
+	// Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+	// We recommend adjusting this value in production.
+	tracesSampleRate: 1.0,
 });
 
 startTransition(() => {

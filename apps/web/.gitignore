@@ -1,7 +1,9 @@
 __generated__
 .cache
 .env
+.env.sentry-build-plugin
 .output
+.sentryclirc
 .vercel
 api
 build/

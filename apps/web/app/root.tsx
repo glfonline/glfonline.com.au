@@ -15,7 +15,7 @@ import {
 	useLocation,
 	useRouteError,
 } from '@remix-run/react';
-import { withSentry } from '@sentry/remix';
+import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
 import { type SeoHandleFunction, getSeoMeta } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
@@ -121,6 +121,7 @@ function App() {
 
 export function ErrorBoundary() {
 	const error = useRouteError();
+	captureRemixErrorBoundaryError(error);
 
 	const main = isRouteErrorResponse(error) ? (
 		error.status === 404 ? (

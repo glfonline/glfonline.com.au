@@ -14,7 +14,9 @@ import { renderToPipeableStream } from 'react-dom/server';
 import { SENTRY_DSN } from './lib/constants';
 
 Sentry.init({
+	autoInstrumentRemix: true,
 	dsn: SENTRY_DSN,
+	environment: process.env.NODE_ENV,
 	tracesSampleRate: 1,
 });
 
