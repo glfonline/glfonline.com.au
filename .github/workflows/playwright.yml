@@ -35,11 +35,32 @@ jobs:
           node-version-file: package.json
           cache: pnpm
 
-      - name: 📥 Download deps
-        run: pnpm install --prefer-offline --frozen-lockfile
+      - name: 🧳 Restore Turbo cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+            packages/**/node_modules
+          key: turbo-${{ github.sha }}
+          restore-keys: |
+            turbo-${{ github.ref }}-
+            turbo-
 
-      - name: 📥 Install Playwright Browsers
+      - name: 📥 Install dependencies (if cache is not restored)
+        run: pnpm install --prefer-offline --frozen-lockfile
+        if: steps.cache.outputs.cache-hit != 'true'
+
+      - name: 🧳 Cache Playwright Browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json', 'pnpm-lock.yaml') }}
+          restore-keys: |
+            playwright-${{ runner.os }}-
+
+      - name: 📥 Install Playwright Browsers (if cache is not restored)
         run: pnpm dlx playwright install --with-deps
+        if: steps.cache.outputs.cache-hit != 'true'
 
       - name: 🎭 Run Playwright tests
         run: pnpm run test:e2e
