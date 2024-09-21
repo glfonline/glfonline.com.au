@@ -29,12 +29,12 @@
 		"test:e2e": "turbo run test:e2e"
 	},
 	"dependencies": {
-		"@biomejs/biome": "1.8.3",
+		"@biomejs/biome": "1.9.2",
 		"@glfonline/tsconfig": "workspace:^",
 		"@manypkg/cli": "^0.21.4",
 		"stale-dep": "^0.7.0",
-		"turbo": "^2.1.1",
-		"typescript": "^5.5.4"
+		"turbo": "^2.1.2",
+		"typescript": "^5.6.2"
 	},
 	"packageManager": "pnpm@9.10.0",
 	"engines": {

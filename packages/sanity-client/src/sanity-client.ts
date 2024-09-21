@@ -14,7 +14,7 @@ export const sanityClient: Fetcher = (operation: DocumentNode, variables?: Recor
 	})
 		.then((res) => res.json())
 		.then((data) => {
-			if (data.errors?.length) {
+			if (data.errors?.length > 0) {
 				throw new GraphQLErrorResult(data.data, data.errors);
 			}
 			return data.data;

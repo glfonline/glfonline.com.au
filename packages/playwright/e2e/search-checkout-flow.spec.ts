@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 import invariant from 'tiny-invariant';
 
+const REGEX = /^https:\/\/golfladiesfirst\.myshopify\.com\/checkouts\//;
+
 test('Search checkout flow', async ({ page, baseURL }) => {
 	invariant(baseURL, 'Base URL must be defined');
 	// Go to home page
@@ -18,5 +20,5 @@ test('Search checkout flow', async ({ page, baseURL }) => {
 	// Click on the "Checkout" button
 	await page.getByRole('button', { name: 'Checkout' }).click();
 	// Check that we are on the checkout page
-	await expect(page).toHaveURL(/^https:\/\/golfladiesfirst\.myshopify\.com\/checkouts\//);
+	await expect(page).toHaveURL(REGEX);
 });

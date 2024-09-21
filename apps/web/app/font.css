@@ -24,7 +24,7 @@
  * Webfonts copyright: Copyright The Monotype Corporation. All rights reserved. &amp;#x0022;Century Gothic&amp;#x0022; is a trademark of The Monotype Corporation in the United States and/or other countries.
  *
  * © 2020 MyFonts Inc
-*/
+ */
 
 /* @import must be at top of file, otherwise CSS will not work */
 /* @import url('//hello.myfonts.net/count/3ba4b7'); */
@@ -34,34 +34,29 @@
 	font-display: swap;
 	font-style: normal;
 	font-weight: 400;
-	src:
-		url('/fonts/CentGothWGL/font.woff2') format('woff2'),
-		url('/fonts/CentGothWGL/font.woff') format('woff');
+	src: url('/fonts/CentGothWGL/font.woff2') format('woff2'), url('/fonts/CentGothWGL/font.woff') format('woff');
 }
 @font-face {
 	font-family: 'Century Gothic';
 	font-display: swap;
 	font-style: italic;
 	font-weight: 700;
-	src:
-		url('/fonts/CentGothWGL-BdIt/font.woff2') format('woff2'),
-		url('/fonts/CentGothWGL-BdIt/font.woff') format('woff');
+	src: url('/fonts/CentGothWGL-BdIt/font.woff2') format('woff2'), url('/fonts/CentGothWGL-BdIt/font.woff')
+		format('woff');
 }
 @font-face {
 	font-family: 'Century Gothic';
 	font-display: swap;
 	font-style: italic;
 	font-weight: 400;
-	src:
-		url('/fonts/CentGothWGL-Italic/font.woff2') format('woff2'),
-		url('/fonts/CentGothWGL-Italic/font.woff') format('woff');
+	src: url('/fonts/CentGothWGL-Italic/font.woff2') format('woff2'), url('/fonts/CentGothWGL-Italic/font.woff')
+		format('woff');
 }
 @font-face {
 	font-family: 'Century Gothic';
 	font-display: swap;
 	font-style: normal;
 	font-weight: 700;
-	src:
-		url('/fonts/CentGothWGL-Bold/font.woff2') format('woff2'),
-		url('/fonts/CentGothWGL-Bold/font.woff') format('woff');
+	src: url('/fonts/CentGothWGL-Bold/font.woff2') format('woff2'), url('/fonts/CentGothWGL-Bold/font.woff')
+		format('woff');
 }

@@ -51,6 +51,28 @@ const glfPlugin = plugin(({ addBase }) => {
 			'--color-brand-primary': 'var(--color-gray-900)' /* #2e2e2e */,
 			'--color-brand-primary-light': 'var(--color-gray-800)' /* #3f3f3f */,
 			'--color-brand-focus-ring': 'var(--color-gray-900)' /* #2e2e2e */,
+
+			// shadcn UI
+			'--background': '0 0% 100%',
+			'--foreground': '222.2 84% 4.9%',
+			'--muted': '210 40% 96.1%',
+			'--muted-foreground': '215.4 16.3% 46.9%',
+			'--popover': '0 0% 100%',
+			'--popover-foreground': '222.2 84% 4.9%',
+			'--card': '0 0% 100%',
+			'--card-foreground': '222.2 84% 4.9%',
+			'--border': '214.3 31.8% 91.4%',
+			'--input': '214.3 31.8% 91.4%',
+			'--primary': '222.2 47.4% 11.2%',
+			'--primary-foreground': '210 40% 98%',
+			'--secondary': '210 40% 96.1%',
+			'--secondary-foreground': '222.2 47.4% 11.2%',
+			'--accent': '210 40% 96.1%',
+			'--accent-foreground': '222.2 47.4% 11.2%',
+			'--destructive': '0 84.2% 60.2%',
+			'--destructive-foreground': '210 40% 98%',
+			'--ring': '215 20.2% 65.1%',
+			'--radius': '0.5rem',
 		},
 		"[data-theme='ladies']": {
 			'--color-brand-50': 'var(--color-pink-50)' /* #fff4fa */,
@@ -81,6 +103,34 @@ const glfPlugin = plugin(({ addBase }) => {
 			'--color-brand-primary': 'var(--color-blue-900)' /* #0c153c */,
 			'--color-brand-primary-light': 'var(--color-blue-800)' /* #122775 */,
 			'--color-brand-focus-ring': 'var(--color-blue-600)' /* #2157eb */,
+		},
+
+		'.dark': {
+			// shadcn UI
+			'--background': '222.2 84% 4.9%',
+			'--foreground': '210 40% 98%',
+			'--muted': '217.2 32.6% 17.5%',
+			'--muted-foreground': '215 20.2% 65.1%',
+			'--popover': '222.2 84% 4.9%',
+			'--popover-foreground': '210 40% 98%',
+			'--card': '222.2 84% 4.9%',
+			'--card-foreground': '210 40% 98%',
+			'--border': '217.2 32.6% 17.5%',
+			'--input': '217.2 32.6% 17.5%',
+			'--primary': '210 40% 98%',
+			'--primary-foreground': '222.2 47.4% 11.2%',
+			'--secondary': '217.2 32.6% 17.5%',
+			'--secondary-foreground': '210 40% 98%',
+			'--accent': '217.2 32.6% 17.5%',
+			'--accent-foreground': '210 40% 98%',
+			'--destructive': '0 62.8% 30.6%',
+			'--destructive-foreground': '0 85.7% 97.3%',
+			'--ring': '217.2 32.6% 17.5%',
+		},
+
+		'*': {
+			// shadcn UI
+			borderColor: "theme('colors.border')",
 		},
 	});
 });

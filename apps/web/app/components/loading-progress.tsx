@@ -28,6 +28,7 @@ export function LoadingProgress() {
 
 	return (
 		<div
+			tabIndex={0}
 			aria-hidden={!isActive}
 			aria-valuetext={isActive ? 'Loading' : undefined}
 			className="fixed inset-x-0 left-0 top-0 z-50 h-1 animate-pulse"

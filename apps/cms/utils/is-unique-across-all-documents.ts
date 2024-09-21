@@ -1,9 +1,11 @@
 import type { SlugIsUniqueValidator } from 'sanity';
 
+const REGEX = /^drafts\./;
+
 export const isUniqueAcrossAllDocuments: SlugIsUniqueValidator = async (slug, context) => {
 	const { document, getClient } = context;
 	const client = getClient({ apiVersion: '2022-12-07' });
-	const id = document?._id.replace(/^drafts\./, '');
+	const id = document?._id.replace(REGEX, '');
 	const params = {
 		draft: `drafts.${id}`,
 		published: id,
