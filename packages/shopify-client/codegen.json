@@ -10,8 +10,5 @@
 		"./schema.graphql": {
 			"plugins": ["schema-ast"]
 		}
-	},
-	"hooks": {
-		"afterAllFileWrite": ["pnpm run fix:format"]
 	}
 }

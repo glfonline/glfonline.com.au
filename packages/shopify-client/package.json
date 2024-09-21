@@ -29,7 +29,7 @@
 		"fix": "pnpm biome check --write",
 		"fix:format": "pnpm biome format --write",
 		"fix:lint": "pnpm biome lint --write",
-		"generate": "graphql-codegen --config codegen.json",
+		"generate": "graphql-codegen --config codegen.json && pnpm run fix:format",
 		"postinstall": "ts-gql build"
 	},
 	"dependencies": {
