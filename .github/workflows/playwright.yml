@@ -1,7 +1,7 @@
 name: 🎭 Playwright
 
 on:
-  deployment_status:
+  deployment:
 
 jobs:
   playwright:
@@ -54,9 +54,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json', 'pnpm-lock.yaml') }}
-          restore-keys: |
-            playwright-${{ runner.os }}-
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: playwright-${{ runner.os }}-
 
       - name: 📥 Install Playwright Browsers (if cache is not restored)
         run: pnpm dlx playwright install --with-deps

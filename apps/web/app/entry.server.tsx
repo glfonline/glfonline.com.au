@@ -61,19 +61,20 @@ function handleBotRequest(
 
 					pipe(body);
 				},
-				onShellError(error: unknown) {
-					reject(error);
+				onShellError(err: unknown) {
+					reject(err);
 				},
-				onError(error: unknown) {
+				onError(err) {
 					// biome-ignore lint/style/noParameterAssign:
 					responseStatusCode = 500;
 					/**
-					 * Log streaming rendering errors from inside the shell.  Don't log
-					 * errors encountered during initial shell rendering since they'll
-					 * reject and get logged in handleDocumentRequest.
+					 * Log streaming rendering errors from inside the shell.
+					 * Don't log errors encountered during initial shell rendering since
+					 * they'll reject and get logged in handleDocumentRequest.
 					 */
 					if (shellRendered) {
-						console.error(error);
+						// biome-ignore lint/suspicious/noConsole:
+						console.error(err);
 					}
 				},
 			},
@@ -110,10 +111,10 @@ function handleBrowserRequest(
 
 					pipe(body);
 				},
-				onShellError(error: unknown) {
-					reject(error);
+				onShellError(err) {
+					reject(err);
 				},
-				onError(error: unknown) {
+				onError(err: unknown) {
 					// biome-ignore lint/style/noParameterAssign:
 					responseStatusCode = 500;
 					/**
@@ -122,7 +123,8 @@ function handleBrowserRequest(
 					 * reject and get logged in handleDocumentRequest.
 					 */
 					if (shellRendered) {
-						console.error(error);
+						// biome-ignore lint/suspicious/noConsole:
+						console.error(err);
 					}
 				},
 			},

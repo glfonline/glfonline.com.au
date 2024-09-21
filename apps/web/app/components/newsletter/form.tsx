@@ -36,28 +36,28 @@ export function NewsletterSignup() {
 						<Field className="sm:col-span-4" label="Email address" message={form.errors.email()?.message}>
 							<TextInput name={form.fields.email()} />
 						</Field>
-						<div className="flex flex-col gap-4 sm:col-span-4">
-							<label className="text-sm text-gray-700">Which list would you like to sign up to?</label>
-							<fieldset>
-								<legend className="sr-only">Email list</legend>
-								<div className="space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-									{(['Ladies', 'Mens'] as const).map((options) => (
-										<div className="flex items-center gap-3" key={options}>
-											<input
-												className="text-brand-primary focus:ring-brand-light h-5 w-5 border-gray-300"
-												id={options}
-												name={form.fields.gender()}
-												type="radio"
-												value={options}
-											/>
-											<label className="block text-sm font-medium text-gray-700" htmlFor={options}>
-												{options}
-											</label>
-										</div>
-									))}
-								</div>
-							</fieldset>
-						</div>
+
+						<fieldset className="flex flex-col gap-4 sm:col-span-4">
+							<legend aria-hidden className="text-sm text-gray-700">
+								Which list would you like to sign up to?
+							</legend>
+							<div className="space-y-4 mt-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+								{(['Ladies', 'Mens'] as const).map((options) => (
+									<div className="flex items-center gap-3" key={options}>
+										<input
+											className="text-brand-primary focus:ring-brand-light h-5 w-5 border-gray-300"
+											id={options}
+											name={form.fields.gender()}
+											type="radio"
+											value={options}
+										/>
+										<label className="block text-sm font-medium text-gray-700" htmlFor={options}>
+											{options}
+										</label>
+									</div>
+								))}
+							</div>
+						</fieldset>
 
 						<Button className="sm:col-span-4" isLoading={fetcher.state === 'loading'} type="submit" variant="neutral">
 							Join

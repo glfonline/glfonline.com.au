@@ -16,6 +16,7 @@ export async function search<TData>({ indexName, query, pageParam, hitsPerPage }
 	nextPage: number | undefined;
 }> {
 	const client = liteClient(ALGOLIA_APP_ID, ALGOLIA_SEARCH_API_KEY);
+
 	const { results } = await client.search<TData>({
 		requests: [
 			{
@@ -26,9 +27,28 @@ export async function search<TData>({ indexName, query, pageParam, hitsPerPage }
 			},
 		],
 	});
+
 	const result = results[0] as SearchResponse<TData>;
-	if (!result) return { hits: [], nextPage: undefined };
-	const { hits, nbPages, page } = result;
+
+	if (!result)
+		return {
+			hits: [],
+			nextPage: undefined,
+		};
+
+	const { hits = [], nbPages, page } = result;
+
+	if (nbPages === undefined || page === undefined) {
+		return {
+			hits,
+			nextPage: undefined,
+		};
+	}
+
 	const nextPage = page + 1 < nbPages ? page + 1 : undefined;
-	return { hits, nextPage };
+
+	return {
+		hits,
+		nextPage,
+	};
 }

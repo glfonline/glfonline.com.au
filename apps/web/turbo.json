@@ -2,6 +2,9 @@
 	"$schema": "https://turbo.build/schema.json",
 	"extends": ["//"],
 	"tasks": {
+		"check:types": {
+			"dependsOn": ["^build"]
+		},
 		"build": {
 			"dependsOn": ["^build"],
 			"env": ["ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_API_KEY", "TURNSTILE_SECRET_KEY"],
