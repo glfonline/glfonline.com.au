@@ -9,7 +9,6 @@ import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { PortableText } from '../lib/portable-text';
 import { PostSchema } from '../lib/post-schema';
 import { urlFor } from '../lib/sanity-image';
-import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
 
@@ -32,10 +31,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
-		title: data.page.title,
-	});
-	return [seoMeta];
+	return [];
 };
 
 export default function Page() {

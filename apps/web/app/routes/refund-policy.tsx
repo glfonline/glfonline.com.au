@@ -5,7 +5,6 @@ import invariant from 'tiny-invariant';
 
 import { PageLayout } from '../components/page-layout';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
-import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
 
@@ -27,10 +26,7 @@ export async function loader() {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
-		title: data.page.title,
-	});
-	return [seoMeta];
+	return [];
 };
 
 export default function Page() {

@@ -11,7 +11,6 @@ import { getBlogPostCount, getBlogPosts } from '../lib/get-blog-posts';
 import { getFeaturedBlogPost } from '../lib/get-featured-blog-post';
 import { PortableText, type PortableTextProps } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
-import { getSeoMeta } from '../seo';
 import type { Theme } from '../types';
 
 const POSTS_LIMIT = 5;
@@ -54,10 +53,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
-		title: data.title,
-	});
-	return [seoMeta];
+	return [];
 };
 
 export default function Blog() {

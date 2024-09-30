@@ -10,7 +10,6 @@ import { Heading } from '../components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
-import { getSeoMeta } from '../seo';
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request);
@@ -72,10 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
 }
 
 export const meta: MetaFunction = () => {
-	const seoMeta = getSeoMeta({
-		title: 'Cart',
-	});
-	return [seoMeta];
+	return [];
 };
 
 export default function CartPage() {

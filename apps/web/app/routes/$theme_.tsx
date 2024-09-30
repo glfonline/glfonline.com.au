@@ -8,7 +8,6 @@ import { CollectionCard } from '../components/collection-card';
 import { brandsWeLove } from '../lib/brands-we-love';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { urlFor } from '../lib/sanity-image';
-import { getSeoMeta } from '../seo';
 
 const ThemeSchema = z.object({
 	theme: z.enum(['ladies', 'mens']),
@@ -44,12 +43,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	});
 }
 
-export const meta: MetaFunction<typeof loader> = ({ params }) => {
-	const seoMeta = getSeoMeta({
-		title: `Shop ${params.theme === 'ladies' ? 'Ladies' : 'Mens'}`,
-	});
-
-	return [seoMeta];
+export const meta: MetaFunction<typeof loader> = () => {
+	return [];
 };
 
 export default function CollectionsPage() {

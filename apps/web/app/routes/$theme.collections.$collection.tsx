@@ -23,7 +23,6 @@ import { capitalise } from '../lib/capitalise';
 import { formatMoney } from '../lib/format-money';
 import { type SortBy, getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { PRODUCT_TYPE, getProductFilterOptions } from '../lib/get-product-filter-options';
-import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
@@ -106,11 +105,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
-		title: `Shop ${data.title}`,
-	});
-
-	return [seoMeta];
+	return [];
 };
 
 export default function CollectionPage() {

@@ -16,7 +16,6 @@ import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
 
@@ -67,11 +66,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
-		title: data.product.title,
-		description: data.product.description,
-	});
-	return [seoMeta];
+	return [];
 };
 
 export default function ProductPage() {

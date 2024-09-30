@@ -12,7 +12,6 @@ import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
-import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
 
@@ -45,10 +44,7 @@ export async function loader() {
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
-		title: data.title,
-	});
-	return [seoMeta];
+	return [];
 };
 
 export default function TestimonialsPage() {
