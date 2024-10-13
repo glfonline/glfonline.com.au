@@ -12997,7 +12997,7 @@ type StoreAvailabilityEdge {
 	node: StoreAvailability!
 }
 
-"An auto-generated type for paginating through a list of Strings.\n"
+"An auto-generated type for paginating through multiple Strings.\n"
 type StringConnection {
 	"""
 	A list of edges.

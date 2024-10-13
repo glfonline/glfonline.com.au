@@ -29,7 +29,7 @@
 		"test:e2e": "turbo run test:e2e"
 	},
 	"dependencies": {
-		"@biomejs/biome": "1.9.2",
+		"@biomejs/biome": "1.9.3",
 		"@glfonline/tsconfig": "workspace:^",
 		"@manypkg/cli": "^0.21.4",
 		"stale-dep": "^0.7.0",
