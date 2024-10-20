@@ -31,7 +31,7 @@
 	"dependencies": {
 		"@biomejs/biome": "1.9.3",
 		"@glfonline/tsconfig": "workspace:^",
-		"@manypkg/cli": "^0.21.4",
+		"@manypkg/cli": "^0.22.0",
 		"stale-dep": "^0.7.0",
 		"turbo": "^2.2.1",
 		"typescript": "^5.6.2"
