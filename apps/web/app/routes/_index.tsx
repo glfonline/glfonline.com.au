@@ -1,6 +1,6 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { json } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { type MetaFunction, useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
@@ -20,6 +20,7 @@ import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
+import { getSeoMeta } from '../seo';
 import type { Theme } from '../types';
 
 export const headers = routeHeaders;
@@ -49,6 +50,11 @@ export async function loader() {
 		},
 	});
 }
+
+export const meta: MetaFunction<typeof loader> = () => {
+	const seoMeta = getSeoMeta();
+	return [seoMeta];
+};
 
 export default function Index() {
 	const { brandsWeLove } = useLoaderData<typeof loader>();
