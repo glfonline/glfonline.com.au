@@ -262,7 +262,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -635,7 +635,7 @@ type Blog implements HasMetafields & Node & OnlineStorePublishable {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -941,7 +941,7 @@ type Cart implements HasMetafields & Node {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -1040,7 +1040,7 @@ input CartBuyerIdentityInput {
 	An ordered set of delivery addresses tied to the buyer that is interacting with the cart.
 	The rank of the preferences is determined by the order of the addresses in the array. Preferences
 	can be used to populate relevant fields in the checkout flow.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	deliveryAddressPreferences: [DeliveryAddressInput!]
@@ -1542,7 +1542,7 @@ The input fields to create a cart.
 input CartInput {
 	"""
 	An array of key-value pairs that contains additional information about the cart.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	attributes: [AttributeInput!]
@@ -1552,21 +1552,21 @@ input CartInput {
 
 	"""
 	The case-insensitive discount codes that the customer added at checkout.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	discountCodes: [String!]
 
 	"""
 	A list of merchandise lines to add to the cart.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	lines: [CartLineInput!]
 
 	"""
 	The metafields to associate with this cart.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	metafields: [CartInputMetafieldInput!]
@@ -1700,7 +1700,7 @@ The input fields to create a merchandise line on a cart.
 input CartLineInput {
 	"""
 	An array of key-value pairs that contains additional information about the merchandise line.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	attributes: [AttributeInput!]
@@ -1727,7 +1727,7 @@ The input fields to update a line item on a cart.
 input CartLineUpdateInput {
 	"""
 	An array of key-value pairs that contains additional information about the merchandise line.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	attributes: [AttributeInput!]
@@ -2214,7 +2214,7 @@ input CheckoutAttributesUpdateV2Input {
 
 	"""
 	A list of extra information that's added to the checkout.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	customAttributes: [AttributeInput!]
@@ -2347,7 +2347,7 @@ input CheckoutCreateInput {
 
 	"""
 	A list of extra information that's added to the checkout.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	customAttributes: [AttributeInput!]
@@ -2359,7 +2359,7 @@ input CheckoutCreateInput {
 
 	"""
 	A list of line item objects, each one containing information about an item in the checkout.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	lineItems: [CheckoutLineItemInput!]
@@ -2857,7 +2857,7 @@ The input fields to create a line item on a checkout.
 input CheckoutLineItemInput {
 	"""
 	Extra information in the form of an array of Key-Value pairs about the line item.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	customAttributes: [AttributeInput!]
@@ -2879,7 +2879,7 @@ The input fields to update a line item on the checkout.
 input CheckoutLineItemUpdateInput {
 	"""
 	Extra information in the form of an array of Key-Value pairs about the line item.
-	
+
 	The input must not contain more than `250` values.
 	"""
 	customAttributes: [AttributeInput!]
@@ -3086,7 +3086,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -3113,7 +3113,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 
 		"""
 		Returns a subset of products matching all product filters.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		filters: [ProductFilter!]
@@ -5699,7 +5699,7 @@ type Customer implements HasMetafields {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -6862,7 +6862,7 @@ interface HasMetafields {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -7851,7 +7851,7 @@ type Location implements HasMetafields & Node {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -8222,7 +8222,7 @@ type Market implements HasMetafields & Node {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -9049,7 +9049,7 @@ type Mutation {
 	cartAttributesUpdate(
 		"""
 		An array of key-value pairs that contains additional information about the cart.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		attributes: [AttributeInput!]!
@@ -9092,7 +9092,7 @@ type Mutation {
 
 		"""
 		The case-insensitive discount codes that the customer added at checkout.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		discountCodes: [String!]
@@ -9109,7 +9109,7 @@ type Mutation {
 
 		"""
 		A list of merchandise lines to add to the cart.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lines: [CartLineInput!]!
@@ -9126,7 +9126,7 @@ type Mutation {
 
 		"""
 		The merchandise line IDs to remove.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lineIds: [ID!]!
@@ -9143,7 +9143,7 @@ type Mutation {
 
 		"""
 		The merchandise lines to update.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lines: [CartLineUpdateInput!]!
@@ -9163,7 +9163,7 @@ type Mutation {
 	cartMetafieldsSet(
 		"""
 		The list of Cart metafield values to set. Maximum of 25.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		metafields: [CartMetafieldsSetInput!]!
@@ -9210,7 +9210,7 @@ type Mutation {
 
 		"""
 		The selected delivery options.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		selectedDeliveryOptions: [CartSelectedDeliveryOptionInput!]!
@@ -9423,7 +9423,7 @@ type Mutation {
 
 		"""
 		A list of gift card codes to append to the checkout.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		giftCardCodes: [String!]!
@@ -9443,7 +9443,7 @@ type Mutation {
 
 		"""
 		A list of line item objects to add to the checkout.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lineItems: [CheckoutLineItemInput!]!
@@ -9463,7 +9463,7 @@ type Mutation {
 
 		"""
 		Line item ids to remove.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lineItemIds: [ID!]!
@@ -9483,7 +9483,7 @@ type Mutation {
 
 		"""
 		A list of line item objects to set on the checkout.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lineItems: [CheckoutLineItemInput!]!
@@ -9503,7 +9503,7 @@ type Mutation {
 
 		"""
 		Line items to update.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		lineItems: [CheckoutLineItemUpdateInput!]!
@@ -9920,7 +9920,7 @@ type Order implements HasMetafields & Node {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -10336,7 +10336,7 @@ type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -10846,7 +10846,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -10945,7 +10945,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	variantBySelectedOptions(
 		"""
 		The input fields used for a selected option.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		selectedOptions: [SelectedOptionInput!]!
@@ -11307,7 +11307,7 @@ type ProductVariant implements HasMetafields & Node {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
@@ -11824,7 +11824,7 @@ type QueryRoot {
 	nodes(
 		"""
 		The IDs of the Nodes to return.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		ids: [ID!]!
@@ -11914,14 +11914,14 @@ type QueryRoot {
 
 		"""
 		Specifies the list of resource fields to use for search. The default fields searched on are TITLE, PRODUCT_TYPE, VARIANT_TITLE, and VENDOR. For the best search experience, you should search on the default field set.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		searchableFields: [SearchableField!]
 
 		"""
 		The types of resources to search for.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		types: [PredictiveSearchType!]
@@ -12060,7 +12060,7 @@ type QueryRoot {
 
 		"""
 		Returns a subset of products matching all product filters.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		productFilters: [ProductFilter!]
@@ -12082,7 +12082,7 @@ type QueryRoot {
 
 		"""
 		The types of resources to search for.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		types: [SearchType!]
@@ -12815,7 +12815,7 @@ type Shop implements HasMetafields & Node {
 	metafields(
 		"""
 		The list of metafields to retrieve by namespace and key.
-		
+
 		The input must not contain more than `250` values.
 		"""
 		identifiers: [HasMetafieldsIdentifier!]!
