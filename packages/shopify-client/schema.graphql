@@ -8474,7 +8474,7 @@ type MenuItem implements Node {
 }
 
 "The list of possible resources a `MenuItem` can reference.\n"
-union MenuItemResource = Article | Blog | Collection | Page | Product | ShopPolicy
+union MenuItemResource = Article | Blog | Collection | Metaobject | Page | Product | ShopPolicy
 
 """
 A menu item type.
@@ -8514,6 +8514,11 @@ enum MenuItemType {
 	An http link.
 	"""
 	HTTP
+
+	"""
+	A metaobject page link.
+	"""
+	METAOBJECT
 
 	"""
 	A page link.
@@ -10944,6 +10949,16 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	"Find a product’s variant based on its selected options.\nThis is useful for converting a user’s selection of product options into a single matching variant.\nIf there is not a variant for the selected options, `null` will be returned.\n"
 	variantBySelectedOptions(
 		"""
+		Whether to perform case insensitive match on option names and values.
+		"""
+		caseInsensitiveMatch: Boolean = false
+
+		"""
+		Whether to ignore unknown product options.
+		"""
+		ignoreUnknownOptions: Boolean = false
+
+		"""
 		The input fields used for a selected option.
 
 		The input must not contain more than `250` values.
@@ -11412,6 +11427,11 @@ type ProductVariant implements HasMetafields & Node {
 		"""
 		reverse: Boolean = false
 	): StoreAvailabilityConnection!
+
+	"""
+	Whether tax is charged when the product variant is sold.
+	"""
+	taxable: Boolean!
 
 	"""
 	The product variant’s title.
@@ -11987,7 +12007,7 @@ type QueryRoot {
 	): StringConnection!
 
 	"""
-	List of the shop’s products. For storefront search, use [`search` query](https://shopify.dev/docs/api/storefront/latest/queries/search).
+	Returns a list of the shop's products. For storefront search, use the [`search`](https://shopify.dev/docs/api/storefront/latest/queries/search) query.
 	"""
 	products(
 		"""
@@ -12010,7 +12030,7 @@ type QueryRoot {
 		"""
 		last: Int
 
-		"Apply one or multiple filters to the query.\n| name | description | acceptable_values | default_value | example_use |\n| ---- | ---- | ---- | ---- | ---- |\n| available_for_sale |\n| created_at |\n| product_type |\n| tag |\n| tag_not |\n| title |\n| updated_at |\n| variants.price |\n| vendor |\nRefer to the detailed [search syntax](https://shopify.dev/api/usage/search-syntax) for more information about using filters.\n"
+		"You can apply one or multiple filters to a query.\n| name | description | acceptable_values | default_value | example_use |\n| ---- | ---- | ---- | ---- | ---- |\n| available_for_sale | Filter by products that have at least one product variant available for sale. |\n| created_at | Filter by the date and time when the product was created. | | | - `created_at:>'2020-10-21T23:39:20Z'`<br/> - `created_at:<now`<br/> - `created_at:<=2024` |\n| product_type | Filter by a comma-separated list of [product types](https://help.shopify.com/en/manual/products/details/product-type). | | | `product_type:snowboard` |\n| tag | Filter products by the product [`tags`](https://shopify.dev/docs/api/storefront/latest/objects/Product#field-tags) field. | | | `tag:my_tag` |\n| tag_not | Filter by products that don't have the specified product [tags](https://shopify.dev/docs/api/storefront/latest/objects/Product#field-tags). | | | `tag_not:my_tag` |\n| title | Filter by the product [`title`](https://shopify.dev/docs/api/storefront/latest/objects/Product#field-title) field. | | | `title:The Minimal Snowboard` |\n| updated_at | Filter by the date and time when the product was last updated. | | | - `updated_at:>'2020-10-21T23:39:20Z'`<br/> - `updated_at:<now`<br/> - `updated_at:<=2024` |\n| variants.price | Filter by the price of the product's variants. |\n| vendor | Filter by the product [`vendor`](https://shopify.dev/docs/api/storefront/latest/objects/Product#field-vendor) field. | | | - `vendor:Snowdevil`<br/> - `vendor:Snowdevil OR vendor:Icedevil` |\nLearn more about [Shopify API search syntax](https://shopify.dev/api/usage/search-syntax).\n"
 		query: String
 
 		"""
