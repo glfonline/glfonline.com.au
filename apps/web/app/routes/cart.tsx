@@ -21,19 +21,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 const INTENT = 'intent';
 
-const CHECKOUT_ACTION = 'checkout';
+const ACTIONS = {
+	CHECKOUT_ACTION: 'checkout',
+	DECREMENT_ACTION: 'decrement',
+	INCREMENT_ACTION: 'increment',
+	REMOVE_ACTION: 'remove',
+};
+
 const CheckoutScheme = z.object({
 	checkoutUrl: z.string().min(1),
 });
 
-const DECREMENT_ACTION = 'decrement';
-const INCREMENT_ACTION = 'increment';
 const QuantityScheme = z.object({
 	variantId: z.string().min(1),
 	quantity: z.coerce.number(),
 });
 
-const REMOVE_ACTION = 'remove';
 const RemoveScheme = z.object({
 	variantId: z.string().min(1),
 });
@@ -43,13 +46,13 @@ export async function action({ request }: ActionFunctionArgs) {
 	const intent = formData.get(INTENT);
 
 	switch (intent) {
-		case CHECKOUT_ACTION: {
+		case ACTIONS.CHECKOUT_ACTION: {
 			const { checkoutUrl } = CheckoutScheme.parse(Object.fromEntries(formData.entries()));
 			return redirect(checkoutUrl);
 		}
 
-		case INCREMENT_ACTION:
-		case DECREMENT_ACTION: {
+		case ACTIONS.INCREMENT_ACTION:
+		case ACTIONS.DECREMENT_ACTION: {
 			const { quantity, variantId } = QuantityScheme.parse(Object.fromEntries(formData.entries()));
 			const cart = await session.getCart();
 			const newCart = updateCartItem(cart, variantId, quantity);
@@ -57,7 +60,7 @@ export async function action({ request }: ActionFunctionArgs) {
 			return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
 		}
 
-		case REMOVE_ACTION: {
+		case ACTIONS.REMOVE_ACTION: {
 			const { variantId } = RemoveScheme.parse(Object.fromEntries(formData.entries()));
 			const cart = await session.getCart();
 			const newCart = removeCartItem(cart, variantId);
@@ -213,7 +216,7 @@ export default function CartPage() {
 							disabled={navigation.state !== 'idle'}
 							name={INTENT}
 							type="submit"
-							value={CHECKOUT_ACTION}
+							value={ACTIONS.CHECKOUT_ACTION}
 							variant="neutral"
 						>
 							Checkout
@@ -254,7 +257,7 @@ function QuantityPicker({
 						disabled={quantity <= 1}
 						name={INTENT}
 						type="submit"
-						value={DECREMENT_ACTION}
+						value={ACTIONS.DECREMENT_ACTION}
 					>
 						<ChevronLeftIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
@@ -281,7 +284,7 @@ function QuantityPicker({
 						disabled={quantity + 1 >= quantityAvailable}
 						name={INTENT}
 						type="submit"
-						value={INCREMENT_ACTION}
+						value={ACTIONS.INCREMENT_ACTION}
 					>
 						<ChevronRightIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
@@ -304,7 +307,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 				)}
 				name={INTENT}
 				type="submit"
-				value={REMOVE_ACTION}
+				value={ACTIONS.REMOVE_ACTION}
 			>
 				<span className="sr-only">Remove</span>
 				<XMarkIcon aria-hidden="true" className="h-5 w-5" />
