@@ -39,13 +39,13 @@
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
-		"@graphql-codegen/cli": "^5.0.2",
+		"@graphql-codegen/cli": "^5.0.3",
 		"@graphql-codegen/schema-ast": "^4.1.0",
 		"concurrently": "^9.0.1",
 		"graphql": "^16.9.0",
 		"react": "^18.3.1",
-		"tsup": "^8.3.0",
-		"typescript": "^5.6.2"
+		"tsup": "^8.3.4",
+		"typescript": "^5.6.3"
 	},
 	"ts-gql": {
 		"addTypenames": false,

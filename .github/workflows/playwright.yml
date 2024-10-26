@@ -42,10 +42,9 @@ jobs:
           path: |
             node_modules
             packages/**/node_modules
-          key: turbo-${{ hashFiles('pnpm-lock.yaml') }}-${{ github.sha }}
+          key: turbo-${{ hashFiles('pnpm-lock.yaml') }}
           restore-keys: |
-            turbo-${{ hashFiles('pnpm-lock.yaml') }}
-            turbo-${{ github.ref }}-
+            turbo-
 
       - name: 📥 Install dependencies (if cache is not restored)
         run: pnpm install --prefer-offline --frozen-lockfile
@@ -57,7 +56,8 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: playwright-${{ runner.os }}-
+          restore-keys: |
+            playwright-${{ runner.os }}-
 
       - name: 📥 Install Playwright Browsers (if cache is not restored)
         run: pnpm dlx playwright install --with-deps
