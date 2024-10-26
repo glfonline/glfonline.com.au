@@ -119,7 +119,7 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 
 							{/* Social Links */}
 							<div className="mt-auto flex flex-shrink-0 justify-between border-t border-gray-200 p-4">
-								<div className="text-gray-500">&copy; GLF Online 2023</div>
+								<div className="text-gray-500">&copy; GLF Online {new Date().getFullYear()}</div>
 								<div className="flex gap-4">
 									{socialLinks.map((link) => (
 										<a

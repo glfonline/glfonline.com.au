@@ -400,44 +400,73 @@ export const CART_QUERY = gql`
  * Mutations
  ******************************************************************************/
 
-export const CREATE_CHECKOUT_MUTATION = gql`
-	mutation CREATE_CHECKOUT_MUTATION($input: CheckoutCreateInput!) {
-		checkoutCreate(input: $input) {
-			checkout {
+export const CREATE_CART_MUTATION = gql`
+	mutation CREATE_CART_MUTATION($input: CartInput!) {
+		cartCreate(input: $input) {
+			cart {
 				id
-				lineItems(first: 250) {
+				checkoutUrl
+				lines(first: 250) {
 					edges {
 						node {
 							id
 							quantity
-							title
-							variant {
-								id
-								availableForSale
-								currentlyNotInStock
-								image {
-									...IMAGE_FRAGMENT
+							cost {
+								amountPerQuantity {
+									...MONEY_FRAGMENT
 								}
-								price {
-									amount
+								compareAtAmountPerQuantity {
+									...MONEY_FRAGMENT
 								}
-								product {
+								totalAmount {
+									...MONEY_FRAGMENT
+								}
+							}
+							merchandise {
+								... on ProductVariant {
 									id
-									handle
-									tags
+									availableForSale
+									currentlyNotInStock
+									image {
+										...IMAGE_FRAGMENT
+									}
+									price {
+										...MONEY_FRAGMENT
+									}
+									product {
+										id
+										handle
+										tags
+										title
+									}
+									quantityAvailable
+									title
 								}
-								quantityAvailable
-								title
 							}
 						}
 					}
 				}
-				subtotalPrice {
-					amount
+				cost {
+					subtotalAmount {
+						...MONEY_FRAGMENT
+					}
+					totalAmount {
+						...MONEY_FRAGMENT
+					}
+					totalDutyAmount {
+						...MONEY_FRAGMENT
+					}
+					totalTaxAmount {
+						...MONEY_FRAGMENT
+					}
 				}
-				webUrl
+			}
+			userErrors {
+				field
+				message
 			}
 		}
 	}
 	${IMAGE_FRAGMENT}
-` as import('../__generated__/ts-gql/CREATE_CHECKOUT_MUTATION').type;
+	${MONEY_FRAGMENT}
+` as import('../__generated__/ts-gql/CREATE_CART_MUTATION').type;

@@ -23,7 +23,7 @@ const INTENT = 'intent';
 
 const CHECKOUT_ACTION = 'checkout';
 const CheckoutScheme = z.object({
-	webUrl: z.string().min(1),
+	checkoutUrl: z.string().min(1),
 });
 
 const DECREMENT_ACTION = 'decrement';
@@ -44,8 +44,8 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	switch (intent) {
 		case CHECKOUT_ACTION: {
-			const { webUrl } = CheckoutScheme.parse(Object.fromEntries(formData.entries()));
-			return redirect(webUrl);
+			const { checkoutUrl } = CheckoutScheme.parse(Object.fromEntries(formData.entries()));
+			return redirect(checkoutUrl);
 		}
 
 		case INCREMENT_ACTION:
@@ -82,7 +82,7 @@ export default function CartPage() {
 	const { cartInfo } = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
 
-	if (cartInfo?.lineItems.edges.length === 0) {
+	if (cartInfo?.lines.edges.length === 0) {
 		return (
 			<div className="bg-white">
 				<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 text-center sm:px-6 lg:max-w-7xl lg:px-8">
@@ -114,24 +114,21 @@ export default function CartPage() {
 							Items in your shopping cart
 						</h2>
 
-						{Array.isArray(cartInfo?.lineItems.edges) ? (
+						{Array.isArray(cartInfo?.lines.edges) ? (
 							<ul className="divide-y divide-gray-200 border-b border-t border-gray-200" role="list">
-								{/* biome-ignore lint/complexity/noExcessiveCognitiveComplexity: */}
-								{cartInfo.lineItems.edges.map(({ node }) => {
-									const theme = node.variant?.product.tags.map((tag) => tag.toLocaleLowerCase()).includes('ladies')
-										? 'ladies'
-										: 'mens';
+								{cartInfo.lines.edges.map(({ node }) => {
+									const theme = node.merchandise.product.tags.includes('ladies') ? 'ladies' : 'mens';
 									return (
 										<li className="flex py-6 sm:py-10" data-theme={theme} key={node.id}>
 											<div className="flex-shrink-0">
-												{node.variant?.image?.url ? (
+												{node.merchandise.image?.url ? (
 													<Image
-														alt={node.variant.image.altText ?? ''}
+														alt={node.merchandise.image.altText ?? ''}
 														className="h-24 w-24 object-contain object-center sm:h-48 sm:w-48"
 														height={192}
 														layout="constrained"
 														priority={false}
-														src={node.variant.image.url}
+														src={node.merchandise.image.url}
 														width={192}
 													/>
 												) : (
@@ -147,40 +144,39 @@ export default function CartPage() {
 																<Link
 																	className="text-gray-700 hover:text-gray-800"
 																	prefetch="intent"
-																	to={`/${theme}/products/${node.variant?.product.handle}`}
+																	to={`/${theme}/products/${node.merchandise.product.handle}`}
 																>
-																	{node.title}
+																	{node.merchandise.product.title}
 																</Link>
 															</h3>
 														</div>
-														{node.variant?.title !== 'Default Title' ? (
+														{node.merchandise.title !== 'Default Title' && (
 															<div className="mt-1 flex text-sm">
-																<p className="text-gray-500">{node.variant?.title}</p>
+																<p className="text-gray-500">{node.merchandise.title}</p>
 															</div>
-														) : null}
+														)}
 														<p className="mt-1 text-sm text-gray-900">
-															{formatMoney(node.variant?.price.amount, 'AUD')}
+															{formatMoney(node.cost.amountPerQuantity.amount, 'AUD')}
 														</p>
 													</div>
 
 													<div className="mt-4 sm:mt-0 sm:pr-9">
 														<QuantityPicker
 															quantity={node.quantity}
-															quantityAvailable={node.variant?.quantityAvailable ?? 0}
-															variantId={node.variant?.id ?? ''}
+															quantityAvailable={node.merchandise.quantityAvailable ?? 0}
+															variantId={node.merchandise.id}
 														/>
-														<RemoveFromCart variantId={node.variant?.id ?? ''} />
+														<RemoveFromCart variantId={node.merchandise.id} />
 													</div>
 												</div>
 
 												<p className="mt-4 flex space-x-2 text-sm text-gray-700">
-													{node.variant?.currentlyNotInStock ? (
+													{node.merchandise.currentlyNotInStock ? (
 														<ClockIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-gray-300" />
 													) : (
 														<CheckIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-green-500" />
 													)}
-
-													<span>{node.variant?.currentlyNotInStock ? 'Out of stock' : 'In stock'}</span>
+													<span>{node.merchandise.currentlyNotInStock ? 'Out of stock' : 'In stock'}</span>
 												</p>
 											</div>
 										</li>
@@ -203,13 +199,15 @@ export default function CartPage() {
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
-								<dd className="text-sm text-gray-900">{formatMoney(cartInfo?.subtotalPrice.amount || 0, 'AUD')}</dd>
+								<dd className="text-sm text-gray-900">
+									{formatMoney(cartInfo?.cost.subtotalAmount.amount || 0, 'AUD')}
+								</dd>
 							</div>
 						</dl>
 
 						<p className="text-sm text-gray-600">Taxes and shipping are calculated at checkout</p>
 
-						{cartInfo?.webUrl ? <input name="webUrl" type="hidden" value={cartInfo.webUrl} /> : null}
+						{cartInfo?.checkoutUrl && <input name="checkoutUrl" type="hidden" value={cartInfo.checkoutUrl} />}
 
 						<Button
 							disabled={navigation.state !== 'idle'}

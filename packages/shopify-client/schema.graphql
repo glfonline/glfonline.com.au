@@ -14,9 +14,25 @@ directive @accessRestricted(
 ) on FIELD_DEFINITION | OBJECT
 
 """
+Informs the server to delay the execution of the current fragment, potentially resulting in multiple responses from the server. Non-deferred data is delivered in the initial response and data deferred is delivered in subsequent responses. Only available on development stores with the Defer Directive developer preview enabled.
+"""
+directive @defer(
+	"When `true`, fragment should be deferred. When `false`, fragment will not be\ndeferred and data will be included in the initial response. Defaults to `true`\nwhen omitted.\n"
+	if: Boolean = true
+
+	"May be used to identify the data from responses and associate it with the\ncorresponding defer directive. `label` must be unique label across all `@defer` and\n`@stream` directives in a document. `label` must not be provided as a variable.\n"
+	label: String
+) on FRAGMENT_SPREAD | INLINE_FRAGMENT
+
+"""
 Contextualizes data based on the additional information provided by the directive. For example, you can use the `@inContext(country: CA)` directive to [query a product's price](https://shopify.dev/custom-storefronts/internationalization/international-pricing) in a storefront within the context of Canada.
 """
 directive @inContext(
+	"""
+	The buyer's identity.
+	"""
+	buyer: BuyerInput
+
 	"""
 	The country code for context. For example, `CA`.
 	"""
@@ -451,19 +467,6 @@ type AutomaticDiscountApplication implements DiscountApplication {
 }
 
 """
-A collection of available shipping rates for a checkout.
-"""
-type AvailableShippingRates {
-	"Whether or not the shipping rates are ready.\nThe `shippingRates` field is `null` when this value is `false`.\nThis field should be polled until its value becomes `true`.\n"
-	ready: Boolean!
-
-	"""
-	The fetched shipping rates. `null` until the `ready` field is `true`.
-	"""
-	shippingRates: [ShippingRate!]
-}
-
-"""
 Represents a cart line common fields.
 """
 interface BaseCartLine implements Node {
@@ -770,6 +773,19 @@ type BrandColors {
 	secondary: [BrandColorGroup!]!
 }
 
+"The input fields for obtaining the buyer's identity.\n"
+input BuyerInput {
+	"""
+	The identifier of the company location.
+	"""
+	companyLocationId: ID
+
+	"""
+	The storefront customer access token retrieved from the [Customer Accounts API](https://shopify.dev/docs/api/customer/reference/mutations/storefrontCustomerAccessTokenCreate).
+	"""
+	customerAccessToken: String!
+}
+
 """
 Card brand, such as Visa or Mastercard, which can be used for payments.
 """
@@ -807,6 +823,11 @@ enum CardBrand {
 
 "A cart represents the merchandise that a buyer intends to purchase,\nand the estimated cost associated with the cart. Learn how to\n[interact with a cart](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nduring a customer's session.\n"
 type Cart implements HasMetafields & Node {
+	"""
+	The gift cards that have been applied to the cart.
+	"""
+	appliedGiftCards: [AppliedGiftCard!]!
+
 	"""
 	An attribute associated with the cart.
 	"""
@@ -868,6 +889,9 @@ type Cart implements HasMetafields & Node {
 		Reverse the order of the underlying list.
 		"""
 		reverse: Boolean = false
+
+		"Whether to include [carrier-calculated delivery rates](https://help.shopify.com/en/manual/shipping/setting-up-and-managing-your-shipping/enabling-shipping-carriers) in the response.\n\nBy default, only static shipping rates are returned. This argument requires mandatory usage of the [`@defer` directive](https://shopify.dev/docs/api/storefront#directives).\n\nFor more information, refer to [fetching carrier-calculated rates for the cart using `@defer`](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/defer#fetching-carrier-calculated-rates-for-the-cart-using-defer).\n"
+		withCarrierRates: Boolean = false
 	): CartDeliveryGroupConnection!
 
 	"""
@@ -988,9 +1012,29 @@ type CartAutomaticDiscountAllocation implements CartDiscountAllocation {
 	discountedAmount: MoneyV2!
 
 	"""
+	The type of line that the discount is applicable towards.
+	"""
+	targetType: DiscountApplicationTargetType!
+
+	"""
 	The title of the allocated discount.
 	"""
 	title: String!
+}
+
+"""
+Return type for `cartBillingAddressUpdate` mutation.
+"""
+type CartBillingAddressUpdatePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
 }
 
 """
@@ -1020,12 +1064,22 @@ type CartBuyerIdentity {
 	"""
 	phone: String
 
-	"A set of wallet preferences tied to the buyer that is interacting with the cart.\nPreferences can be used to populate relevant payment fields in the checkout flow.\n"
-	walletPreferences: [String!]! @deprecated(reason: "Use `preferences` instead.")
+	"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
+	preferences: CartPreferences
+
+	"""
+	The purchasing company associated with the cart.
+	"""
+	purchasingCompany: PurchasingCompany
 }
 
 "Specifies the input fields to update the buyer information associated with a cart.\nBuyer identity is used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nand should match the customer's shipping address.\n"
 input CartBuyerIdentityInput {
+	"""
+	The company location of the buyer that is interacting with the cart.
+	"""
+	companyLocationId: ID
+
 	"""
 	The country where the buyer is located.
 	"""
@@ -1054,6 +1108,9 @@ input CartBuyerIdentityInput {
 	The phone number of the buyer that is interacting with the cart.
 	"""
 	phone: String
+
+	"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
+	preferences: CartPreferencesInput
 }
 
 """
@@ -1090,6 +1147,11 @@ type CartCodeDiscountAllocation implements CartDiscountAllocation {
 	The discounted amount that has been applied to the cart line.
 	"""
 	discountedAmount: MoneyV2!
+
+	"""
+	The type of line that the discount is applicable towards.
+	"""
+	targetType: DiscountApplicationTargetType!
 }
 
 """
@@ -1249,9 +1311,50 @@ type CartCustomDiscountAllocation implements CartDiscountAllocation {
 	discountedAmount: MoneyV2!
 
 	"""
+	The type of line that the discount is applicable towards.
+	"""
+	targetType: DiscountApplicationTargetType!
+
+	"""
 	The title of the allocated discount.
 	"""
 	title: String!
+}
+
+"""
+Preferred location used to find the closest pick up point based on coordinates.
+"""
+type CartDeliveryCoordinatesPreference {
+	"The two-letter code for the country of the preferred location.\n\nFor example, US.\n"
+	countryCode: CountryCode!
+
+	"""
+	The geographic latitude for a given location. Coordinates are required in order to set pickUpHandle for pickup points.
+	"""
+	latitude: Float!
+
+	"""
+	The geographic longitude for a given location. Coordinates are required in order to set pickUpHandle for pickup points.
+	"""
+	longitude: Float!
+}
+
+"""
+Preferred location used to find the closest pick up point based on coordinates.
+"""
+input CartDeliveryCoordinatesPreferenceInput {
+	"The two-letter code for the country of the preferred location.\n\nFor example, US.\n"
+	countryCode: CountryCode!
+
+	"""
+	The geographic latitude for a given location. Coordinates are required in order to set pickUpHandle for pickup points.
+	"""
+	latitude: Float!
+
+	"""
+	The geographic longitude for a given location. Coordinates are required in order to set pickUpHandle for pickup points.
+	"""
+	longitude: Float!
 }
 
 """
@@ -1299,6 +1402,11 @@ type CartDeliveryGroup {
 	deliveryOptions: [CartDeliveryOption!]!
 
 	"""
+	The type of merchandise in the delivery group.
+	"""
+	groupType: CartDeliveryGroupType!
+
+	"""
 	The ID for the delivery group.
 	"""
 	id: ID!
@@ -1340,6 +1448,17 @@ type CartDeliveryGroupEdge {
 	node: CartDeliveryGroup!
 }
 
+"Defines what type of merchandise is in the delivery group.\n"
+enum CartDeliveryGroupType {
+	"The delivery group only contains merchandise that is either a one time purchase or a first delivery of\nsubscription merchandise.\n"
+	ONE_TIME_PURCHASE
+
+	"""
+	The delivery group only contains subscription merchandise.
+	"""
+	SUBSCRIPTION
+}
+
 """
 Information about a delivery option.
 """
@@ -1375,6 +1494,47 @@ type CartDeliveryOption {
 	title: String
 }
 
+"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
+type CartDeliveryPreference {
+	"""
+	Preferred location used to find the closest pick up point based on coordinates.
+	"""
+	coordinates: CartDeliveryCoordinatesPreference
+
+	"""
+	The preferred delivery methods such as shipping, local pickup or through pickup points.
+	"""
+	deliveryMethod: [PreferenceDeliveryMethodType!]!
+
+	"The pickup handle prefills checkout fields with the location for either local pickup or pickup points delivery methods.\nIt accepts both location ID for local pickup and external IDs for pickup points.\n"
+	pickupHandle: [String!]!
+}
+
+"""
+Delivery preferences can be used to prefill the delivery section at checkout.
+"""
+input CartDeliveryPreferenceInput {
+	"""
+	The coordinates of a delivery location in order of preference.
+	"""
+	coordinates: CartDeliveryCoordinatesPreferenceInput
+
+	"""
+	The preferred delivery methods such as shipping, local pickup or through pickup points.
+
+	The input must not contain more than `250` values.
+	"""
+	deliveryMethod: [PreferenceDeliveryMethodType!]
+
+	"""
+	The pickup handle prefills checkout fields with the location for either local pickup or pickup points delivery methods.
+	It accepts both location ID for local pickup and external IDs for pickup points.
+
+	The input must not contain more than `250` values.
+	"""
+	pickupHandle: [String!]
+}
+
 "The input fields for submitting direct payment method information for checkout.\n"
 input CartDirectPaymentMethodInput {
 	"""
@@ -1401,6 +1561,11 @@ interface CartDiscountAllocation {
 	The discounted amount that has been applied to the cart line.
 	"""
 	discountedAmount: MoneyV2!
+
+	"""
+	The type of line that the discount is applicable towards.
+	"""
+	targetType: DiscountApplicationTargetType!
 }
 
 """
@@ -1438,9 +1603,44 @@ Possible error codes that can be returned by `CartUserError`.
 """
 enum CartErrorCode {
 	"""
+	The specified address field contains emojis.
+	"""
+	ADDRESS_FIELD_CONTAINS_EMOJIS
+
+	"""
+	The specified address field contains HTML tags.
+	"""
+	ADDRESS_FIELD_CONTAINS_HTML_TAGS
+
+	"""
+	The specified address field contains a URL.
+	"""
+	ADDRESS_FIELD_CONTAINS_URL
+
+	"""
+	The specified address field does not match the expected pattern.
+	"""
+	ADDRESS_FIELD_DOES_NOT_MATCH_EXPECTED_PATTERN
+
+	"""
+	The specified address field is required.
+	"""
+	ADDRESS_FIELD_IS_REQUIRED
+
+	"""
+	The specified address field is too long.
+	"""
+	ADDRESS_FIELD_IS_TOO_LONG
+
+	"""
 	The input value is invalid.
 	"""
 	INVALID
+
+	"""
+	Company location not found or not allowed.
+	"""
+	INVALID_COMPANY_LOCATION
 
 	"""
 	Delivery group was not found in cart.
@@ -1451,6 +1651,11 @@ enum CartErrorCode {
 	Delivery option was not valid.
 	"""
 	INVALID_DELIVERY_OPTION
+
+	"""
+	The quantity must be a multiple of the specified increment.
+	"""
+	INVALID_INCREMENT
 
 	"""
 	Merchandise line was not found in cart.
@@ -1473,9 +1678,34 @@ enum CartErrorCode {
 	INVALID_PAYMENT_EMPTY_CART
 
 	"""
+	The given zip code is invalid for the provided country.
+	"""
+	INVALID_ZIP_CODE_FOR_COUNTRY
+
+	"""
+	The given zip code is invalid for the provided province.
+	"""
+	INVALID_ZIP_CODE_FOR_PROVINCE
+
+	"""
 	The input value should be less than the maximum value allowed.
 	"""
 	LESS_THAN
+
+	"""
+	The quantity must be below the specified maximum for the item.
+	"""
+	MAXIMUM_EXCEEDED
+
+	"""
+	The quantity must be above the specified minimum for the item.
+	"""
+	MINIMUM_NOT_MET
+
+	"""
+	The customer access token is required when setting a company location.
+	"""
+	MISSING_CUSTOMER_ACCESS_TOKEN
 
 	"""
 	Missing discount code.
@@ -1488,14 +1718,34 @@ enum CartErrorCode {
 	MISSING_NOTE
 
 	"""
+	The note length must be below the specified maximum.
+	"""
+	NOTE_TOO_LONG
+
+	"""
 	The payment method is not supported.
 	"""
 	PAYMENT_METHOD_NOT_SUPPORTED
 
 	"""
+	The given province cannot be found.
+	"""
+	PROVINCE_NOT_FOUND
+
+	"""
+	A general error occurred during address validation.
+	"""
+	UNSPECIFIED_ADDRESS_ERROR
+
+	"""
 	Validation failed.
 	"""
 	VALIDATION_CUSTOM
+
+	"""
+	The given zip code is unsupported.
+	"""
+	ZIP_CODE_NOT_SUPPORTED
 }
 
 """
@@ -1537,6 +1787,21 @@ input CartFreePaymentMethodInput {
 }
 
 """
+Return type for `cartGiftCardCodesUpdate` mutation.
+"""
+type CartGiftCardCodesUpdatePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+}
+
+"""
 The input fields to create a cart.
 """
 input CartInput {
@@ -1556,6 +1821,13 @@ input CartInput {
 	The input must not contain more than `250` values.
 	"""
 	discountCodes: [String!]
+
+	"""
+	The case-insensitive gift card codes.
+
+	The input must not contain more than `250` values.
+	"""
+	giftCardCodes: [String!]
 
 	"""
 	A list of merchandise lines to add to the cart.
@@ -1912,6 +2184,35 @@ type CartPaymentUpdatePayload {
 	userErrors: [CartUserError!]!
 }
 
+"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
+type CartPreferences {
+	"""
+	Delivery preferences can be used to prefill the delivery section in at checkout.
+	"""
+	delivery: CartDeliveryPreference
+
+	"Wallet preferences are used to populate relevant payment fields in the checkout flow.\nAccepted value: `[\"shop_pay\"]`.\n"
+	wallet: [String!]
+}
+
+"""
+The input fields represent preferences for the buyer that is interacting with the cart.
+"""
+input CartPreferencesInput {
+	"""
+	Delivery preferences can be used to prefill the delivery section in at checkout.
+	"""
+	delivery: CartDeliveryPreferenceInput
+
+	"""
+	Wallet preferences are used to populate relevant payment fields in the checkout flow.
+	Accepted value: `["shop_pay"]`.
+
+	The input must not contain more than `250` values.
+	"""
+	wallet: [String!]
+}
+
 "The input fields for updating the selected delivery options for a delivery group.\n"
 input CartSelectedDeliveryOptionInput {
 	"""
@@ -1991,1048 +2292,6 @@ input CartWalletPaymentMethodInput {
 	The payment method information for the Shop Pay wallet.
 	"""
 	shopPayWalletContent: ShopPayWalletContentInput
-}
-
-"A container for all the information required to checkout items and pay.\n\nThe Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information.\n"
-type Checkout implements Node {
-	"""
-	The gift cards used on the checkout.
-	"""
-	appliedGiftCards: [AppliedGiftCard!]!
-
-	"The available shipping rates for this Checkout.\nShould only be used when checkout `requiresShipping` is `true` and\nthe shipping address is valid.\n"
-	availableShippingRates: AvailableShippingRates
-
-	"""
-	The identity of the customer associated with the checkout.
-	"""
-	buyerIdentity: CheckoutBuyerIdentity!
-
-	"""
-	The date and time when the checkout was completed.
-	"""
-	completedAt: DateTime
-
-	"""
-	The date and time when the checkout was created.
-	"""
-	createdAt: DateTime!
-
-	"""
-	The currency code for the checkout.
-	"""
-	currencyCode: CurrencyCode!
-
-	"""
-	A list of extra information that's added to the checkout.
-	"""
-	customAttributes: [Attribute!]!
-
-	"""
-	Discounts that have been applied on the checkout.
-	"""
-	discountApplications(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): DiscountApplicationConnection!
-
-	"""
-	The email attached to this checkout.
-	"""
-	email: String
-
-	"""
-	A globally-unique ID.
-	"""
-	id: ID!
-
-	"""
-	A list of line item objects, each one containing information about an item in the checkout.
-	"""
-	lineItems(
-		"""
-		Returns the elements that come after the specified cursor.
-		"""
-		after: String
-
-		"""
-		Returns the elements that come before the specified cursor.
-		"""
-		before: String
-
-		"""
-		Returns up to the first `n` elements from the list.
-		"""
-		first: Int
-
-		"""
-		Returns up to the last `n` elements from the list.
-		"""
-		last: Int
-
-		"""
-		Reverse the order of the underlying list.
-		"""
-		reverse: Boolean = false
-	): CheckoutLineItemConnection!
-
-	"""
-	The sum of all the prices of all the items in the checkout. Duties, taxes, shipping and discounts excluded.
-	"""
-	lineItemsSubtotalPrice: MoneyV2!
-
-	"""
-	The note associated with the checkout.
-	"""
-	note: String
-
-	"""
-	The resulting order from a paid checkout.
-	"""
-	order: Order
-
-	"""
-	The <b>Order status</b> page for this Checkout, null when checkout isn't completed.
-	"""
-	orderStatusUrl: URL
-
-	"""
-	The amount left to be paid. This is equal to the cost of the line items, taxes, and shipping, minus discounts and gift cards.
-	"""
-	paymentDue: MoneyV2!
-
-	"""
-	The amount left to be paid. This is equal to the cost of the line items, duties, taxes, and shipping, minus discounts and gift cards.
-	"""
-	paymentDueV2: MoneyV2! @deprecated(reason: "Use `paymentDue` instead.")
-
-	"Whether or not the Checkout is ready and can be completed. Checkouts may\nhave asynchronous operations that can take time to finish. If you want\nto complete a checkout or ensure all the fields are populated and up to\ndate, polling is required until the value is true.\n"
-	ready: Boolean!
-
-	"""
-	States whether or not the fulfillment requires shipping.
-	"""
-	requiresShipping: Boolean!
-
-	"""
-	The shipping address to where the line items will be shipped.
-	"""
-	shippingAddress: MailingAddress
-
-	"The discounts that have been allocated onto the shipping line by discount applications.\n"
-	shippingDiscountAllocations: [DiscountAllocation!]!
-
-	"""
-	Once a shipping rate is selected by the customer it's transitioned to a `shipping_line` object.
-	"""
-	shippingLine: ShippingRate
-
-	"""
-	The price at checkout before shipping and taxes.
-	"""
-	subtotalPrice: MoneyV2!
-
-	"""
-	The price at checkout before duties, shipping, and taxes.
-	"""
-	subtotalPriceV2: MoneyV2! @deprecated(reason: "Use `subtotalPrice` instead.")
-
-	"""
-	Whether the checkout is tax exempt.
-	"""
-	taxExempt: Boolean!
-
-	"""
-	Whether taxes are included in the line item and shipping line prices.
-	"""
-	taxesIncluded: Boolean!
-
-	"""
-	The sum of all the duties applied to the line items in the checkout.
-	"""
-	totalDuties: MoneyV2
-
-	"""
-	The sum of all the prices of all the items in the checkout, including taxes and duties.
-	"""
-	totalPrice: MoneyV2!
-
-	"""
-	The sum of all the prices of all the items in the checkout, including taxes and duties.
-	"""
-	totalPriceV2: MoneyV2! @deprecated(reason: "Use `totalPrice` instead.")
-
-	"""
-	The sum of all the taxes applied to the line items and shipping lines in the checkout.
-	"""
-	totalTax: MoneyV2!
-
-	"""
-	The sum of all the taxes applied to the line items and shipping lines in the checkout.
-	"""
-	totalTaxV2: MoneyV2! @deprecated(reason: "Use `totalTax` instead.")
-
-	"""
-	The date and time when the checkout was last updated.
-	"""
-	updatedAt: DateTime!
-
-	"""
-	The url pointing to the checkout accessible from the web.
-	"""
-	webUrl: URL!
-}
-
-"""
-The input fields required to update a checkout's attributes.
-"""
-input CheckoutAttributesUpdateV2Input {
-	"Allows setting partial addresses on a Checkout, skipping the full validation of attributes.\nThe required attributes are city, province, and country.\nFull validation of the addresses is still done at completion time. Defaults to `false` with \neach operation.\n"
-	allowPartialAddresses: Boolean = false
-
-	"""
-	A list of extra information that's added to the checkout.
-
-	The input must not contain more than `250` values.
-	"""
-	customAttributes: [AttributeInput!]
-
-	"""
-	The text of an optional note that a shop owner can attach to the checkout.
-	"""
-	note: String
-}
-
-"""
-Return type for `checkoutAttributesUpdateV2` mutation.
-"""
-type CheckoutAttributesUpdateV2Payload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-The identity of the customer associated with the checkout.
-"""
-type CheckoutBuyerIdentity {
-	"""
-	The country code for the checkout. For example, `CA`.
-	"""
-	countryCode: CountryCode
-}
-
-"""
-The input fields for the identity of the customer associated with the checkout.
-"""
-input CheckoutBuyerIdentityInput {
-	"The country code of one of the shop's\n[enabled countries](https://help.shopify.com/en/manual/payments/shopify-payments/multi-currency/setup).\nFor example, `CA`. Including this field creates a checkout in the specified country's currency.\n"
-	countryCode: CountryCode!
-}
-
-"""
-Return type for `checkoutCompleteFree` mutation.
-"""
-type CheckoutCompleteFreePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutCompleteWithCreditCardV2` mutation.
-"""
-type CheckoutCompleteWithCreditCardV2Payload {
-	"""
-	The checkout on which the payment was applied.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	A representation of the attempted payment.
-	"""
-	payment: Payment
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutCompleteWithTokenizedPaymentV3` mutation.
-"""
-type CheckoutCompleteWithTokenizedPaymentV3Payload {
-	"""
-	The checkout on which the payment was applied.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	A representation of the attempted payment.
-	"""
-	payment: Payment
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-The input fields required to create a checkout.
-"""
-input CheckoutCreateInput {
-	"Allows setting partial addresses on a Checkout, skipping the full validation of attributes.\nThe required attributes are city, province, and country.\nFull validation of addresses is still done at completion time. Defaults to `null`.\n"
-	allowPartialAddresses: Boolean
-
-	"""
-	The identity of the customer associated with the checkout.
-	"""
-	buyerIdentity: CheckoutBuyerIdentityInput
-
-	"""
-	A list of extra information that's added to the checkout.
-
-	The input must not contain more than `250` values.
-	"""
-	customAttributes: [AttributeInput!]
-
-	"""
-	The email with which the customer wants to checkout.
-	"""
-	email: String
-
-	"""
-	A list of line item objects, each one containing information about an item in the checkout.
-
-	The input must not contain more than `250` values.
-	"""
-	lineItems: [CheckoutLineItemInput!]
-
-	"""
-	The text of an optional note that a shop owner can attach to the checkout.
-	"""
-	note: String
-
-	"""
-	The shipping address to where the line items will be shipped.
-	"""
-	shippingAddress: MailingAddressInput
-}
-
-"""
-Return type for `checkoutCreate` mutation.
-"""
-type CheckoutCreatePayload {
-	"""
-	The new checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The checkout queue token. Available only to selected stores.
-	"""
-	queueToken: String
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutCustomerAssociateV2` mutation.
-"""
-type CheckoutCustomerAssociateV2Payload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The associated customer object.
-	"""
-	customer: Customer
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutCustomerDisassociateV2` mutation.
-"""
-type CheckoutCustomerDisassociateV2Payload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutDiscountCodeApplyV2` mutation.
-"""
-type CheckoutDiscountCodeApplyV2Payload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutDiscountCodeRemove` mutation.
-"""
-type CheckoutDiscountCodeRemovePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutEmailUpdateV2` mutation.
-"""
-type CheckoutEmailUpdateV2Payload {
-	"""
-	The checkout object with the updated email.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Possible error codes that can be returned by `CheckoutUserError`.
-"""
-enum CheckoutErrorCode {
-	"""
-	Checkout is already completed.
-	"""
-	ALREADY_COMPLETED
-
-	"""
-	Input email contains an invalid domain name.
-	"""
-	BAD_DOMAIN
-
-	"""
-	The input value is blank.
-	"""
-	BLANK
-
-	"""
-	Cart does not meet discount requirements notice.
-	"""
-	CART_DOES_NOT_MEET_DISCOUNT_REQUIREMENTS_NOTICE
-
-	"""
-	Customer already used once per customer discount notice.
-	"""
-	CUSTOMER_ALREADY_USED_ONCE_PER_CUSTOMER_DISCOUNT_NOTICE
-
-	"""
-	Discount already applied.
-	"""
-	DISCOUNT_ALREADY_APPLIED
-
-	"""
-	Discount code isn't working right now. Please contact us for help.
-	"""
-	DISCOUNT_CODE_APPLICATION_FAILED
-
-	"""
-	Discount disabled.
-	"""
-	DISCOUNT_DISABLED
-
-	"""
-	Discount expired.
-	"""
-	DISCOUNT_EXPIRED
-
-	"""
-	Discount limit reached.
-	"""
-	DISCOUNT_LIMIT_REACHED
-
-	"""
-	Discount not found.
-	"""
-	DISCOUNT_NOT_FOUND
-
-	"""
-	Checkout is already completed.
-	"""
-	EMPTY
-
-	"""
-	Queue token has expired.
-	"""
-	EXPIRED_QUEUE_TOKEN
-
-	"""
-	Gift card has already been applied.
-	"""
-	GIFT_CARD_ALREADY_APPLIED
-
-	"""
-	Gift card code is invalid.
-	"""
-	GIFT_CARD_CODE_INVALID
-
-	"""
-	Gift card currency does not match checkout currency.
-	"""
-	GIFT_CARD_CURRENCY_MISMATCH
-
-	"""
-	Gift card has no funds left.
-	"""
-	GIFT_CARD_DEPLETED
-
-	"""
-	Gift card is disabled.
-	"""
-	GIFT_CARD_DISABLED
-
-	"""
-	Gift card is expired.
-	"""
-	GIFT_CARD_EXPIRED
-
-	"""
-	Gift card was not found.
-	"""
-	GIFT_CARD_NOT_FOUND
-
-	"""
-	Gift card cannot be applied to a checkout that contains a gift card.
-	"""
-	GIFT_CARD_UNUSABLE
-
-	"""
-	The input value should be greater than or equal to the minimum value allowed.
-	"""
-	GREATER_THAN_OR_EQUAL_TO
-
-	"""
-	Higher value discount applied.
-	"""
-	HIGHER_VALUE_DISCOUNT_APPLIED
-
-	"""
-	The input value is invalid.
-	"""
-	INVALID
-
-	"""
-	Cannot specify country and presentment currency code.
-	"""
-	INVALID_COUNTRY_AND_CURRENCY
-
-	"""
-	Input Zip is invalid for country provided.
-	"""
-	INVALID_FOR_COUNTRY
-
-	"""
-	Input Zip is invalid for country and province provided.
-	"""
-	INVALID_FOR_COUNTRY_AND_PROVINCE
-
-	"""
-	Invalid province in country.
-	"""
-	INVALID_PROVINCE_IN_COUNTRY
-
-	"""
-	Queue token is invalid.
-	"""
-	INVALID_QUEUE_TOKEN
-
-	"""
-	Invalid region in country.
-	"""
-	INVALID_REGION_IN_COUNTRY
-
-	"""
-	Invalid state in country.
-	"""
-	INVALID_STATE_IN_COUNTRY
-
-	"""
-	The input value should be less than the maximum value allowed.
-	"""
-	LESS_THAN
-
-	"""
-	The input value should be less than or equal to the maximum value allowed.
-	"""
-	LESS_THAN_OR_EQUAL_TO
-
-	"""
-	Line item was not found in checkout.
-	"""
-	LINE_ITEM_NOT_FOUND
-
-	"""
-	Checkout is locked.
-	"""
-	LOCKED
-
-	"""
-	Maximum number of discount codes limit reached.
-	"""
-	MAXIMUM_DISCOUNT_CODE_LIMIT_REACHED
-
-	"""
-	Missing payment input.
-	"""
-	MISSING_PAYMENT_INPUT
-
-	"""
-	Not enough in stock.
-	"""
-	NOT_ENOUGH_IN_STOCK
-
-	"""
-	Input value is not supported.
-	"""
-	NOT_SUPPORTED
-
-	"""
-	The input value needs to be blank.
-	"""
-	PRESENT
-
-	"""
-	Product is not published for this customer.
-	"""
-	PRODUCT_NOT_AVAILABLE
-
-	"""
-	Shipping rate expired.
-	"""
-	SHIPPING_RATE_EXPIRED
-
-	"""
-	Throttled during checkout.
-	"""
-	THROTTLED_DURING_CHECKOUT
-
-	"""
-	The input value is too long.
-	"""
-	TOO_LONG
-
-	"""
-	The amount of the payment does not match the value to be paid.
-	"""
-	TOTAL_PRICE_MISMATCH
-
-	"""
-	Unable to apply discount.
-	"""
-	UNABLE_TO_APPLY
-}
-
-"""
-Return type for `checkoutGiftCardRemoveV2` mutation.
-"""
-type CheckoutGiftCardRemoveV2Payload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutGiftCardsAppend` mutation.
-"""
-type CheckoutGiftCardsAppendPayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-A single line item in the checkout, grouped by variant and attributes.
-"""
-type CheckoutLineItem implements Node {
-	"""
-	Extra information in the form of an array of Key-Value pairs about the line item.
-	"""
-	customAttributes: [Attribute!]!
-
-	"""
-	The discounts that have been allocated onto the checkout line item by discount applications.
-	"""
-	discountAllocations: [DiscountAllocation!]!
-
-	"""
-	A globally-unique ID.
-	"""
-	id: ID!
-
-	"""
-	The quantity of the line item.
-	"""
-	quantity: Int!
-
-	"""
-	Title of the line item. Defaults to the product's title.
-	"""
-	title: String!
-
-	"""
-	Unit price of the line item.
-	"""
-	unitPrice: MoneyV2
-
-	"""
-	Product variant of the line item.
-	"""
-	variant: ProductVariant
-}
-
-"An auto-generated type for paginating through multiple CheckoutLineItems.\n"
-type CheckoutLineItemConnection {
-	"""
-	A list of edges.
-	"""
-	edges: [CheckoutLineItemEdge!]!
-
-	"""
-	A list of the nodes contained in CheckoutLineItemEdge.
-	"""
-	nodes: [CheckoutLineItem!]!
-
-	"""
-	Information to aid in pagination.
-	"""
-	pageInfo: PageInfo!
-}
-
-"An auto-generated type which holds one CheckoutLineItem and a cursor during pagination.\n"
-type CheckoutLineItemEdge {
-	"""
-	A cursor for use in pagination.
-	"""
-	cursor: String!
-
-	"""
-	The item at the end of CheckoutLineItemEdge.
-	"""
-	node: CheckoutLineItem!
-}
-
-"""
-The input fields to create a line item on a checkout.
-"""
-input CheckoutLineItemInput {
-	"""
-	Extra information in the form of an array of Key-Value pairs about the line item.
-
-	The input must not contain more than `250` values.
-	"""
-	customAttributes: [AttributeInput!]
-
-	"""
-	The quantity of the line item.
-	"""
-	quantity: Int!
-
-	"""
-	The ID of the product variant for the line item.
-	"""
-	variantId: ID!
-}
-
-"""
-The input fields to update a line item on the checkout.
-"""
-input CheckoutLineItemUpdateInput {
-	"""
-	Extra information in the form of an array of Key-Value pairs about the line item.
-
-	The input must not contain more than `250` values.
-	"""
-	customAttributes: [AttributeInput!]
-
-	"""
-	The ID of the line item.
-	"""
-	id: ID
-
-	"""
-	The quantity of the line item.
-	"""
-	quantity: Int
-
-	"""
-	The variant ID of the line item.
-	"""
-	variantId: ID
-}
-
-"""
-Return type for `checkoutLineItemsAdd` mutation.
-"""
-type CheckoutLineItemsAddPayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutLineItemsRemove` mutation.
-"""
-type CheckoutLineItemsRemovePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutLineItemsReplace` mutation.
-"""
-type CheckoutLineItemsReplacePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [CheckoutUserError!]!
-}
-
-"""
-Return type for `checkoutLineItemsUpdate` mutation.
-"""
-type CheckoutLineItemsUpdatePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutShippingAddressUpdateV2` mutation.
-"""
-type CheckoutShippingAddressUpdateV2Payload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Return type for `checkoutShippingLineUpdate` mutation.
-"""
-type CheckoutShippingLineUpdatePayload {
-	"""
-	The updated checkout object.
-	"""
-	checkout: Checkout
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	checkoutUserErrors: [CheckoutUserError!]!
-
-	"""
-	The list of errors that occurred from executing the mutation.
-	"""
-	userErrors: [UserError!]! @deprecated(reason: "Use `checkoutUserErrors` instead.")
-}
-
-"""
-Represents an error that happens during execution of a checkout mutation.
-"""
-type CheckoutUserError implements DisplayableError {
-	"""
-	The error code.
-	"""
-	code: CheckoutErrorCode
-
-	"""
-	The path to the input field that caused the error.
-	"""
-	field: [String!]
-
-	"""
-	The error message.
-	"""
-	message: String!
 }
 
 "A collection represents a grouping of products that a shop owner can create to\norganize them or make their shops easier to browse.\n"
@@ -3296,6 +2555,155 @@ type CommentEdge {
 	The item at the end of CommentEdge.
 	"""
 	node: Comment!
+}
+
+"""
+Represents information about a company which is also a customer of the shop.
+"""
+type Company implements HasMetafields & Node {
+	"""
+	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company was created in Shopify.
+	"""
+	createdAt: DateTime!
+
+	"""
+	A unique externally-supplied ID for the company.
+	"""
+	externalId: String
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	Returns a metafield found by namespace and key.
+	"""
+	metafield(
+		"""
+		The identifier for the metafield.
+		"""
+		key: String!
+
+		"""
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+		"""
+		namespace: String
+	): Metafield
+
+	"""
+	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	"""
+	metafields(
+		"""
+		The list of metafields to retrieve by namespace and key.
+
+		The input must not contain more than `250` values.
+		"""
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
+
+	"""
+	The name of the company.
+	"""
+	name: String!
+
+	"""
+	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company was last modified.
+	"""
+	updatedAt: DateTime!
+}
+
+"""
+A company's main point of contact.
+"""
+type CompanyContact implements Node {
+	"""
+	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company contact was created in Shopify.
+	"""
+	createdAt: DateTime!
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The company contact's locale (language).
+	"""
+	locale: String
+
+	"""
+	The company contact's job title.
+	"""
+	title: String
+
+	"""
+	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company contact was last modified.
+	"""
+	updatedAt: DateTime!
+}
+
+"""
+A company's location.
+"""
+type CompanyLocation implements HasMetafields & Node {
+	"""
+	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company location was created in Shopify.
+	"""
+	createdAt: DateTime!
+
+	"""
+	A unique externally-supplied ID for the company.
+	"""
+	externalId: String
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The preferred locale of the company location.
+	"""
+	locale: String
+
+	"""
+	Returns a metafield found by namespace and key.
+	"""
+	metafield(
+		"""
+		The identifier for the metafield.
+		"""
+		key: String!
+
+		"""
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+		"""
+		namespace: String
+	): Metafield
+
+	"""
+	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	"""
+	metafields(
+		"""
+		The list of metafields to retrieve by namespace and key.
+
+		The input must not contain more than `250` values.
+		"""
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
+
+	"""
+	The name of the company location.
+	"""
+	name: String!
+
+	"""
+	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company location was last modified.
+	"""
+	updatedAt: DateTime!
 }
 
 """
@@ -4666,79 +4074,6 @@ enum CountryCode {
 }
 
 """
-Credit card information used for a payment.
-"""
-type CreditCard {
-	"""
-	The brand of the credit card.
-	"""
-	brand: String
-
-	"""
-	The expiry month of the credit card.
-	"""
-	expiryMonth: Int
-
-	"""
-	The expiry year of the credit card.
-	"""
-	expiryYear: Int
-
-	"""
-	The credit card's BIN number.
-	"""
-	firstDigits: String
-
-	"""
-	The first name of the card holder.
-	"""
-	firstName: String
-
-	"""
-	The last 4 digits of the credit card.
-	"""
-	lastDigits: String
-
-	"""
-	The last name of the card holder.
-	"""
-	lastName: String
-
-	"""
-	The masked credit card number with only the last 4 digits displayed.
-	"""
-	maskedNumber: String
-}
-
-"Specifies the fields required to complete a checkout with\na Shopify vaulted credit card payment.\n"
-input CreditCardPaymentInputV2 {
-	"""
-	The billing address for the payment.
-	"""
-	billingAddress: MailingAddressInput!
-
-	"""
-	A unique client generated key used to avoid duplicate charges. When a duplicate payment is found, the original is returned instead of creating a new one. For more information, refer to [Idempotent requests](https://shopify.dev/api/usage/idempotent-requests).
-	"""
-	idempotencyKey: String!
-
-	"""
-	The amount and currency of the payment.
-	"""
-	paymentAmount: MoneyInput!
-
-	"""
-	Executes the payment in test mode if possible. Defaults to `false`.
-	"""
-	test: Boolean = false
-
-	"""
-	The ID returned by Shopify's Card Vault.
-	"""
-	vaultId: String!
-}
-
-"""
 The part of the image that should remain after cropping.
 """
 enum CropRegion {
@@ -5666,14 +5001,6 @@ type Customer implements HasMetafields {
 	id: ID!
 
 	"""
-	The customer's most recently updated, incomplete checkout.
-	"""
-	lastIncompleteCheckout: Checkout
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
 	The customer’s last name.
 	"""
 	lastName: String
@@ -6311,6 +5638,25 @@ input DeliveryAddressInput {
 	A delivery address preference of a buyer that is interacting with the cart.
 	"""
 	deliveryAddress: MailingAddressInput
+
+	"""
+	Defines what kind of address validation is requested.
+	"""
+	deliveryAddressValidationStrategy: DeliveryAddressValidationStrategy = COUNTRY_CODE_ONLY
+
+	"Whether the given delivery address is considered to be a one-time use address. One-time use addresses do not\nget persisted to the buyer's personal addresses when checking out.\n"
+	oneTimeUse: Boolean = false
+}
+
+"Defines the types of available validation strategies for delivery addresses.\n"
+enum DeliveryAddressValidationStrategy {
+	"""
+	Only the country code is validated.
+	"""
+	COUNTRY_CODE_ONLY
+
+	"Strict validation is performed, i.e. all fields in the address are validated\naccording to Shopify's checkout rules. If the address fails validation, the cart will not be updated.\n"
+	STRICT
 }
 
 """
@@ -6623,6 +5969,9 @@ type Filter {
 	"""
 	label: String!
 
+	"Describes how to present the filter values.\nReturns a value only for filters of type `LIST`. Returns null for other types.\n"
+	presentation: FilterPresentation
+
 	"""
 	An enumeration that denotes the type of data this filter represents.
 	"""
@@ -6632,6 +5981,24 @@ type Filter {
 	The list of values for this filter.
 	"""
 	values: [FilterValue!]!
+}
+
+"Defines how to present the filter values, specifies the presentation of the filter.\n"
+enum FilterPresentation {
+	"""
+	Image presentation, filter values display an image.
+	"""
+	IMAGE
+
+	"""
+	Swatch presentation, filter values display color or image patterns.
+	"""
+	SWATCH
+
+	"""
+	Text presentation, no additional visual display for filter values.
+	"""
+	TEXT
 }
 
 "The type of data that the filter group represents.\n\nFor more information, refer to [Filter products in a collection with the Storefront API]\n(https://shopify.dev/custom-storefronts/products-collections/filter-products).\n"
@@ -6666,6 +6033,11 @@ type FilterValue {
 	"""
 	id: String!
 
+	"""
+	The visual representation when the filter's presentation is `IMAGE`.
+	"""
+	image: MediaImage
+
 	"An input object that can be used to filter by this value on the parent field.\n\nThe value is provided as a helper for building dynamic filtering UI. For\nexample, if you have a list of selected `FilterValue` objects, you can combine\ntheir respective `input` values to use in a subsequent query.\n"
 	input: JSON!
 
@@ -6673,6 +6045,11 @@ type FilterValue {
 	A human-friendly string for this filter value.
 	"""
 	label: String!
+
+	"""
+	The visual representation when the filter's presentation is `SWATCH`.
+	"""
+	swatch: Swatch
 }
 
 """
@@ -6883,6 +6260,11 @@ input HasMetafieldsIdentifier {
 	"""
 	namespace: String
 }
+
+"""
+An ISO 8601-encoded datetime
+"""
+scalar ISO8601DateTime
 
 """
 Represents an image resource.
@@ -8683,6 +8065,8 @@ union MetafieldParentResource =
 	| Blog
 	| Cart
 	| Collection
+	| Company
+	| CompanyLocation
 	| Customer
 	| Location
 	| Market
@@ -8690,10 +8074,20 @@ union MetafieldParentResource =
 	| Page
 	| Product
 	| ProductVariant
+	| SellingPlan
 	| Shop
 
 "Returns the resource which is being referred to by a metafield.\n"
-union MetafieldReference = Collection | GenericFile | MediaImage | Metaobject | Page | Product | ProductVariant | Video
+union MetafieldReference =
+	| Collection
+	| GenericFile
+	| MediaImage
+	| Metaobject
+	| Model3d
+	| Page
+	| Product
+	| ProductVariant
+	| Video
 
 "An auto-generated type for paginating through multiple MetafieldReferences.\n"
 type MetafieldReferenceConnection {
@@ -9065,6 +8459,21 @@ type Mutation {
 		cartId: ID!
 	): CartAttributesUpdatePayload
 
+	"""
+	Updates the billing address on the cart.
+	"""
+	cartBillingAddressUpdate(
+		"""
+		The customer's billing address.
+		"""
+		billingAddress: MailingAddressInput
+
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartBillingAddressUpdatePayload
+
 	"Updates customer information associated with a cart.\nBuyer identity is used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nand should match the customer's shipping address.\n"
 	cartBuyerIdentityUpdate(
 		"The customer associated with the cart. Used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\nBuyer identity should match the customer's shipping address.\n"
@@ -9102,6 +8511,23 @@ type Mutation {
 		"""
 		discountCodes: [String!]
 	): CartDiscountCodesUpdatePayload
+
+	"""
+	Updates the gift card codes applied to the cart.
+	"""
+	cartGiftCardCodesUpdate(
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+
+		"""
+		The case-insensitive gift card codes.
+
+		The input must not contain more than `250` values.
+		"""
+		giftCardCodes: [String!]!
+	): CartGiftCardCodesUpdatePayload
 
 	"""
 	Adds a merchandise line to the cart.
@@ -9186,7 +8612,7 @@ type Mutation {
 		"""
 		The note on the cart.
 		"""
-		note: String
+		note: String!
 	): CartNoteUpdatePayload
 
 	"""
@@ -9233,325 +8659,6 @@ type Mutation {
 		"""
 		cartId: ID!
 	): CartSubmitForCompletionPayload
-
-	"""
-	Updates the attributes of a checkout if `allowPartialAddresses` is `true`.
-	"""
-	checkoutAttributesUpdateV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The checkout attributes to update.
-		"""
-		input: CheckoutAttributesUpdateV2Input!
-	): CheckoutAttributesUpdateV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Completes a checkout without providing payment information. You can use this mutation for free items or items whose purchase price is covered by a gift card.
-	"""
-	checkoutCompleteFree(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-	): CheckoutCompleteFreePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Completes a checkout using a credit card token from Shopify's card vault. Before you can complete checkouts using CheckoutCompleteWithCreditCardV2, you need to  [_request payment processing_](https://shopify.dev/apps/channels/getting-started#request-payment-processing).
-	"""
-	checkoutCompleteWithCreditCardV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The credit card info to apply as a payment.
-		"""
-		payment: CreditCardPaymentInputV2!
-	): CheckoutCompleteWithCreditCardV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Completes a checkout with a tokenized payment.
-	"""
-	checkoutCompleteWithTokenizedPaymentV3(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The info to apply as a tokenized payment.
-		"""
-		payment: TokenizedPaymentInputV3!
-	): CheckoutCompleteWithTokenizedPaymentV3Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Creates a new checkout.
-	"""
-	checkoutCreate(
-		"""
-		The fields used to create a checkout.
-		"""
-		input: CheckoutCreateInput!
-
-		"""
-		The checkout queue token. Available only to selected stores.
-		"""
-		queueToken: String
-	): CheckoutCreatePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Associates a customer to the checkout.
-	"""
-	checkoutCustomerAssociateV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The customer access token of the customer to associate.
-		"""
-		customerAccessToken: String!
-	): CheckoutCustomerAssociateV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Disassociates the current checkout customer from the checkout.
-	"""
-	checkoutCustomerDisassociateV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-	): CheckoutCustomerDisassociateV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Applies a discount to an existing checkout using a discount code.
-	"""
-	checkoutDiscountCodeApplyV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The discount code to apply to the checkout.
-		"""
-		discountCode: String!
-	): CheckoutDiscountCodeApplyV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Removes the applied discounts from an existing checkout.
-	"""
-	checkoutDiscountCodeRemove(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-	): CheckoutDiscountCodeRemovePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Updates the email on an existing checkout.
-	"""
-	checkoutEmailUpdateV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The email to update the checkout with.
-		"""
-		email: String!
-	): CheckoutEmailUpdateV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Removes an applied gift card from the checkout.
-	"""
-	checkoutGiftCardRemoveV2(
-		"""
-		The ID of the Applied Gift Card to remove from the Checkout.
-		"""
-		appliedGiftCardId: ID!
-
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-	): CheckoutGiftCardRemoveV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Appends gift cards to an existing checkout.
-	"""
-	checkoutGiftCardsAppend(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		A list of gift card codes to append to the checkout.
-
-		The input must not contain more than `250` values.
-		"""
-		giftCardCodes: [String!]!
-	): CheckoutGiftCardsAppendPayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Adds a list of line items to a checkout.
-	"""
-	checkoutLineItemsAdd(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		A list of line item objects to add to the checkout.
-
-		The input must not contain more than `250` values.
-		"""
-		lineItems: [CheckoutLineItemInput!]!
-	): CheckoutLineItemsAddPayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Removes line items from an existing checkout.
-	"""
-	checkoutLineItemsRemove(
-		"""
-		The checkout on which to remove line items.
-		"""
-		checkoutId: ID!
-
-		"""
-		Line item ids to remove.
-
-		The input must not contain more than `250` values.
-		"""
-		lineItemIds: [ID!]!
-	): CheckoutLineItemsRemovePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Sets a list of line items to a checkout.
-	"""
-	checkoutLineItemsReplace(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		A list of line item objects to set on the checkout.
-
-		The input must not contain more than `250` values.
-		"""
-		lineItems: [CheckoutLineItemInput!]!
-	): CheckoutLineItemsReplacePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Updates line items on a checkout.
-	"""
-	checkoutLineItemsUpdate(
-		"""
-		The checkout on which to update line items.
-		"""
-		checkoutId: ID!
-
-		"""
-		Line items to update.
-
-		The input must not contain more than `250` values.
-		"""
-		lineItems: [CheckoutLineItemUpdateInput!]!
-	): CheckoutLineItemsUpdatePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Updates the shipping address of an existing checkout.
-	"""
-	checkoutShippingAddressUpdateV2(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		The shipping address to where the line items will be shipped.
-		"""
-		shippingAddress: MailingAddressInput!
-	): CheckoutShippingAddressUpdateV2Payload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
-
-	"""
-	Updates the shipping lines on an existing checkout.
-	"""
-	checkoutShippingLineUpdate(
-		"""
-		The ID of the checkout.
-		"""
-		checkoutId: ID!
-
-		"""
-		A unique identifier to a Checkout’s shipping provider, price, and title combination, enabling the customer to select the availableShippingRates.
-		"""
-		shippingRateHandle: String!
-	): CheckoutShippingLineUpdatePayload
-		@deprecated(
-			reason: "The Storefront GraphQL Checkout API is deprecated and will be removed in a future version. Please see https://shopify.dev/changelog/deprecation-of-checkout-apis for more information."
-		)
 
 	"Creates a customer access token.\nThe customer access token is required to modify the customer object in any way.\n"
 	customerAccessTokenCreate(
@@ -9740,6 +8847,46 @@ type Mutation {
 		"""
 		customerAccessToken: String!
 	): CustomerUpdatePayload
+
+	"""
+	Create a new Shop Pay payment request session.
+	"""
+	shopPayPaymentRequestSessionCreate(
+		"""
+		A payment request object.
+		"""
+		paymentRequest: ShopPayPaymentRequestInput!
+
+		"""
+		A unique identifier for the payment request session.
+		"""
+		sourceIdentifier: String!
+	): ShopPayPaymentRequestSessionCreatePayload
+
+	"""
+	Submits a Shop Pay payment request session.
+	"""
+	shopPayPaymentRequestSessionSubmit(
+		"""
+		The idempotency key is used to guarantee an idempotent result.
+		"""
+		idempotencyKey: String!
+
+		"""
+		The order name to be used for the order created from the payment request.
+		"""
+		orderName: String
+
+		"""
+		The final payment request object.
+		"""
+		paymentRequest: ShopPayPaymentRequestInput!
+
+		"""
+		A token representing a payment session request.
+		"""
+		token: String!
+	): ShopPayPaymentRequestSessionSubmitPayload
 }
 
 "An object with an ID field to support global identification, in accordance with the\n[Relay specification](https://relay.dev/graphql/objectidentification.htm#sec-Node-Interface).\nThis interface is used by the [node](https://shopify.dev/api/admin-graphql/unstable/queries/node)\nand [nodes](https://shopify.dev/api/admin-graphql/unstable/queries/nodes) queries.\n"
@@ -9798,6 +8945,11 @@ type Order implements HasMetafields & Node {
 	The total amount of the order, including duties, taxes and discounts, minus amounts for line items that have been removed.
 	"""
 	currentTotalPrice: MoneyV2!
+
+	"""
+	The total cost of shipping, excluding shipping lines that have been refunded or removed. Taxes aren't included unless the order is a taxes-included order.
+	"""
+	currentTotalShippingPrice: MoneyV2!
 
 	"""
 	The total of all taxes applied to the order, excluding taxes for returned line items.
@@ -10451,69 +9603,6 @@ enum PageSortKeys {
 }
 
 """
-A payment applied to a checkout.
-"""
-type Payment implements Node {
-	"""
-	The amount of the payment.
-	"""
-	amount: MoneyV2!
-
-	"""
-	The amount of the payment.
-	"""
-	amountV2: MoneyV2! @deprecated(reason: "Use `amount` instead.")
-
-	"""
-	The billing address for the payment.
-	"""
-	billingAddress: MailingAddress
-
-	"""
-	The checkout to which the payment belongs.
-	"""
-	checkout: Checkout!
-
-	"""
-	The credit card used for the payment in the case of direct payments.
-	"""
-	creditCard: CreditCard
-
-	"""
-	A message describing a processing error during asynchronous processing.
-	"""
-	errorMessage: String
-
-	"""
-	A globally-unique ID.
-	"""
-	id: ID!
-
-	"A client-side generated token to identify a payment and perform idempotent operations.\nFor more information, refer to\n[Idempotent requests](https://shopify.dev/api/usage/idempotent-requests).\n"
-	idempotencyKey: String
-
-	"""
-	The URL where the customer needs to be redirected so they can complete the 3D Secure payment flow.
-	"""
-	nextActionUrl: URL
-
-	"""
-	Whether the payment is still processing asynchronously.
-	"""
-	ready: Boolean!
-
-	"""
-	A flag to indicate if the payment is to be done in test mode for gateways that support it.
-	"""
-	test: Boolean!
-
-	"""
-	The actual transaction recorded by Shopify after having processed the payment with the gateway.
-	"""
-	transaction: Transaction
-}
-
-"""
 Settings related to payments.
 """
 type PaymentSettings {
@@ -10549,36 +9638,6 @@ type PaymentSettings {
 	List of the digital wallets which the shop supports.
 	"""
 	supportedDigitalWallets: [DigitalWallet!]!
-}
-
-"""
-The valid values for the types of payment token.
-"""
-enum PaymentTokenType {
-	"""
-	Apple Pay token type.
-	"""
-	APPLE_PAY
-
-	"""
-	Google Pay token type.
-	"""
-	GOOGLE_PAY
-
-	"""
-	Shopify Pay token type.
-	"""
-	SHOPIFY_PAY
-
-	"""
-	Stripe token type.
-	"""
-	STRIPE_VAULT_TOKEN
-
-	"""
-	Vault payment token type.
-	"""
-	VAULT
 }
 
 """
@@ -10652,6 +9711,26 @@ enum PredictiveSearchType {
 	Returns matching query strings.
 	"""
 	QUERY
+}
+
+"""
+The preferred delivery methods such as shipping, local pickup or through pickup points.
+"""
+enum PreferenceDeliveryMethodType {
+	"""
+	A delivery method used to let buyers collect purchases at designated locations like parcel lockers.
+	"""
+	PICKUP_POINT
+
+	"""
+	A delivery method used to let buyers receive items directly from a specific location within an area.
+	"""
+	PICK_UP
+
+	"""
+	A delivery method used to send items directly to a buyer’s specified address.
+	"""
+	SHIPPING
 }
 
 "The input fields for a filter used to view a subset of products in a collection matching a specific price range.\n"
@@ -11183,9 +10262,45 @@ type ProductOption implements Node {
 	name: String!
 
 	"""
+	The corresponding option value to the product option.
+	"""
+	optionValues: [ProductOptionValue!]!
+
+	"""
 	The corresponding value to the product option name.
 	"""
 	values: [String!]! @deprecated(reason: "Use `optionValues` instead.")
+}
+
+"The product option value names. For example, \"Red\", \"Blue\", and \"Green\" for a \"Color\" option.\n"
+type ProductOptionValue implements Node {
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The name of the product option value.
+	"""
+	name: String!
+
+	"""
+	The swatch of the product option value.
+	"""
+	swatch: ProductOptionValueSwatch
+}
+
+"The product option value swatch.\n"
+type ProductOptionValueSwatch {
+	"""
+	The swatch color.
+	"""
+	color: Color
+
+	"""
+	The swatch image.
+	"""
+	image: Media
 }
 
 """
@@ -11286,10 +10401,56 @@ type ProductVariant implements HasMetafields & Node {
 	"""
 	compareAtPriceV2: MoneyV2 @deprecated(reason: "Use `compareAtPrice` instead.")
 
+	"List of bundles components included in the variant considering only fixed bundles.\n"
+	components(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+	): ProductVariantComponentConnection!
+
 	"""
 	Whether a product is out of stock but still available for purchase (used for backorders).
 	"""
 	currentlyNotInStock: Boolean!
+
+	"List of bundles that include this variant considering only fixed bundles.\n"
+	groupedBy(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+	): ProductVariantConnection!
 
 	"""
 	A globally-unique ID.
@@ -11347,6 +10508,39 @@ type ProductVariant implements HasMetafields & Node {
 	The total sellable quantity of the variant for online sales channels.
 	"""
 	quantityAvailable: Int
+
+	"""
+	A list of quantity breaks for the product variant.
+	"""
+	quantityPriceBreaks(
+		"""
+		Returns the elements that come after the specified cursor.
+		"""
+		after: String
+
+		"""
+		Returns the elements that come before the specified cursor.
+		"""
+		before: String
+
+		"""
+		Returns up to the first `n` elements from the list.
+		"""
+		first: Int
+
+		"""
+		Returns up to the last `n` elements from the list.
+		"""
+		last: Int
+	): QuantityPriceBreakConnection!
+
+	"""
+	The quantity rule for the product variant in a given context.
+	"""
+	quantityRule: QuantityRule!
+
+	"Whether a product variant requires components. The default value is `false`.\nIf `true`, then the product variant can only be purchased as a parent bundle with components.\n"
+	requiresComponents: Boolean!
 
 	"""
 	Whether a customer needs to provide a shipping address when placing an order for the product variant.
@@ -11459,6 +10653,50 @@ type ProductVariant implements HasMetafields & Node {
 	weightUnit: WeightUnit!
 }
 
+"Represents a component of a bundle variant.\n"
+type ProductVariantComponent {
+	"""
+	The product variant object that the component belongs to.
+	"""
+	productVariant: ProductVariant!
+
+	"""
+	The quantity of component present in the bundle.
+	"""
+	quantity: Int!
+}
+
+"An auto-generated type for paginating through multiple ProductVariantComponents.\n"
+type ProductVariantComponentConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [ProductVariantComponentEdge!]!
+
+	"""
+	A list of the nodes contained in ProductVariantComponentEdge.
+	"""
+	nodes: [ProductVariantComponent!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one ProductVariantComponent and a cursor during pagination.\n"
+type ProductVariantComponentEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of ProductVariantComponentEdge.
+	"""
+	node: ProductVariantComponent!
+}
+
 "An auto-generated type for paginating through multiple ProductVariants.\n"
 type ProductVariantConnection {
 	"""
@@ -11516,6 +10754,78 @@ enum ProductVariantSortKeys {
 	Sort by the `title` value.
 	"""
 	TITLE
+}
+
+"""
+Represents information about the buyer that is interacting with the cart.
+"""
+type PurchasingCompany {
+	"""
+	The company associated to the order or draft order.
+	"""
+	company: Company!
+
+	"""
+	The company contact associated to the order or draft order.
+	"""
+	contact: CompanyContact
+
+	"""
+	The company location associated to the order or draft order.
+	"""
+	location: CompanyLocation!
+}
+
+"Quantity price breaks lets you offer different rates that are based on the\namount of a specific variant being ordered.\n"
+type QuantityPriceBreak {
+	"Minimum quantity required to reach new quantity break price.\n"
+	minimumQuantity: Int!
+
+	"The price of variant after reaching the minimum quanity.\n"
+	price: MoneyV2!
+}
+
+"An auto-generated type for paginating through multiple QuantityPriceBreaks.\n"
+type QuantityPriceBreakConnection {
+	"""
+	A list of edges.
+	"""
+	edges: [QuantityPriceBreakEdge!]!
+
+	"""
+	A list of the nodes contained in QuantityPriceBreakEdge.
+	"""
+	nodes: [QuantityPriceBreak!]!
+
+	"""
+	Information to aid in pagination.
+	"""
+	pageInfo: PageInfo!
+}
+
+"An auto-generated type which holds one QuantityPriceBreak and a cursor during pagination.\n"
+type QuantityPriceBreakEdge {
+	"""
+	A cursor for use in pagination.
+	"""
+	cursor: String!
+
+	"""
+	The item at the end of QuantityPriceBreakEdge.
+	"""
+	node: QuantityPriceBreak!
+}
+
+"The quantity rule for the product variant in a given context.\n"
+type QuantityRule {
+	"The value that specifies the quantity increment between minimum and maximum of the rule.\nOnly quantities divisible by this value will be considered valid.\n\nThe increment must be lower than or equal to the minimum and the maximum, and both minimum and maximum\nmust be divisible by this value.\n"
+	increment: Int!
+
+	"An optional value that defines the highest allowed quantity purchased by the customer.\nIf defined, maximum must be lower than or equal to the minimum and must be a multiple of the increment.\n"
+	maximum: Int
+
+	"The value that defines the lowest allowed quantity purchased by the customer.\nThe minimum must be a multiple of the quantity rule's increment.\n"
+	minimum: Int!
 }
 
 """
@@ -11983,9 +11293,14 @@ type QueryRoot {
 		intent: ProductRecommendationIntent = RELATED
 
 		"""
+		The handle of the product.
+		"""
+		productHandle: String
+
+		"""
 		The id of the product.
 		"""
-		productId: ID!
+		productId: ID
 	): [Product!]
 
 	"Tags added to products.\nAdditional access scope required: unauthenticated_read_product_tags.\n"
@@ -12410,11 +11725,21 @@ input SelectedOptionInput {
 """
 Represents how products and variants can be sold and purchased.
 """
-type SellingPlan {
+type SellingPlan implements HasMetafields {
+	"""
+	The billing policy for the selling plan.
+	"""
+	billingPolicy: SellingPlanBillingPolicy
+
 	"""
 	The initial payment due for the purchase.
 	"""
 	checkoutCharge: SellingPlanCheckoutCharge!
+
+	"""
+	The delivery policy for the selling plan.
+	"""
+	deliveryPolicy: SellingPlanDeliveryPolicy
 
 	"""
 	The description of the selling plan.
@@ -12425,6 +11750,33 @@ type SellingPlan {
 	A globally-unique ID.
 	"""
 	id: ID!
+
+	"""
+	Returns a metafield found by namespace and key.
+	"""
+	metafield(
+		"""
+		The identifier for the metafield.
+		"""
+		key: String!
+
+		"""
+		The container the metafield belongs to. If omitted, the app-reserved namespace will be used.
+		"""
+		namespace: String
+	): Metafield
+
+	"""
+	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	"""
+	metafields(
+		"""
+		The list of metafields to retrieve by namespace and key.
+
+		The input must not contain more than `250` values.
+		"""
+		identifiers: [HasMetafieldsIdentifier!]!
+	): [Metafield]!
 
 	"""
 	The name of the selling plan. For example, '6 weeks of prepaid granola, delivered weekly'.
@@ -12529,6 +11881,11 @@ type SellingPlanAllocationPriceAdjustment {
 }
 
 """
+The selling plan billing policy.
+"""
+union SellingPlanBillingPolicy = SellingPlanRecurringBillingPolicy
+
+"""
 The initial payment due for the purchase.
 """
 type SellingPlanCheckoutCharge {
@@ -12590,6 +11947,11 @@ type SellingPlanConnection {
 	"""
 	pageInfo: PageInfo!
 }
+
+"""
+The selling plan delivery policy.
+"""
+union SellingPlanDeliveryPolicy = SellingPlanRecurringDeliveryPolicy
 
 "An auto-generated type which holds one SellingPlan and a cursor during pagination.\n"
 type SellingPlanEdge {
@@ -12723,6 +12085,31 @@ type SellingPlanGroupOption {
 }
 
 """
+Represents a valid selling plan interval.
+"""
+enum SellingPlanInterval {
+	"""
+	Day interval.
+	"""
+	DAY
+
+	"""
+	Month interval.
+	"""
+	MONTH
+
+	"""
+	Week interval.
+	"""
+	WEEK
+
+	"""
+	Year interval.
+	"""
+	YEAR
+}
+
+"""
 An option provided by a Selling Plan.
 """
 type SellingPlanOption {
@@ -12771,28 +12158,33 @@ union SellingPlanPriceAdjustmentValue =
 	| SellingPlanPercentagePriceAdjustment
 
 """
-A shipping rate to be applied to a checkout.
+The recurring billing policy for the selling plan.
 """
-type ShippingRate {
+type SellingPlanRecurringBillingPolicy {
 	"""
-	Human-readable unique identifier for this shipping rate.
+	The billing frequency, it can be either: day, week, month or year.
 	"""
-	handle: String!
+	interval: SellingPlanInterval!
 
 	"""
-	Price of this shipping rate.
+	The number of intervals between billings.
 	"""
-	price: MoneyV2!
+	intervalCount: Int!
+}
+
+"""
+The recurring delivery policy for the selling plan.
+"""
+type SellingPlanRecurringDeliveryPolicy {
+	"""
+	The delivery frequency, it can be either: day, week, month or year.
+	"""
+	interval: SellingPlanInterval!
 
 	"""
-	Price of this shipping rate.
+	The number of intervals between deliveries.
 	"""
-	priceV2: MoneyV2! @deprecated(reason: "Use `price` instead.")
-
-	"""
-	Title of this shipping rate.
-	"""
-	title: String!
+	intervalCount: Int!
 }
 
 """
@@ -12890,6 +12282,652 @@ type Shop implements HasMetafields & Node {
 	The shop’s terms of service.
 	"""
 	termsOfService: ShopPolicy
+}
+
+"""
+Represents a Shop Pay payment request.
+"""
+type ShopPayPaymentRequest {
+	"""
+	The delivery methods for the payment request.
+	"""
+	deliveryMethods: [ShopPayPaymentRequestDeliveryMethod!]!
+
+	"""
+	The discount codes for the payment request.
+	"""
+	discountCodes: [String!]!
+
+	"""
+	The discounts for the payment request order.
+	"""
+	discounts: [ShopPayPaymentRequestDiscount!]
+
+	"""
+	The line items for the payment request.
+	"""
+	lineItems: [ShopPayPaymentRequestLineItem!]!
+
+	"""
+	The locale for the payment request.
+	"""
+	locale: String!
+
+	"""
+	The presentment currency for the payment request.
+	"""
+	presentmentCurrency: CurrencyCode!
+
+	"""
+	The delivery method type for the payment request.
+	"""
+	selectedDeliveryMethodType: ShopPayPaymentRequestDeliveryMethodType!
+
+	"""
+	The shipping address for the payment request.
+	"""
+	shippingAddress: ShopPayPaymentRequestContactField
+
+	"""
+	The shipping lines for the payment request.
+	"""
+	shippingLines: [ShopPayPaymentRequestShippingLine!]!
+
+	"""
+	The subtotal amount for the payment request.
+	"""
+	subtotal: MoneyV2!
+
+	"""
+	The total amount for the payment request.
+	"""
+	total: MoneyV2!
+
+	"""
+	The total shipping price for the payment request.
+	"""
+	totalShippingPrice: ShopPayPaymentRequestTotalShippingPrice
+
+	"""
+	The total tax for the payment request.
+	"""
+	totalTax: MoneyV2
+}
+
+"""
+Represents a contact field for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestContactField {
+	"""
+	The first address line of the contact field.
+	"""
+	address1: String!
+
+	"""
+	The second address line of the contact field.
+	"""
+	address2: String
+
+	"""
+	The city of the contact field.
+	"""
+	city: String!
+
+	"""
+	The company name of the contact field.
+	"""
+	companyName: String
+
+	"""
+	The country of the contact field.
+	"""
+	countryCode: String!
+
+	"""
+	The email of the contact field.
+	"""
+	email: String
+
+	"""
+	The first name of the contact field.
+	"""
+	firstName: String!
+
+	"""
+	The first name of the contact field.
+	"""
+	lastName: String!
+
+	"""
+	The phone number of the contact field.
+	"""
+	phone: String
+
+	"""
+	The postal code of the contact field.
+	"""
+	postalCode: String
+
+	"""
+	The province of the contact field.
+	"""
+	provinceCode: String
+}
+
+"""
+Represents a delivery method for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestDeliveryMethod {
+	"""
+	The amount for the delivery method.
+	"""
+	amount: MoneyV2!
+
+	"""
+	The code of the delivery method.
+	"""
+	code: String!
+
+	"""
+	The detail about when the delivery may be expected.
+	"""
+	deliveryExpectationLabel: String
+
+	"""
+	The detail of the delivery method.
+	"""
+	detail: String
+
+	"""
+	The label of the delivery method.
+	"""
+	label: String!
+
+	"""
+	The maximum delivery date for the delivery method.
+	"""
+	maxDeliveryDate: ISO8601DateTime
+
+	"""
+	The minimum delivery date for the delivery method.
+	"""
+	minDeliveryDate: ISO8601DateTime
+}
+
+"""
+The input fields to create a delivery method for a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestDeliveryMethodInput {
+	"""
+	The amount for the delivery method.
+	"""
+	amount: MoneyInput
+
+	"""
+	The code of the delivery method.
+	"""
+	code: String
+
+	"""
+	The detail about when the delivery may be expected.
+	"""
+	deliveryExpectationLabel: String
+
+	"""
+	The detail of the delivery method.
+	"""
+	detail: String
+
+	"""
+	The label of the delivery method.
+	"""
+	label: String
+
+	"""
+	The maximum delivery date for the delivery method.
+	"""
+	maxDeliveryDate: ISO8601DateTime
+
+	"""
+	The minimum delivery date for the delivery method.
+	"""
+	minDeliveryDate: ISO8601DateTime
+}
+
+"""
+Represents the delivery method type for a Shop Pay payment request.
+"""
+enum ShopPayPaymentRequestDeliveryMethodType {
+	"""
+	The delivery method type is pickup.
+	"""
+	PICKUP
+
+	"""
+	The delivery method type is shipping.
+	"""
+	SHIPPING
+}
+
+"""
+Represents a discount for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestDiscount {
+	"""
+	The amount of the discount.
+	"""
+	amount: MoneyV2!
+
+	"""
+	The label of the discount.
+	"""
+	label: String!
+}
+
+"""
+The input fields to create a discount for a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestDiscountInput {
+	"""
+	The amount of the discount.
+	"""
+	amount: MoneyInput
+
+	"""
+	The label of the discount.
+	"""
+	label: String
+}
+
+"""
+Represents an image for a Shop Pay payment request line item.
+"""
+type ShopPayPaymentRequestImage {
+	"""
+	The alt text of the image.
+	"""
+	alt: String
+
+	"""
+	The source URL of the image.
+	"""
+	url: String!
+}
+
+"""
+The input fields to create an image for a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestImageInput {
+	"""
+	The alt text of the image.
+	"""
+	alt: String
+
+	"""
+	The source URL of the image.
+	"""
+	url: String!
+}
+
+"""
+The input fields represent a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestInput {
+	"""
+	The delivery methods for the payment request.
+
+	The input must not contain more than `250` values.
+	"""
+	deliveryMethods: [ShopPayPaymentRequestDeliveryMethodInput!]
+
+	"""
+	The discount codes for the payment request.
+
+	The input must not contain more than `250` values.
+	"""
+	discountCodes: [String!]
+
+	"""
+	The discounts for the payment request order.
+
+	The input must not contain more than `250` values.
+	"""
+	discounts: [ShopPayPaymentRequestDiscountInput!]
+
+	"""
+	The line items for the payment request.
+
+	The input must not contain more than `250` values.
+	"""
+	lineItems: [ShopPayPaymentRequestLineItemInput!]
+
+	"""
+	The locale for the payment request.
+	"""
+	locale: String!
+
+	"""
+	The encrypted payment method for the payment request.
+	"""
+	paymentMethod: String
+
+	"""
+	The presentment currency for the payment request.
+	"""
+	presentmentCurrency: CurrencyCode!
+
+	"""
+	The delivery method type for the payment request.
+	"""
+	selectedDeliveryMethodType: ShopPayPaymentRequestDeliveryMethodType
+
+	"""
+	The shipping lines for the payment request.
+
+	The input must not contain more than `250` values.
+	"""
+	shippingLines: [ShopPayPaymentRequestShippingLineInput!]
+
+	"""
+	The subtotal amount for the payment request.
+	"""
+	subtotal: MoneyInput!
+
+	"""
+	The total amount for the payment request.
+	"""
+	total: MoneyInput!
+
+	"""
+	The total shipping price for the payment request.
+	"""
+	totalShippingPrice: ShopPayPaymentRequestTotalShippingPriceInput
+
+	"""
+	The total tax for the payment request.
+	"""
+	totalTax: MoneyInput
+}
+
+"""
+Represents a line item for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestLineItem {
+	"""
+	The final item price for the line item.
+	"""
+	finalItemPrice: MoneyV2!
+
+	"""
+	The final line price for the line item.
+	"""
+	finalLinePrice: MoneyV2!
+
+	"""
+	The image of the line item.
+	"""
+	image: ShopPayPaymentRequestImage
+
+	"""
+	The item discounts for the line item.
+	"""
+	itemDiscounts: [ShopPayPaymentRequestDiscount!]
+
+	"""
+	The label of the line item.
+	"""
+	label: String!
+
+	"""
+	The line discounts for the line item.
+	"""
+	lineDiscounts: [ShopPayPaymentRequestDiscount!]
+
+	"""
+	The original item price for the line item.
+	"""
+	originalItemPrice: MoneyV2
+
+	"""
+	The original line price for the line item.
+	"""
+	originalLinePrice: MoneyV2
+
+	"""
+	The quantity of the line item.
+	"""
+	quantity: Int!
+
+	"""
+	Whether the line item requires shipping.
+	"""
+	requiresShipping: Boolean
+
+	"""
+	The SKU of the line item.
+	"""
+	sku: String
+}
+
+"""
+The input fields to create a line item for a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestLineItemInput {
+	"""
+	The final item price for the line item.
+	"""
+	finalItemPrice: MoneyInput
+
+	"""
+	The final line price for the line item.
+	"""
+	finalLinePrice: MoneyInput
+
+	"""
+	The image of the line item.
+	"""
+	image: ShopPayPaymentRequestImageInput
+
+	"""
+	The item discounts for the line item.
+
+	The input must not contain more than `250` values.
+	"""
+	itemDiscounts: [ShopPayPaymentRequestDiscountInput!]
+
+	"""
+	The label of the line item.
+	"""
+	label: String
+
+	"""
+	The line discounts for the line item.
+
+	The input must not contain more than `250` values.
+	"""
+	lineDiscounts: [ShopPayPaymentRequestDiscountInput!]
+
+	"""
+	The original item price for the line item.
+	"""
+	originalItemPrice: MoneyInput
+
+	"""
+	The original line price for the line item.
+	"""
+	originalLinePrice: MoneyInput
+
+	"""
+	The quantity of the line item.
+	"""
+	quantity: Int!
+
+	"""
+	Whether the line item requires shipping.
+	"""
+	requiresShipping: Boolean
+
+	"""
+	The SKU of the line item.
+	"""
+	sku: String
+}
+
+"""
+Represents a receipt for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestReceipt {
+	"""
+	The payment request object.
+	"""
+	paymentRequest: ShopPayPaymentRequest!
+
+	"""
+	The processing status.
+	"""
+	processingStatusType: String!
+
+	"""
+	The token of the receipt.
+	"""
+	token: String!
+}
+
+"""
+Represents a Shop Pay payment request session.
+"""
+type ShopPayPaymentRequestSession {
+	"""
+	The checkout URL of the Shop Pay payment request session.
+	"""
+	checkoutUrl: URL!
+
+	"""
+	The payment request associated with the Shop Pay payment request session.
+	"""
+	paymentRequest: ShopPayPaymentRequest!
+
+	"""
+	The source identifier of the Shop Pay payment request session.
+	"""
+	sourceIdentifier: String!
+
+	"""
+	The token of the Shop Pay payment request session.
+	"""
+	token: String!
+}
+
+"""
+Return type for `shopPayPaymentRequestSessionCreate` mutation.
+"""
+type ShopPayPaymentRequestSessionCreatePayload {
+	"""
+	The new Shop Pay payment request session object.
+	"""
+	shopPayPaymentRequestSession: ShopPayPaymentRequestSession
+
+	"""
+	Error codes for failed Shop Pay payment request session mutations.
+	"""
+	userErrors: [UserErrorsShopPayPaymentRequestSessionUserErrors!]!
+}
+
+"""
+Return type for `shopPayPaymentRequestSessionSubmit` mutation.
+"""
+type ShopPayPaymentRequestSessionSubmitPayload {
+	"""
+	The checkout on which the payment was applied.
+	"""
+	paymentRequestReceipt: ShopPayPaymentRequestReceipt
+
+	"""
+	Error codes for failed Shop Pay payment request session mutations.
+	"""
+	userErrors: [UserErrorsShopPayPaymentRequestSessionUserErrors!]!
+}
+
+"""
+Represents a shipping line for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestShippingLine {
+	"""
+	The amount for the shipping line.
+	"""
+	amount: MoneyV2!
+
+	"""
+	The code of the shipping line.
+	"""
+	code: String!
+
+	"""
+	The label of the shipping line.
+	"""
+	label: String!
+}
+
+"""
+The input fields to create a shipping line for a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestShippingLineInput {
+	"""
+	The amount for the shipping line.
+	"""
+	amount: MoneyInput
+
+	"""
+	The code of the shipping line.
+	"""
+	code: String
+
+	"""
+	The label of the shipping line.
+	"""
+	label: String
+}
+
+"""
+Represents a shipping total for a Shop Pay payment request.
+"""
+type ShopPayPaymentRequestTotalShippingPrice {
+	"""
+	The discounts for the shipping total.
+	"""
+	discounts: [ShopPayPaymentRequestDiscount!]!
+
+	"""
+	The final total for the shipping total.
+	"""
+	finalTotal: MoneyV2!
+
+	"""
+	The original total for the shipping total.
+	"""
+	originalTotal: MoneyV2
+}
+
+"""
+The input fields to create a shipping total for a Shop Pay payment request.
+"""
+input ShopPayPaymentRequestTotalShippingPriceInput {
+	"""
+	The discounts for the shipping total.
+
+	The input must not contain more than `250` values.
+	"""
+	discounts: [ShopPayPaymentRequestDiscountInput!]
+
+	"""
+	The final total for the shipping total.
+	"""
+	finalTotal: MoneyInput
+
+	"""
+	The original total for the shipping total.
+	"""
+	originalTotal: MoneyInput
 }
 
 "The input fields for submitting Shop Pay payment method information for checkout.\n"
@@ -13200,42 +13238,19 @@ type SubmitThrottled {
 	pollAfter: DateTime!
 }
 
-"Specifies the fields required to complete a checkout with\na tokenized payment.\n"
-input TokenizedPaymentInputV3 {
+"""
+Color and image for visual representation.
+"""
+type Swatch {
 	"""
-	The billing address for the payment.
+	The swatch color.
 	"""
-	billingAddress: MailingAddressInput!
+	color: Color
 
 	"""
-	A unique client generated key used to avoid duplicate charges. When a duplicate payment is found, the original is returned instead of creating a new one. For more information, refer to [Idempotent requests](https://shopify.dev/api/usage/idempotent-requests).
+	The swatch image.
 	"""
-	idempotencyKey: String!
-
-	"""
-	Public Hash Key used for AndroidPay payments only.
-	"""
-	identifier: String
-
-	"""
-	The amount and currency of the payment.
-	"""
-	paymentAmount: MoneyInput!
-
-	"""
-	A simple string or JSON containing the required payment data for the tokenized payment.
-	"""
-	paymentData: String!
-
-	"""
-	Whether to execute the payment in test mode, if possible. Test mode isn't supported in production stores. Defaults to `false`.
-	"""
-	test: Boolean = false
-
-	"""
-	The type of payment token.
-	"""
-	type: PaymentTokenType!
+	image: MediaImage
 }
 
 """
@@ -13246,94 +13261,6 @@ interface Trackable {
 	URL parameters to be added to a page URL to track the origin of on-site search traffic for [analytics reporting](https://help.shopify.com/manual/reports-and-analytics/shopify-reports/report-types/default-reports/behaviour-reports). Returns a result when accessed through the [search](https://shopify.dev/docs/api/storefront/current/queries/search) or [predictiveSearch](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries, otherwise returns null.
 	"""
 	trackingParameters: String
-}
-
-"""
-An object representing exchange of money for a product or service.
-"""
-type Transaction {
-	"""
-	The amount of money that the transaction was for.
-	"""
-	amount: MoneyV2!
-
-	"""
-	The amount of money that the transaction was for.
-	"""
-	amountV2: MoneyV2! @deprecated(reason: "Use `amount` instead.")
-
-	"""
-	The kind of the transaction.
-	"""
-	kind: TransactionKind!
-
-	"""
-	The status of the transaction.
-	"""
-	status: TransactionStatus! @deprecated(reason: "Use `statusV2` instead.")
-
-	"""
-	The status of the transaction.
-	"""
-	statusV2: TransactionStatus
-
-	"""
-	Whether the transaction was done in test mode or not.
-	"""
-	test: Boolean!
-}
-
-"""
-The different kinds of order transactions.
-"""
-enum TransactionKind {
-	"An amount reserved against the cardholder's funding source.\nMoney does not change hands until the authorization is captured.\n"
-	AUTHORIZATION
-
-	"""
-	A transfer of the money that was reserved during the authorization stage.
-	"""
-	CAPTURE
-
-	"""
-	Money returned to the customer when they have paid too much.
-	"""
-	CHANGE
-
-	"""
-	An authorization for a payment taken with an EMV credit card reader.
-	"""
-	EMV_AUTHORIZATION
-
-	"""
-	An authorization and capture performed together in a single step.
-	"""
-	SALE
-}
-
-"""
-Transaction statuses describe the status of a transaction.
-"""
-enum TransactionStatus {
-	"""
-	There was an error while processing the transaction.
-	"""
-	ERROR
-
-	"""
-	The transaction failed.
-	"""
-	FAILURE
-
-	"""
-	The transaction is pending.
-	"""
-	PENDING
-
-	"""
-	The transaction succeeded.
-	"""
-	SUCCESS
 }
 
 "Represents an [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) and\n[RFC 3987](https://datatracker.ietf.org/doc/html/rfc3987)-compliant URI string.\n\nFor example, `\"https://example.myshopify.com\"` is a valid URL. It includes a scheme (`https`) and a host\n(`example.myshopify.com`).\n"
@@ -13534,6 +13461,46 @@ type UserError implements DisplayableError {
 	The error message.
 	"""
 	message: String!
+}
+
+"""
+Error codes for failed Shop Pay payment request session mutations.
+"""
+type UserErrorsShopPayPaymentRequestSessionUserErrors implements DisplayableError {
+	"""
+	The error code.
+	"""
+	code: UserErrorsShopPayPaymentRequestSessionUserErrorsCode
+
+	"""
+	The path to the input field that caused the error.
+	"""
+	field: [String!]
+
+	"""
+	The error message.
+	"""
+	message: String!
+}
+
+"""
+Possible error codes that can be returned by `ShopPayPaymentRequestSessionUserErrors`.
+"""
+enum UserErrorsShopPayPaymentRequestSessionUserErrorsCode {
+	"""
+	Idempotency key has already been used.
+	"""
+	IDEMPOTENCY_KEY_ALREADY_USED
+
+	"""
+	Payment request input is invalid.
+	"""
+	PAYMENT_REQUEST_INVALID_INPUT
+
+	"""
+	Payment request not found.
+	"""
+	PAYMENT_REQUEST_NOT_FOUND
 }
 
 """
