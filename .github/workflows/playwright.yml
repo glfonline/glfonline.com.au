@@ -73,4 +73,3 @@ jobs:
           name: playwright-report
           path: packages/playwright/playwright-report/
           retention-days: 30
-
