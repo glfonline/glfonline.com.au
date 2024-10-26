@@ -1,16 +1,16 @@
-import { CREATE_CHECKOUT_MUTATION, shopifyClient } from '@glfonline/shopify-client';
+import { CREATE_CART_MUTATION, shopifyClient } from '@glfonline/shopify-client';
 
 import type { CartItem } from './cart';
 
 export async function getCartInfo(items: Array<CartItem>) {
-	const json = await shopifyClient(CREATE_CHECKOUT_MUTATION, {
+	const json = await shopifyClient(CREATE_CART_MUTATION, {
 		input: {
-			lineItems: items.map((item) => ({
-				variantId: item.variantId,
+			lines: items.map((item) => ({
+				merchandiseId: item.variantId,
 				quantity: item.quantity,
 			})),
 		},
 	});
 
-	return json.checkoutCreate?.checkout;
+	return json.cartCreate?.cart;
 }
