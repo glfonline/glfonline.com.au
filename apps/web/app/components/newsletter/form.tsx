@@ -1,6 +1,9 @@
 import { useFetcher } from '@remix-run/react';
 import { useZorm } from 'react-zorm';
 
+import { useState } from 'react';
+import Turnstile from 'react-turnstile';
+import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { Field } from '../design-system/field';
 import { Heading } from '../design-system/heading';
@@ -11,6 +14,9 @@ import { NewsletterSchema } from './schema';
 export function NewsletterSignup() {
 	const fetcher = useFetcher<typeof action>();
 	const form = useZorm('contact_form', NewsletterSchema);
+	const [token, setToken] = useState('');
+
+	const { isMounted } = useClientOnlyMount();
 
 	return (
 		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
@@ -58,6 +64,21 @@ export function NewsletterSignup() {
 								))}
 							</div>
 						</fieldset>
+
+						<div className="flex min-h-[65px] items-center flex-col gap-1 sm:col-span-4">
+							{isMounted && (
+								<Turnstile
+									onVerify={(token) => {
+										setToken(token);
+									}}
+									sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
+									size="normal"
+									style={{ width: '100%' }}
+									theme="light"
+								/>
+							)}
+							<input name={form.fields.token()} type="hidden" value={token} />
+						</div>
 
 						<Button className="sm:col-span-4" isLoading={fetcher.state === 'loading'} type="submit" variant="neutral">
 							Join
