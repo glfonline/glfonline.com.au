@@ -5,4 +5,5 @@ export const NewsletterSchema = z.object({
 	last_name: z.string().min(1, 'Last name is required'),
 	email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
 	gender: z.string().min(1, 'Gender is required'),
+	token: z.string(),
 });
