@@ -169,8 +169,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(remix@2.15.0)
       remix-utils:
-        specifier: ^7.7.0
-        version: 7.7.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1)(zod@3.23.8)
+        specifier: ^8.0.0
+        version: 8.0.0(is-ip@5.0.1)(react@18.3.1)(zod@3.23.8)
       tailwind-merge:
         specifier: ^2.5.4
         version: 2.5.4
@@ -7070,35 +7070,29 @@ packages:
       '@remix-run/react': '>=1.0.0'
       remix: '>=1.0.0'
 
-  remix-utils@7.7.0:
-    resolution: {integrity: sha512-J8NhP044nrNIam/xOT1L9a4RQ9FSaA2wyrUwmN8ZT+c/+CdAAf70yfaLnvMyKcV5U+8BcURQ/aVbth77sT6jGA==}
-    engines: {node: '>=18.0.0'}
+  remix-utils@8.0.0:
+    resolution: {integrity: sha512-vrs8Iytnuwi+KF+VYOPT3vzDX7cLbys897pwzLpMzLjOXJQ/S60dApHCmQ9cPWH3XHRgvaoJjZ6+sMGaax4fbg==}
+    engines: {node: '>=20.0.0'}
     peerDependencies:
-      '@remix-run/cloudflare': ^2.0.0
-      '@remix-run/node': ^2.0.0
-      '@remix-run/react': ^2.0.0
-      '@remix-run/router': ^1.7.2
-      crypto-js: ^4.1.1
+      '@oslojs/crypto': ^1.0.1
+      '@oslojs/encoding': ^1.1.0
       intl-parse-accept-language: ^1.0.0
       is-ip: ^5.0.1
-      react: ^18.0.0
+      react: ^18.0.0 || ^19.0.0
+      react-router: ^7.0.0
       zod: ^3.22.4
     peerDependenciesMeta:
-      '@remix-run/cloudflare':
+      '@oslojs/crypto':
         optional: true
-      '@remix-run/node':
-        optional: true
-      '@remix-run/react':
-        optional: true
-      '@remix-run/router':
-        optional: true
-      crypto-js:
+      '@oslojs/encoding':
         optional: true
       intl-parse-accept-language:
         optional: true
       is-ip:
         optional: true
       react:
+        optional: true
+      react-router:
         optional: true
       zod:
         optional: true
@@ -7830,8 +7824,8 @@ packages:
     resolution: {integrity: sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==}
     engines: {node: '>=8'}
 
-  type-fest@4.28.0:
-    resolution: {integrity: sha512-jXMwges/FVbFRe5lTMJZVEZCrO9kI9c8k0PA/z7nF3bo0JSCCLysvokFjNPIUK/itEMas10MQM+AiHoHt/T/XA==}
+  type-fest@4.31.0:
+    resolution: {integrity: sha512-yCxltHW07Nkhv/1F6wWBr8kz+5BGMfP+RbRSYFnegVb0qV/UMT0G0ElBloPVerqn4M2ZV80Ir1FtCcYv1cT6vQ==}
     engines: {node: '>=16'}
 
   type-is@1.6.18:
@@ -10771,7 +10765,7 @@ snapshots:
       '@pnpm/network.ca-file': 1.0.2
       config-chain: 1.1.13
 
-  '@portabletext/editor@1.11.2(@sanity/block-tools@3.64.3)(@sanity/schema@3.64.3)(@sanity/types@3.64.3(debug@4.3.7))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rxjs@7.8.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
+  '@portabletext/editor@1.11.2(@sanity/block-tools@3.64.3(debug@4.3.7))(@sanity/schema@3.64.3(debug@4.3.7))(@sanity/types@3.64.3(debug@4.3.7))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rxjs@7.8.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))':
     dependencies:
       '@portabletext/patches': 1.1.0
       '@sanity/block-tools': 3.64.3(debug@4.3.7)
@@ -11647,7 +11641,7 @@ snapshots:
       graphql: 16.9.0
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
-      type-fest: 4.28.0
+      type-fest: 4.31.0
       worktop: 0.7.3
     transitivePeerDependencies:
       - '@types/react'
@@ -11661,7 +11655,7 @@ snapshots:
       content-security-policy-builder: 2.2.0
       react: 18.3.1
       source-map-support: 0.5.21
-      type-fest: 4.28.0
+      type-fest: 4.31.0
       use-resize-observer: 9.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       worktop: 0.7.3
     optionalDependencies:
@@ -16244,7 +16238,7 @@ snapshots:
 
   remeda@2.17.3:
     dependencies:
-      type-fest: 4.28.0
+      type-fest: 4.31.0
 
   remedial@1.0.8: {}
 
@@ -16254,13 +16248,10 @@ snapshots:
       just-merge: 3.2.0
       remix: 2.15.0
 
-  remix-utils@7.7.0(@remix-run/node@2.15.0(typescript@5.7.2))(@remix-run/react@2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2))(@remix-run/router@1.21.0)(is-ip@5.0.1)(react@18.3.1)(zod@3.23.8):
+  remix-utils@8.0.0(is-ip@5.0.1)(react@18.3.1)(zod@3.23.8):
     dependencies:
-      type-fest: 4.28.0
+      type-fest: 4.31.0
     optionalDependencies:
-      '@remix-run/node': 2.15.0(typescript@5.7.2)
-      '@remix-run/react': 2.15.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.7.2)
-      '@remix-run/router': 1.21.0
       is-ip: 5.0.1
       react: 18.3.1
       zod: 3.23.8
@@ -16387,7 +16378,7 @@ snapshots:
       '@dnd-kit/sortable': 7.0.2(@dnd-kit/core@6.2.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@dnd-kit/utilities': 3.2.2(react@18.3.1)
       '@juggle/resize-observer': 3.4.0
-      '@portabletext/editor': 1.11.2(@sanity/block-tools@3.64.3)(@sanity/schema@3.64.3)(@sanity/types@3.64.3(debug@4.3.7))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rxjs@7.8.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
+      '@portabletext/editor': 1.11.2(@sanity/block-tools@3.64.3(debug@4.3.7))(@sanity/schema@3.64.3(debug@4.3.7))(@sanity/types@3.64.3(debug@4.3.7))(@types/react@18.3.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(rxjs@7.8.1)(styled-components@6.1.13(react-dom@18.3.1(react@18.3.1))(react@18.3.1))
       '@portabletext/react': 3.1.0(react@18.3.1)
       '@rexxars/react-json-inspector': 8.0.1(react@18.3.1)
       '@sanity/asset-utils': 2.2.0
@@ -17186,7 +17177,7 @@ snapshots:
 
   type-fest@0.8.1: {}
 
-  type-fest@4.28.0: {}
+  type-fest@4.31.0: {}
 
   type-is@1.6.18:
     dependencies:
