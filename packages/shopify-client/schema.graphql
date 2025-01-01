@@ -217,7 +217,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	"""
 	content(
 		"""
-		Truncates string after the given length.
+		Truncates a string after the given length.
 		"""
 		truncateAt: Int
 	): String!
@@ -232,7 +232,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	"""
 	excerpt(
 		"""
-		Truncates string after the given length.
+		Truncates a string after the given length.
 		"""
 		truncateAt: Int
 	): String
@@ -258,7 +258,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	image: Image
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -273,7 +273,7 @@ type Article implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -618,7 +618,7 @@ type Blog implements HasMetafields & Node & OnlineStorePublishable {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -633,7 +633,7 @@ type Blog implements HasMetafields & Node & OnlineStorePublishable {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -945,7 +945,7 @@ type Cart implements HasMetafields & Node {
 	): BaseCartLineConnection!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -960,7 +960,7 @@ type Cart implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -1269,21 +1269,33 @@ type CartCost {
 	The duty amount for the customer to pay at checkout.
 	"""
 	totalDutyAmount: MoneyV2
+		@deprecated(
+			reason: "Tax and duty amounts are no longer available and will be removed in a future version.\nPlease see [the changelog](https://shopify.dev/changelog/tax-and-duties-are-deprecated-in-storefront-cart-api)\nfor more information.\n"
+		)
 
 	"""
 	Whether the total duty amount is estimated.
 	"""
 	totalDutyAmountEstimated: Boolean!
+		@deprecated(
+			reason: "Tax and duty amounts are no longer available and will be removed in a future version.\nPlease see [the changelog](https://shopify.dev/changelog/tax-and-duties-are-deprecated-in-storefront-cart-api)\nfor more information.\n"
+		)
 
 	"""
 	The tax amount for the customer to pay at checkout.
 	"""
 	totalTaxAmount: MoneyV2
+		@deprecated(
+			reason: "Tax and duty amounts are no longer available and will be removed in a future version.\nPlease see [the changelog](https://shopify.dev/changelog/tax-and-duties-are-deprecated-in-storefront-cart-api)\nfor more information.\n"
+		)
 
 	"""
 	Whether the total tax amount is estimated.
 	"""
 	totalTaxAmountEstimated: Boolean!
+		@deprecated(
+			reason: "Tax and duty amounts are no longer available and will be removed in a future version.\nPlease see [the changelog](https://shopify.dev/changelog/tax-and-duties-are-deprecated-in-storefront-cart-api)\nfor more information.\n"
+		)
 }
 
 """
@@ -2301,7 +2313,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 	"""
 	description(
 		"""
-		Truncates string after the given length.
+		Truncates a string after the given length.
 		"""
 		truncateAt: Int
 	): String!
@@ -2325,7 +2337,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 	image: Image
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -2340,7 +2352,7 @@ type Collection implements HasMetafields & Node & OnlineStorePublishable & Track
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -2495,7 +2507,7 @@ type Comment implements Node {
 	"""
 	content(
 		"""
-		Truncates string after the given length.
+		Truncates a string after the given length.
 		"""
 		truncateAt: Int
 	): String!
@@ -2577,7 +2589,7 @@ type Company implements HasMetafields & Node {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -2592,7 +2604,7 @@ type Company implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -2669,7 +2681,7 @@ type CompanyLocation implements HasMetafields & Node {
 	locale: String
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -2684,7 +2696,7 @@ type CompanyLocation implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -5006,7 +5018,7 @@ type Customer implements HasMetafields {
 	lastName: String
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -5021,7 +5033,7 @@ type Customer implements HasMetafields {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -6219,7 +6231,7 @@ Represents information about the metafields associated to the specified resource
 """
 interface HasMetafields {
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -6234,7 +6246,7 @@ interface HasMetafields {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -7213,7 +7225,7 @@ type Location implements HasMetafields & Node {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -7228,7 +7240,7 @@ type Location implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -7584,7 +7596,7 @@ type Market implements HasMetafields & Node {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -7599,7 +7611,7 @@ type Market implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -9057,7 +9069,7 @@ type Order implements HasMetafields & Node {
 	): OrderLineItemConnection!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -9072,7 +9084,7 @@ type Order implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -9473,7 +9485,7 @@ type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -9488,7 +9500,7 @@ type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -9761,7 +9773,7 @@ The price value (fixed or percentage) for a discount application.
 """
 union PricingValue = MoneyV2 | PricingPercentageValue
 
-"A product represents an individual item for sale in a Shopify store. Products are often physical, but they don't have to be.\nFor example, a digital download (such as a movie, music or ebook file) also\nqualifies as a product, as do services (such as equipment rental, work for hire,\ncustomization of another product or an extended warranty).\n"
+"The `Product` object lets you manage products in a merchant’s store.\n\nProducts are the goods and services that merchants offer to customers.\nThey can include various details such as title, description, price, images, and options such as size or color.\nYou can use [product variants](/docs/api/storefront/latest/objects/ProductVariant)\nto create or update different versions of the same product.\nYou can also add or update product [media](/docs/api/storefront/latest/interfaces/Media).\nProducts can be organized by grouping them into a [collection](/docs/api/storefront/latest/objects/Collection).\n\nLearn more about working with [products and collections](/docs/storefronts/headless/building-with-the-storefront-api/products-collections).\n"
 type Product implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	Indicates if at least one product variant is available for sale.
@@ -9769,7 +9781,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	availableForSale: Boolean!
 
 	"""
-	List of collections a product belongs to.
+	A list of [collections](/docs/api/storefront/latest/objects/Collection) that include the product.
 	"""
 	collections(
 		"""
@@ -9799,7 +9811,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): CollectionConnection!
 
 	"""
-	The compare at price of the product across all variants.
+	The [compare-at price range](https://help.shopify.com/manual/products/details/product-pricing/sale-pricing) of the product in the shop's default currency.
 	"""
 	compareAtPriceRange: ProductPriceRange!
 
@@ -9809,24 +9821,22 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	createdAt: DateTime!
 
 	"""
-	Stripped description of the product, single line with HTML tags removed.
+	A single-line description of the product, with [HTML tags](https://developer.mozilla.org/en-US/docs/Web/HTML) removed.
 	"""
 	description(
 		"""
-		Truncates string after the given length.
+		Truncates a string after the given length.
 		"""
 		truncateAt: Int
 	): String!
 
-	"""
-	The description of the product, complete with HTML formatting.
-	"""
+	"The description of the product, with\nHTML tags. For example, the description might include\nbold `<strong></strong>` and italic `<i></i>` text.\n"
 	descriptionHtml: HTML!
 
 	"The featured image for the product.\n\nThis field is functionally equivalent to `images(first: 1)`.\n"
 	featuredImage: Image
 
-	"A human-friendly unique string for the Product automatically generated from its title.\nThey are used by the Liquid templating language to refer to objects.\n"
+	"A unique, human-readable string of the product's title.\nA handle can contain letters, hyphens (`-`), and numbers, but no spaces.\nThe handle is used in the online store URL for the product.\n"
 	handle: String!
 
 	"""
@@ -9875,7 +9885,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	isGiftCard: Boolean!
 
 	"""
-	The media associated with the product.
+	The [media](/docs/apps/build/online-store/product-media) that are associated with the product. Valid media are images, 3D models, videos.
 	"""
 	media(
 		"""
@@ -9910,7 +9920,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): MediaConnection!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -9925,7 +9935,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -9936,11 +9946,11 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 		identifiers: [HasMetafieldsIdentifier!]!
 	): [Metafield]!
 
-	"The URL used for viewing the resource on the shop's Online Store. Returns\n`null` if the resource is currently not published to the Online Store sales channel.\n"
+	"The product's URL on the online store.\nIf `null`, then the product isn't published to the online store sales channel.\n"
 	onlineStoreUrl: URL
 
 	"""
-	List of product options.
+	A list of product options. The limit is defined by the [shop's resource limits for product options](/docs/api/admin-graphql/latest/objects/Shop#field-resourcelimits) (`Shop.resourceLimits.maxProductOptions`).
 	"""
 	options(
 		"""
@@ -9949,14 +9959,10 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 		first: Int
 	): [ProductOption!]!
 
-	"""
-	The price range.
-	"""
+	"The minimum and maximum prices of a product, expressed in decimal numbers.\nFor example, if the product is priced between $10.00 and $50.00,\nthen the price range is $10.00 - $50.00.\n"
 	priceRange: ProductPriceRange!
 
-	"""
-	A categorization that a product can be tagged with, commonly used for filtering and searching.
-	"""
+	"The [product type](https://help.shopify.com/manual/products/details/product-type)\nthat merchants define.\n"
 	productType: String!
 
 	"""
@@ -9965,12 +9971,12 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	publishedAt: DateTime!
 
 	"""
-	Whether the product can only be purchased with a selling plan.
+	Whether the product can only be purchased with a [selling plan](/docs/apps/build/purchase-options/subscriptions/selling-plans). Products that are sold on subscription (`requiresSellingPlan: true`) can be updated only for online stores. If you update a product to be subscription-only (`requiresSellingPlan:false`), then the product is unpublished from all channels, except the online store.
 	"""
 	requiresSellingPlan: Boolean!
 
 	"""
-	A list of a product's available selling plan groups. A selling plan group represents a selling method. For example, 'Subscribe and save' is a selling method where customers pay for goods or services per delivery. A selling plan group contains individual selling plans.
+	A list of all [selling plan groups](/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan) that are associated with the product either directly, or through the product's variants.
 	"""
 	sellingPlanGroups(
 		"""
@@ -9999,21 +10005,17 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 		reverse: Boolean = false
 	): SellingPlanGroupConnection!
 
-	"""
-	The product's SEO information.
-	"""
+	"The [SEO title and description](https://help.shopify.com/manual/promoting-marketing/seo/adding-keywords)\nthat are associated with a product.\n"
 	seo: SEO!
 
-	"A comma separated list of tags that have been added to the product.\nAdditional access scope required for private apps: unauthenticated_read_product_tags.\n"
+	"A comma-separated list of searchable keywords that are\nassociated with the product. For example, a merchant might apply the `sports`\nand `summer` tags to products that are associated with sportwear for summer.\nUpdating `tags` overwrites any existing tags that were previously added to the product.\nTo add new tags without overwriting existing tags,\nuse the GraphQL Admin API's [`tagsAdd`](/docs/api/admin-graphql/latest/mutations/tagsadd)\nmutation.\n"
 	tags: [String!]!
 
-	"""
-	The product’s title.
-	"""
+	"The name for the product that displays to customers. The title is used to construct the product's handle.\nFor example, if a product is titled \"Black Sunglasses\", then the handle is `black-sunglasses`.\n"
 	title: String!
 
 	"""
-	The total quantity of inventory in stock for this Product.
+	The quantity of inventory that's in stock.
 	"""
 	totalInventory: Int
 
@@ -10046,7 +10048,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): ProductVariant
 
 	"""
-	List of the product’s variants.
+	A list of [variants](/docs/api/storefront/latest/objects/ProductVariant) that are associated with the product.
 	"""
 	variants(
 		"""
@@ -10081,7 +10083,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): ProductVariantConnection!
 
 	"""
-	The product’s vendor name.
+	The name of the product's vendor.
 	"""
 	vendor: String!
 }
@@ -10463,7 +10465,7 @@ type ProductVariant implements HasMetafields & Node {
 	image: Image
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -10478,7 +10480,7 @@ type ProductVariant implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -11281,7 +11283,7 @@ type QueryRoot {
 	Find a product by its handle.
 	"""
 	productByHandle(
-		"A unique string that identifies the product. Handles are automatically\ngenerated based on the product's title, and are always lowercase. Whitespace\nand special characters are replaced with a hyphen: `-`. If there are\nmultiple consecutive whitespace or special characters, then they're replaced\nwith a single hyphen. Whitespace or special characters at the beginning are\nremoved. If a duplicate product title is used, then the handle is\nauto-incremented by one. For example, if you had two products called\n`Potion`, then their handles would be `potion` and `potion-1`. After a\nproduct has been created, changing the product title doesn't update the handle.\n"
+		"A unique, human-readable string of the product's title.\nA handle can contain letters, hyphens (`-`), and numbers, but no spaces.\nThe handle is used in the online store URL for the product.\n"
 		handle: String!
 	): Product @deprecated(reason: "Use `product` instead.")
 
@@ -11752,7 +11754,7 @@ type SellingPlan implements HasMetafields {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -11767,7 +11769,7 @@ type SellingPlan implements HasMetafields {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
@@ -12207,7 +12209,7 @@ type Shop implements HasMetafields & Node {
 	id: ID!
 
 	"""
-	Returns a metafield found by namespace and key.
+	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
 	"""
 	metafield(
 		"""
@@ -12222,7 +12224,7 @@ type Shop implements HasMetafields & Node {
 	): Metafield
 
 	"""
-	The metafields associated with the resource matching the supplied list of namespaces and keys.
+	A list of [custom fields](/docs/apps/build/custom-data) that a merchant associates with a Shopify resource.
 	"""
 	metafields(
 		"""
