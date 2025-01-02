@@ -11,6 +11,7 @@ export default defineConfig({
 			ignoredRouteFiles: ['**/.*'],
 			future: {
 				unstable_optimizeDeps: true,
+				v3_fetcherPersist: true,
 			},
 		}),
 		sentryVitePlugin({
