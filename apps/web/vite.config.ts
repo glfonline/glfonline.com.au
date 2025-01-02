@@ -9,6 +9,9 @@ export default defineConfig({
 	plugins: [
 		remix({
 			ignoredRouteFiles: ['**/.*'],
+			future: {
+				unstable_optimizeDeps: true,
+			},
 		}),
 		sentryVitePlugin({
 			org: 'glf-online',
