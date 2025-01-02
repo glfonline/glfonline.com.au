@@ -1,11 +1,11 @@
-import { type ActionFunctionArgs, json } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 
 import type { FormResponse } from '../../types';
 import { NewsletterSchema } from './schema';
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs): Promise<FormResponse> {
 	try {
 		/** Get the form data out of the request */
 		const formData = await request.formData();
@@ -62,9 +62,9 @@ export async function action({ request }: ActionFunctionArgs) {
 			credentials: 'omit',
 		});
 
-		return json<FormResponse>({ ok: true });
+		return { ok: true };
 	} catch {
 		/** @todo */
-		return json<FormResponse>({ ok: false });
+		return { ok: false };
 	}
 }

@@ -1,6 +1,6 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
+import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
 import { Form, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -16,6 +16,7 @@ import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
+import { notFound } from '../lib/not-found';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
@@ -35,13 +36,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {
 			handle: result.data.handle,
 		});
-		if (!product) {
-			throw new Response(null, {
-				status: 404,
-				statusText: 'Product Not Found',
-			});
-		}
-		return json(
+		if (!product) notFound();
+		return data(
 			{ product, theme: result.data.theme },
 			{
 				headers: {
@@ -50,10 +46,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			},
 		);
 	}
-	throw new Response(null, {
-		status: 404,
-		statusText: 'Product Not Found',
-	});
+	notFound();
 }
 
 export async function action({ request }: ActionFunctionArgs) {
@@ -62,7 +55,12 @@ export async function action({ request }: ActionFunctionArgs) {
 	let cart = await session.getCart();
 	cart = addToCart(cart, variantId, 1);
 	await session.setCart(cart);
-	return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
+	return data(
+		{},
+		{
+			headers: { 'Set-Cookie': await session.commitSession() },
+		},
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

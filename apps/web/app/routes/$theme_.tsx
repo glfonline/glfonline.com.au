@@ -1,5 +1,5 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
-import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 
@@ -7,6 +7,7 @@ import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
 import { brandsWeLove } from '../lib/brands-we-love';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
+import { notFound } from '../lib/not-found';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
@@ -36,12 +37,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			id: result.data.theme,
 		});
 		const collection = CollectionSchema.parse(ThemePage);
-		return json({ collection, theme: result.data.theme });
+		return { collection, theme: result.data.theme };
 	}
-	throw new Response(null, {
-		status: 404,
-		statusText: 'Not Found',
-	});
+	notFound();
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {

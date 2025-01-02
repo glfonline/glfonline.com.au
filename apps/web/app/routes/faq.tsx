@@ -1,5 +1,6 @@
 import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, json, useLoaderData } from '@remix-run/react';
+import { data } from '@remix-run/node';
+import { type MetaFunction, useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
@@ -22,7 +23,7 @@ export async function loader() {
 	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, { id: 'faqs' });
 	const faqPage = FaqSchema.parse(FaqPage);
 
-	return json(
+	return data(
 		{ faqPage, title: 'Frequently Asked Questions' },
 		{
 			headers: {

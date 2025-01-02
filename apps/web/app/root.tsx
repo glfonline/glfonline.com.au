@@ -2,7 +2,6 @@ import './font.css';
 import './tailwind.css';
 
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { json } from '@remix-run/node';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
 	Links,
@@ -61,11 +60,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		getMainNavigation(),
 	]);
 
-	return json({
+	return {
 		cartCount: cart.length,
 		mainNavigation,
 		shop,
-	});
+	};
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data, matches }) => {

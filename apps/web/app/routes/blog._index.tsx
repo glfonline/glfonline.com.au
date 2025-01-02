@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
@@ -43,13 +43,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		getFeaturedBlogPost(),
 		getBlogPostCount(),
 	]);
-	return json({
+	return {
 		after,
 		count,
 		featuredPost,
 		posts,
 		title: 'Blog',
-	});
+	};
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {

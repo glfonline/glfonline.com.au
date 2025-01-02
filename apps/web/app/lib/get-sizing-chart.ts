@@ -20,7 +20,7 @@ export function getSizingChart({
 	productType,
 	vendor,
 	tags,
-}: { productType: string; vendor: Vendor; tags: Array<string> }):
+}: { productType: string; vendor: Vendor; tags: ReadonlyArray<string> }):
 	| {
 			href: string;
 			useSizing?: boolean;

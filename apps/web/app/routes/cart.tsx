@@ -1,5 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, json, redirect } from '@remix-run/node';
+import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data, redirect } from '@remix-run/node';
 import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -16,7 +16,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request);
 	const cart = await session.getCart();
 	const cartInfo = await getCartInfo(cart);
-	return json({ cartInfo }, { headers: { 'Set-Cookie': await session.commitSession() } });
+	return data(
+		{ cartInfo },
+		{
+			headers: { 'Set-Cookie': await session.commitSession() },
+		},
+	);
 }
 
 const INTENT = 'intent';
@@ -57,7 +62,12 @@ export async function action({ request }: ActionFunctionArgs) {
 			const cart = await session.getCart();
 			const newCart = updateCartItem(cart, variantId, quantity);
 			await session.setCart(newCart);
-			return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
+			return data(
+				{},
+				{
+					headers: { 'Set-Cookie': await session.commitSession() },
+				},
+			);
 		}
 
 		case ACTIONS.REMOVE_ACTION: {
@@ -65,7 +75,12 @@ export async function action({ request }: ActionFunctionArgs) {
 			const cart = await session.getCart();
 			const newCart = removeCartItem(cart, variantId);
 			await session.setCart(newCart);
-			return json({}, { headers: { 'Set-Cookie': await session.commitSession() } });
+			return data(
+				{},
+				{
+					headers: { 'Set-Cookie': await session.commitSession() },
+				},
+			);
 		}
 
 		default: {

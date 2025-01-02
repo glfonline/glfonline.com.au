@@ -1,5 +1,6 @@
 import { type LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { assert, isString } from 'emery';
+import { notFound } from '../lib/not-found';
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const { slug } = params;
@@ -8,10 +9,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	if (obj) {
 		return redirect(obj.destination);
 	}
-	throw new Response(null, {
-		status: 404,
-		statusText: 'Not Found',
-	});
+	notFound();
 }
 
 const redirects = [

@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, json } from '@remix-run/node';
+import type { ActionFunctionArgs } from '@remix-run/node';
 import sendgrid from '@sendgrid/mail';
 import dedent from 'dedent';
 import { parseForm } from 'react-zorm';
@@ -70,10 +70,10 @@ export async function action({ request }: ActionFunctionArgs) {
 		const sendgridResponse = await sendgrid.send(mailOptions);
 		// biome-ignore lint/suspicious/noConsole:
 		console.log({ sendgridResponse });
-		return json({ ok: true });
+		return { ok: true };
 	} catch (error) {
 		// biome-ignore lint/suspicious/noConsole:
 		console.error(error);
-		return json({ ok: false });
+		return { ok: false };
 	}
 }

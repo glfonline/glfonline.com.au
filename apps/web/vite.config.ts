@@ -3,7 +3,13 @@ import { installGlobals } from '@remix-run/node';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { defineConfig } from 'vite';
 
-installGlobals();
+declare module '@remix-run/node' {
+	interface Future {
+		v3_singleFetch: true;
+	}
+}
+
+installGlobals({ nativeFetch: true });
 
 export default defineConfig({
 	plugins: [
@@ -14,6 +20,7 @@ export default defineConfig({
 				v3_fetcherPersist: true,
 				v3_lazyRouteDiscovery: true,
 				v3_relativeSplatPath: true,
+				v3_singleFetch: true,
 				v3_throwAbortReason: true,
 			},
 		}),

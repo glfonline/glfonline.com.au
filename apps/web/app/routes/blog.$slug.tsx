@@ -1,11 +1,12 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
+import { type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
 import invariant from 'tiny-invariant';
 
 import { Hero } from '../components/hero';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
+import { notFound } from '../lib/not-found';
 import { PortableText } from '../lib/portable-text';
 import { PostSchema } from '../lib/post-schema';
 import { urlFor } from '../lib/sanity-image';
@@ -19,8 +20,8 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		slug: params.slug,
 	});
 	const page = PostSchema.parse(allPost[0]);
-	if (!page) throw json('Page not found');
-	return json(
+	if (!page) notFound();
+	return data(
 		{ page },
 		{
 			headers: {

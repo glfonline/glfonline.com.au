@@ -1,10 +1,11 @@
 import { LEGAL_PAGE_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { type MetaFunction, json } from '@remix-run/node';
+import { type MetaFunction, data } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 
 import { PageLayout } from '../components/page-layout';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
+import { notFound } from '../lib/not-found';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
@@ -13,8 +14,8 @@ export async function loader() {
 	const { page } = await shopifyClient(LEGAL_PAGE_QUERY, {
 		handle: 'privacy-policy',
 	});
-	if (!page) throw json('Page not found');
-	return json(
+	if (!page) notFound();
+	return data(
 		{ page },
 		{
 			headers: {

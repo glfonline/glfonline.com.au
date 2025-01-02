@@ -1,6 +1,6 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { json } from '@remix-run/node';
-import { type MetaFunction, useLoaderData } from '@remix-run/react';
+import { type MetaFunction, data } from '@remix-run/node';
+import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
@@ -44,7 +44,7 @@ const HomePageSchema = z.object({
 
 export async function loader() {
 	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
-	return json(HomePageSchema.parse(HomePage), {
+	return data(HomePageSchema.parse(HomePage), {
 		headers: {
 			'Cache-Control': CACHE_SHORT,
 		},

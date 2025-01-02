@@ -1,5 +1,5 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, json } from '@remix-run/node';
+import { type MetaFunction, data } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 import { z } from 'zod';
@@ -34,7 +34,7 @@ export async function loader() {
 	});
 
 	const { sections } = AboutSchema.parse(AboutPage);
-	return json(
+	return data(
 		{ sections },
 		{
 			headers: {

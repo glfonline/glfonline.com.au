@@ -9,7 +9,7 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { type LoaderFunctionArgs, type MetaFunction, json } from '@remix-run/node';
+import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
@@ -23,6 +23,7 @@ import { capitalise } from '../lib/capitalise';
 import { formatMoney } from '../lib/format-money';
 import { type SortBy, getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { PRODUCT_TYPE, getProductFilterOptions } from '../lib/get-product-filter-options';
+import { notFound } from '../lib/not-found';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
@@ -69,24 +70,14 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		]);
 
 		/** Collection data */
-		if (collectionPromise.status === 'rejected') {
-			throw new Response(null, {
-				status: 404,
-				statusText: 'Collection Not Found',
-			});
-		}
+		if (collectionPromise.status === 'rejected') notFound();
 		const collection = collectionPromise.value;
-		if (!(collection && Array.isArray(collection.products))) {
-			throw new Response(null, {
-				status: 404,
-				statusText: 'Collection Not Found',
-			});
-		}
+		if (!(collection && Array.isArray(collection.products))) notFound();
 
 		/** Options data */
 		const options = optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
 
-		return json({
+		return {
 			after,
 			collectionHandle,
 			image: collection.image,
@@ -95,13 +86,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 			products: collection.products,
 			theme,
 			title: collection.title,
-		});
+		};
 	}
 
-	throw new Response(null, {
-		status: 404,
-		statusText: 'Not Found',
-	});
+	notFound();
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
