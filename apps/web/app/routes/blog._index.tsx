@@ -1,6 +1,12 @@
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
+import {
+	Link,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+	useLoaderData,
+	useLocation,
+	useNavigate,
+} from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 

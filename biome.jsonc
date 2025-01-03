@@ -19,6 +19,7 @@
 			"**/__generated__",
 			"**/.cache",
 			"**/.env",
+			"**/.react-router",
 			"**/.sanity",
 			"**/.tsconfig.tsbuildinfo",
 			"**/.turbo",
@@ -61,6 +62,7 @@
 			"correctness": {
 				"all": true,
 				"noNodejsModules": "off",
+				"noUndeclaredDependencies": "off",
 				"useImportExtensions": "off"
 			},
 			"performance": {
@@ -74,6 +76,7 @@
 				"all": true,
 				"noDefaultExport": "off",
 				"noImplicitBoolean": "off",
+				"noNamespace": "off",
 				"noNamespaceImport": "off",
 				"useBlockStatements": "off",
 				"useConsistentArrayType": {

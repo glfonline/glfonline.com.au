@@ -1,19 +1,4 @@
-import './font.css';
-import './tailwind.css';
-
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
-import {
-	Links,
-	Meta,
-	type MetaFunction,
-	Outlet,
-	Scripts,
-	ScrollRestoration,
-	isRouteErrorResponse,
-	useLocation,
-	useRouteError,
-} from '@remix-run/react';
 import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
 import { type SeoHandleFunction, getSeoMeta } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
@@ -22,6 +7,19 @@ import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { useEffect } from 'react';
+import {
+	Links,
+	type LinksFunction,
+	type LoaderFunctionArgs,
+	Meta,
+	type MetaFunction,
+	Outlet,
+	Scripts,
+	ScrollRestoration,
+	isRouteErrorResponse,
+	useLocation,
+	useRouteError,
+} from 'react-router';
 
 import favicon from '../assets/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
@@ -29,9 +27,11 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
+import fontStylesheet from './font.css?url';
 import { getSession } from './lib/cart';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
+import tailwindStylesheet from './tailwind.css?url';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
 	title: data.shop.name,
@@ -49,6 +49,8 @@ export const links: LinksFunction = () => {
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
+		{ rel: 'stylesheet', href: fontStylesheet },
+		{ rel: 'stylesheet', href: tailwindStylesheet },
 	];
 };
 
