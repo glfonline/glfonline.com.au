@@ -1,6 +1,5 @@
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
 import { parseGid } from '@shopify/hydrogen';
+import { type LoaderFunctionArgs, isRouteErrorResponse, useRouteError } from 'react-router';
 
 export function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);

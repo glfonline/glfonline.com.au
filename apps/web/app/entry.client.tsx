@@ -4,10 +4,11 @@
  * @see https://remix.run/file-conventions/entry.client
  */
 
-import { RemixBrowser, useLocation, useMatches } from '@remix-run/react';
 import * as Sentry from '@sentry/remix';
 import { StrictMode, startTransition, useEffect } from 'react';
 import { hydrateRoot } from 'react-dom/client';
+import { useLocation, useMatches } from 'react-router';
+import { HydratedRouter } from 'react-router/dom';
 
 import { SENTRY_DSN } from './lib/constants';
 
@@ -40,7 +41,7 @@ startTransition(() => {
 	hydrateRoot(
 		document,
 		<StrictMode>
-			<RemixBrowser />
+			<HydratedRouter />
 		</StrictMode>,
 	);
 });

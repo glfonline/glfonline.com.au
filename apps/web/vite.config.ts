@@ -1,40 +1,33 @@
-import { vitePlugin as remix } from '@remix-run/dev';
-import { installGlobals } from '@remix-run/node';
+import { reactRouter } from '@react-router/dev/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+import autoprefixer from 'autoprefixer';
+import tailwindcss from 'tailwindcss';
 import { defineConfig } from 'vite';
 
-declare module '@remix-run/node' {
-	interface Future {
-		v3_singleFetch: true;
-	}
-}
-
-installGlobals({ nativeFetch: true });
-
 export default defineConfig({
+	build: {
+		sourcemap: true,
+	},
+
+	css: {
+		postcss: {
+			plugins: [tailwindcss, autoprefixer],
+		},
+	},
+
 	plugins: [
-		remix({
-			ignoredRouteFiles: ['**/.*'],
-			future: {
-				unstable_optimizeDeps: true,
-				v3_fetcherPersist: true,
-				v3_lazyRouteDiscovery: true,
-				v3_relativeSplatPath: true,
-				v3_singleFetch: true,
-				v3_throwAbortReason: true,
-			},
-		}),
+		reactRouter(),
 		sentryVitePlugin({
 			org: 'glf-online',
 			project: 'glfonline-com-au',
 		}),
 	],
 
-	server: {
-		port: 3000,
+	ssr: {
+		noExternal: true,
 	},
 
-	build: {
-		sourcemap: true,
+	server: {
+		port: 3000,
 	},
 });

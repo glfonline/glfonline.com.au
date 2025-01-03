@@ -11,10 +11,10 @@ import {
 } from '@headlessui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { NavLink, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router';
 
 import { makeProductHref } from '../lib/make-product-href';
 import { type Product, useAlgoliaSearch } from '../lib/use-algolia-search';
