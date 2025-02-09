@@ -50,7 +50,7 @@ export function SearchDialog({
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div className="fixed inset-0 bg-gray-500 bg-opacity-25 transition-opacity" />
+					<div className="fixed inset-0 bg-gray-500/25 transition-opacity" />
 				</TransitionChild>
 
 				<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
@@ -63,7 +63,7 @@ export function SearchDialog({
 						leaveFrom="opacity-100 scale-100"
 						leaveTo="opacity-0 scale-95"
 					>
-						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
+						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all">
 							<Combobox
 								onChange={(product: NonNullable<typeof data>['hits'][number]) => {
 									navigate(makeProductHref(product));

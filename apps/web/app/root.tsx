@@ -1,5 +1,5 @@
-import './font.css';
-import './tailwind.css';
+import fontStylesheet from './font.css?url';
+import tailwindStylesheet from './tailwind.css?url';
 
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
@@ -49,6 +49,8 @@ export const links: LinksFunction = () => {
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
+		{ rel: 'stylesheet', href: fontStylesheet },
+		{ rel: 'stylesheet', href: tailwindStylesheet },
 	];
 };
 

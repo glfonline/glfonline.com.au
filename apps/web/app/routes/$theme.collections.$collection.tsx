@@ -171,7 +171,7 @@ function Filters({ setMobileFiltersOpen }: { setMobileFiltersOpen: React.Dispatc
 				type="button"
 			>
 				<span className="text-sm font-medium text-gray-700">Filters</span>
-				<PlusIcon aria-hidden="true" className="ml-1 h-5 w-5 flex-shrink-0 text-gray-400" />
+				<PlusIcon aria-hidden="true" className="ml-1 h-5 w-5 shrink-0 text-gray-400" />
 			</button>
 
 			<div className="hidden lg:block">
@@ -201,7 +201,7 @@ function MobileFilters({
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div className="fixed inset-0 bg-black bg-opacity-25" />
+					<div className="fixed inset-0 bg-black/25" />
 				</TransitionChild>
 
 				<div className="fixed inset-0 z-40 flex">
@@ -251,7 +251,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 
 	return (
 		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
-			<div className="aspect-[3/4] group-hover:opacity-75 sm:aspect-auto sm:h-96">
+			<div className="aspect-3/4 group-hover:opacity-75 sm:aspect-auto sm:h-96">
 				{node.featuredImage?.url ? (
 					<Image
 						breakpoints={[320, 640]}

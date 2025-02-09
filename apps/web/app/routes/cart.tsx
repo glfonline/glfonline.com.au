@@ -138,7 +138,7 @@ export default function CartPage() {
 									const theme = node.merchandise.product.tags.includes('ladies') ? 'ladies' : 'mens';
 									return (
 										<li className="flex py-6 sm:py-10" data-theme={theme} key={node.id}>
-											<div className="flex-shrink-0">
+											<div className="shrink-0">
 												{node.merchandise.image?.url ? (
 													<Image
 														alt={node.merchandise.image.altText ?? ''}
@@ -190,9 +190,9 @@ export default function CartPage() {
 
 												<p className="mt-4 flex space-x-2 text-sm text-gray-700">
 													{node.merchandise.currentlyNotInStock ? (
-														<ClockIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-gray-300" />
+														<ClockIcon aria-hidden="true" className="h-5 w-5 shrink-0 text-gray-300" />
 													) : (
-														<CheckIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-green-500" />
+														<CheckIcon aria-hidden="true" className="h-5 w-5 shrink-0 text-green-500" />
 													)}
 													<span>{node.merchandise.currentlyNotInStock ? 'Out of stock' : 'In stock'}</span>
 												</p>
@@ -257,7 +257,7 @@ function QuantityPicker({
 	return (
 		<div className="flex flex-col items-start gap-2">
 			<span className="text-sm text-gray-700 hover:text-gray-800">Quantity</span>
-			<span className="isolate inline-flex shadow-sm">
+			<span className="isolate inline-flex shadow-xs">
 				<fetcher.Form method="post">
 					<input name="variantId" type="hidden" value={variantId} />
 					<input name="quantity" type="hidden" value={quantity - 1} />
@@ -265,7 +265,7 @@ function QuantityPicker({
 						className={clsx(
 							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
 							'hover:bg-gray-50',
-							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
+							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-hidden focus:ring-1',
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
@@ -292,7 +292,7 @@ function QuantityPicker({
 						className={clsx(
 							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
 							'hover:bg-gray-50',
-							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
+							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-hidden focus:ring-1',
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
@@ -318,7 +318,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 			<button
 				className={clsx(
 					'-m-2 inline-flex bg-white p-2 text-gray-400',
-					'focus:ring-brand-primary hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2',
+					'focus:ring-brand-primary hover:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-offset-2',
 				)}
 				name={INTENT}
 				type="submit"
