@@ -3,7 +3,7 @@
 	"extends": ["//"],
 	"tasks": {
 		"build": {
-			"dependsOn": ["^build", "generate"],
+			"dependsOn": ["^build"],
 			"outputs": ["__generated__/**", "dist/**"]
 		},
 		"generate": {
