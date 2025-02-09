@@ -172,7 +172,7 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 				src={image.src}
 			/>
 			<div
-				className="from-true-black/50 relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t via-transparent p-8"
+				className="from-true-black/50 relative flex h-full flex-col items-center justify-end gap-4 bg-linear-to-t via-transparent p-8"
 				data-theme={theme}
 			>
 				<Heading color="light" id={id} size="2">

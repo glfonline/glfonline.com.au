@@ -152,9 +152,11 @@ export default function ProductPage() {
 												className={clsx(
 													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
 													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-													node.availableForSale ? 'cursor-pointer focus:outline-none' : 'cursor-not-allowed opacity-25',
+													node.availableForSale
+														? 'cursor-pointer focus:outline-hidden'
+														: 'cursor-not-allowed opacity-25',
 													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
-													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white',
+													'[:checked+&]:bg-brand-primary hover:[:checked+&]:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white',
 												)}
 											>
 												{node.title}
@@ -215,7 +217,7 @@ function ImageGallery({
 				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
-							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-hidden focus:ring-3 focus:ring-opacity-50 focus:ring-offset-4"
 							key={node.id}
 						>
 							{({ selected }) => {

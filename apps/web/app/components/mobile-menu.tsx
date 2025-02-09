@@ -118,12 +118,12 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 							</div>
 
 							{/* Social Links */}
-							<div className="mt-auto flex flex-shrink-0 justify-between border-t border-gray-200 p-4">
+							<div className="mt-auto flex shrink-0 justify-between border-t border-gray-200 p-4">
 								<div className="text-gray-500">&copy; GLF Online {new Date().getFullYear()}</div>
 								<div className="flex gap-4">
 									{socialLinks.map((link) => (
 										<a
-											className="focus:text-primary text-gray-400 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
+											className="focus:text-primary text-gray-400 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-hidden"
 											href={link.href}
 											key={link.href}
 										>

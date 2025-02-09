@@ -139,7 +139,7 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 				{hasPrevPage && (
 					<button
 						type="button"
-						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
+						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-hidden focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							navigate(-1);
 						}}
@@ -153,7 +153,7 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 				{hasNextPage && (
 					<button
 						type="button"
-						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
+						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-hidden focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							const params = new URLSearchParams(location.search);
 							params.set('after', (after + POSTS_LIMIT).toString());

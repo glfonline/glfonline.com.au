@@ -1,7 +1,7 @@
 import { type VariantProps, cva } from 'class-variance-authority';
 
 export const getButtonStyles = cva(
-	'inline-flex gap-2 items-center font-bold justify-center uppercase border focus:outline-none focus:ring-2 transition duration-300 whitespace-nowrap',
+	'inline-flex gap-2 items-center font-bold justify-center uppercase border focus:outline-hidden focus:ring-2 transition duration-300 whitespace-nowrap',
 	{
 		variants: {
 			variant: {

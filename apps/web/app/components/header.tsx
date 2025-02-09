@@ -18,7 +18,7 @@ export function Header() {
 	const [open, setOpen] = useState(false);
 
 	return (
-		<header className="sticky top-0 z-20 flex-shrink-0 bg-white">
+		<header className="sticky top-0 z-20 shrink-0 bg-white">
 			<MobileMenu open={open} setOpen={setOpen} />
 			<div className="relative">
 				<nav aria-label="Top">
@@ -45,7 +45,7 @@ function TopNav() {
 					<div className="inline-flex gap-3">
 						{socialLinks.map((link) => (
 							<a
-								className="focus:ring-brand inline-flex focus:outline-none focus:ring-2"
+								className="focus:ring-brand inline-flex focus:outline-hidden focus:ring-2"
 								href={link.href}
 								key={link.href}
 							>
@@ -122,7 +122,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 								<NavLink className="group -m-2 flex items-center gap-2 p-2" to="/cart">
 									<ShoppingCartIcon
 										aria-hidden="true"
-										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
+										className="h-6 w-6 shrink-0 text-gray-600 group-hover:text-gray-800"
 									/>
 									<span className="text-sm text-gray-700 group-hover:text-gray-800">{cartCount}</span>
 									<span className="sr-only">items in cart, view bag</span>
@@ -140,7 +140,7 @@ function MegaMenu() {
 	const navItemClasses = [
 		'relative flex flex-1 items-center justify-center gap-1 px-4 text-center text-sm font-bold uppercase transition-colors duration-200 ease-out',
 		'hover:bg-brand-primary hover:text-white',
-		'focus:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary',
+		'focus:z-10 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand-primary',
 	];
 
 	const { mainNavigation } = useLoaderData<typeof loader>();
@@ -172,7 +172,7 @@ function MegaMenu() {
 										 * pokes out the top, so we use this shorter element
 										 * to hide the top of the shadow.
 										 */}
-										<div aria-hidden="true" className="absolute inset-0 top-1/2 bg-white shadow" />
+										<div aria-hidden="true" className="absolute inset-0 top-1/2 bg-white shadow-sm" />
 
 										<div className="relative bg-white">
 											<div className="mx-auto max-w-7xl px-8">

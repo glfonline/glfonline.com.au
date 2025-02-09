@@ -136,10 +136,8 @@ const glfPlugin = plugin(({ addBase }) => {
 });
 
 // have to type this as `any` because Config type is wrong
-function withOpacity(variableName: string): any {
-	return ({ opacityValue }: { opacityValue?: number }) => {
-		return `rgba(var(${variableName}), ${opacityValue ?? 0})`;
-	};
+function withOpacity(variableName: string): string {
+	return `rgb(var(${variableName}) / <alpha-value>)`;
 }
 
 export default {

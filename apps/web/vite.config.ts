@@ -1,6 +1,7 @@
 import { vitePlugin as remix } from '@remix-run/dev';
 import { installGlobals } from '@remix-run/node';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 declare module '@remix-run/node' {
@@ -13,6 +14,7 @@ installGlobals({ nativeFetch: true });
 
 export default defineConfig({
 	plugins: [
+		tailwindcss(),
 		remix({
 			ignoredRouteFiles: ['**/.*'],
 			future: {
