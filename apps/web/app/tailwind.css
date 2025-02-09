@@ -1,14 +1,83 @@
 @import 'tailwindcss';
 
-@config '../tailwind.config.ts';
+@plugin 'tailwindcss-animate';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+
+@theme {
+	--color-gray-50: #fbfbfb;
+	--color-gray-100: #f7f7f7;
+	--color-gray-200: #ebebeb;
+	--color-gray-300: #dcdcdc;
+	--color-gray-400: #b2b2b2;
+	--color-gray-500: #808080;
+	--color-gray-600: #636363;
+	--color-gray-700: #515151;
+	--color-gray-800: #3f3f3f;
+	--color-gray-900: #2e2e2e;
+
+	--color-pink-50: #fff4fa;
+	--color-pink-100: #ffe0f1;
+	--color-pink-200: #fcc7e5;
+	--color-pink-300: #faa5d3;
+	--color-pink-400: #f76aaf;
+	--color-pink-500: #f2308e;
+	--color-pink-600: #e2006d;
+	--color-pink-700: #c20c5b;
+	--color-pink-800: #99154b;
+	--color-pink-900: #751a3d;
+
+	--color-blue-50: #ebf4ff;
+	--color-blue-100: #e2eeff;
+	--color-blue-200: #c5dbff;
+	--color-blue-300: #a4c4fe;
+	--color-blue-400: #749ffc;
+	--color-blue-500: #3f76f8;
+	--color-blue-600: #2157eb;
+	--color-blue-700: #1640bd;
+	--color-blue-800: #122775;
+	--color-blue-900: #0c153c;
+
+	/* Brand Colors */
+	--color-brand-50: var(--color-gray-50);
+	--color-brand-100: var(--color-gray-100);
+	--color-brand-200: var(--color-gray-200);
+	--color-brand-300: var(--color-gray-300);
+	--color-brand-400: var(--color-gray-400);
+	--color-brand-500: var(--color-gray-500);
+	--color-brand-600: var(--color-gray-600);
+	--color-brand-700: var(--color-gray-700);
+	--color-brand-800: var(--color-gray-800);
+	--color-brand-900: var(--color-gray-900);
+	--color-brand-primary: var(--color-gray-900);
+	--color-brand-primary-light: var(--color-gray-800);
+	--color-brand-focus-ring: var(--color-gray-900);
+
+	--color-black: #2c2c2c;
+	--color-ring-brand: hsl(var(--color-brand-focus-ring));
+	--color-true-black: #000;
+
+	/* Font Families */
+	--font-sans: Century Gothic, ui-sans-serif, system-ui, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol,
+		Noto Color Emoji;
+
+	/* Border Radius */
+	--radius-lg: 0.5rem;
+	--radius-md: calc(0.5rem - 2px);
+	--radius-sm: calc(0.5rem - 4px);
+
+	/* Animations */
+	--animation-accordion-down: accordion-down 0.2s ease-out;
+	--animation-accordion-up: accordion-up 0.2s ease-out;
+}
 
 /*
-  The default border color has changed to `currentColor` in Tailwind CSS v4,
-  so we've added these compatibility styles to make sure everything still
-  looks the same as it did with Tailwind CSS v3.
+	The default border color has changed to `currentColor` in Tailwind CSS v4,
+	so we've added these compatibility styles to make sure everything still
+	looks the same as it did with Tailwind CSS v3.
 
-  If we ever want to remove these styles, we need to add an explicit border
-  color utility to any element that depends on these defaults.
+	If we ever want to remove these styles, we need to add an explicit border
+	color utility to any element that depends on these defaults.
 */
 @layer base {
 	*,
@@ -16,6 +85,81 @@
 	::before,
 	::backdrop,
 	::file-selector-button {
-		border-color: var(--color-gray-200, currentColor);
+		border-color: var(--border, currentColor);
+	}
+
+	:root {
+		--border: hsl(214.3 31.8% 91.4%);
+		--input: hsl(214.3 31.8% 91.4%);
+		--ring: hsl(215 20.2% 65.1%);
+		--background: hsl(0 0% 100%);
+		--foreground: hsl(222.2 84% 4.9%);
+		--primary: hsl(222.2 47.4% 11.2%);
+		--primary-foreground: hsl(210 40% 98%);
+		--secondary: hsl(210 40% 96.1%);
+		--secondary-foreground: hsl(222.2 47.4% 11.2%);
+		--accent: hsl(210 40% 96.1%);
+		--accent-foreground: hsl(222.2 47.4% 11.2%);
+		--destructive: hsl(0 84.2% 60.2%);
+		--destructive-foreground: hsl(210 40% 98%);
+		--popover: hsl(0 0% 100%);
+		--popover-foreground: hsl(222.2 84% 4.9%);
+		--card: hsl(0 0% 100%);
+		--card-foreground: hsl(222.2 84% 4.9%);
+
+		scrollbar-gutter: stable both-edges;
+	}
+
+	[data-theme='ladies'] {
+		--color-brand-50: var(--color-pink-50);
+		--color-brand-100: var(--color-pink-100);
+		--color-brand-200: var(--color-pink-200);
+		--color-brand-300: var(--color-pink-300);
+		--color-brand-400: var(--color-pink-400);
+		--color-brand-500: var(--color-pink-500);
+		--color-brand-600: var(--color-pink-600);
+		--color-brand-700: var(--color-pink-700);
+		--color-brand-800: var(--color-pink-800);
+		--color-brand-900: var(--color-pink-900);
+		--color-brand-primary: var(--color-pink-600);
+		--color-brand-primary-light: var(--color-pink-500);
+		--color-brand-focus-ring: var(--color-pink-400);
+	}
+
+	[data-theme='mens'] {
+		--color-brand-50: var(--color-blue-50);
+		--color-brand-100: var(--color-blue-100);
+		--color-brand-200: var(--color-blue-200);
+		--color-brand-300: var(--color-blue-300);
+		--color-brand-400: var(--color-blue-400);
+		--color-brand-500: var(--color-blue-500);
+		--color-brand-600: var(--color-blue-600);
+		--color-brand-700: var(--color-blue-700);
+		--color-brand-800: var(--color-blue-800);
+		--color-brand-900: var(--color-blue-900);
+		--color-brand-primary: var(--color-blue-900);
+		--color-brand-primary-light: var(--color-blue-800);
+		--color-brand-focus-ring: var(--color-blue-600);
+	}
+
+	[id] {
+		scroll-margin-top: calc(var(--spacing) * 4);
+	}
+}
+
+@layer components {
+	.prose {
+		font-family: var(--font-sans);
+	}
+
+	.prose h1,
+	.prose h2 {
+		font-family: var(--font-sans);
+		text-wrap: balance;
+	}
+
+	.prose code::before,
+	.prose code::after {
+		content: none;
 	}
 }
