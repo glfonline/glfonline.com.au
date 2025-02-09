@@ -781,7 +781,7 @@ input BuyerInput {
 	companyLocationId: ID
 
 	"""
-	The storefront customer access token retrieved from the [Customer Accounts API](https://shopify.dev/docs/api/customer/reference/mutations/storefrontCustomerAccessTokenCreate).
+	The customer access token retrieved from the [Customer Accounts API](https://shopify.dev/docs/api/customer#step-obtain-access-token).
 	"""
 	customerAccessToken: String!
 }
@@ -1051,8 +1051,8 @@ type CartBuyerIdentity {
 	"""
 	customer: Customer
 
-	"An ordered set of delivery addresses tied to the buyer that is interacting with the cart.\nThe rank of the preferences is determined by the order of the addresses in the array. Preferences\ncan be used to populate relevant fields in the checkout flow.\n"
-	deliveryAddressPreferences: [DeliveryAddress!]!
+	"An ordered set of delivery addresses tied to the buyer that is interacting with the cart.\nThe rank of the preferences is determined by the order of the addresses in the array. Preferences\ncan be used to populate relevant fields in the checkout flow.\n\nAs of the `2025-01` release, `buyerIdentity.deliveryAddressPreferences` is deprecated.\nDelivery addresses are now part of the `CartDelivery` object and managed with three new mutations:\n- `cartDeliveryAddressAdd`\n- `cartDeliveryAddressUpdate`\n- `cartDeliveryAddressDelete`\n"
+	deliveryAddressPreferences: [DeliveryAddress!]! @deprecated(reason: "Use `cart.delivery` instead.")
 
 	"""
 	The email address of the buyer that's interacting with the cart.
@@ -1064,7 +1064,7 @@ type CartBuyerIdentity {
 	"""
 	phone: String
 
-	"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
+	"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection.\nPreferences are not synced back to the cart if they are overwritten.\n"
 	preferences: CartPreferences
 
 	"""
@@ -1091,15 +1091,6 @@ input CartBuyerIdentityInput {
 	customerAccessToken: String
 
 	"""
-	An ordered set of delivery addresses tied to the buyer that is interacting with the cart.
-	The rank of the preferences is determined by the order of the addresses in the array. Preferences
-	can be used to populate relevant fields in the checkout flow.
-
-	The input must not contain more than `250` values.
-	"""
-	deliveryAddressPreferences: [DeliveryAddressInput!]
-
-	"""
 	The email address of the buyer that is interacting with the cart.
 	"""
 	email: String
@@ -1109,7 +1100,7 @@ input CartBuyerIdentityInput {
 	"""
 	phone: String
 
-	"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
+	"A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection.\nPreferences are not synced back to the cart if they are overwritten.\n"
 	preferences: CartPreferencesInput
 }
 
