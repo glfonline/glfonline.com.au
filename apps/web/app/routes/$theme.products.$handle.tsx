@@ -217,7 +217,7 @@ function ImageGallery({
 				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
-							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-hidden focus:ring-3 focus:ring-opacity-50 focus:ring-offset-4"
+							className="focus:ring-brand/50 relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-hidden focus:ring-3 focus:ring-offset-4"
 							key={node.id}
 						>
 							{({ selected }) => {

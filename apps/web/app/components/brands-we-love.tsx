@@ -21,7 +21,7 @@ export function BrandsWeLove({ brands }: { brands: z.infer<typeof brandsWeLove> 
 							className={clsx(
 								'relative col-span-1 flex justify-center rounded px-8 py-8 transition duration-150 ease-in-out',
 								'hover:bg-brand-100',
-								'focus:bg-brand-50 focus:ring-brand focus:z-10 focus:outline-hidden focus:ring-3 focus:ring-opacity-50',
+								'focus:bg-brand-50/50 focus:ring-brand focus:z-10 focus:outline-hidden focus:ring-3',
 								'active:bg-brand-200',
 							)}
 							data-theme={brand.theme}

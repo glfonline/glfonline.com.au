@@ -13,7 +13,7 @@ export const getButtonStyles = cva(
 				brand: [
 					'border-transparent bg-brand-primary text-white',
 					'hover:bg-white hover:text-black',
-					'focus:ring-brand focus:ring-opacity-75',
+					'focus:ring-brand/75',
 				],
 				neutral: [
 					'bg-gray-900 text-white border-transparent',
