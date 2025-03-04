@@ -112,8 +112,8 @@ importers:
         specifier: ^5.62.11
         version: 5.66.11(@tanstack/react-query@5.66.11(react@18.3.1))(react@18.3.1)
       '@unpic/react':
-        specifier: ^0.1.15
-        version: 0.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        specifier: ^1.0.0
+        version: 1.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@vercel/analytics':
         specifier: ^1.4.1
         version: 1.5.0(@remix-run/react@2.16.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(react@18.3.1)
@@ -3559,15 +3559,15 @@ packages:
       react: '>=16.8.0'
       react-dom: '>=16.8.0'
 
-  '@unpic/core@0.1.0':
-    resolution: {integrity: sha512-Xw6BNChpV1klga8Qe/Y4slkohMl4GLmsQCEOxx+yRrm7cMzT6covLvUMVP606YTtIFpJauh0fSZ+N2A03y80iA==}
+  '@unpic/core@1.0.1':
+    resolution: {integrity: sha512-e0cwxOhtWPd4J32rV1V6jFmDGAi1r4p/f+lDqlnx+fhgFwMTyQQKw5lL7VEthUPBHFNaNBsXNbNKwnaIs2V71Q==}
 
-  '@unpic/react@0.1.15':
-    resolution: {integrity: sha512-Mr5cC96O1AZNRDfgDtL3VChr3xferCHLEzkj4Xg6XekdHltI/FHm9LPKHECE1V/bUn2qmJXoYOSmCB+4QDhIJg==}
+  '@unpic/react@1.0.1':
+    resolution: {integrity: sha512-JmKVmf7ZhKDlVFK8yfbgiWp9K4rXXovE8mWrbkqjDJHKhDqbF5uUp7754Tk7oNSYJcvIXfH8P/nYRCfG2ca0/w==}
     peerDependencies:
       next: ^13.0.0 || ^14.0.0 || ^15.0.0
-      react: ^17.0.0 || ^18.0.0
-      react-dom: ^17.0.0 || ^18.0.0
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^17.0.0 || ^18.0.0 || ^19.0.0
     peerDependenciesMeta:
       next:
         optional: true
@@ -8386,8 +8386,8 @@ packages:
     resolution: {integrity: sha512-6bc58dPYhCMHHuwxldQxO3RRNZ4eCogZ/st++0+fcC1nr0jiGUtAdBJ2qzmLQWSxbtz42pWt4QQMiZ9HvZf5cg==}
     engines: {node: '>=0.10.0'}
 
-  unpic@3.22.0:
-    resolution: {integrity: sha512-NFhB8HgHHWkNzTxwWg6KHx8+3RZnhWFm4Axdqp9iI176iY3wskzfP16NRSJ2SSTfXzyK4W6GsBqs8iOOdvOB3g==}
+  unpic@4.1.2:
+    resolution: {integrity: sha512-sau6i25EUxumNIL7e0kDpPWkVw3yxghLYcEwxPvm08263UfABDxtUJPT3H55z7W15cVXJB/PEhw4z6Oc+idWCA==}
 
   unpipe@1.0.0:
     resolution: {integrity: sha512-pjy2bYhSsufwWlKwPc+l3cN7+wuJlK6uz0YdJEOlQDbl6jo/YlPi4mb8agUkVC8BF7V8NuzeyPNqRksA3hztKQ==}
@@ -12818,13 +12818,13 @@ snapshots:
       - '@codemirror/lint'
       - '@codemirror/search'
 
-  '@unpic/core@0.1.0':
+  '@unpic/core@1.0.1':
     dependencies:
-      unpic: 3.22.0
+      unpic: 4.1.2
 
-  '@unpic/react@0.1.15(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@unpic/react@1.0.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
-      '@unpic/core': 0.1.0
+      '@unpic/core': 1.0.1
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
 
@@ -18248,7 +18248,7 @@ snapshots:
     dependencies:
       normalize-path: 2.1.1
 
-  unpic@3.22.0: {}
+  unpic@4.1.2: {}
 
   unpipe@1.0.0: {}
 
