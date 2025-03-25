@@ -59,10 +59,10 @@ export async function getProductsFromCollectionByTag({
 			products: collection?.products.edges,
 			title: collection?.title,
 		};
-	} catch (error) {
+	} catch (err) {
 		/** @todo */
 		// biome-ignore lint/suspicious/noConsole:
-		console.error(error);
+		console.error(err);
 	}
 }
 

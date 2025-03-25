@@ -71,9 +71,9 @@ export async function action({ request }: ActionFunctionArgs) {
 		// biome-ignore lint/suspicious/noConsole:
 		console.log({ sendgridResponse });
 		return { ok: true };
-	} catch (error) {
+	} catch (err) {
 		// biome-ignore lint/suspicious/noConsole:
-		console.error(error);
+		console.error(err);
 		return { ok: false };
 	}
 }
