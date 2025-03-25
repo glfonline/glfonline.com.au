@@ -225,17 +225,20 @@ export default function CartPage() {
 
 						<p className="text-sm text-gray-600">Taxes and shipping are calculated at checkout</p>
 
-						{cartInfo?.checkoutUrl && <input name="checkoutUrl" type="hidden" value={cartInfo.checkoutUrl} />}
-
-						<Button
-							disabled={navigation.state !== 'idle'}
-							name={INTENT}
-							type="submit"
-							value={ACTIONS.CHECKOUT_ACTION}
-							variant="neutral"
-						>
-							Checkout
-						</Button>
+						{cartInfo.checkoutUrl && (
+							<>
+								<input name="checkoutUrl" type="hidden" value={cartInfo.checkoutUrl} />
+								<Button
+									disabled={navigation.state !== 'idle'}
+									name={INTENT}
+									type="submit"
+									value={ACTIONS.CHECKOUT_ACTION}
+									variant="neutral"
+								>
+									Checkout
+								</Button>
+							</>
+						)}
 					</Form>
 				</div>
 			</div>
