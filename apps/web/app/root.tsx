@@ -1,5 +1,7 @@
-import './font.css';
-import './tailwind.css';
+// @ts-ignore
+import fontCssUrl from './font.css?url';
+// @ts-ignore
+import tailwindCssUrl from './tailwind.css?url';
 
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
@@ -21,7 +23,6 @@ import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { useEffect } from 'react';
-
 import favicon from '../assets/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
 import { GenericError } from './components/generic-error';
@@ -47,6 +48,8 @@ export const links: LinksFunction = () => {
 	return [
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
+		{ rel: 'stylesheet', href: fontCssUrl },
+		{ rel: 'stylesheet', href: tailwindCssUrl },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
 	];
 };
