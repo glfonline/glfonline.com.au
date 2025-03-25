@@ -169,7 +169,8 @@ type Block {
 	_key: String
 	_type: String
 	children: [Span]
-	list: String
+	level: Float
+	listItem: String
 	style: String
 }
 
@@ -180,6 +181,11 @@ input BooleanFilter {
 	Checks if the value is equal to the given input.
 	"""
 	eq: Boolean
+
+	"""
+	Checks if the value is defined.
+	"""
+	is_defined: Boolean
 
 	"""
 	Checks if the value is not equal to the given input.
@@ -385,6 +391,11 @@ input DateFilter {
 	gte: Date
 
 	"""
+	Checks if the value is defined.
+	"""
+	is_defined: Boolean
+
+	"""
 	Checks if the value is lesser than the given input.
 	"""
 	lt: Date
@@ -420,6 +431,11 @@ input DatetimeFilter {
 	Checks if the value is greater than or equal to the given input.
 	"""
 	gte: DateTime
+
+	"""
+	Checks if the value is defined.
+	"""
+	is_defined: Boolean
 
 	"""
 	Checks if the value is lesser than the given input.
@@ -618,6 +634,11 @@ input FloatFilter {
 	gte: Float
 
 	"""
+	Checks if the value is defined.
+	"""
+	is_defined: Boolean
+
+	"""
 	Checks if the value is lesser than the given input.
 	"""
 	lt: Float
@@ -655,6 +676,27 @@ input GeopointSorting {
 	alt: SortOrder
 	lat: SortOrder
 	lng: SortOrder
+}
+
+type GlobalDocumentReference {
+	_key: String
+	_ref: String
+	_type: String
+	_weak: Boolean
+}
+
+input GlobalDocumentReferenceFilter {
+	_key: StringFilter
+	_ref: StringFilter
+	_type: StringFilter
+	_weak: BooleanFilter
+}
+
+input GlobalDocumentReferenceSorting {
+	_key: SortOrder
+	_ref: SortOrder
+	_type: SortOrder
+	_weak: SortOrder
 }
 
 type HomePage implements Document {
@@ -797,6 +839,11 @@ input IntFilter {
 	Checks if the value is greater than or equal to the given input.
 	"""
 	gte: Int
+
+	"""
+	Checks if the value is defined.
+	"""
+	is_defined: Boolean
 
 	"""
 	Checks if the value is lesser than the given input.
@@ -1324,6 +1371,7 @@ type SanityFileAsset implements Document {
 	size: Float
 	source: SanityAssetSourceData
 	title: String
+	uploadId: String
 	url: String
 }
 
@@ -1350,6 +1398,7 @@ input SanityFileAssetFilter {
 	size: FloatFilter
 	source: SanityAssetSourceDataFilter
 	title: StringFilter
+	uploadId: StringFilter
 	url: StringFilter
 }
 
@@ -1372,6 +1421,7 @@ input SanityFileAssetSorting {
 	size: SortOrder
 	source: SanityAssetSourceDataSorting
 	title: SortOrder
+	uploadId: SortOrder
 	url: SortOrder
 }
 
@@ -1705,6 +1755,11 @@ input StringFilter {
 	"""
 	eq: String
 	in: [String!]
+
+	"""
+	Checks if the value is defined.
+	"""
+	is_defined: Boolean
 
 	"""
 	Checks if the value matches the given word/words.
