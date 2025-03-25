@@ -3,7 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "stale-dep && npx pnpm@9 install && turbo run build",
+		"build": "stale-dep && npx pnpm@10 install && turbo run build",
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
@@ -32,9 +32,6 @@
 	"engines": {
 		"node": ">=20",
 		"pnpm": ">=9"
-	},
-	"volta": {
-		"node": "22.14.0"
 	},
 	"manypkg": {
 		"defaultBranch": "main",

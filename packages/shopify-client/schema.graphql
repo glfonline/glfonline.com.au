@@ -863,6 +863,11 @@ type Cart implements HasMetafields & Node {
 	"""
 	createdAt: DateTime!
 
+	"""
+	The delivery properties of the cart.
+	"""
+	delivery: CartDelivery!
+
 	"The delivery groups available for the cart, based on the buyer identity default\ndelivery address preference or the default address of the logged-in customer.\n"
 	deliveryGroups(
 		"""
@@ -988,6 +993,26 @@ type Cart implements HasMetafields & Node {
 }
 
 """
+A delivery address of the buyer that is interacting with the cart.
+"""
+union CartAddress = CartDeliveryAddress
+
+"""
+The input fields to provide exactly one of a variety of delivery address types.
+"""
+input CartAddressInput {
+	"""
+	Copies details from the customer address to an address on this cart.
+	"""
+	copyFromCustomerAddressId: ID
+
+	"""
+	A delivery address stored on this cart.
+	"""
+	deliveryAddress: CartDeliveryAddressInput
+}
+
+"""
 Return type for `cartAttributesUpdate` mutation.
 """
 type CartAttributesUpdatePayload {
@@ -1000,12 +1025,22 @@ type CartAttributesUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
 The discounts automatically applied to the cart line based on prerequisites that have been met.
 """
 type CartAutomaticDiscountAllocation implements CartDiscountAllocation {
+	"""
+	The discount that have been applied on the cart line.
+	"""
+	discountApplication: CartDiscountApplication!
+
 	"""
 	The discounted amount that has been applied to the cart line.
 	"""
@@ -1035,6 +1070,11 @@ type CartBillingAddressUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -1117,6 +1157,11 @@ type CartBuyerIdentityUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 "Represents how credit card details are provided for a direct payment.\n"
@@ -1133,6 +1178,11 @@ type CartCodeDiscountAllocation implements CartDiscountAllocation {
 	The code used to apply the discount.
 	"""
 	code: String!
+
+	"""
+	The discount that have been applied on the cart line.
+	"""
+	discountApplication: CartDiscountApplication!
 
 	"""
 	The discounted amount that has been applied to the cart line.
@@ -1302,12 +1352,22 @@ type CartCreatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
 The discounts automatically applied to the cart line based on prerequisites that have been met.
 """
 type CartCustomDiscountAllocation implements CartDiscountAllocation {
+	"""
+	The discount that have been applied on the cart line.
+	"""
+	discountApplication: CartDiscountApplication!
+
 	"""
 	The discounted amount that has been applied to the cart line.
 	"""
@@ -1322,6 +1382,206 @@ type CartCustomDiscountAllocation implements CartDiscountAllocation {
 	The title of the allocated discount.
 	"""
 	title: String!
+}
+
+"The delivery properties of the cart.\n"
+type CartDelivery {
+	"""
+	Selectable addresses to present to the buyer on the cart.
+	"""
+	addresses(
+		"""
+		Filter the addresses by selected status.
+		"""
+		selected: Boolean = false
+	): [CartSelectableAddress!]!
+}
+
+"""
+Represents a mailing address for customers and shipping.
+"""
+type CartDeliveryAddress {
+	"""
+	The first line of the address. Typically the street address or PO Box number.
+	"""
+	address1: String
+
+	"The second line of the address. Typically the number of the apartment, suite, or unit.\n"
+	address2: String
+
+	"""
+	The name of the city, district, village, or town.
+	"""
+	city: String
+
+	"""
+	The name of the customer's company or organization.
+	"""
+	company: String
+
+	"The two-letter code for the country of the address.\n\nFor example, US.\n"
+	countryCode: String
+
+	"""
+	The first name of the customer.
+	"""
+	firstName: String
+
+	"""
+	A formatted version of the address, customized by the provided arguments.
+	"""
+	formatted(
+		"""
+		Whether to include the customer's company in the formatted address.
+		"""
+		withCompany: Boolean = true
+
+		"""
+		Whether to include the customer's name in the formatted address.
+		"""
+		withName: Boolean = false
+	): [String!]!
+
+	"""
+	A comma-separated list of the values for city, province, and country.
+	"""
+	formattedArea: String
+
+	"""
+	The last name of the customer.
+	"""
+	lastName: String
+
+	"""
+	The latitude coordinate of the customer address.
+	"""
+	latitude: Float
+
+	"""
+	The longitude coordinate of the customer address.
+	"""
+	longitude: Float
+
+	"""
+	The full name of the customer, based on firstName and lastName.
+	"""
+	name: String
+
+	"A unique phone number for the customer.\n\nFormatted using E.164 standard. For example, _+16135551111_.\n"
+	phone: String
+
+	"The alphanumeric code for the region.\n\nFor example, ON.\n"
+	provinceCode: String
+
+	"""
+	The zip or postal code of the address.
+	"""
+	zip: String
+}
+
+"""
+The input fields to create or update a cart address.
+"""
+input CartDeliveryAddressInput {
+	"The first line of the address. Typically the street address or PO Box number.\n"
+	address1: String
+
+	"The second line of the address. Typically the number of the apartment, suite, or unit.\n"
+	address2: String
+
+	"The name of the city, district, village, or town.\n"
+	city: String
+
+	"The name of the customer's company or organization.\n"
+	company: String
+
+	"""
+	The name of the country.
+	"""
+	countryCode: CountryCode
+
+	"""
+	The first name of the customer.
+	"""
+	firstName: String
+
+	"""
+	The last name of the customer.
+	"""
+	lastName: String
+
+	"A unique phone number for the customer.\n\nFormatted using E.164 standard. For example, _+16135551111_.\n"
+	phone: String
+
+	"""
+	The region of the address, such as the province, state, or district.
+	"""
+	provinceCode: String
+
+	"""
+	The zip or postal code of the address.
+	"""
+	zip: String
+}
+
+"""
+Return type for `cartDeliveryAddressesAdd` mutation.
+"""
+type CartDeliveryAddressesAddPayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
+}
+
+"""
+Return type for `cartDeliveryAddressesRemove` mutation.
+"""
+type CartDeliveryAddressesRemovePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
+}
+
+"""
+Return type for `cartDeliveryAddressesUpdate` mutation.
+"""
+type CartDeliveryAddressesUpdatePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -1463,6 +1723,18 @@ enum CartDeliveryGroupType {
 }
 
 """
+The input fields for the cart's delivery properties.
+"""
+input CartDeliveryInput {
+	"""
+	Selectable addresses to present to the buyer on the cart.
+
+	The input must not contain more than `250` values.
+	"""
+	addresses: [CartSelectableAddressInput!]
+}
+
+"""
 Information about a delivery option.
 """
 type CartDeliveryOption {
@@ -1541,6 +1813,11 @@ input CartDeliveryPreferenceInput {
 "The input fields for submitting direct payment method information for checkout.\n"
 input CartDirectPaymentMethodInput {
 	"""
+	Indicates if the customer has accepted the subscription terms. Defaults to false.
+	"""
+	acceptedSubscriptionTerms: Boolean = false
+
+	"""
 	The customer's billing address.
 	"""
 	billingAddress: MailingAddressInput!
@@ -1561,6 +1838,11 @@ The discounts that have been applied to the cart line.
 """
 interface CartDiscountAllocation {
 	"""
+	The discount that have been applied on the cart line.
+	"""
+	discountApplication: CartDiscountApplication!
+
+	"""
 	The discounted amount that has been applied to the cart line.
 	"""
 	discountedAmount: MoneyV2!
@@ -1569,6 +1851,32 @@ interface CartDiscountAllocation {
 	The type of line that the discount is applicable towards.
 	"""
 	targetType: DiscountApplicationTargetType!
+}
+
+"""
+The discount application capture the intentions of a discount source at
+        the time of application.
+"""
+type CartDiscountApplication {
+	"""
+	The method by which the discount's value is allocated to its entitled items.
+	"""
+	allocationMethod: DiscountApplicationAllocationMethod!
+
+	"""
+	Which lines of targetType that the discount is allocated over.
+	"""
+	targetSelection: DiscountApplicationTargetSelection!
+
+	"""
+	The type of line that the discount is applicable towards.
+	"""
+	targetType: DiscountApplicationTargetType!
+
+	"""
+	The value of the discount application.
+	"""
+	value: PricingValue!
 }
 
 """
@@ -1599,6 +1907,11 @@ type CartDiscountCodesUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -1644,6 +1957,11 @@ enum CartErrorCode {
 	Company location not found or not allowed.
 	"""
 	INVALID_COMPANY_LOCATION
+
+	"""
+	The delivery address was not found.
+	"""
+	INVALID_DELIVERY_ADDRESS_ID
 
 	"""
 	Delivery group was not found in cart.
@@ -1726,6 +2044,11 @@ enum CartErrorCode {
 	NOTE_TOO_LONG
 
 	"""
+	Only one delivery address can be selected.
+	"""
+	ONLY_ONE_DELIVERY_ADDRESS_CAN_BE_SELECTED
+
+	"""
 	The payment method is not supported.
 	"""
 	PAYMENT_METHOD_NOT_SUPPORTED
@@ -1734,6 +2057,11 @@ enum CartErrorCode {
 	The given province cannot be found.
 	"""
 	PROVINCE_NOT_FOUND
+
+	"""
+	Too many delivery addresses on Cart.
+	"""
+	TOO_MANY_DELIVERY_ADDRESSES
 
 	"""
 	A general error occurred during address validation.
@@ -1790,6 +2118,26 @@ input CartFreePaymentMethodInput {
 }
 
 """
+Return type for `cartGiftCardCodesRemove` mutation.
+"""
+type CartGiftCardCodesRemovePayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
+}
+
+"""
 Return type for `cartGiftCardCodesUpdate` mutation.
 """
 type CartGiftCardCodesUpdatePayload {
@@ -1802,6 +2150,11 @@ type CartGiftCardCodesUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -1817,6 +2170,11 @@ input CartInput {
 
 	"The customer associated with the cart. Used to determine [international pricing]\n(https://shopify.dev/custom-storefronts/internationalization/international-pricing).\nBuyer identity should match the customer's shipping address.\n"
 	buyerIdentity: CartBuyerIdentityInput
+
+	"""
+	The delivery-related fields for the cart.
+	"""
+	delivery: CartDeliveryInput
 
 	"""
 	The case-insensitive discount codes that the customer added at checkout.
@@ -2041,6 +2399,11 @@ type CartLinesAddPayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -2056,6 +2419,11 @@ type CartLinesRemovePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -2071,6 +2439,11 @@ type CartLinesUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 """
@@ -2150,6 +2523,26 @@ type CartNoteUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
+}
+
+"""
+An error occurred during the cart operation.
+"""
+type CartOperationError {
+	"""
+	The error code.
+	"""
+	code: String!
+
+	"""
+	The error message.
+	"""
+	message: String
 }
 
 "The input fields for updating the payment method that will be used to checkout.\n"
@@ -2185,6 +2578,11 @@ type CartPaymentUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
 }
 
 "A set of preferences tied to the buyer interacting with the cart. Preferences are used to prefill fields in at checkout to streamline information collection. \nPreferences are not synced back to the cart if they are overwritten.\n"
@@ -2216,6 +2614,104 @@ input CartPreferencesInput {
 	wallet: [String!]
 }
 
+"""
+Return type for `cartPrepareForCompletion` mutation.
+"""
+type CartPrepareForCompletionPayload {
+	"""
+	The result of cart preparation for completion.
+	"""
+	result: CartPrepareForCompletionResult
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+}
+
+"""
+The result of cart preparation.
+"""
+union CartPrepareForCompletionResult = CartStatusNotReady | CartStatusReady | CartThrottled
+
+"A selectable delivery address for a cart.\n"
+type CartSelectableAddress {
+	"""
+	The delivery address.
+	"""
+	address: CartAddress!
+
+	"""
+	A unique identifier for the address, specific to this cart.
+	"""
+	id: ID!
+
+	"""
+	This delivery address will not be associated with the buyer after a successful checkout.
+	"""
+	oneTimeUse: Boolean!
+
+	"""
+	Sets exactly one address as pre-selected for the buyer.
+	"""
+	selected: Boolean!
+}
+
+"""
+The input fields for a selectable delivery address in a cart.
+"""
+input CartSelectableAddressInput {
+	"""
+	Exactly one kind of delivery address.
+	"""
+	address: CartAddressInput!
+
+	"""
+	When true, this delivery address will not be associated with the buyer after a successful checkout.
+	"""
+	oneTimeUse: Boolean
+
+	"""
+	Sets exactly one address as pre-selected for the buyer.
+	"""
+	selected: Boolean
+
+	"""
+	Defines what kind of address validation is requested.
+	"""
+	validationStrategy: DeliveryAddressValidationStrategy = COUNTRY_CODE_ONLY
+}
+
+"""
+The input fields to update a line item on a cart.
+"""
+input CartSelectableAddressUpdateInput {
+	"""
+	Exactly one kind of delivery address.
+	"""
+	address: CartAddressInput
+
+	"""
+	The id of the selectable address.
+	"""
+	id: ID!
+
+	"""
+	When true, this delivery address will not be associated with the buyer after a successful checkout.
+	"""
+	oneTimeUse: Boolean
+
+	"""
+	Sets exactly one address as pre-selected for the buyer.
+	"""
+	selected: Boolean
+
+	"""
+	Defines what kind of address validation is requested.
+	"""
+	validationStrategy: DeliveryAddressValidationStrategy = COUNTRY_CODE_ONLY
+}
+
 "The input fields for updating the selected delivery options for a delivery group.\n"
 input CartSelectedDeliveryOptionInput {
 	"""
@@ -2242,6 +2738,36 @@ type CartSelectedDeliveryOptionsUpdatePayload {
 	The list of errors that occurred from executing the mutation.
 	"""
 	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
+}
+
+"""
+Cart is not ready for payment update and completion.
+"""
+type CartStatusNotReady {
+	"""
+	The result of cart preparation for completion.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that caused the cart to not be ready for payment update and completion.
+	"""
+	errors: [CartOperationError!]!
+}
+
+"""
+Cart is ready for payment update and completion.
+"""
+type CartStatusReady {
+	"""
+	The result of cart preparation for completion.
+	"""
+	cart: Cart
 }
 
 """
@@ -2263,6 +2789,14 @@ type CartSubmitForCompletionPayload {
 The result of cart submit completion.
 """
 union CartSubmitForCompletionResult = SubmitAlreadyAccepted | SubmitFailed | SubmitSuccess | SubmitThrottled
+
+"Response signifying that the access to cart request is currently being throttled.\nThe client can retry after `poll_after`.\n"
+type CartThrottled {
+	"""
+	The polling delay.
+	"""
+	pollAfter: DateTime!
+}
 
 """
 Represents an error that happens during execution of a cart mutation.
@@ -2295,6 +2829,59 @@ input CartWalletPaymentMethodInput {
 	The payment method information for the Shop Pay wallet.
 	"""
 	shopPayWalletContent: ShopPayWalletContentInput
+}
+
+"""
+A warning that occurred during a cart mutation.
+"""
+type CartWarning {
+	"""
+	The code of the warning.
+	"""
+	code: CartWarningCode!
+
+	"""
+	The message text of the warning.
+	"""
+	message: String!
+
+	"""
+	The target of the warning.
+	"""
+	target: ID!
+}
+
+"""
+The code for the cart warning.
+"""
+enum CartWarningCode {
+	"""
+	A delivery address with the same details already exists on this cart.
+	"""
+	DUPLICATE_DELIVERY_ADDRESS
+
+	"""
+	The merchandise does not have enough stock.
+	"""
+	MERCHANDISE_NOT_ENOUGH_STOCK
+
+	"""
+	The merchandise is out of stock.
+	"""
+	MERCHANDISE_OUT_OF_STOCK
+
+	"""
+	Gift cards are not available as a payment method.
+	"""
+	PAYMENTS_GIFT_CARDS_UNAVAILABLE
+}
+
+"A filter used to view a subset of products in a collection matching a specific category value.\n"
+input CategoryFilter {
+	"""
+	The id of the category to filter on.
+	"""
+	id: String!
 }
 
 "A collection represents a grouping of products that a shop owner can create to\norganize them or make their shops easier to browse.\n"
@@ -2811,6 +3398,36 @@ type ComponentizableCartLine implements BaseCartLine & Node {
 	The selling plan associated with the cart line and the effect that each selling plan has on variants when they're purchased.
 	"""
 	sellingPlanAllocation: SellingPlanAllocation
+}
+
+"""
+Details for count of elements.
+"""
+type Count {
+	"""
+	Count of elements.
+	"""
+	count: Int!
+
+	"""
+	Precision of count, how exact is the value.
+	"""
+	precision: CountPrecision!
+}
+
+"""
+The precision of the value returned by a count field.
+"""
+enum CountPrecision {
+	"""
+	The count is at least the value. A limit was reached.
+	"""
+	AT_LEAST
+
+	"""
+	The count is exactly the value.
+	"""
+	EXACT
 }
 
 """
@@ -7891,6 +8508,11 @@ enum MenuItemType {
 	COLLECTIONS
 
 	"""
+	A customer account page link.
+	"""
+	CUSTOMER_ACCOUNT_PAGE
+
+	"""
 	A frontpage link.
 	"""
 	FRONTPAGE
@@ -8499,6 +9121,57 @@ type Mutation {
 	): CartCreatePayload
 
 	"""
+	Adds delivery addresses to the cart.
+	"""
+	cartDeliveryAddressesAdd(
+		"""
+		A list of delivery addresses to add to the cart.
+
+		The input must not contain more than `250` values.
+		"""
+		addresses: [CartSelectableAddressInput!]!
+
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartDeliveryAddressesAddPayload
+
+	"""
+	Removes delivery addresses from the cart.
+	"""
+	cartDeliveryAddressesRemove(
+		"""
+		A list of delivery addresses by handle to remove from the cart.
+
+		The input must not contain more than `250` values.
+		"""
+		addressIds: [ID!]!
+
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartDeliveryAddressesRemovePayload
+
+	"""
+	Updates one or more delivery addresses on a cart.
+	"""
+	cartDeliveryAddressesUpdate(
+		"""
+		The delivery addresses to update.
+
+		The input must not contain more than `250` values.
+		"""
+		addresses: [CartSelectableAddressUpdateInput!]!
+
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartDeliveryAddressesUpdatePayload
+
+	"""
 	Updates the discount codes applied to the cart.
 	"""
 	cartDiscountCodesUpdate(
@@ -8514,6 +9187,23 @@ type Mutation {
 		"""
 		discountCodes: [String!]
 	): CartDiscountCodesUpdatePayload
+
+	"""
+	Removes the gift card codes applied to the cart.
+	"""
+	cartGiftCardCodesRemove(
+		"""
+		The gift cards to remove.
+
+		The input must not contain more than `250` values.
+		"""
+		appliedGiftCardIds: [ID!]!
+
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartGiftCardCodesRemovePayload
 
 	"""
 	Updates the gift card codes applied to the cart.
@@ -8632,6 +9322,16 @@ type Mutation {
 		"""
 		payment: CartPaymentInput!
 	): CartPaymentUpdatePayload
+
+	"""
+	Prepare the cart for cart checkout completion.
+	"""
+	cartPrepareForCompletion(
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartPrepareForCompletionPayload
 
 	"""
 	Update the selected delivery options for a delivery group.
@@ -9606,11 +10306,24 @@ enum PageSortKeys {
 }
 
 """
+Type for paginating through multiple sitemap's resources.
+"""
+type PaginatedSitemapResources {
+	"""
+	Whether there are more pages to fetch following the current page.
+	"""
+	hasNextPage: Boolean!
+
+	"List of sitemap resources for the current page.\nNote: The number of items varies between 0 and 250 per page.\n"
+	items: [SitemapResourceInterface!]!
+}
+
+"""
 Settings related to payments.
 """
 type PaymentSettings {
 	"""
-	List of the card brands which the shop accepts.
+	List of the card brands which the business entity accepts.
 	"""
 	acceptedCardBrands: [CardBrand!]!
 
@@ -9620,7 +10333,7 @@ type PaymentSettings {
 	cardVaultUrl: URL!
 
 	"""
-	The country where the shop is located.
+	The country where the shop is located. When multiple business entities operate within the shop, then this will represent the country of the business entity that's serving the specified buyer context.
 	"""
 	countryCode: CountryCode!
 
@@ -9638,7 +10351,7 @@ type PaymentSettings {
 	shopifyPaymentsAccountId: String
 
 	"""
-	List of the digital wallets which the shop supports.
+	List of the digital wallets which the business entity supports.
 	"""
 	supportedDigitalWallets: [DigitalWallet!]!
 }
@@ -9766,10 +10479,35 @@ union PricingValue = MoneyV2 | PricingPercentageValue
 
 "The `Product` object lets you manage products in a merchant’s store.\n\nProducts are the goods and services that merchants offer to customers.\nThey can include various details such as title, description, price, images, and options such as size or color.\nYou can use [product variants](/docs/api/storefront/latest/objects/ProductVariant)\nto create or update different versions of the same product.\nYou can also add or update product [media](/docs/api/storefront/latest/interfaces/Media).\nProducts can be organized by grouping them into a [collection](/docs/api/storefront/latest/objects/Collection).\n\nLearn more about working with [products and collections](/docs/storefronts/headless/building-with-the-storefront-api/products-collections).\n"
 type Product implements HasMetafields & Node & OnlineStorePublishable & Trackable {
+	"A list of variants whose selected options differ with the provided selected options by one, ordered by variant id.\nIf selected options are not provided, adjacent variants to the first available variant is returned.\n\nNote that this field returns an array of variants. In most cases, the number of variants in this array will be low.\nHowever, with a low number of options and a high number of values per option, the number of variants returned\nhere can be high. In such cases, it recommended to avoid using this field.\n\nThis list of variants can be used in combination with the `options` field to build a rich variant picker that\nincludes variant availability or other variant information.\n"
+	adjacentVariants(
+		"""
+		Whether to perform case insensitive match on option names and values.
+		"""
+		caseInsensitiveMatch: Boolean = false
+
+		"""
+		Whether to ignore product options that are not present on the requested product.
+		"""
+		ignoreUnknownOptions: Boolean = true
+
+		"""
+		The input fields used for a selected option.
+
+		The input must not contain more than `250` values.
+		"""
+		selectedOptions: [SelectedOptionInput!]
+	): [ProductVariant!]!
+
 	"""
 	Indicates if at least one product variant is available for sale.
 	"""
 	availableForSale: Boolean!
+
+	"""
+	The category of a product from [Shopify's Standard Product Taxonomy](https://shopify.github.io/product-taxonomy/releases/unstable/?categoryId=sg-4-17-2-17).
+	"""
+	category: TaxonomyCategory
 
 	"""
 	A list of [collections](/docs/api/storefront/latest/objects/Collection) that include the product.
@@ -9823,6 +10561,12 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 
 	"The description of the product, with\nHTML tags. For example, the description might include\nbold `<strong></strong>` and italic `<i></i>` text.\n"
 	descriptionHtml: HTML!
+
+	"An encoded string containing all option value combinations\nwith a corresponding variant that is currently available for sale.\n\nIntegers represent option and values:\n[0,1] represents option_value at array index 0 for the option at array index 0\n\n`:`, `,`, ` ` and `-` are control characters.\n`:` indicates a new option. ex: 0:1 indicates value 0 for the option in position 1, value 1 for the option in position 2.\n`,` indicates the end of a repeated prefix, mulitple consecutive commas indicate the end of multiple repeated prefixes.\n` ` indicates a gap in the sequence of option values. ex: 0 4 indicates option values in position 0 and 4 are present.\n`-` indicates a continuous range of option values. ex: 0 1-3 4\n\nDecoding process:\n\nExample options: [Size, Color, Material]\nExample values: [[Small, Medium, Large], [Red, Blue], [Cotton, Wool]]\nExample encoded string: \"0:0:0,1:0-1,,1:0:0-1,1:1,,2:0:1,1:0,,\"\n\nStep 1: Expand ranges into the numbers they represent: \"0:0:0,1:0 1,,1:0:0 1,1:1,,2:0:1,1:0,,\"\nStep 2: Expand repeated prefixes: \"0:0:0,0:1:0 1,1:0:0 1,1:1:1,2:0:1,2:1:0,\"\nStep 3: Expand shared prefixes so data is encoded as a string: \"0:0:0,0:1:0,0:1:1,1:0:0,1:0:1,1:1:1,2:0:1,2:1:0,\"\nStep 4: Map to options + option values to determine existing variants:\n\n[Small, Red, Cotton] (0:0:0), [Small, Blue, Cotton] (0:1:0), [Small, Blue, Wool] (0:1:1),\n[Medium, Red, Cotton] (1:0:0), [Medium, Red, Wool] (1:0:1), [Medium, Blue, Wool] (1:1:1),\n[Large, Red, Wool] (2:0:1), [Large, Blue, Cotton] (2:1:0).\n\n"
+	encodedVariantAvailability: String
+
+	"An encoded string containing all option value combinations with a corresponding variant.\n\nIntegers represent option and values:\n[0,1] represents option_value at array index 0 for the option at array index 0\n\n`:`, `,`, ` ` and `-` are control characters.\n`:` indicates a new option. ex: 0:1 indicates value 0 for the option in position 1, value 1 for the option in position 2.\n`,` indicates the end of a repeated prefix, mulitple consecutive commas indicate the end of multiple repeated prefixes.\n` ` indicates a gap in the sequence of option values. ex: 0 4 indicates option values in position 0 and 4 are present.\n`-` indicates a continuous range of option values. ex: 0 1-3 4\n\nDecoding process:\n\nExample options: [Size, Color, Material]\nExample values: [[Small, Medium, Large], [Red, Blue], [Cotton, Wool]]\nExample encoded string: \"0:0:0,1:0-1,,1:0:0-1,1:1,,2:0:1,1:0,,\"\n\nStep 1: Expand ranges into the numbers they represent: \"0:0:0,1:0 1,,1:0:0 1,1:1,,2:0:1,1:0,,\"\nStep 2: Expand repeated prefixes: \"0:0:0,0:1:0 1,1:0:0 1,1:1:1,2:0:1,2:1:0,\"\nStep 3: Expand shared prefixes so data is encoded as a string: \"0:0:0,0:1:0,0:1:1,1:0:0,1:0:1,1:1:1,2:0:1,2:1:0,\"\nStep 4: Map to options + option values to determine existing variants:\n\n[Small, Red, Cotton] (0:0:0), [Small, Blue, Cotton] (0:1:0), [Small, Blue, Wool] (0:1:1),\n[Medium, Red, Cotton] (1:0:0), [Medium, Red, Wool] (1:0:1), [Medium, Blue, Wool] (1:1:1),\n[Large, Red, Wool] (2:0:1), [Large, Blue, Cotton] (2:1:0).\n\n"
+	encodedVariantExistence: String
 
 	"The featured image for the product.\n\nThis field is functionally equivalent to `images(first: 1)`.\n"
 	featuredImage: Image
@@ -9966,6 +10710,26 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	"""
 	requiresSellingPlan: Boolean!
 
+	"Find an active product variant based on selected options, availability or the first variant.\n\nAll arguments are optional. If no selected options are provided, the first available variant is returned.\nIf no variants are available, the first variant is returned.\n"
+	selectedOrFirstAvailableVariant(
+		"""
+		Whether to perform case insensitive match on option names and values.
+		"""
+		caseInsensitiveMatch: Boolean = false
+
+		"""
+		Whether to ignore unknown product options.
+		"""
+		ignoreUnknownOptions: Boolean = true
+
+		"""
+		The input fields used for a selected option.
+
+		The input must not contain more than `250` values.
+		"""
+		selectedOptions: [SelectedOptionInput!]
+	): ProductVariant
+
 	"""
 	A list of all [selling plan groups](/docs/apps/build/purchase-options/subscriptions/selling-plans/build-a-selling-plan) that are associated with the product either directly, or through the product's variants.
 	"""
@@ -10074,6 +10838,11 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	): ProductVariantConnection!
 
 	"""
+	The number of [variants](/docs/api/storefront/latest/objects/ProductVariant) that are associated with the product.
+	"""
+	variantsCount: Count
+
+	"""
 	The name of the product's vendor.
 	"""
 	vendor: String!
@@ -10166,6 +10935,11 @@ input ProductFilter {
 	available: Boolean
 
 	"""
+	A product category to filter on.
+	"""
+	category: CategoryFilter
+
+	"""
 	A range of prices to filter with-in.
 	"""
 	price: PriceRangeFilter
@@ -10189,6 +10963,11 @@ input ProductFilter {
 	A product tag to filter on.
 	"""
 	tag: String
+
+	"""
+	A standard product attribute metafield to filter on.
+	"""
+	taxonomyMetafield: TaxonomyMetafieldFilter
 
 	"""
 	A variant metafield to filter on.
@@ -10267,6 +11046,9 @@ type ProductOption implements Node {
 
 "The product option value names. For example, \"Red\", \"Blue\", and \"Green\" for a \"Color\" option.\n"
 type ProductOptionValue implements Node {
+	"The product variant that combines this option value with the\nlowest-position option values for all other options.\n\nThis field will always return a variant, provided a variant including this option value exists.\n"
+	firstSelectableVariant: ProductVariant
+
 	"""
 	A globally-unique ID.
 	"""
@@ -10574,6 +11356,11 @@ type ProductVariant implements HasMetafields & Node {
 		"""
 		reverse: Boolean = false
 	): SellingPlanAllocationConnection!
+
+	"""
+	The Shop Pay Installments pricing information for the product variant.
+	"""
+	shopPayInstallmentsPricing: ShopPayInstallmentsProductVariantPricing
 
 	"""
 	The SKU (stock keeping unit) associated with the variant.
@@ -11217,6 +12004,11 @@ type QueryRoot {
 	): PageConnection!
 
 	"""
+	Settings related to payments.
+	"""
+	paymentSettings: PaymentSettings!
+
+	"""
 	List of the predictive search results.
 	"""
 	predictiveSearch(
@@ -11425,6 +12217,16 @@ type QueryRoot {
 	The shop associated with the storefront access token.
 	"""
 	shop: Shop!
+
+	"""
+	Contains all fields required to generate sitemaps.
+	"""
+	sitemap(
+		"""
+		The type of the resource for the sitemap.
+		"""
+		type: SitemapType!
+	): Sitemap!
 
 	"""
 	A list of redirects for a shop.
@@ -12124,7 +12926,7 @@ type SellingPlanPercentagePriceAdjustment {
 	"""
 	The percentage value of the price adjustment.
 	"""
-	adjustmentPercentage: Int!
+	adjustmentPercentage: Float!
 }
 
 """
@@ -12267,6 +13069,11 @@ type Shop implements HasMetafields & Node {
 	shipsToCountries: [CountryCode!]!
 
 	"""
+	The Shop Pay Installments pricing information for the shop.
+	"""
+	shopPayInstallmentsPricing: ShopPayInstallmentsPricing
+
+	"""
 	The shop’s subscription policy.
 	"""
 	subscriptionPolicy: ShopPolicyWithDefault
@@ -12275,6 +13082,151 @@ type Shop implements HasMetafields & Node {
 	The shop’s terms of service.
 	"""
 	termsOfService: ShopPolicy
+}
+
+"""
+The financing plan in Shop Pay Installments.
+"""
+type ShopPayInstallmentsFinancingPlan implements Node {
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The maximum price to qualify for the financing plan.
+	"""
+	maxPrice: MoneyV2!
+
+	"""
+	The minimum price to qualify for the financing plan.
+	"""
+	minPrice: MoneyV2!
+
+	"""
+	The terms of the financing plan.
+	"""
+	terms: [ShopPayInstallmentsFinancingPlanTerm!]!
+}
+
+"""
+The payment frequency for a Shop Pay Installments Financing Plan.
+"""
+enum ShopPayInstallmentsFinancingPlanFrequency {
+	"""
+	Monthly payment frequency.
+	"""
+	MONTHLY
+
+	"""
+	Weekly payment frequency.
+	"""
+	WEEKLY
+}
+
+"""
+The terms of the financing plan in Shop Pay Installments.
+"""
+type ShopPayInstallmentsFinancingPlanTerm implements Node {
+	"""
+	The annual percentage rate (APR) of the financing plan.
+	"""
+	apr: Int!
+
+	"""
+	The payment frequency for the financing plan.
+	"""
+	frequency: ShopPayInstallmentsFinancingPlanFrequency!
+
+	"""
+	A globally-unique ID.
+	"""
+	id: ID!
+
+	"""
+	The number of installments for the financing plan.
+	"""
+	installmentsCount: Count
+
+	"""
+	The type of loan for the financing plan.
+	"""
+	loanType: ShopPayInstallmentsLoan!
+}
+
+"""
+The loan type for a Shop Pay Installments Financing Plan Term.
+"""
+enum ShopPayInstallmentsLoan {
+	"""
+	An interest-bearing loan type.
+	"""
+	INTEREST
+
+	"""
+	A split-pay loan type.
+	"""
+	SPLIT_PAY
+
+	"""
+	A zero-percent loan type.
+	"""
+	ZERO_PERCENT
+}
+
+"""
+The result for a Shop Pay Installments pricing request.
+"""
+type ShopPayInstallmentsPricing {
+	"""
+	The financing plans available for the given price range.
+	"""
+	financingPlans: [ShopPayInstallmentsFinancingPlan!]!
+
+	"""
+	The maximum price to qualify for financing.
+	"""
+	maxPrice: MoneyV2!
+
+	"""
+	The minimum price to qualify for financing.
+	"""
+	minPrice: MoneyV2!
+}
+
+"""
+The shop pay installments pricing information for a product variant.
+"""
+type ShopPayInstallmentsProductVariantPricing implements Node {
+	"""
+	Whether the product variant is available.
+	"""
+	available: Boolean!
+
+	"""
+	Whether the product variant is eligible for Shop Pay Installments.
+	"""
+	eligible: Boolean!
+
+	"""
+	The full price of the product variant.
+	"""
+	fullPrice: MoneyV2!
+
+	"""
+	The ID of the product variant.
+	"""
+	id: ID!
+
+	"""
+	The number of payment terms available for the product variant.
+	"""
+	installmentsCount: Count
+
+	"""
+	The price per term for the product variant.
+	"""
+	pricePerTerm: MoneyV2!
 }
 
 """
@@ -12994,6 +13946,140 @@ type ShopPolicyWithDefault {
 	url: URL!
 }
 
+"""
+Contains all fields required to generate sitemaps.
+"""
+type Sitemap {
+	"""
+	The number of sitemap's pages for a given type.
+	"""
+	pagesCount: Count
+
+	"A list of sitemap's resources for a given type.\n\nImportant Notes:\n  - The number of items per page varies from 0 to 250.\n  - Empty pages (0 items) may occur and do not necessarily indicate the end of results.\n  - Always check `hasNextPage` to determine if more pages are available.\n"
+	resources(
+		"""
+		The page number to fetch.
+		"""
+		page: Int!
+	): PaginatedSitemapResources
+}
+
+"""
+Represents a sitemap's image.
+"""
+type SitemapImage {
+	"""
+	Image's alt text.
+	"""
+	alt: String
+
+	"""
+	Path to the image.
+	"""
+	filepath: String
+
+	"""
+	The date and time when the image was updated.
+	"""
+	updatedAt: DateTime!
+}
+
+"""
+Represents a sitemap resource that is not a metaobject.
+"""
+type SitemapResource implements SitemapResourceInterface {
+	"""
+	Resource's handle.
+	"""
+	handle: String!
+
+	"""
+	Resource's image.
+	"""
+	image: SitemapImage
+
+	"""
+	Resource's title.
+	"""
+	title: String
+
+	"""
+	The date and time when the resource was updated.
+	"""
+	updatedAt: DateTime!
+}
+
+"""
+Represents the common fields for all sitemap resource types.
+"""
+interface SitemapResourceInterface {
+	"""
+	Resource's handle.
+	"""
+	handle: String!
+
+	"""
+	The date and time when the resource was updated.
+	"""
+	updatedAt: DateTime!
+}
+
+"A SitemapResourceMetaobject represents a metaobject with\n[the `renderable` capability](https://shopify.dev/docs/apps/build/custom-data/metaobjects/use-metaobject-capabilities#render-metaobjects-as-web-pages).\n"
+type SitemapResourceMetaobject implements SitemapResourceInterface {
+	"""
+	Resource's handle.
+	"""
+	handle: String!
+
+	"""
+	The URL handle for accessing pages of this metaobject type in the Online Store.
+	"""
+	onlineStoreUrlHandle: String
+
+	"""
+	The type of the metaobject. Defines the namespace of its associated metafields.
+	"""
+	type: String!
+
+	"""
+	The date and time when the resource was updated.
+	"""
+	updatedAt: DateTime!
+}
+
+"""
+The types of resources potentially present in a sitemap.
+"""
+enum SitemapType {
+	"""
+	Articles present in the sitemap.
+	"""
+	ARTICLE
+
+	"""
+	Blogs present in the sitemap.
+	"""
+	BLOG
+
+	"""
+	Collections present in the sitemap.
+	"""
+	COLLECTION
+
+	"Metaobjects present in the sitemap. Only metaobject types with the\n[`renderable` capability](https://shopify.dev/docs/apps/build/custom-data/metaobjects/use-metaobject-capabilities#render-metaobjects-as-web-pages)\nare included in sitemap.\n"
+	METAOBJECT
+
+	"""
+	Pages present in the sitemap.
+	"""
+	PAGE
+
+	"""
+	Products present in the sitemap.
+	"""
+	PRODUCT
+}
+
 "The availability of a product variant at a particular location.\nLocal pick-up must be enabled in the  store's shipping settings, otherwise this will return an empty result.\n"
 type StoreAvailability {
 	"""
@@ -13054,6 +14140,11 @@ type StringConnection {
 	A list of edges.
 	"""
 	edges: [StringEdge!]!
+
+	"""
+	A list of the nodes contained in StringEdge.
+	"""
+	nodes: [String!]!
 
 	"""
 	Information to aid in pagination.
@@ -13221,6 +14312,11 @@ type SubmitSuccess {
 	The ID of the cart completion attempt that will be used for polling for the result.
 	"""
 	attemptId: String!
+
+	"""
+	The url to which the buyer should be redirected after the cart is successfully submitted.
+	"""
+	redirectUrl: URL!
 }
 
 """
@@ -13244,6 +14340,42 @@ type Swatch {
 	The swatch image.
 	"""
 	image: MediaImage
+}
+
+"The taxonomy category for the product.\n"
+type TaxonomyCategory implements Node {
+	"""
+	All parent nodes of the current taxonomy category.
+	"""
+	ancestors: [TaxonomyCategory!]!
+
+	"""
+	A static identifier for the taxonomy category.
+	"""
+	id: ID!
+
+	"""
+	The localized name of the taxonomy category.
+	"""
+	name: String!
+}
+
+"A filter used to view a subset of products in a collection matching a specific taxonomy metafield value.\n"
+input TaxonomyMetafieldFilter {
+	"""
+	The key of the metafield to filter on.
+	"""
+	key: String!
+
+	"""
+	The namespace of the metafield to filter on.
+	"""
+	namespace: String!
+
+	"""
+	The value of the metafield.
+	"""
+	value: String!
 }
 
 """
