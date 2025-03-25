@@ -123,9 +123,6 @@ importers:
       '@vercel/remix':
         specifier: ^2.15.3
         version: 2.15.3(@remix-run/dev@2.16.2(@remix-run/react@2.16.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.2))(@remix-run/serve@2.16.2(typescript@5.8.2))(@types/node@22.13.13)(jiti@2.4.2)(ts-node@10.9.1(@types/node@22.13.13)(typescript@5.8.2))(typescript@5.8.2)(vite@6.2.2(@types/node@22.13.13)(jiti@2.4.2)(yaml@2.7.0))(yaml@2.7.0))(@remix-run/node@2.16.2(typescript@5.8.2))(@remix-run/server-runtime@2.16.2(typescript@5.8.2))(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@vercel/speed-insights':
-        specifier: ^1.2.0
-        version: 1.2.0(react@18.3.1)
       algoliasearch:
         specifier: ^5.22.0
         version: 5.22.0
@@ -3540,29 +3537,6 @@ packages:
       '@remix-run/server-runtime': 2.15.3
       react: '*'
       react-dom: '*'
-
-  '@vercel/speed-insights@1.2.0':
-    resolution: {integrity: sha512-y9GVzrUJ2xmgtQlzFP2KhVRoCglwfRQgjyfY607aU0hh0Un6d0OUyrJkjuAlsV18qR4zfoFPs/BiIj9YDS6Wzw==}
-    peerDependencies:
-      '@sveltejs/kit': ^1 || ^2
-      next: '>= 13'
-      react: ^18 || ^19 || ^19.0.0-rc
-      svelte: '>= 4'
-      vue: ^3
-      vue-router: ^4
-    peerDependenciesMeta:
-      '@sveltejs/kit':
-        optional: true
-      next:
-        optional: true
-      react:
-        optional: true
-      svelte:
-        optional: true
-      vue:
-        optional: true
-      vue-router:
-        optional: true
 
   '@vercel/static-config@3.0.0':
     resolution: {integrity: sha512-2qtvcBJ1bGY0dYGYh3iM7yGKkk971FujLEDXzuW5wcZsPr1GSEjO/w2iSr3qve6nDDtBImsGoDEnus5FI4+fIw==}
@@ -11825,15 +11799,15 @@ snapshots:
       - '@types/react'
       - supports-color
 
-  '@sanity/presentation-comlink@1.0.12(@sanity/client@6.28.3(debug@4.4.0))(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))':
+  '@sanity/presentation-comlink@1.0.12(@sanity/client@6.28.3)(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))':
     dependencies:
       '@sanity/client': 6.28.3(debug@4.4.0)
       '@sanity/comlink': 3.0.1
-      '@sanity/visual-editing-types': 1.0.11(@sanity/client@6.28.3(debug@4.4.0))(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))
+      '@sanity/visual-editing-types': 1.0.11(@sanity/client@6.28.3)(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))
     transitivePeerDependencies:
       - '@sanity/types'
 
-  '@sanity/preview-url-secret@2.1.6(@sanity/client@6.28.3(debug@4.4.0))':
+  '@sanity/preview-url-secret@2.1.6(@sanity/client@6.28.3)':
     dependencies:
       '@sanity/client': 6.28.3(debug@4.4.0)
       '@sanity/uuid': 3.0.2
@@ -11974,7 +11948,7 @@ snapshots:
       - react-dom
       - react-is
 
-  '@sanity/visual-editing-types@1.0.11(@sanity/client@6.28.3(debug@4.4.0))(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))':
+  '@sanity/visual-editing-types@1.0.11(@sanity/client@6.28.3)(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))':
     dependencies:
       '@sanity/client': 6.28.3(debug@4.4.0)
     optionalDependencies:
@@ -12794,10 +12768,6 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       ts-morph: 12.0.0
-
-  '@vercel/speed-insights@1.2.0(react@18.3.1)':
-    optionalDependencies:
-      react: 18.3.1
 
   '@vercel/static-config@3.0.0':
     dependencies:
@@ -16992,8 +16962,8 @@ snapshots:
       '@sanity/logos': 2.1.13(@sanity/color@3.0.6)(react@18.3.1)
       '@sanity/migrate': 3.80.1(@types/react@18.3.20)
       '@sanity/mutator': 3.80.1(@types/react@18.3.20)
-      '@sanity/presentation-comlink': 1.0.12(@sanity/client@6.28.3(debug@4.4.0))(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))
-      '@sanity/preview-url-secret': 2.1.6(@sanity/client@6.28.3(debug@4.4.0))
+      '@sanity/presentation-comlink': 1.0.12(@sanity/client@6.28.3)(@sanity/types@3.80.1(@types/react@18.3.20)(debug@4.4.0))
+      '@sanity/preview-url-secret': 2.1.6(@sanity/client@6.28.3)
       '@sanity/schema': 3.80.1(@types/react@18.3.20)(debug@4.4.0)
       '@sanity/telemetry': 0.7.9(react@18.3.1)
       '@sanity/types': 3.80.1(@types/react@18.3.20)(debug@4.4.0)

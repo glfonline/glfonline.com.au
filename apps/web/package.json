@@ -42,7 +42,6 @@
 		"@vercel/analytics": "^1.5.0",
 		"@vercel/node": "^5.1.14",
 		"@vercel/remix": "^2.15.3",
-		"@vercel/speed-insights": "^1.2.0",
 		"algoliasearch": "^5.22.0",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",

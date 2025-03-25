@@ -20,7 +20,6 @@ import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persist
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { SpeedInsights } from '@vercel/speed-insights/remix';
 import { useEffect } from 'react';
 
 import favicon from '../assets/favicon.svg';
@@ -112,7 +111,6 @@ function App() {
 				</PersistQueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
-				<SpeedInsights />
 			</body>
 		</html>
 	);
