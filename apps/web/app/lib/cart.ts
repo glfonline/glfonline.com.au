@@ -32,8 +32,7 @@ export async function getSession(input: Request | string | null | undefined) {
 
 		// TODO: Get and set cart from Redis or something if user is logged in (could probably use a storage abstraction)
 		getCart(): Promise<Array<CartItem>> {
-			const cart = JSON.parse(session.get(cartSessionKey) || '[]');
-			return cart;
+			return JSON.parse(session.get(cartSessionKey) || '[]');
 		},
 
 		setCart(cart: Array<CartItem>) {
