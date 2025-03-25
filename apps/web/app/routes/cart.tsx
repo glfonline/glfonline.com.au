@@ -100,7 +100,7 @@ export default function CartPage() {
 	const { cartInfo } = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
 
-	if (cartInfo?.lines.edges.length === 0) {
+	if (!cartInfo || cartInfo.lines.edges.length === 0) {
 		return (
 			<div className="bg-white">
 				<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 text-center sm:px-6 lg:max-w-7xl lg:px-8">
@@ -132,7 +132,7 @@ export default function CartPage() {
 							Items in your shopping cart
 						</h2>
 
-						{Array.isArray(cartInfo?.lines.edges) ? (
+						{Array.isArray(cartInfo.lines.edges) ? (
 							<ul className="divide-y divide-gray-200 border-b border-t border-gray-200" role="list">
 								{cartInfo.lines.edges.map(({ node }) => {
 									const theme = node.merchandise.product.tags.includes('ladies') ? 'ladies' : 'mens';
@@ -218,7 +218,7 @@ export default function CartPage() {
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
 								<dd className="text-sm text-gray-900">
-									{formatMoney(cartInfo?.cost.subtotalAmount.amount || 0, 'AUD')}
+									{formatMoney(cartInfo.cost.subtotalAmount.amount || 0, 'AUD')}
 								</dd>
 							</div>
 						</dl>
