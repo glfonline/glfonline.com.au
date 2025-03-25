@@ -28,6 +28,15 @@
 		"sort:packages": "npx sort-package-json 'package.json' './apps/*/package.json' './packages/*/package.json'",
 		"test:e2e": "turbo run test:e2e"
 	},
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@glfonline/tsconfig": "workspace:^",
+		"@manypkg/cli": "^0.23.0",
+		"stale-dep": "^0.8.2",
+		"turbo": "^2.4.4",
+		"turbo-ignore": "^2.4.4",
+		"typescript": "^5.8.2"
+	},
 	"packageManager": "pnpm@10.6.5+sha512.cdf928fca20832cd59ec53826492b7dc25dc524d4370b6b4adbf65803d32efaa6c1c88147c0ae4e8d579a6c9eec715757b50d4fa35eea179d868eada4ed043af",
 	"engines": {
 		"node": ">=20",
@@ -36,13 +45,5 @@
 	"manypkg": {
 		"defaultBranch": "main",
 		"workspaceProtocol": "require"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^1.9.4",
-		"@glfonline/tsconfig": "workspace:^",
-		"@manypkg/cli": "^0.23.0",
-		"stale-dep": "^0.8.2",
-		"turbo": "^2.4.4",
-		"typescript": "^5.8.2"
 	}
 }
