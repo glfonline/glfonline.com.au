@@ -18,11 +18,15 @@ export function LoadingProgress() {
 
 	useEffect(() => {
 		(async () => {
-			if (!elementRef.current) return;
-			if (isActive) setAnimationComplete(false);
-			const animations = elementRef.current.getAnimations?.() || [];
-			await Promise.all(animations.map(({ finished }) => finished));
-			if (!isActive) setAnimationComplete(true);
+			try {
+				if (!elementRef.current) return;
+				if (isActive) setAnimationComplete(false);
+				const animations = elementRef.current.getAnimations?.() || [];
+				await Promise.all(animations.map(({ finished }) => finished));
+				if (!isActive) setAnimationComplete(true);
+			} catch {
+				// Noop
+			}
 		})();
 	}, [isActive]);
 
