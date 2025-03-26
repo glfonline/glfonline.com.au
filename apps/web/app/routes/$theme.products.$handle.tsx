@@ -209,7 +209,12 @@ export default function ProductPage() {
 									</ButtonLink>
 								)}
 
-								<Button disabled={!product.availableForSale} type="submit" variant="neutral">
+								<Button
+									disabled={!product.availableForSale}
+									isLoading={navigation.state !== 'idle'}
+									type="submit"
+									variant="neutral"
+								>
 									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
 								</Button>
 
