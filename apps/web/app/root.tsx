@@ -49,8 +49,8 @@ export const links: LinksFunction = () => {
 	return [
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
-		{ rel: 'stylesheet', href: fontCssUrl },
-		{ rel: 'stylesheet', href: tailwindCssUrl },
+		{ rel: 'stylesheet', href: fontCssUrl, as: 'style' },
+		{ rel: 'stylesheet', href: tailwindCssUrl, as: 'style' },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
 	];
 };
