@@ -13,5 +13,7 @@ export {
 	PRODUCT_VARIANT_FRAGMENT,
 	SHOP_QUERY,
 	SINGLE_PRODUCT_QUERY,
+	type FragmentData,
+	type OperationData,
 } from './graphql';
 export { shopifyClient } from './shopify-client';

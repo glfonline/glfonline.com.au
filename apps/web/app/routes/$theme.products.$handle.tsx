@@ -1,7 +1,7 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
-import { Form, useLoaderData, useNavigation } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -15,6 +15,7 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
+import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { notFound } from '../lib/not-found';
 import { getSeoMeta } from '../seo';
@@ -29,6 +30,11 @@ const ProductSchema = z.object({
 const CartSchema = z.object({
 	variantId: z.string({ required_error: 'Please select an option' }).min(1),
 });
+
+// Define types for our action return values
+type ActionSuccess = { success: true };
+type ActionError = { success: false; error: string };
+type ActionData = ActionSuccess | ActionError;
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const result = ProductSchema.safeParse(params);
@@ -49,13 +55,48 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	notFound();
 }
 
-export async function action({ request }: ActionFunctionArgs) {
+export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof data<ActionData>>> {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
-	let cart = await session.getCart();
-	cart = addToCart(cart, variantId, 1);
-	await session.setCart(cart);
-	return data({}, { headers: { 'Set-Cookie': await session.commitSession() } });
+
+	// Get current cart
+	const currentCart = await session.getCart();
+
+	// First check if this variant is already in the cart
+	const existingItem = currentCart.find((item) => item.variantId === variantId);
+	const currentQuantity = existingItem ? existingItem.quantity : 0;
+
+	// Create a temporary cart to validate with Shopify
+	// Instead of directly modifying the cart, make a temporary copy with the new item
+	const tempCart = currentCart.map((item) => ({
+		...item,
+		quantity: item.variantId === variantId ? item.quantity + 1 : item.quantity,
+	}));
+
+	// If the item isn't in the cart yet, add it
+	if (!existingItem) {
+		tempCart.push({ variantId, quantity: 1 });
+	}
+
+	// Validate the potential new cart with Shopify first
+	const cartResult = await getCartInfo(tempCart);
+
+	// Only update the session if Shopify accepts the cart
+	if (cartResult.type === 'success') {
+		// Update the real cart now that we know it's valid
+		const updatedCart = addToCart([...currentCart], variantId, 1);
+		await session.setCart(updatedCart);
+		return data({ success: true }, { headers: { 'Set-Cookie': await session.commitSession() } });
+	}
+
+	// If Shopify rejects the cart, show a user-friendly error message
+	return data(
+		{
+			success: false,
+			error: 'Unable to add item to cart. The item might be out of stock or unavailable.',
+		},
+		{ headers: { 'Set-Cookie': await session.commitSession() } },
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -69,6 +110,8 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
+	const actionData = useActionData<typeof action>();
+	const navigation = useNavigation();
 
 	const [variant, setVariant] = useState(
 		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
@@ -81,11 +124,11 @@ export default function ProductPage() {
 
 	const form = useZorm('cart_form', CartSchema);
 
-	const navigation = useNavigation();
+	const formError = actionData && !actionData.success ? actionData.error : undefined;
 
 	let buttonText = 'Add to cart';
 	if (navigation.state === 'submitting') buttonText = 'Adding...';
-	if (navigation.state === 'loading') buttonText = 'Added!';
+	if (navigation.state === 'loading' && !formError) buttonText = 'Added!';
 
 	const sizingChart = getSizingChart(product);
 
@@ -169,6 +212,8 @@ export default function ProductPage() {
 								<Button disabled={!product.availableForSale} type="submit" variant="neutral">
 									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
 								</Button>
+
+								{formError && <p className="text-red-500 text-sm mt-2">{formError}</p>}
 							</div>
 						</Form>
 

@@ -9,19 +9,26 @@ import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
-import { getCartInfo } from '../lib/get-cart-info';
+import { type CartResult, getCartInfo } from '../lib/get-cart-info';
 import { getSeoMeta } from '../seo';
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartResult>>> {
 	const session = await getSession(request);
 	const cart = await session.getCart();
-	const cartInfo = await getCartInfo(cart);
-	return data(
-		{ cartInfo },
-		{
+	const cartResult = await getCartInfo(cart);
+
+	// Clear cart if there was an error fetching cart info
+	if (['error', 'empty'].includes(cartResult.type)) {
+		await session.setCart([]);
+		return data(cartResult, {
 			headers: { 'Set-Cookie': await session.commitSession() },
-		},
-	);
+		});
+	}
+
+	// Otherwise return the successful cart
+	return data(cartResult, {
+		headers: { 'Set-Cookie': await session.commitSession() },
+	});
 }
 
 const INTENT = 'intent';
@@ -97,10 +104,11 @@ export const meta: MetaFunction = () => {
 };
 
 export default function CartPage() {
-	const { cartInfo } = useLoaderData<typeof loader>();
+	const cartResult = useLoaderData<typeof loader>();
 	const navigation = useNavigation();
 
-	if (!cartInfo || cartInfo.lines.edges.length === 0) {
+	// Handle null case or empty cart
+	if (['empty', 'error'].includes(cartResult.type) || !cartResult.cart || cartResult.cart.lines.edges.length === 0) {
 		return (
 			<div className="bg-white">
 				<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 text-center sm:px-6 lg:max-w-7xl lg:px-8">
@@ -120,6 +128,9 @@ export default function CartPage() {
 		);
 	}
 
+	// Now we know cartResult exists and has a cart property
+	const { cart } = cartResult;
+
 	return (
 		<div className="bg-white">
 			<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
@@ -132,9 +143,9 @@ export default function CartPage() {
 							Items in your shopping cart
 						</h2>
 
-						{Array.isArray(cartInfo.lines.edges) ? (
+						{Array.isArray(cart.lines.edges) ? (
 							<ul className="divide-y divide-gray-200 border-b border-t border-gray-200" role="list">
-								{cartInfo.lines.edges.map(({ node }) => {
+								{cart.lines.edges.map(({ node }) => {
 									const theme = node.merchandise.product.tags.includes('ladies') ? 'ladies' : 'mens';
 									return (
 										<li className="flex py-6 sm:py-10" data-theme={theme} key={node.id}>
@@ -217,17 +228,15 @@ export default function CartPage() {
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<dt className="text-sm text-gray-600">Subtotal</dt>
-								<dd className="text-sm text-gray-900">
-									{formatMoney(cartInfo.cost.subtotalAmount.amount || 0, 'AUD')}
-								</dd>
+								<dd className="text-sm text-gray-900">{formatMoney(cart.cost.subtotalAmount.amount || 0, 'AUD')}</dd>
 							</div>
 						</dl>
 
 						<p className="text-sm text-gray-600">Taxes and shipping are calculated at checkout</p>
 
-						{cartInfo.checkoutUrl && (
+						{cart.checkoutUrl && (
 							<>
-								<input name="checkoutUrl" type="hidden" value={cartInfo.checkoutUrl} />
+								<input name="checkoutUrl" type="hidden" value={cart.checkoutUrl} />
 								<Button
 									disabled={navigation.state !== 'idle'}
 									name={INTENT}
