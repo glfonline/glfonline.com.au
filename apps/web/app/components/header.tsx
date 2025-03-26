@@ -1,14 +1,16 @@
 import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { NavLink, useLoaderData } from '@remix-run/react';
+import { NavLink, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId, useState } from 'react';
 
+import { getOptimisticCartCount } from '../lib/cart-utils';
 import { CHANTALE_PHONE, type NavItem, socialLinks } from '../lib/constants';
 import { urlFor } from '../lib/sanity-image';
 import type { loader } from '../root';
+import { useCart } from './cart-provider';
 import { ButtonLink } from './design-system/button';
 import { MobileMenu } from './mobile-menu';
 import { SearchDialog } from './search-dialog';
@@ -61,8 +63,16 @@ function TopNav() {
 }
 
 function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
-	const { cartCount } = useLoaderData<typeof loader>();
+	const { cartCount } = useCart();
+	const navigation = useNavigation();
 	const [isSearchOpen, setSearchOpen] = useState(false);
+
+	// Calculate optimistic cart count
+	let optimisticCartCount = cartCount;
+	if (navigation.formData && (navigation.state === 'loading' || navigation.state === 'submitting')) {
+		optimisticCartCount = getOptimisticCartCount(cartCount, navigation.formData);
+	}
+
 	const toggleSearch = () => {
 		setSearchOpen((prev) => !prev);
 	};
@@ -124,7 +134,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 										aria-hidden="true"
 										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
 									/>
-									<span className="text-sm text-gray-700 group-hover:text-gray-800">{cartCount}</span>
+									<span className="text-sm text-gray-700 group-hover:text-gray-800">{optimisticCartCount}</span>
 									<span className="sr-only">items in cart, view bag</span>
 								</NavLink>
 							</div>

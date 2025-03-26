@@ -4,11 +4,12 @@ import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, da
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 
+import { useCart } from '../components/cart-provider';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading, getHeadingStyles } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
@@ -64,7 +65,6 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 
 	// First check if this variant is already in the cart
 	const existingItem = currentCart.find((item) => item.variantId === variantId);
-	const currentQuantity = existingItem ? existingItem.quantity : 0;
 
 	// Create a temporary cart to validate with Shopify
 	// Instead of directly modifying the cart, make a temporary copy with the new item
@@ -112,6 +112,7 @@ export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
+	const { optimisticallyAddToCart, revertOptimisticUpdate } = useCart();
 
 	const [variant, setVariant] = useState(
 		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
@@ -133,6 +134,27 @@ export default function ProductPage() {
 	const sizingChart = getSizingChart(product);
 
 	const hasNoVariants = product.variants.edges.some(({ node }) => node.title === 'Default Title');
+
+	// Add a function to handle form submission with optimistic updates
+	const handleSubmit = (_event: React.FormEvent<HTMLFormElement>) => {
+		// Only apply optimistic update if the product is available
+		if (product.availableForSale && variant) {
+			// Get the variant ID from the selected variant
+			const variantId = variant.node.id;
+
+			// Optimistically update the cart count
+			optimisticallyAddToCart(variantId, 1);
+		}
+	};
+
+	// New useEffect to revert optimistic update if action fails
+	useEffect(() => {
+		// Check if we've received action data that indicates failure
+		if (actionData && !actionData.success) {
+			// Revert optimistic update since the action failed
+			revertOptimisticUpdate();
+		}
+	}, [actionData, revertOptimisticUpdate]);
 
 	return (
 		<div className="bg-white" data-theme={theme}>
@@ -166,7 +188,7 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
+						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace onSubmit={handleSubmit}>
 							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
 									<legend className="text-sm font-bold text-gray-900">Options</legend>
@@ -209,7 +231,11 @@ export default function ProductPage() {
 									</ButtonLink>
 								)}
 
-								<Button disabled={!product.availableForSale} type="submit" variant="neutral">
+								<Button
+									disabled={!product.availableForSale || navigation.state !== 'idle'}
+									type="submit"
+									variant="neutral"
+								>
 									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
 								</Button>
 

@@ -5,6 +5,7 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
 
+import { useCart } from '../components/cart-provider';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
@@ -266,13 +267,24 @@ function QuantityPicker({
 }) {
 	const fetcher = useFetcher();
 
+	// Calculate optimistic quantity value
+	let optimisticQuantity = quantity;
+	if (fetcher.formData && (fetcher.state === 'loading' || fetcher.state === 'submitting')) {
+		const intent = fetcher.formData.get(INTENT);
+		const newQty = Number(fetcher.formData.get('quantity'));
+
+		if (intent === ACTIONS.INCREMENT_ACTION || intent === ACTIONS.DECREMENT_ACTION) {
+			optimisticQuantity = newQty;
+		}
+	}
+
 	return (
 		<div className="flex flex-col items-start gap-2">
 			<span className="text-sm text-gray-700 hover:text-gray-800">Quantity</span>
 			<span className="isolate inline-flex shadow-sm">
 				<fetcher.Form method="post">
 					<input name="variantId" type="hidden" value={variantId} />
-					<input name="quantity" type="hidden" value={quantity - 1} />
+					<input name="quantity" type="hidden" value={optimisticQuantity - 1} />
 					<button
 						className={clsx(
 							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
@@ -281,7 +293,7 @@ function QuantityPicker({
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
-						disabled={quantity <= 1}
+						disabled={optimisticQuantity <= 1 || fetcher.state === 'submitting' || fetcher.state === 'loading'}
 						name={INTENT}
 						type="submit"
 						value={ACTIONS.DECREMENT_ACTION}
@@ -289,17 +301,19 @@ function QuantityPicker({
 						<ChevronLeftIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
 				</fetcher.Form>
+
 				<span
 					className={clsx(
 						fetcher.state === 'loading' && 'opacity-50',
 						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700',
 					)}
 				>
-					{quantity}
+					{optimisticQuantity}
 				</span>
+
 				<fetcher.Form method="post">
 					<input name="variantId" type="hidden" value={variantId} />
-					<input name="quantity" type="hidden" value={quantity + 1} />
+					<input name="quantity" type="hidden" value={optimisticQuantity + 1} />
 					<button
 						className={clsx(
 							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
@@ -308,7 +322,7 @@ function QuantityPicker({
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
-						disabled={quantity + 1 >= quantityAvailable}
+						disabled={optimisticQuantity + 1 >= quantityAvailable || fetcher.state !== 'idle'}
 						name={INTENT}
 						type="submit"
 						value={ACTIONS.INCREMENT_ACTION}
@@ -323,9 +337,14 @@ function QuantityPicker({
 
 function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
+	const { optimisticallyRemoveFromCart } = useCart();
+
+	const handleRemove = () => {
+		optimisticallyRemoveFromCart(variantId);
+	};
 
 	return (
-		<fetcher.Form className="absolute right-0 top-0" method="post">
+		<fetcher.Form className="absolute right-0 top-0" method="post" onSubmit={handleRemove}>
 			<input name="variantId" type="hidden" value={variantId} />
 			<button
 				className={clsx(
