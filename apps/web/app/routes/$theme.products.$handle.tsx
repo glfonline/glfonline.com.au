@@ -232,7 +232,7 @@ export default function ProductPage() {
 								)}
 
 								<Button
-									disabled={!product.availableForSale || navigation.state !== 'idle'}
+									isLoading={!product.availableForSale || navigation.state !== 'idle'}
 									type="submit"
 									variant="neutral"
 								>
