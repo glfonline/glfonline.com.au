@@ -30,6 +30,7 @@ import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import { getSession } from './lib/cart';
+import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 
@@ -48,22 +49,42 @@ export const links: LinksFunction = () => {
 	return [
 		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
 		{ rel: 'preconnect', href: 'https://shop.app' },
-		{ rel: 'stylesheet', href: fontCssUrl },
-		{ rel: 'stylesheet', href: tailwindCssUrl },
+		{ rel: 'stylesheet', href: fontCssUrl, as: 'style' },
+		{ rel: 'stylesheet', href: tailwindCssUrl, as: 'style' },
 		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
 	];
 };
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const session = await getSession(request);
-	const [cart, { shop }, mainNavigation] = await Promise.all([
-		session.getCart(),
-		shopifyClient(SHOP_QUERY),
-		getMainNavigation(),
-	]);
+	const cart = await session.getCart();
+
+	// Only attempt to validate cart if it has items
+	if (cart.length > 0) {
+		const cartResult = await getCartInfo(cart);
+
+		// Clear the cart if we get an error
+		if (cartResult.type === 'error') {
+			await session.setCart([]);
+			const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
+			return {
+				cartCount: 0,
+				mainNavigation,
+				shop,
+			};
+		}
+	}
+
+	const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
+
+	// Calculate total quantity by summing all item quantities
+	let cartCount = 0;
+	for (const item of cart) {
+		cartCount += item.quantity;
+	}
 
 	return {
-		cartCount: cart.length,
+		cartCount,
 		mainNavigation,
 		shop,
 	};
