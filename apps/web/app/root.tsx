@@ -8,7 +8,6 @@ import {
 	Scripts,
 	ScrollRestoration,
 	isRouteErrorResponse,
-	useLoaderData,
 	useLocation,
 	useRouteError,
 } from '@remix-run/react';
@@ -102,7 +101,6 @@ const persister = createSyncStoragePersister({
 
 function App() {
 	const location = useLocation();
-	const { cartCount } = useLoaderData<typeof loader>();
 
 	useEffect(() => {
 		if (process.env.NODE_ENV !== 'development') {
