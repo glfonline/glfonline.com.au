@@ -12,7 +12,7 @@ import { useCartContext } from '../components/cart-provider';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading, getHeadingStyles } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
-import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
@@ -48,7 +48,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			{ product, theme: result.data.theme },
 			{
 				headers: {
-					'Cache-Control': CACHE_SHORT,
+					'Cache-Control': CACHE_NONE,
 				},
 			},
 		);
