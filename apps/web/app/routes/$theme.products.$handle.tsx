@@ -1,7 +1,7 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
-import { useActionData, useFetcher, useLoaderData } from '@remix-run/react';
+import { useActionData, useFetcher, useLoaderData, useParams } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -112,7 +112,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
-
+	const params = useParams();
 	const actionData = useActionData<typeof action>();
 
 	const [variant, setVariant] = useState(
@@ -170,7 +170,12 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<fetcher.Form className="flex flex-col gap-6" method="post" ref={form.ref}>
+						<fetcher.Form
+							action={`/${theme}/products/${params.handle}`}
+							className="flex flex-col gap-6"
+							method="post"
+							ref={form.ref}
+						>
 							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
 									<legend className="text-sm font-bold text-gray-900">Options</legend>
