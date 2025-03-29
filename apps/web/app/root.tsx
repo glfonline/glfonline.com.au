@@ -21,7 +21,6 @@ import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { useEffect } from 'react';
 import favicon from '../assets/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
-import { CartProvider } from './components/cart-provider';
 import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
@@ -131,11 +130,9 @@ function App() {
 				)}
 				<LoadingProgress />
 				<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-					<CartProvider initCartCount={cartCount}>
-						<MainLayout>
-							<Outlet key={location.pathname} />
-						</MainLayout>
-					</CartProvider>
+					<MainLayout>
+						<Outlet key={location.pathname} />
+					</MainLayout>
 				</PersistQueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />
