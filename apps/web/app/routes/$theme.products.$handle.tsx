@@ -64,7 +64,6 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 
 	// First check if this variant is already in the cart
 	const existingItem = currentCart.find((item) => item.variantId === variantId);
-	const currentQuantity = existingItem ? existingItem.quantity : 0;
 
 	// Create a temporary cart to validate with Shopify
 	// Instead of directly modifying the cart, make a temporary copy with the new item
