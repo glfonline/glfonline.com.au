@@ -2,12 +2,14 @@ import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { useRouteLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
 import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
+import { useCartContext } from '../components/cart-provider';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading, getHeadingStyles } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
@@ -17,6 +19,7 @@ import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { notFound } from '../lib/not-found';
+import type { loader as rootLoader } from '../root';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
@@ -31,7 +34,7 @@ const CartSchema = z.object({
 });
 
 // Define types for our action return values
-type ActionSuccess = { success: true };
+type ActionSuccess = { success: true; cartCount: number };
 type ActionError = { success: false; error: string };
 type ActionData = ActionSuccess | ActionError;
 
@@ -84,7 +87,11 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 		// Update the real cart now that we know it's valid
 		const updatedCart = addToCart([...currentCart], variantId, 1);
 		await session.setCart(updatedCart);
-		return data({ success: true }, { headers: { 'Set-Cookie': await session.commitSession() } });
+		let cartCount = 0;
+		for (const item of updatedCart) {
+			cartCount += item.quantity;
+		}
+		return data({ success: true, cartCount: cartCount }, { headers: { 'Set-Cookie': await session.commitSession() } });
 	}
 
 	// If Shopify rejects the cart, show a user-friendly error message
@@ -106,10 +113,26 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return [seoMeta];
 };
 
+// biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
+	const rootLoaderData = useRouteLoaderData<typeof rootLoader>('root');
 	const actionData = useActionData<typeof action>();
 	const navigation = useNavigation();
+	const cartContext = useCartContext();
+
+	if (
+		// Check if the action was successful and the cart count has changed
+		actionData?.success &&
+		// Ensure that the cart count is a number for both actionData and rootLoaderData
+		typeof actionData?.cartCount === 'number' &&
+		typeof rootLoaderData?.cartCount === 'number' &&
+		// Compare the cart counts
+		actionData.cartCount !== rootLoaderData.cartCount
+	) {
+		// Update the cart count in the context
+		cartContext.setCartCount(actionData.cartCount);
+	}
 
 	const [variant, setVariant] = useState(
 		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
