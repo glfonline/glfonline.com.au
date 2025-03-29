@@ -11,7 +11,7 @@ import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading, getHeadingStyles } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
-import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
@@ -46,7 +46,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			{ product, theme: result.data.theme },
 			{
 				headers: {
-					'Cache-Control': CACHE_SHORT,
+					'Cache-Control': CACHE_NONE,
 				},
 			},
 		);
@@ -109,7 +109,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
-	const navigation = useNavigation();
 
 	const [variant, setVariant] = useState(
 		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
@@ -123,6 +122,8 @@ export default function ProductPage() {
 	const form = useZorm('cart_form', CartSchema);
 
 	const formError = actionData && !actionData.success ? actionData.error : undefined;
+
+	const navigation = useNavigation();
 
 	let buttonText = 'Add to cart';
 	if (navigation.state === 'submitting') buttonText = 'Adding...';
