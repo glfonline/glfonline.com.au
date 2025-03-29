@@ -1,7 +1,7 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
-import { useActionData, useFetcher, useLoaderData, useParams } from '@remix-run/react';
+import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -31,7 +31,7 @@ const CartSchema = z.object({
 });
 
 // Define types for our action return values
-type ActionSuccess = { success: true; cartCount: number };
+type ActionSuccess = { success: true };
 type ActionError = { success: false; error: string };
 type ActionData = ActionSuccess | ActionError;
 
@@ -84,11 +84,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 		// Update the real cart now that we know it's valid
 		const updatedCart = addToCart([...currentCart], variantId, 1);
 		await session.setCart(updatedCart);
-		let cartCount = 0;
-		for (const item of updatedCart) {
-			cartCount += item.quantity;
-		}
-		return data({ success: true, cartCount: cartCount }, { headers: { 'Set-Cookie': await session.commitSession() } });
+		return data({ success: true }, { headers: { 'Set-Cookie': await session.commitSession() } });
 	}
 
 	// If Shopify rejects the cart, show a user-friendly error message
@@ -111,7 +107,6 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 };
 
 export default function ProductPage() {
-	const params = useParams();
 	const { theme, product } = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 
@@ -128,11 +123,11 @@ export default function ProductPage() {
 
 	const formError = actionData && !actionData.success ? actionData.error : undefined;
 
-	const fetcher = useFetcher();
+	const navigation = useNavigation();
 
 	let buttonText = 'Add to cart';
-	if (fetcher.state === 'submitting') buttonText = 'Adding...';
-	if (fetcher.state === 'loading' && !formError) buttonText = 'Added!';
+	if (navigation.state === 'submitting') buttonText = 'Adding...';
+	if (navigation.state === 'loading' && !formError) buttonText = 'Added!';
 
 	const sizingChart = getSizingChart(product);
 
@@ -170,12 +165,7 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<fetcher.Form
-							action={`/${theme}/products/${params.handle}`}
-							className="flex flex-col gap-6"
-							method="post"
-							ref={form.ref}
-						>
+						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
 							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
 									<legend className="text-sm font-bold text-gray-900">Options</legend>
@@ -220,7 +210,7 @@ export default function ProductPage() {
 
 								<Button
 									disabled={!product.availableForSale}
-									isLoading={fetcher.state !== 'idle'}
+									isLoading={navigation.state !== 'idle'}
 									type="submit"
 									variant="neutral"
 								>
@@ -229,7 +219,7 @@ export default function ProductPage() {
 
 								{formError && <p className="text-red-500 text-sm mt-2">{formError}</p>}
 							</div>
-						</fetcher.Form>
+						</Form>
 
 						<div>
 							<h2 className="sr-only">Description</h2>
