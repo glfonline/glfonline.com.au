@@ -1,10 +1,10 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
-import { Form, useActionData, useLoaderData, useNavigation, useRevalidator } from '@remix-run/react';
+import { useActionData, useFetcher, useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -114,14 +114,6 @@ export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 
 	const actionData = useActionData<typeof action>();
-	const revalidator = useRevalidator();
-	const wasActionSuccessful = actionData?.success;
-	useEffect(() => {
-		// Only trigger revalidation when the action succeeds
-		if (wasActionSuccessful) {
-			revalidator.revalidate();
-		}
-	}, [wasActionSuccessful, revalidator]);
 
 	const [variant, setVariant] = useState(
 		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
@@ -136,11 +128,11 @@ export default function ProductPage() {
 
 	const formError = actionData && !actionData.success ? actionData.error : undefined;
 
-	const navigation = useNavigation();
+	const fetcher = useFetcher();
 
 	let buttonText = 'Add to cart';
-	if (navigation.state === 'submitting') buttonText = 'Adding...';
-	if (navigation.state === 'loading' && !formError) buttonText = 'Added!';
+	if (fetcher.state === 'submitting') buttonText = 'Adding...';
+	if (fetcher.state === 'loading' && !formError) buttonText = 'Added!';
 
 	const sizingChart = getSizingChart(product);
 
@@ -178,7 +170,7 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
+						<fetcher.Form className="flex flex-col gap-6" method="post" ref={form.ref}>
 							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
 									<legend className="text-sm font-bold text-gray-900">Options</legend>
@@ -223,7 +215,7 @@ export default function ProductPage() {
 
 								<Button
 									disabled={!product.availableForSale}
-									isLoading={navigation.state !== 'idle'}
+									isLoading={fetcher.state !== 'idle'}
 									type="submit"
 									variant="neutral"
 								>
@@ -232,7 +224,7 @@ export default function ProductPage() {
 
 								{formError && <p className="text-red-500 text-sm mt-2">{formError}</p>}
 							</div>
-						</Form>
+						</fetcher.Form>
 
 						<div>
 							<h2 className="sr-only">Description</h2>
