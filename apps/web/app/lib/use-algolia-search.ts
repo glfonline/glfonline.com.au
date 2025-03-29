@@ -1,5 +1,4 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-
 import { search } from './algolia';
 
 export type Product = {

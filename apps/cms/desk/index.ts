@@ -2,7 +2,6 @@
  * Desk structure overrides
  */
 import type { ListItemBuilder, StructureResolver } from 'sanity/structure';
-
 import { aboutPage } from './about';
 import { faqPage } from './faq';
 import { homePage } from './home';

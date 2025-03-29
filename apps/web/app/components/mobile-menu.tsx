@@ -16,7 +16,6 @@ import { XMarkIcon } from '@heroicons/react/20/solid';
 import { NavLink, useLoaderData } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
-
 import type { loader } from '../../app/root';
 import { type NavItem, socialLinks } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';

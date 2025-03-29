@@ -1,5 +1,4 @@
 import { Image } from '@unpic/react';
-
 import { Heading } from './design-system/heading';
 
 export function Hero({

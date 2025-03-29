@@ -1,7 +1,6 @@
 import { visionTool } from '@sanity/vision';
 import { defineConfig } from 'sanity';
 import { structureTool } from 'sanity/structure';
-
 import { structure } from './desk';
 import { schemaTypes } from './schemas';
 

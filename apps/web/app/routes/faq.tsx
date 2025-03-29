@@ -3,7 +3,6 @@ import { data } from '@remix-run/node';
 import { type MetaFunction, useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
-
 import { Heading } from '../components/design-system/heading';
 import { Hero } from '../components/hero';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';

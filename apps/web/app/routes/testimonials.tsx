@@ -4,7 +4,6 @@ import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
-
 import { Hero } from '../components/hero';
 import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';

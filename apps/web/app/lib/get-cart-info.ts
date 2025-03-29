@@ -2,7 +2,6 @@ import { CREATE_CART_MUTATION, type OperationData, shopifyClient } from '@glfonl
 
 type CartMutationData = OperationData<typeof CREATE_CART_MUTATION>;
 type Cart = NonNullable<CartMutationData['cartCreate']>['cart'];
-
 import type { CartItem } from './cart';
 
 export type CartEmpty = {

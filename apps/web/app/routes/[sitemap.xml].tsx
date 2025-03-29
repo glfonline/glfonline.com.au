@@ -1,6 +1,5 @@
 import { ALL_PRODUCTS_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import dedent from 'dedent';
-
 import { WEB_ADDRESS } from '../lib/constants';
 
 type Products = (typeof ALL_PRODUCTS_QUERY)['___type']['result']['products']['edges'];

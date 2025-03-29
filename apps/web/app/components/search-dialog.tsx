@@ -15,7 +15,6 @@ import { NavLink, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
-
 import { makeProductHref } from '../lib/make-product-href';
 import { type Product, useAlgoliaSearch } from '../lib/use-algolia-search';
 import { Spinner } from './design-system/spinner';

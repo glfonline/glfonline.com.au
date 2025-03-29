@@ -3,7 +3,6 @@ import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react'
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
-
 import { ButtonLink } from '../components/design-system/button';
 import { getHeadingStyles } from '../components/design-system/heading';
 import { Hero } from '../components/hero';

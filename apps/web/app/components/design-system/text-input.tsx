@@ -1,6 +1,5 @@
 import { clsx } from 'clsx';
 import { forwardRef } from 'react';
-
 import { useFieldContext } from './field/context';
 
 export const TextInput = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(function TextInput(

@@ -1,6 +1,5 @@
 import { BLOG_PAGE_QUERY, BLOG_POSTS_COUNT_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { z } from 'zod';
-
 import { PostSchema } from './post-schema';
 
 const PostsSchema = z.array(PostSchema);

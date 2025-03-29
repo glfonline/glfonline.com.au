@@ -1,6 +1,5 @@
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-
 import { ButtonLink } from './design-system/button';
 
 export type CollectionCardProps = {

@@ -4,7 +4,6 @@ import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
-
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';

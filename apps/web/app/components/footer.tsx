@@ -1,6 +1,5 @@
 import { Link } from '@remix-run/react';
 import { Fragment } from 'react';
-
 import { CONTACT_NUMBERS, EMAIL_ADDRESS, HOURS, STREET_ADDRESS, footerNavigation } from '../lib/constants';
 import { ClockIcon } from './vectors/clock-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';

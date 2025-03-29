@@ -1,6 +1,5 @@
 import { FEATURED_BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { z } from 'zod';
-
 import { PostSchema } from './post-schema';
 
 const PostsSchema = z.array(PostSchema);

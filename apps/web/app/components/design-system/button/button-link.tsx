@@ -1,6 +1,5 @@
 import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
-
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(

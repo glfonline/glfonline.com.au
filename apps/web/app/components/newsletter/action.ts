@@ -1,7 +1,6 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
 import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
-
 import type { FormResponse } from '../../types';
 import { NewsletterSchema } from './schema';
 

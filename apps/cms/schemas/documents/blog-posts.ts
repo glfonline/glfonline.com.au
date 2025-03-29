@@ -1,5 +1,4 @@
 import { defineField, defineType } from 'sanity';
-
 import { isUniqueAcrossAllDocuments } from '../../utils/is-unique-across-all-documents';
 
 export const blogPosts = defineType({

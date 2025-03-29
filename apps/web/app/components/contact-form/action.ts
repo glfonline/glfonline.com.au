@@ -3,7 +3,6 @@ import sendgrid from '@sendgrid/mail';
 import dedent from 'dedent';
 import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
-
 import { EMAIL_ADDRESS } from '../../lib/constants';
 import { requiredEnv } from '../../lib/required-env';
 import { ContactFormSchema } from './schema';

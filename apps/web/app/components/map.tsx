@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { useInView } from 'react-intersection-observer';
-
 import { Spinner } from './design-system/spinner';
 
 export function StoreLocationMap() {

@@ -1,5 +1,4 @@
 import type { ListItemBuilder } from 'sanity/structure';
-
 import { defineStructure } from '../utils/define-structure';
 
 export const mainNavigation = defineStructure<ListItemBuilder>((S) =>

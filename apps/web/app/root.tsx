@@ -1,8 +1,3 @@
-// @ts-ignore
-import fontCssUrl from './font.css?url';
-// @ts-ignore
-import tailwindCssUrl from './tailwind.css?url';
-
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
@@ -29,10 +24,14 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
+// @ts-ignore
+import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
+// @ts-ignore
+import tailwindCssUrl from './tailwind.css?url';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
 	title: data.shop.name,

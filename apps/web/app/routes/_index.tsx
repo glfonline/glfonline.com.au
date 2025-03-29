@@ -5,7 +5,6 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
 import { z } from 'zod';
-
 import { BrandsWeLove } from '../components/brands-we-love';
 import { ContactForm } from '../components/contact-form/form';
 import { ButtonLink } from '../components/design-system/button';

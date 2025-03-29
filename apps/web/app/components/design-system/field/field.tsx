@@ -1,6 +1,5 @@
 import { clsx } from 'clsx';
 import { forwardRef, useId, useMemo } from 'react';
-
 import { mergeIds } from '../../../lib/merge-ids';
 import { CheckCircleIcon } from '../../vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';

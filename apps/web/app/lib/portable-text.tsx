@@ -1,7 +1,6 @@
 import { PortableText as PortableTextBase } from '@portabletext/react';
 import { type SanityAsset, getImageDimensions } from '@sanity/asset-utils';
 import { Image } from '@unpic/react';
-
 import { config, urlFor } from './sanity-image';
 
 type PortableTextBaseProps = React.ComponentProps<typeof PortableTextBase>;

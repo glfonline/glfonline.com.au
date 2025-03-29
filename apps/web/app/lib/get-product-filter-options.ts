@@ -1,6 +1,5 @@
 import { COLLECTION_OPTIONS_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { z } from 'zod';
-
 import { capitalise } from './capitalise';
 import { sortSizes } from './sort-sizes';
 

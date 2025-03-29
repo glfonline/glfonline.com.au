@@ -1,5 +1,4 @@
 import { z } from 'zod';
-
 import { imageWithAltSchema } from './image-with-alt-schema';
 
 export const brandsWeLove = z.array(

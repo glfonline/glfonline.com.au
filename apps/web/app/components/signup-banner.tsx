@@ -1,6 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
 import { useState } from 'react';
-
 import { Button } from './design-system/button';
 import { Heading } from './design-system/heading';
 import { NewsletterDialog } from './newsletter-dialog';

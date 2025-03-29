@@ -1,7 +1,6 @@
 import { MAIN_NAVIGATION_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { chunk } from 'remeda';
 import { z } from 'zod';
-
 import { imageWithAltSchema } from './image-with-alt-schema';
 
 const mainNavigationSchema = z.object({
