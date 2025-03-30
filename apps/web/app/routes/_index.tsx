@@ -56,7 +56,9 @@ export const meta: MetaFunction<typeof loader> = () => {
 };
 
 export default function Index() {
-	const { brandsWeLove } = useLoaderData<typeof loader>();
+	const loaderData = useLoaderData<typeof loader>();
+	const brandsWeLove = loaderData?.brandsWeLove || [];
+
 	return (
 		<>
 			<article className="relative flex flex-col gap-4 bg-white">
