@@ -15,6 +15,7 @@ import { NavLink, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
+import { isNonEmptyArray } from '../lib/is-non-empty-array';
 import { makeProductHref } from '../lib/make-product-href';
 import { type Product, useAlgoliaSearch } from '../lib/use-algolia-search';
 import { Spinner } from './design-system/spinner';
@@ -120,7 +121,7 @@ function SearchResults({
 			</div>
 		);
 	}
-	if (data?.hits && data.hits.length > 0) {
+	if (isNonEmptyArray(data?.hits)) {
 		return (
 			<ComboboxOptions
 				className="max-h-96 scroll-py-3 overflow-y-auto p-3"
@@ -142,7 +143,7 @@ function SearchResults({
 										setSearchOpen(false);
 									}}
 									prefetch="intent"
-									to={makeProductHref(product)}
+									to={makeProductHref({ handle: product.handle, tags: product.tags })}
 								>
 									{product.image ? (
 										<Image
