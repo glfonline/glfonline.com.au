@@ -30,15 +30,18 @@ import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
+import { seoConfig } from './seo';
 // @ts-ignore
 import tailwindCssUrl from './tailwind.css?url';
 
-const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => ({
-	title: data.shop.name,
-	titleTemplate: '%s | Ladies and Mens golf clothing and apparel, skorts and clearance items',
-	description: data.shop.description,
-	url: `https://www.glfonline.com.au${pathname}`,
-});
+const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => {
+	return {
+		title: data.shop.name,
+		titleTemplate: seoConfig.titleTemplate,
+		description: data.shop.description || seoConfig.description,
+		url: `https://www.glfonline.com.au${pathname}`,
+	};
+};
 
 export const handle = {
 	seo,
@@ -89,9 +92,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	};
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data, matches }) => {
-	const seoMeta = getSeoMeta((matches as any)[0].shop, data?.shop);
-	return seoMeta;
+export const meta: MetaFunction<typeof loader> = ({ data }) => {
+	return getSeoMeta({
+		...seoConfig,
+		title: data?.shop.name || seoConfig.title,
+	});
 };
 
 const queryClient = new QueryClient();
