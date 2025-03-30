@@ -5,7 +5,7 @@ import { assert, isString } from 'emery';
 import invariant from 'tiny-invariant';
 import { Hero } from '../components/hero';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
-import { notFound } from '../lib/not-found';
+import { notFound } from '../lib/errors.server';
 import { PortableText } from '../lib/portable-text';
 import { PostSchema } from '../lib/post-schema';
 import { urlFor } from '../lib/sanity-image';

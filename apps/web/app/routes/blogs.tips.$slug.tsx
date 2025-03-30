@@ -1,6 +1,6 @@
 import { type LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { assert, isString } from 'emery';
-import { notFound } from '../lib/not-found';
+import { notFound } from '../lib/errors.server';
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const { slug } = params;

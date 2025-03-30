@@ -13,10 +13,10 @@ import { Heading, getHeadingStyles } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
+import { notFound } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { notFound } from '../lib/not-found';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;

@@ -19,10 +19,10 @@ import { Button } from '../components/design-system/button';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { capitalise } from '../lib/capitalise';
+import { notFound } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { type SortBy, getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { PRODUCT_TYPE, getProductFilterOptions } from '../lib/get-product-filter-options';
-import { notFound } from '../lib/not-found';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({

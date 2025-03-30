@@ -5,8 +5,8 @@ import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
 import { brandsWeLove } from '../lib/brands-we-love';
+import { notFound } from '../lib/errors.server';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
-import { notFound } from '../lib/not-found';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 

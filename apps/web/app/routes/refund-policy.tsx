@@ -4,7 +4,7 @@ import { useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { PageLayout } from '../components/page-layout';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
-import { notFound } from '../lib/not-found';
+import { notFound } from '../lib/errors.server';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
