@@ -30,7 +30,7 @@
 		"@remix-run/react": "^2.16.2",
 		"@sanity/asset-utils": "^2.2.1",
 		"@sanity/image-url": "^1.1.0",
-		"@sentry/remix": "^8.55.0",
+		"@sentry/remix": "^9.0.0",
 		"@sentry/vite-plugin": "^3.2.2",
 		"@shopify/hydrogen": "^2025.1.2",
 		"@tanstack/query-core": "^5.69.0",
