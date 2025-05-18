@@ -24,14 +24,14 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-// @ts-ignore
+// @ts-expect-error
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import { seoConfig } from './seo';
-// @ts-ignore
+// @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => {

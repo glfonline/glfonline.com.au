@@ -37,7 +37,7 @@ export function event({ action, category, label, value }: Record<string, string>
 	}
 	window.gtag(
 		'event',
-		// @ts-ignore
+		// @ts-expect-error
 		action,
 		{
 			event_category: category,
