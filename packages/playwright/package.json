@@ -19,9 +19,9 @@
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
 		"@glfonline/web": "workspace:^",
-		"@playwright/test": "^1.51.1",
-		"@types/node": "^22.13.17",
-		"dotenv": "^16.4.7",
+		"@playwright/test": "^1.52.0",
+		"@types/node": "^22.15.18",
+		"dotenv": "^16.5.0",
 		"tiny-invariant": "^1.3.3"
 	}
 }
