@@ -8,7 +8,6 @@ type Option = {
 	values: Array<string>;
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
 export async function getProductFilterOptions({
 	after,
 	collectionHandle,

@@ -28,11 +28,14 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 		>
 			{children}
 			<span aria-live="assertive" className={clsx(isLoading ? undefined : 'sr-only')}>
-				{isLoading && (
-					<span aria-label="Loading">
-						<Spinner />
-					</span>
-				)}
+				<span role="status" aria-live="polite">
+					{isLoading && (
+						<>
+							<Spinner />
+							<span className="sr-only">Loading</span>
+						</>
+					)}
+				</span>
 			</span>
 		</button>
 	);

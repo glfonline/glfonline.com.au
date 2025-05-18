@@ -60,7 +60,6 @@ export async function getProductsFromCollectionByTag({
 		};
 	} catch (err) {
 		/** @todo */
-		// biome-ignore lint/suspicious/noConsole:
 		console.error(err);
 	}
 }

@@ -67,11 +67,9 @@ export async function action({ request }: ActionFunctionArgs) {
 		/** Send email with Sendgrid */
 		sendgrid.setApiKey(requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY));
 		const sendgridResponse = await sendgrid.send(mailOptions);
-		// biome-ignore lint/suspicious/noConsole:
 		console.log({ sendgridResponse });
 		return { ok: true };
 	} catch (err) {
-		// biome-ignore lint/suspicious/noConsole:
 		console.error(err);
 		return { ok: false };
 	}

@@ -55,6 +55,7 @@
 		"rules": {
 			"a11y": {
 				"noAriaHiddenOnFocusable": "off",
+				"noNoninteractiveTabindex": "off",
 				"noRedundantRoles": "off",
 				"noSvgWithoutTitle": "off",
 				"useSemanticElements": "off"
