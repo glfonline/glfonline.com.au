@@ -22,14 +22,25 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function
 	const invalid = Boolean(message && tone === 'critical');
 	const fieldContext: FieldContextType = useMemo(
 		() => [
-			{ disabled, invalid },
+			{
+				disabled,
+				invalid,
+			},
 			{
 				'aria-describedby': mergeIds(message && messageId, description && descriptionId),
 				'aria-invalid': invalid || undefined,
 				id: inputId,
 			},
 		],
-		[description, descriptionId, disabled, inputId, invalid, message, messageId],
+		[
+			description,
+			descriptionId,
+			disabled,
+			inputId,
+			invalid,
+			message,
+			messageId,
+		],
 	);
 	return (
 		<FieldContextProvider value={fieldContext}>

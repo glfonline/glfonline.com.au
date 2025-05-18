@@ -2,6 +2,7 @@ import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
 	{ className, children, href, size, variant, ...consumerProps },
 	forwardedRef,
@@ -11,7 +12,11 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 		return (
 			<Link
 				{...consumerProps}
-				className={getButtonStyles({ className, size, variant })}
+				className={getButtonStyles({
+					className,
+					size,
+					variant,
+				})}
 				prefetch="intent"
 				ref={forwardedRef}
 				to={href}
@@ -21,7 +26,16 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 		);
 	}
 	return (
-		<a {...consumerProps} className={getButtonStyles({ className, size, variant })} href={href} ref={forwardedRef}>
+		<a
+			{...consumerProps}
+			className={getButtonStyles({
+				className,
+				size,
+				variant,
+			})}
+			href={href}
+			ref={forwardedRef}
+		>
 			{children}
 		</a>
 	);

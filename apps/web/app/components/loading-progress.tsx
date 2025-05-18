@@ -17,33 +17,54 @@ export function LoadingProgress() {
 	})();
 
 	useEffect(() => {
-		(async () => {
-			try {
-				if (!elementRef.current) return;
-				if (isActive) setAnimationComplete(false);
-				const animations = elementRef.current.getAnimations?.() || [];
-				await Promise.all(animations.map(({ finished }) => finished));
-				if (!isActive) setAnimationComplete(true);
-			} catch {
-				// Noop
-			}
-		})();
-	}, [isActive]);
+		let isMounted = true;
+
+		// Using a non-async function to properly handle the promise
+		const handleAnimations = () => {
+			// Set initial state
+			if (isActive) setAnimationComplete(false);
+
+			if (!elementRef.current) return;
+
+			const animations = elementRef.current.getAnimations?.() || [];
+
+			// Handle the promise explicitly
+			Promise.all(animations.map(({ finished }) => finished))
+				.then(() => {
+					// Check if component is still mounted before updating state
+					if (isMounted && !isActive) {
+						setAnimationComplete(true);
+					}
+				})
+				.catch(() => {
+					// Noop - catching any errors
+				});
+		};
+
+		// Call the function (no floating promise now)
+		handleAnimations();
+
+		return () => {
+			isMounted = false;
+		};
+	}, [
+		isActive,
+	]);
 
 	return (
 		<div
-			tabIndex={0}
 			aria-hidden={!isActive}
-			aria-valuetext={isActive ? 'Loading' : undefined}
-			className="fixed inset-x-0 left-0 top-0 z-50 h-1 animate-pulse"
-			role="progressbar"
-			aria-valuenow={progress}
-			aria-valuemin={0}
 			aria-valuemax={100}
+			aria-valuemin={0}
+			aria-valuenow={progress}
+			aria-valuetext={isActive ? 'Loading' : undefined}
+			className="fixed inset-x-0 top-0 left-0 z-50 h-1 animate-pulse"
+			role="progressbar"
+			tabIndex={0}
 		>
 			<div
 				className={clsx(
-					'bg-brand-primary h-full transition-all duration-500 ease-in-out',
+					'h-full bg-brand-primary transition-all duration-500 ease-in-out',
 					navigation.state === 'idle' && animationComplete && 'w-0 transition-none',
 					navigation.state === 'submitting' && 'w-4/12',
 					navigation.state === 'loading' && 'w-10/12',

@@ -1,5 +1,5 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, data } from '@remix-run/node';
+import { data, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 import { z } from 'zod';
@@ -28,13 +28,15 @@ const AboutSchema = z.object({
 });
 
 export async function loader() {
-	const { AboutPage } = await sanityClient(ABOUT_PAGE_QUERY, {
+	const res = await sanityClient(ABOUT_PAGE_QUERY, {
 		id: 'about',
 	});
 
-	const { sections } = AboutSchema.parse(AboutPage);
+	const { sections } = AboutSchema.parse(res.AboutPage);
 	return data(
-		{ sections },
+		{
+			sections,
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -47,7 +49,9 @@ export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
 		title: 'About',
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function AboutPage() {
@@ -59,6 +63,7 @@ export default function AboutPage() {
 					<Fragment key={_key}>
 						<Hero
 							image={{
+								alt: aboutImage.asset.altText ?? '',
 								url: urlFor({
 									_ref: aboutImage.asset._id,
 									crop: aboutImage.crop,
@@ -69,7 +74,6 @@ export default function AboutPage() {
 									.height(385)
 									.dpr(2)
 									.url(),
-								alt: aboutImage.asset.altText ?? '',
 							}}
 						/>
 						<AboutSection
@@ -103,11 +107,17 @@ function AboutSection({
 		<div className="flex flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
 			<div className="prose grid max-w-none gap-8 md:grid-cols-2 lg:grid-cols-3">
 				<div>
-					<heading.level className={getHeadingStyles({ size: '2' })}>{heading.text}</heading.level>
+					<heading.level
+						className={getHeadingStyles({
+							size: '2',
+						})}
+					>
+						{heading.text}
+					</heading.level>
 					<Divider />
 				</div>
 			</div>
-			<div className="prose prose-a:font-bold max-w-none gap-8 md:columns-2 lg:columns-3">{children}</div>
+			<div className="prose max-w-none gap-8 prose-a:font-bold md:columns-2 lg:columns-3">{children}</div>
 		</div>
 	);
 }

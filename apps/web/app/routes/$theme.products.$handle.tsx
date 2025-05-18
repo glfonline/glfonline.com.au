@@ -1,6 +1,6 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
+import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -9,7 +9,7 @@ import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
-import { Heading, getHeadingStyles } from '../components/design-system/heading';
+import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
@@ -23,16 +23,28 @@ export const headers = routeHeaders;
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),
-	theme: z.enum(['ladies', 'mens']),
+	theme: z.enum([
+		'ladies',
+		'mens',
+	]),
 });
 
 const CartSchema = z.object({
-	variantId: z.string({ required_error: 'Please select an option' }).min(1),
+	variantId: z
+		.string({
+			required_error: 'Please select an option',
+		})
+		.min(1),
 });
 
 // Define types for our action return values
-type ActionSuccess = { success: true };
-type ActionError = { success: false; error: string };
+type ActionSuccess = {
+	success: true;
+};
+type ActionError = {
+	success: false;
+	error: string;
+};
 type ActionData = ActionSuccess | ActionError;
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -42,8 +54,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			handle: result.data.handle,
 		});
 		if (!product) notFound();
-		return data(
-			{ product, theme: result.data.theme },
+		return json(
+			{
+				product,
+				theme: result.data.theme,
+			},
 			{
 				headers: {
 					'Cache-Control': CACHE_NONE,
@@ -54,8 +69,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	notFound();
 }
 
-export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof data<ActionData>>> {
-	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
+export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof json<ActionData>>> {
+	const [formData, session] = await Promise.all([
+		request.formData(),
+		getSession(request),
+	]);
 	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
 
 	// Get current cart
@@ -73,7 +91,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 
 	// If the item isn't in the cart yet, add it
 	if (!existingItem) {
-		tempCart.push({ variantId, quantity: 1 });
+		tempCart.push({
+			quantity: 1,
+			variantId,
+		});
 	}
 
 	// Validate the potential new cart with Shopify first
@@ -82,28 +103,49 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 	// Only update the session if Shopify accepts the cart
 	if (cartResult.type === 'success') {
 		// Update the real cart now that we know it's valid
-		const updatedCart = addToCart([...currentCart], variantId, 1);
+		const updatedCart = addToCart(
+			[
+				...currentCart,
+			],
+			variantId,
+			1,
+		);
 		await session.setCart(updatedCart);
-		return data({ success: true }, { headers: { 'Set-Cookie': await session.commitSession() } });
+		return json(
+			{
+				success: true,
+			},
+			{
+				headers: {
+					'Set-Cookie': await session.commitSession(),
+				},
+			},
+		);
 	}
 
 	// If Shopify rejects the cart, show a user-friendly error message
-	return data(
+	return json(
 		{
-			success: false,
 			error: 'Unable to add item to cart. The item might be out of stock or unavailable.',
+			success: false,
 		},
-		{ headers: { 'Set-Cookie': await session.commitSession() } },
+		{
+			headers: {
+				'Set-Cookie': await session.commitSession(),
+			},
+		},
 	);
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.product.title,
 		description: data.product.description,
+		title: data.product.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function ProductPage() {
@@ -139,7 +181,13 @@ export default function ProductPage() {
 				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
 					<ImageGallery
 						images={product.images.edges.map(({ node: { id, altText, url, height, width } }) => ({
-							node: { id, altText, url, height, width },
+							node: {
+								altText,
+								height,
+								id,
+								url,
+								width,
+							},
 						}))}
 						isOnSale={isOnSale}
 					/>
@@ -152,7 +200,11 @@ export default function ProductPage() {
 							</Heading>
 							<h2 className="sr-only">Product information</h2>
 							{variant?.node.price && (
-								<p className={getHeadingStyles({ size: '2' })}>
+								<p
+									className={getHeadingStyles({
+										size: '2',
+									})}
+								>
 									{isOnSale && variant.node.compareAtPrice?.amount && (
 										<del>
 											<span className="sr-only">was </span>
@@ -168,7 +220,7 @@ export default function ProductPage() {
 						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
 							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
-									<legend className="text-sm font-bold text-gray-900">Options</legend>
+									<legend className="font-bold text-gray-900 text-sm">Options</legend>
 								</div>
 								<div className="flex flex-wrap gap-3">
 									{product.variants.edges.map(({ node }) => (
@@ -180,18 +232,18 @@ export default function ProductPage() {
 												id={node.id}
 												name={form.fields.variantId()}
 												onChange={(event) => {
-													setVariant(product.variants.edges.find(({ node }) => node.id === event.target.value));
+													setVariant(product.variants.edges.find((v) => v.node.id === event.target.value));
 												}}
 												type="radio"
 												value={node.id}
 											/>
 											<span
 												className={clsx(
-													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
+													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 font-bold text-sm uppercase',
 													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
 													node.availableForSale ? 'cursor-pointer focus:outline-none' : 'cursor-not-allowed opacity-25',
-													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
-													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white',
+													'[:focus+&]:ring-2 [:focus+&]:ring-brand-500 [:focus+&]:ring-offset-2',
+													'[:checked+&]:border-transparent [:checked+&]:bg-brand-primary [:checked+&]:text-white [:checked+&]:hover:bg-brand-light',
 												)}
 											>
 												{node.title}
@@ -217,7 +269,7 @@ export default function ProductPage() {
 									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
 								</Button>
 
-								{formError && <p className="text-red-500 text-sm mt-2">{formError}</p>}
+								{formError && <p className="mt-2 text-red-500 text-sm">{formError}</p>}
 							</div>
 						</Form>
 
@@ -259,7 +311,7 @@ function ImageGallery({
 				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
-							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+							className="relative flex h-24 cursor-pointer items-center justify-center bg-white font-medium text-gray-900 text-sm uppercase hover:bg-gray-50 focus:outline-none focus:ring focus:ring-brand focus:ring-opacity-50 focus:ring-offset-4"
 							key={node.id}
 						>
 							{({ selected }) => {
@@ -268,7 +320,9 @@ function ImageGallery({
 										<span className="absolute inset-0 overflow-hidden">
 											<Image
 												alt={node.altText || ''}
-												breakpoints={[276]}
+												breakpoints={[
+													276,
+												]}
 												className="h-full w-full object-cover object-center"
 												height={192}
 												layout="constrained"
@@ -298,7 +352,12 @@ function ImageGallery({
 						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
 							<Image
 								alt={node.altText || ''}
-								breakpoints={[640, 768, 1024, 1280]}
+								breakpoints={[
+									640,
+									768,
+									1024,
+									1280,
+								]}
 								className="h-full w-full object-contain object-center sm:rounded-lg"
 								height={624}
 								layout="constrained"

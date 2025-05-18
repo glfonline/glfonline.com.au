@@ -73,11 +73,11 @@ export function SearchDialog({
 								<div className="relative">
 									<MagnifyingGlassIcon
 										aria-hidden="true"
-										className="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
+										className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
 									/>
 									<ComboboxInput
 										autoFocus
-										className="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
+										className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
 										onChange={(event) => {
 											setQuery(event.target.value);
 										}}
@@ -108,7 +108,9 @@ function SearchResults({
 	query,
 	setSearchOpen,
 }: {
-	data?: { hits: Array<Hit<Product>> };
+	data?: {
+		hits: Array<Hit<Product>>;
+	};
 	isLoading: boolean;
 	isPreviousData: boolean;
 	query: string;
@@ -126,7 +128,9 @@ function SearchResults({
 			<ComboboxOptions
 				className="max-h-96 scroll-py-3 overflow-y-auto p-3"
 				static
-				style={{ opacity: isPreviousData ? 0.5 : 1 }}
+				style={{
+					opacity: isPreviousData ? 0.5 : 1,
+				}}
 			>
 				{data.hits.map((product) => (
 					<ComboboxOption
@@ -143,7 +147,10 @@ function SearchResults({
 										setSearchOpen(false);
 									}}
 									prefetch="intent"
-									to={makeProductHref({ handle: product.handle, tags: product.tags })}
+									to={makeProductHref({
+										handle: product.handle,
+										tags: product.tags,
+									})}
 								>
 									{product.image ? (
 										<Image
@@ -160,7 +167,7 @@ function SearchResults({
 									)}
 									<span
 										className={clsx(
-											'text-sm font-medium [&>em]:bg-black [&>em]:not-italic [&>em]:text-white',
+											'font-medium text-sm [&>em]:bg-black [&>em]:text-white [&>em]:not-italic',
 											focus ? 'text-gray-900' : 'text-gray-700',
 										)}
 										dangerouslySetInnerHTML={{

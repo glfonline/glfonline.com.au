@@ -1,5 +1,5 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, data } from '@remix-run/node';
+import { data, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -25,24 +25,29 @@ import type { Theme } from '../types';
 export const headers = routeHeaders;
 
 const HomePageSchema = z.object({
-	heroImage: imageWithAltSchema,
-	heading: z.array(z.string()),
+	brandsWeLove,
 	descriptionRaw: z.any(),
+	heading: z.array(z.string()),
+	heroImage: imageWithAltSchema,
 	themeCards: z.array(
 		z.object({
 			_key: z.string(),
 			heading: z.string(),
 			href: z.string(),
-			label: z.string(),
 			image: imageWithAltSchema,
-			theme: z.enum(['ladies', 'mens']),
+			label: z.string(),
+			theme: z.enum([
+				'ladies',
+				'mens',
+			]),
 		}),
 	),
-	brandsWeLove,
 });
 
 export async function loader() {
-	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
+	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, {
+		id: 'home',
+	});
 	return data(HomePageSchema.parse(HomePage), {
 		headers: {
 			'Cache-Control': CACHE_SHORT,
@@ -52,12 +57,14 @@ export async function loader() {
 
 export const meta: MetaFunction<typeof loader> = () => {
 	const seoMeta = getSeoMeta();
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Index() {
 	const loaderData = useLoaderData<typeof loader>();
-	const brandsWeLove = loaderData?.brandsWeLove || [];
+	const brands = loaderData?.brandsWeLove || [];
 
 	return (
 		<>
@@ -65,7 +72,7 @@ export default function Index() {
 				<Hero />
 				<CollectionPromo />
 			</article>
-			<BrandsWeLove brands={brandsWeLove} />
+			<BrandsWeLove brands={brands} />
 			<ContactForm />
 			<NewsletterSignup />
 			<StoreLocationMap />
@@ -80,7 +87,11 @@ function Hero() {
 			<div className="bg-white px-4 py-12 sm:px-6 md:w-80 lg:px-8">
 				<div className="flex flex-col gap-6 px-4">
 					<VerticalLogo className="mx-auto hidden w-full max-w-xs text-black md:block" />
-					<h1 className={getHeadingStyles({ size: '2' })}>
+					<h1
+						className={getHeadingStyles({
+							size: '2',
+						})}
+					>
 						{heading.map((line, index) => (
 							<Fragment key={index}>
 								{line}
@@ -97,7 +108,12 @@ function Hero() {
 			<div className="flex-1">
 				<Image
 					alt={heroImage.asset.altText ?? ''}
-					breakpoints={[640, 768, 1024, 1280]}
+					breakpoints={[
+						640,
+						768,
+						1024,
+						1280,
+					]}
 					className="h-full w-full object-cover"
 					layout="fullWidth"
 					priority
@@ -123,7 +139,10 @@ function CollectionPromo() {
 		<div className="mx-auto grid w-full max-w-lg gap-4 sm:max-w-7xl md:grid-cols-2">
 			{themeCards.map((card) => (
 				<CollectionCard
-					cta={{ text: card.label, href: card.href }}
+					cta={{
+						href: card.href,
+						text: card.label,
+					}}
 					heading={card.heading}
 					image={{
 						src: urlFor({
@@ -146,7 +165,10 @@ function CollectionPromo() {
 }
 
 type CollectionCardProps = {
-	cta: { text: string; href: string };
+	cta: {
+		text: string;
+		href: string;
+	};
 	heading: string;
 	image: {
 		src: string;
@@ -162,7 +184,15 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 		<div className="relative aspect-square">
 			<Image
 				alt={image.alt || ''}
-				breakpoints={[1264, 1080, 960, 828, 750, 640, 632]}
+				breakpoints={[
+					1264,
+					1080,
+					960,
+					828,
+					750,
+					640,
+					632,
+				]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'top'],
@@ -173,7 +203,7 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 				src={image.src}
 			/>
 			<div
-				className="from-true-black/50 relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t via-transparent p-8"
+				className="relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t from-true-black/50 via-transparent p-8"
 				data-theme={theme}
 			>
 				<Heading color="light" id={id} size="2">
@@ -198,9 +228,9 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 type ObjectPosition = 'center' | 'top' | 'right' | 'bottom' | 'left';
 
 const objectPositionMap: Record<ObjectPosition, `object-${ObjectPosition}`> = {
-	center: 'object-center',
-	top: 'object-top',
-	right: 'object-right',
 	bottom: 'object-bottom',
+	center: 'object-center',
 	left: 'object-left',
+	right: 'object-right',
+	top: 'object-top',
 };

@@ -1,5 +1,5 @@
 import { LEGAL_PAGE_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { type MetaFunction, data } from '@remix-run/node';
+import { data as json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { PageLayout } from '../components/page-layout';
@@ -14,8 +14,10 @@ export async function loader() {
 		handle: 'privacy-policy',
 	});
 	if (!page) notFound();
-	return data(
-		{ page },
+	return json(
+		{
+			page,
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -29,7 +31,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.page.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Page() {

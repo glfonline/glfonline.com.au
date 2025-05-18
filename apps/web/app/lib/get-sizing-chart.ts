@@ -14,13 +14,25 @@ type Vendor = StringWithAutocomplete<
 	| 'Sporte Leisure'
 >;
 
-const noSizingChart = ['Accessories', 'Cart Bags', 'Gift Vouchers', 'Gloves', 'Headwear', 'Shoes & Socks', 'Wedges'];
+const noSizingChart = [
+	'Accessories',
+	'Cart Bags',
+	'Gift Vouchers',
+	'Gloves',
+	'Headwear',
+	'Shoes & Socks',
+	'Wedges',
+];
 
 export function getSizingChart({
 	productType,
 	vendor,
 	tags,
-}: { productType: string; vendor: Vendor; tags: ReadonlyArray<string> }):
+}: {
+	productType: string;
+	vendor: Vendor;
+	tags: ReadonlyArray<string>;
+}):
 	| {
 			href: string;
 			useSizing?: boolean;

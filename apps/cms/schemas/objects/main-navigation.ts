@@ -11,14 +11,22 @@ export const mainNavigation = defineField({
 			title: 'Categories',
 			name: 'navCategories',
 			type: 'array',
-			of: [{ type: 'navCategory' }],
+			of: [
+				{
+					type: 'navCategory',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		},
 		{
 			title: 'Pages',
 			name: 'pages',
 			type: 'array',
-			of: [{ type: 'navItem' }],
+			of: [
+				{
+					type: 'navItem',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		},
 	],
@@ -72,14 +80,22 @@ export const navCategory = defineField({
 			title: 'Featured Items',
 			name: 'featuredItems',
 			type: 'array',
-			of: [{ type: 'featuredNavItem' }],
+			of: [
+				{
+					type: 'featuredNavItem',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		},
 		{
 			title: 'Sections',
 			name: 'navSections',
 			type: 'array',
-			of: [{ type: 'navSection' }],
+			of: [
+				{
+					type: 'navSection',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		},
 	],
@@ -129,7 +145,11 @@ export const navSection = defineField({
 			title: 'Items',
 			name: 'items',
 			type: 'array',
-			of: [{ type: 'navItem' }],
+			of: [
+				{
+					type: 'navItem',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		},
 	],

@@ -33,62 +33,66 @@ export type NavItem = {
 	href: string;
 };
 
-export const socialLinks: Array<NavItem & { icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element }> = [
+export const socialLinks: Array<
+	NavItem & {
+		icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+	}
+> = [
 	{
-		label: 'Facebook',
 		href: FACEBOOK_URL,
 		icon: FacebookIcon,
+		label: 'Facebook',
 	},
 	{
-		label: 'Instagram',
 		href: INSTAGRAM_URL,
 		icon: InstagramIcon,
+		label: 'Instagram',
 	},
 ];
 
 export const footerNavigation: Array<Array<NavItem>> = [
 	[
 		{
-			label: 'Shop Ladies',
 			href: '/ladies',
+			label: 'Shop Ladies',
 		},
 		{
-			label: 'Shop Mens',
 			href: '/mens',
+			label: 'Shop Mens',
 		},
 		{
-			label: 'About Us',
 			href: '/about',
+			label: 'About Us',
 		},
 		{
-			label: 'Contact',
 			href: '/contact',
+			label: 'Contact',
 		},
 		{
-			label: 'Testimonials',
 			href: '/testimonials',
+			label: 'Testimonials',
 		},
 	],
 	[
 		{
-			label: 'FAQ',
 			href: '/faq',
+			label: 'FAQ',
 		},
 		{
-			label: 'Blog',
 			href: '/blog',
+			label: 'Blog',
 		},
 		{
-			label: 'Privacy Policy',
 			href: '/privacy-policy',
+			label: 'Privacy Policy',
 		},
 		{
-			label: 'Refund Policy',
 			href: '/refund-policy',
+			label: 'Refund Policy',
 		},
 		{
-			label: 'Terms & Conditions',
 			href: '/terms-and-conditions',
+			label: 'Terms & Conditions',
 		},
 	],
 ];

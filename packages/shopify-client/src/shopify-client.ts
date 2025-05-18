@@ -6,15 +6,15 @@ const ACCESS_TOKEN = '2288cabae0640a8f47933d6ed4116607';
 
 export const shopifyClient: Fetcher = (operation: DocumentNode, variables?: Record<string, unknown>) => {
 	return fetch(API_URL, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-			'X-Shopify-Storefront-Access-Token': ACCESS_TOKEN,
-		},
 		body: JSON.stringify({
 			query: print(operation),
 			variables,
 		}),
+		headers: {
+			'Content-Type': 'application/json',
+			'X-Shopify-Storefront-Access-Token': ACCESS_TOKEN,
+		},
+		method: 'POST',
 	})
 		.then((res) => res.json())
 		.then((data) => {

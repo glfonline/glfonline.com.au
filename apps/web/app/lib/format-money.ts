@@ -1,7 +1,7 @@
 const formatter = (currency: string) =>
 	new Intl.NumberFormat('en-AU', {
-		style: 'currency',
 		currency,
+		style: 'currency',
 	});
 
 export function formatMoney(dollars: number, currency = 'AUD'): string {

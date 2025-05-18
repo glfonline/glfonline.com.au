@@ -43,20 +43,25 @@ export function NewsletterSignup() {
 						</Field>
 
 						<fieldset className="flex flex-col gap-4 sm:col-span-4">
-							<legend aria-hidden className="text-sm text-gray-700">
+							<legend aria-hidden className="text-gray-700 text-sm">
 								Which list would you like to sign up to?
 							</legend>
-							<div className="space-y-4 mt-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-								{(['Ladies', 'Mens'] as const).map((options) => (
+							<div className="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
+								{(
+									[
+										'Ladies',
+										'Mens',
+									] as const
+								).map((options) => (
 									<div className="flex items-center gap-3" key={options}>
 										<input
-											className="text-brand-primary focus:ring-brand-light h-5 w-5 border-gray-300"
+											className="h-5 w-5 border-gray-300 text-brand-primary focus:ring-brand-light"
 											id={options}
 											name={form.fields.gender()}
 											type="radio"
 											value={options}
 										/>
-										<label className="block text-sm font-medium text-gray-700" htmlFor={options}>
+										<label className="block font-medium text-gray-700 text-sm" htmlFor={options}>
 											{options}
 										</label>
 									</div>
@@ -64,15 +69,15 @@ export function NewsletterSignup() {
 							</div>
 						</fieldset>
 
-						<div className="flex min-h-[65px] items-center flex-col gap-1 sm:col-span-4">
+						<div className="flex min-h-[65px] flex-col items-center gap-1 sm:col-span-4">
 							{isMounted && (
 								<Turnstile
-									onVerify={(token) => {
-										setToken(token);
-									}}
+									onVerify={setToken}
 									sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 									size="normal"
-									style={{ width: '100%' }}
+									style={{
+										width: '100%',
+									}}
 									theme="light"
 								/>
 							)}

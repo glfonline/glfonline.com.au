@@ -1,7 +1,8 @@
 import { assert, isDefined } from 'emery';
 import { forwardRef } from 'react';
-import { type HeadingVariantProps, getHeadingStyles } from './get-heading-styles';
+import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
 	{ children, className, color, headingElement, size, weight, ...consumerProps },
 	forwardedRef,
@@ -11,7 +12,12 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Hea
 	return (
 		<HeadingElement
 			{...consumerProps}
-			className={getHeadingStyles({ className, color, size, weight })}
+			className={getHeadingStyles({
+				className,
+				color,
+				size,
+				weight,
+			})}
 			ref={forwardedRef}
 		>
 			{children}

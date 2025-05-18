@@ -16,7 +16,12 @@ export function Hero({
 			{image && (
 				<Image
 					alt={image.alt ?? ''}
-					breakpoints={[640, 768, 1024, 1280]}
+					breakpoints={[
+						640,
+						768,
+						1024,
+						1280,
+					]}
 					className="absolute inset-0 h-full w-full object-cover"
 					layout="fullWidth"
 					priority
@@ -24,7 +29,7 @@ export function Hero({
 				/>
 			)}
 			{title && (
-				<span className="bg-true-black/75 isolate px-6 py-2">
+				<span className="isolate bg-true-black/75 px-6 py-2">
 					<Heading className="isolate" color="light" size="2">
 						{title}
 					</Heading>

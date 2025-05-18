@@ -3,8 +3,8 @@
 	"globalDependencies": ["**/.env.*local"],
 	"tasks": {
 		"build": {
-			"outputs": ["dist/**"],
-			"dependsOn": ["^build"]
+			"dependsOn": ["^build"],
+			"outputs": ["dist/**"]
 		},
 		"check:format": {},
 		"check:lint": {},

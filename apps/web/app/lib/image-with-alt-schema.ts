@@ -9,10 +9,10 @@ export const imageWithAltSchema = z.object({
 	crop: z
 		.nullable(
 			z.object({
-				top: z.number(),
 				bottom: z.number(),
 				left: z.number(),
 				right: z.number(),
+				top: z.number(),
 			}),
 		)
 		.optional()
@@ -20,10 +20,10 @@ export const imageWithAltSchema = z.object({
 	hotspot: z
 		.nullable(
 			z.object({
-				x: z.number(),
-				y: z.number(),
 				height: z.number(),
 				width: z.number(),
+				x: z.number(),
+				y: z.number(),
 			}),
 		)
 		.optional()

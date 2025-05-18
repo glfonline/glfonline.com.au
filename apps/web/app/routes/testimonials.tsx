@@ -1,5 +1,5 @@
-import { TESTIMONIALS_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, data } from '@remix-run/node';
+import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
+import { data as json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
@@ -28,12 +28,16 @@ const TestimonialsSchema = z.object({
 });
 
 export async function loader() {
-	const { TestimonialsPage } = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
+	const res = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
 		id: 'testimonials',
 	});
-	const { testimonials, heroImage } = TestimonialsSchema.parse(TestimonialsPage);
-	return data(
-		{ heroImage, testimonials, title: 'Testimonials' },
+	const { testimonials, heroImage } = TestimonialsSchema.parse(res.TestimonialsPage);
+	return json(
+		{
+			heroImage,
+			testimonials,
+			title: 'Testimonials',
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -47,7 +51,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function TestimonialsPage() {
@@ -57,6 +63,7 @@ export default function TestimonialsPage() {
 			<div className="flex w-full flex-col gap-10">
 				<Hero
 					image={{
+						alt: heroImage.asset.altText ?? '',
 						url: urlFor({
 							_ref: heroImage.asset._id,
 							crop: heroImage.crop,
@@ -67,7 +74,6 @@ export default function TestimonialsPage() {
 							.height(385)
 							.dpr(2)
 							.url(),
-						alt: heroImage.asset.altText ?? '',
 					}}
 					title={title}
 				/>
@@ -88,7 +94,16 @@ function Testimonials() {
 					<li className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12" key={_key}>
 						<Image
 							alt={testimonialImage.asset.altText ?? ''}
-							breakpoints={[640, 750, 767, 828, 960, 1080, 1280, 1534]}
+							breakpoints={[
+								640,
+								750,
+								767,
+								828,
+								960,
+								1080,
+								1280,
+								1534,
+							]}
 							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 							layout="fullWidth"
 							priority={false}
@@ -106,8 +121,8 @@ function Testimonials() {
 						/>
 						<div className="md:col-span-7 md:col-start-6 md:py-16">
 							<div className="relative">
-								<OpenQuote className="text-brand-primary absolute left-5 top-8 z-10 h-8 w-8" />
-								<div className="prose prose-blockquote:pl-0 prose-blockquote:border-none prose-p:before:content-none relative mx-auto w-full bg-white px-16 py-12 md:mx-0">
+								<OpenQuote className="absolute top-8 left-5 z-10 h-8 w-8 text-brand-primary" />
+								<div className="prose relative mx-auto w-full prose-blockquote:border-none bg-white px-16 py-12 prose-blockquote:pl-0 prose-p:before:content-none md:mx-0">
 									<blockquote>
 										<PortableText value={quoteRaw} />
 										<p className="font-bold">{author}</p>
@@ -118,7 +133,7 @@ function Testimonials() {
 					</li>
 				) : (
 					<li className="border px-8 py-10" key={_key}>
-						<div className="prose prose-blockquote:border-none prose-p:before:content-none prose-blockquote:pl-0">
+						<div className="prose prose-blockquote:border-none prose-blockquote:pl-0 prose-p:before:content-none">
 							<blockquote>
 								<PortableText value={quoteRaw} />
 								<p className="font-bold">{author}</p>

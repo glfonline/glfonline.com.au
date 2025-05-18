@@ -6,15 +6,18 @@ export function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
 	/** @todo get gid from query */
 	const shopId = parseGid('gid://shopify/Shop/10809832').id;
-	const body = robotsTxtData({ url: url.origin, shopId });
+	const body = robotsTxtData({
+		shopId,
+		url: url.origin,
+	});
 
 	return new Response(body, {
-		status: 200,
 		headers: {
-			'Content-Type': 'text/plain',
 			// Cache for 24 hours
 			'Cache-Control': `max-age=${60 * 60 * 24}`,
+			'Content-Type': 'text/plain',
 		},
+		status: 200,
 	});
 }
 
@@ -50,7 +53,10 @@ function robotsTxtData({ url, shopId }: { shopId?: string; url?: string }) {
 
 	return `
 User-agent: *
-${generalDisallowRules({ sitemapUrl, shopId })}
+${generalDisallowRules({
+	shopId,
+	sitemapUrl,
+})}
 
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google
@@ -69,11 +75,17 @@ Disallow: /
 
 User-agent: AhrefsBot
 Crawl-delay: 10
-${generalDisallowRules({ sitemapUrl, shopId })}
+${generalDisallowRules({
+	shopId,
+	sitemapUrl,
+})}
 
 User-agent: AhrefsSiteAudit
 Crawl-delay: 10
-${generalDisallowRules({ sitemapUrl, shopId })}
+${generalDisallowRules({
+	shopId,
+	sitemapUrl,
+})}
 
 User-agent: MJ12bot
 Crawl-Delay: 10

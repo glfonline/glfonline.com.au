@@ -5,6 +5,7 @@ import { CheckCircleIcon } from '../../vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';
 import { FieldContextProvider, type FieldContextType } from './context';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 	{
 		children,
@@ -23,14 +24,25 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 	const invalid = Boolean(message && tone === 'critical');
 	const fieldContext: FieldContextType = useMemo(
 		() => [
-			{ disabled, invalid },
+			{
+				disabled,
+				invalid,
+			},
 			{
 				'aria-describedby': mergeIds(message && messageId, description && descriptionId),
 				'aria-invalid': invalid || undefined,
 				id: inputId,
 			},
 		],
-		[description, descriptionId, disabled, inputId, invalid, message, messageId],
+		[
+			description,
+			descriptionId,
+			disabled,
+			inputId,
+			invalid,
+			message,
+			messageId,
+		],
 	);
 	return (
 		<FieldContextProvider value={fieldContext}>
@@ -57,8 +69,8 @@ export function useFieldIds(idProp?: string) {
 	const messageId = `${inputId}--message`;
 
 	return {
-		inputId,
 		descriptionId,
+		inputId,
 		messageId,
 	};
 }

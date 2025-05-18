@@ -35,18 +35,31 @@ export async function getProductsFromCollectionByTag({
 		const { collection } = await shopifyClient(COLLECTION_QUERY, {
 			...getSortOptions(sortBy),
 			after,
-			first: itemsPerPage,
-			handle,
 			filters: [
-				{ available: true },
-				{ tag: capitalise(theme) },
-				...(productType ? [{ productType }] : []),
+				{
+					available: true,
+				},
+				{
+					tag: capitalise(theme),
+				},
+				...(productType
+					? [
+							{
+								productType,
+							},
+						]
+					: []),
 				...(filterOptions
 					? Object.entries(filterOptions).map(([key, value]) => ({
-							variantOption: { name: key, value },
+							variantOption: {
+								name: key,
+								value,
+							},
 						}))
 					: []),
 			],
+			first: itemsPerPage,
+			handle,
 		});
 
 		return {
@@ -60,7 +73,6 @@ export async function getProductsFromCollectionByTag({
 		};
 	} catch (err) {
 		/** @todo */
-		// biome-ignore lint/suspicious/noConsole:
 		console.error(err);
 	}
 }
@@ -82,43 +94,43 @@ function getSortOptions(sortType: string): {
 	switch (sortType) {
 		case 'collection-default':
 			return {
-				sortKey: 'COLLECTION_DEFAULT',
 				reverse: false,
+				sortKey: 'COLLECTION_DEFAULT',
 			};
 		case 'latest-desc':
 			return {
-				sortKey: 'CREATED',
 				reverse: true,
+				sortKey: 'CREATED',
 			};
 		case 'price-asc':
 			return {
-				sortKey: 'PRICE',
 				reverse: false,
+				sortKey: 'PRICE',
 			};
 		case 'price-desc':
 			return {
-				sortKey: 'PRICE',
 				reverse: true,
+				sortKey: 'PRICE',
 			};
 		case 'relevance':
 			return {
-				sortKey: 'RELEVANCE',
 				reverse: false,
+				sortKey: 'RELEVANCE',
 			};
 		case 'title-asc':
 			return {
-				sortKey: 'TITLE',
 				reverse: false,
+				sortKey: 'TITLE',
 			};
 		case 'title-desc':
 			return {
-				sortKey: 'TITLE',
 				reverse: true,
+				sortKey: 'TITLE',
 			};
 		case 'trending-desc':
 			return {
-				sortKey: 'BEST_SELLING',
 				reverse: true,
+				sortKey: 'BEST_SELLING',
 			};
 		default:
 			return getSortOptions('collection-default');

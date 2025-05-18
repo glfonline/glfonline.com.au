@@ -1,5 +1,5 @@
 import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
-import { data } from '@remix-run/node';
+import { data as json } from '@remix-run/node';
 import { type MetaFunction, useLoaderData } from '@remix-run/react';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -14,16 +14,26 @@ import { getSeoMeta } from '../seo';
 export const headers = routeHeaders;
 
 const FaqSchema = z.object({
+	faqs: z
+		.object({
+			answerRaw: z.any(),
+			question: z.nullable(z.string().min(1)),
+		})
+		.array(),
 	heroImage: imageWithAltSchema,
-	faqs: z.object({ question: z.nullable(z.string().min(1)), answerRaw: z.any() }).array(),
 });
 
 export async function loader() {
-	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, { id: 'faqs' });
-	const faqPage = FaqSchema.parse(FaqPage);
+	const res = await sanityClient(GET_FAQS_PAGES, {
+		id: 'faqs',
+	});
+	const faqPage = FaqSchema.parse(res.FaqPage);
 
-	return data(
-		{ faqPage, title: 'Frequently Asked Questions' },
+	return json(
+		{
+			faqPage,
+			title: 'Frequently Asked Questions',
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -37,7 +47,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function FaqPage() {
@@ -47,6 +59,7 @@ export default function FaqPage() {
 		<div className="bg-white">
 			<Hero
 				image={{
+					alt: faqPage.heroImage.asset.altText ?? '',
 					url: urlFor({
 						_ref: faqPage.heroImage.asset._id,
 						crop: faqPage.heroImage.crop,
@@ -57,7 +70,6 @@ export default function FaqPage() {
 						.height(385)
 						.dpr(2)
 						.url(),
-					alt: faqPage.heroImage.asset.altText ?? '',
 				}}
 				title="FAQs"
 			/>

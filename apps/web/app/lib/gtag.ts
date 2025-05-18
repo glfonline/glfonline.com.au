@@ -15,7 +15,6 @@ export const trackingIds = [
  */
 export function pageview(url: string, trackingId: string) {
 	if (!window.gtag) {
-		// biome-ignore lint/suspicious/noConsole:
 		console.warn(
 			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.',
 		);
@@ -31,7 +30,6 @@ export function pageview(url: string, trackingId: string) {
  */
 export function event({ action, category, label, value }: Record<string, string>) {
 	if (!window.gtag) {
-		// biome-ignore lint/suspicious/noConsole:
 		console.warn(
 			'window.gtag is not defined. This could mean your google analytics script has not loaded on the page yet.',
 		);
@@ -39,7 +37,7 @@ export function event({ action, category, label, value }: Record<string, string>
 	}
 	window.gtag(
 		'event',
-		// @ts-ignore
+		// @ts-expect-error
 		action,
 		{
 			event_category: category,

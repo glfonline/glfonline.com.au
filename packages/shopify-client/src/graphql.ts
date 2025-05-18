@@ -1,4 +1,5 @@
 import { gql } from '@ts-gql/tag/no-transform';
+
 export type { FragmentData, OperationData } from '@ts-gql/tag';
 
 /*******************************************************************************

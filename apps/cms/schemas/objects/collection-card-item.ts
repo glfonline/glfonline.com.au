@@ -30,9 +30,18 @@ export const collectionCardItem = defineField({
 			description: 'How many columns should this item span?',
 			options: {
 				list: [
-					{ title: '2/5', value: '2' },
-					{ title: '3/5', value: '3' },
-					{ title: '5/5', value: '5' },
+					{
+						title: '2/5',
+						value: '2',
+					},
+					{
+						title: '3/5',
+						value: '3',
+					},
+					{
+						title: '5/5',
+						value: '5',
+					},
 				],
 				layout: 'radio',
 				direction: 'horizontal',

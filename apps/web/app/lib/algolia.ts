@@ -20,10 +20,10 @@ export async function search<TData>({ indexName, query, pageParam, hitsPerPage }
 	const { results } = await client.search<TData>({
 		requests: [
 			{
-				indexName,
-				query,
-				page: pageParam,
 				hitsPerPage,
+				indexName,
+				page: pageParam,
+				query,
 			},
 		],
 	});

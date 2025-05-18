@@ -11,22 +11,29 @@ import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
 const ThemeSchema = z.object({
-	theme: z.enum(['ladies', 'mens']),
+	theme: z.enum([
+		'ladies',
+		'mens',
+	]),
 });
 
 const CollectionSchema = z.object({
 	_id: z.string(),
-	theme: z.string(),
+	brandsWeLove,
 	collectionCards: z.array(
 		z.object({
 			_key: z.string(),
 			href: z.string(),
-			label: z.string(),
 			image: imageWithAltSchema,
-			span: z.enum(['2', '3', '5']),
+			label: z.string(),
+			span: z.enum([
+				'2',
+				'3',
+				'5',
+			]),
 		}),
 	),
-	brandsWeLove,
+	theme: z.string(),
 });
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -36,7 +43,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			id: result.data.theme,
 		});
 		const collection = CollectionSchema.parse(ThemePage);
-		return { collection, theme: result.data.theme };
+		return {
+			collection,
+			theme: result.data.theme,
+		};
 	}
 	notFound();
 }
@@ -46,7 +56,9 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 		title: `Shop ${params.theme === 'ladies' ? 'Ladies' : 'Mens'}`,
 	});
 
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function CollectionsPage() {
@@ -55,29 +67,29 @@ export default function CollectionsPage() {
 	return (
 		<div data-theme={theme}>
 			<div className="grid gap-4 lg:grid-cols-5">
-				{collection.collectionCards.map((collection, index) => (
+				{collection.collectionCards.map((c, index) => (
 					<CollectionCard
 						cta={{
-							text: collection.label,
-							href: collection.href,
+							href: c.href,
+							text: c.label,
 						}}
 						image={{
+							alt: c.image.asset.altText ?? '',
+							objectPosition: 'top',
 							src: urlFor({
-								_ref: collection.image.asset._id,
-								crop: collection.image.crop,
-								hotspot: collection.image.hotspot,
+								_ref: c.image.asset._id,
+								crop: c.image.crop,
+								hotspot: c.image.hotspot,
 							})
 								.auto('format')
-								.width((1280 / 5) * Number(collection.span))
+								.width((1280 / 5) * Number(c.span))
 								.height(384)
 								.dpr(2)
 								.url(),
-							alt: collection.image.asset.altText ?? '',
-							objectPosition: 'top',
 						}}
-						key={collection._key}
+						key={c._key}
 						priority={index === 0}
-						span={collection.span}
+						span={c.span}
 					/>
 				))}
 			</div>

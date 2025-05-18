@@ -1,5 +1,5 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
+import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
 import invariant from 'tiny-invariant';
@@ -20,8 +20,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	});
 	const page = PostSchema.parse(allPost[0]);
 	if (!page) notFound();
-	return data(
-		{ page },
+	return json(
+		{
+			page,
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -35,7 +37,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.page.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Page() {
@@ -45,6 +49,7 @@ export default function Page() {
 			<div className="mx-auto flex max-w-2xl flex-col gap-12 px-4 pb-12 sm:gap-16 sm:px-6 sm:pb-16 lg:px-8">
 				<Hero
 					image={{
+						alt: page.mainImage.asset.altText ?? '',
 						url: urlFor({
 							_ref: page.mainImage.asset._id,
 							crop: page.mainImage.crop,
@@ -55,7 +60,6 @@ export default function Page() {
 							.height(385)
 							.dpr(2)
 							.url(),
-						alt: page.mainImage.asset.altText ?? '',
 					}}
 					title={page.title}
 				/>

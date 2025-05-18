@@ -21,13 +21,16 @@ import { Hero } from '../components/hero';
 import { capitalise } from '../lib/capitalise';
 import { badRequest, notFound, serverError } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
-import { type SortBy, getProductsFromCollectionByTag } from '../lib/get-collection-products';
-import { PRODUCT_TYPE, getProductFilterOptions } from '../lib/get-product-filter-options';
+import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collection-products';
+import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
-	theme: z.enum(['ladies', 'mens']),
+	theme: z.enum([
+		'ladies',
+		'mens',
+	]),
 });
 
 const SortSchema = z
@@ -101,11 +104,11 @@ function parseRequestParameters(params: unknown, request: Request) {
 	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};
 
 	return {
-		params: paramsResult.data,
 		after,
-		sort,
-		productType,
 		filterOptions,
+		params: paramsResult.data,
+		productType,
+		sort,
 	};
 }
 
@@ -121,15 +124,25 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 			filterOptions,
 			handle: collectionHandle,
 			itemsPerPage: ITEMS_PER_PAGE,
+			productType,
 			sortBy: sort,
 			theme,
-			productType,
 		}),
-		getProductFilterOptions({ collectionHandle, first: 250, theme }),
+		getProductFilterOptions({
+			collectionHandle,
+			first: 250,
+			theme,
+		}),
 	]);
 
 	// Process collection data - now ensures products is always defined
-	const collection = processCollectionData({ collectionPromise, theme, collectionHandle, sort, filterOptions });
+	const collection = processCollectionData({
+		collectionHandle,
+		collectionPromise,
+		filterOptions,
+		sort,
+		theme,
+	});
 
 	// Process options data
 	const options = optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
@@ -152,7 +165,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		title: `Shop ${data.title}`,
 	});
 
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function CollectionPage() {
@@ -162,13 +177,19 @@ export default function CollectionPage() {
 
 	return (
 		<div className="flex flex-col gap-12 py-9" data-theme={theme}>
-			<Hero image={{ url: imageMap[theme], alt: image.altText ?? '' }} title={title} />
+			<Hero
+				image={{
+					alt: image.altText ?? '',
+					url: imageMap[theme],
+				}}
+				title={title}
+			/>
 
 			<div>
 				<MobileFilters mobileFiltersOpen={mobileFiltersOpen} setMobileFiltersOpen={setMobileFiltersOpen} />
 
 				<main className="mx-auto max-w-2xl px-4 lg:max-w-7xl lg:px-8 xl:px-0">
-					<div className="pb-24 pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
+					<div className="pt-12 pb-24 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
 						<Filters setMobileFiltersOpen={setMobileFiltersOpen} />
 
 						<section aria-labelledby="product-heading" className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
@@ -180,7 +201,7 @@ export default function CollectionPage() {
 								{products.length > 0 ? (
 									products.map(({ node }) => <ProductCard key={node.id} node={node as ProductNode} />)
 								) : (
-									<p className="col-start-1 col-end-[-1] text-center text-xl font-bold uppercase">No products found</p>
+									<p className="col-start-1 col-end-[-1] text-center font-bold text-xl uppercase">No products found</p>
 								)}
 							</div>
 							<Pagination
@@ -224,7 +245,7 @@ function Filters({ setMobileFiltersOpen }: { setMobileFiltersOpen: React.Dispatc
 				}}
 				type="button"
 			>
-				<span className="text-sm font-medium text-gray-700">Filters</span>
+				<span className="font-medium text-gray-700 text-sm">Filters</span>
 				<PlusIcon aria-hidden="true" className="ml-1 h-5 w-5 flex-shrink-0 text-gray-400" />
 			</button>
 
@@ -270,7 +291,7 @@ function MobileFilters({
 					>
 						<DialogPanel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl">
 							<div className="flex items-center justify-between">
-								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
+								<h2 className="font-medium text-gray-900 text-lg">Filters</h2>
 								<button
 									className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
 									onClick={() => {
@@ -308,7 +329,10 @@ function ProductCard({ node }: { node: ProductNode }) {
 			<div className="aspect-[3/4] group-hover:opacity-75 sm:aspect-auto sm:h-96">
 				{node.featuredImage?.url ? (
 					<Image
-						breakpoints={[320, 640]}
+						breakpoints={[
+							320,
+							640,
+						]}
 						className="h-full w-full"
 						layout="fullWidth"
 						objectFit="contain"
@@ -320,7 +344,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 					<span aria-hidden="true" className="block h-full w-full bg-gray-200" />
 				)}
 				{isOnSale && (
-					<div className="pointer-events-none absolute left-0 right-0 top-0 aspect-square">
+					<div className="pointer-events-none absolute top-0 right-0 left-0 aspect-square">
 						<DiagonalBanner>On Sale</DiagonalBanner>
 					</div>
 				)}
@@ -370,7 +394,10 @@ function DisplayOptions() {
 								<li key={key}>
 									<Link
 										className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700"
-										to={clearSearchUrl({ key, location })}
+										to={clearSearchUrl({
+											key,
+											location,
+										})}
 									>
 										<svg className="h-2 w-2" fill="none" stroke="currentColor" viewBox="0 0 8 8">
 											<path d="M1 1l6 6m0-6L1 7" strokeLinecap="round" strokeWidth="1.5" />
@@ -387,7 +414,12 @@ function DisplayOptions() {
 				</div>
 			)}
 			{options.map((option) => {
-				if (!['Size', PRODUCT_TYPE].includes(option.name)) {
+				if (
+					![
+						'Size',
+						PRODUCT_TYPE,
+					].includes(option.name)
+				) {
 					return null;
 				}
 				if (option.name === PRODUCT_TYPE && option.values.length <= 1) {
@@ -489,7 +521,7 @@ export function Pagination({
 	return (
 		<nav
 			aria-label="Pagination"
-			className="mx-auto mt-6 flex max-w-7xl items-center justify-between text-sm font-medium text-gray-700"
+			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
@@ -524,14 +556,38 @@ export function Pagination({
 }
 
 const sortOptions = [
-	{ label: 'Default', value: 'collection-default' },
-	{ label: 'Newest', value: 'latest-desc' },
-	{ label: 'Price: Low to High', value: 'price-asc' },
-	{ label: 'Price: High to Low', value: 'price-desc' },
-	{ label: 'Relevance', value: 'relevance' },
-	{ label: 'Title: A-Z', value: 'title-asc' },
-	{ label: 'Title: Z-A', value: 'title-desc' },
-	{ label: 'Trending', value: 'trending-desc' },
+	{
+		label: 'Default',
+		value: 'collection-default',
+	},
+	{
+		label: 'Newest',
+		value: 'latest-desc',
+	},
+	{
+		label: 'Price: Low to High',
+		value: 'price-asc',
+	},
+	{
+		label: 'Price: High to Low',
+		value: 'price-desc',
+	},
+	{
+		label: 'Relevance',
+		value: 'relevance',
+	},
+	{
+		label: 'Title: A-Z',
+		value: 'title-asc',
+	},
+	{
+		label: 'Title: Z-A',
+		value: 'title-desc',
+	},
+	{
+		label: 'Trending',
+		value: 'trending-desc',
+	},
 ] satisfies Array<{
 	label: string;
 	value: SortBy;

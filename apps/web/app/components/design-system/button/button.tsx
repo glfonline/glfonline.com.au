@@ -4,6 +4,7 @@ import { mergeRefs } from '../../../lib/merge-refs';
 import { Spinner } from '../spinner';
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
 	{ children, className, isLoading, onClick, size, type = 'button', variant, ...consumerProps },
 	forwardedRef,
@@ -15,24 +16,35 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 			if (isLoading) return;
 			onClick?.(event);
 		},
-		[isLoading, onClick],
+		[
+			isLoading,
+			onClick,
+		],
 	);
 
 	return (
 		<button
 			{...consumerProps}
-			className={getButtonStyles({ className, isLoading, size, variant })}
+			className={getButtonStyles({
+				className,
+				isLoading,
+				size,
+				variant,
+			})}
 			onClick={handleOnClick}
 			ref={mergeRefs(internalRef, forwardedRef)}
 			type={type}
 		>
 			{children}
 			<span aria-live="assertive" className={clsx(isLoading ? undefined : 'sr-only')}>
-				{isLoading && (
-					<span aria-label="Loading">
-						<Spinner />
-					</span>
-				)}
+				<span aria-live="polite" role="status">
+					{isLoading && (
+						<>
+							<Spinner />
+							<span className="sr-only">Loading</span>
+						</>
+					)}
+				</span>
 			</span>
 		</button>
 	);

@@ -63,12 +63,12 @@ export function ContactForm() {
 						{isMounted && (
 							<Turnstile
 								className="[&>*]:!w-full"
-								onVerify={(token) => {
-									setToken(token);
-								}}
+								onVerify={setToken}
 								sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 								size="normal"
-								style={{ width: '100%' }}
+								style={{
+									width: '100%',
+								}}
 								theme="light"
 							/>
 						)}

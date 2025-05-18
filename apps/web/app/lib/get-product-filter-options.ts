@@ -8,7 +8,6 @@ type Option = {
 	values: Array<string>;
 };
 
-// biome-ignore lint/complexity/noExcessiveCognitiveComplexity:
 export async function getProductFilterOptions({
 	after,
 	collectionHandle,
@@ -26,10 +25,17 @@ export async function getProductFilterOptions({
 	let cursor = after;
 	while (hasNextPage) {
 		const { collection } = await shopifyClient(COLLECTION_OPTIONS_QUERY, {
-			handle: collectionHandle,
 			after: cursor,
+			filters: [
+				{
+					available: true,
+				},
+				{
+					tag: capitalise(theme),
+				},
+			],
 			first,
-			filters: [{ available: true }, { tag: capitalise(theme) }],
+			handle: collectionHandle,
 		});
 		const { products } = schema.parse(collection);
 		for (const { node } of products.edges) {
@@ -48,11 +54,16 @@ export async function getProductFilterOptions({
 	}
 	const options: Array<Option> = [];
 	for (const [key, value] of optionsMap) {
-		let optionValues = [...value].sort();
+		let optionValues = [
+			...value,
+		].sort();
 		if (key === 'Size') {
 			optionValues = sortSizes(optionValues);
 		}
-		options.push({ name: key, values: optionValues });
+		options.push({
+			name: key,
+			values: optionValues,
+		});
 	}
 	options.push({
 		name: PRODUCT_TYPE,
@@ -63,7 +74,6 @@ export async function getProductFilterOptions({
 
 const schema = z.object({
 	products: z.object({
-		pageInfo: z.object({ endCursor: z.string(), hasNextPage: z.boolean() }),
 		edges: z.array(
 			z.object({
 				node: z.object({
@@ -78,6 +88,10 @@ const schema = z.object({
 				}),
 			}),
 		),
+		pageInfo: z.object({
+			endCursor: z.string(),
+			hasNextPage: z.boolean(),
+		}),
 	}),
 });
 

@@ -16,9 +16,9 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 					</Heading>
 				</div>
 				<div className="flex flex-col gap-6">
-					<p className="text-base leading-7 text-gray-600">We found an error while loading this page.</p>
+					<p className="text-base text-gray-600 leading-7">We found an error while loading this page.</p>
 					{process.env.NODE_ENV === 'development' && error && (
-						<code className="text-base leading-7 text-gray-600">
+						<code className="text-base text-gray-600 leading-7">
 							<span>{error.statusText}</span>
 							{error.data && (
 								<pre
@@ -26,11 +26,11 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 										__html: addLinksToStackTrace(error.data),
 									}}
 									style={{
-										padding: '2rem',
 										background: 'hsla(10, 50%, 50%, 0.1)',
 										color: 'red',
-										overflow: 'auto',
 										maxWidth: '100%',
+										overflow: 'auto',
+										padding: '2rem',
 									}}
 								/>
 							)}

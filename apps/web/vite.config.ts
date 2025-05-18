@@ -10,12 +10,16 @@ declare module '@remix-run/node' {
 	}
 }
 
-installGlobals({ nativeFetch: true });
+installGlobals({
+	nativeFetch: true,
+});
 
 export default defineConfig({
+	build: {
+		sourcemap: true,
+	},
 	plugins: [
 		remix({
-			ignoredRouteFiles: ['**/.*'],
 			future: {
 				unstable_optimizeDeps: true,
 				v3_fetcherPersist: true,
@@ -24,7 +28,12 @@ export default defineConfig({
 				v3_singleFetch: true,
 				v3_throwAbortReason: true,
 			},
-			presets: [vercelPreset()],
+			ignoredRouteFiles: [
+				'**/.*',
+			],
+			presets: [
+				vercelPreset(),
+			],
 		}),
 		sentryVitePlugin({
 			org: 'glf-online',
@@ -34,9 +43,5 @@ export default defineConfig({
 
 	server: {
 		port: 3000,
-	},
-
-	build: {
-		sourcemap: true,
 	},
 });

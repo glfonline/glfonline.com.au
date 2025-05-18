@@ -1,18 +1,18 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
+	isRouteErrorResponse,
 	Links,
 	Meta,
 	type MetaFunction,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	isRouteErrorResponse,
 	useLocation,
 	useRouteError,
 } from '@remix-run/react';
 import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { type SeoHandleFunction, getSeoMeta } from '@shopify/hydrogen';
+import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -24,14 +24,14 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-// @ts-ignore
+// @ts-expect-error
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import { seoConfig } from './seo';
-// @ts-ignore
+// @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
 const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => {
@@ -49,11 +49,29 @@ export const handle = {
 
 export const links: LinksFunction = () => {
 	return [
-		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
-		{ rel: 'preconnect', href: 'https://shop.app' },
-		{ rel: 'stylesheet', href: fontCssUrl, as: 'style' },
-		{ rel: 'stylesheet', href: tailwindCssUrl, as: 'style' },
-		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
+		{
+			rel: 'preconnect',
+			href: 'https://cdn.shopify.com',
+		},
+		{
+			rel: 'preconnect',
+			href: 'https://shop.app',
+		},
+		{
+			rel: 'stylesheet',
+			href: fontCssUrl,
+			as: 'style',
+		},
+		{
+			rel: 'stylesheet',
+			href: tailwindCssUrl,
+			as: 'style',
+		},
+		{
+			rel: 'icon',
+			type: 'image/svg+xml',
+			href: favicon,
+		},
 	];
 };
 
@@ -68,16 +86,22 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		// Clear the cart if we get an error
 		if (cartResult.type === 'error') {
 			await session.setCart([]);
-			const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
+			const [{ shop: shopData }, navigationData] = await Promise.all([
+				shopifyClient(SHOP_QUERY),
+				getMainNavigation(),
+			]);
 			return {
 				cartCount: 0,
-				mainNavigation,
-				shop,
+				mainNavigation: navigationData,
+				shop: shopData,
 			};
 		}
 	}
 
-	const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
+	const [{ shop }, mainNavigation] = await Promise.all([
+		shopifyClient(SHOP_QUERY),
+		getMainNavigation(),
+	]);
 
 	// Calculate total quantity by summing all item quantities
 	let cartCount = 0;
@@ -113,7 +137,9 @@ function App() {
 				gtag.pageview(location.pathname, id);
 			}
 		}
-	}, [location.pathname]);
+	}, [
+		location.pathname,
+	]);
 
 	return (
 		<html className="h-full" lang="en">
@@ -123,7 +149,7 @@ function App() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="bg-background text-foreground relative flex min-h-full flex-col">
+			<body className="relative flex min-h-full flex-col bg-background text-foreground">
 				{process.env.NODE_ENV === 'production' && (
 					<>
 						<GoogleAnalytics />
@@ -132,7 +158,12 @@ function App() {
 					</>
 				)}
 				<LoadingProgress />
-				<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+				<PersistQueryClientProvider
+					client={queryClient}
+					persistOptions={{
+						persister,
+					}}
+				>
 					<MainLayout>
 						<Outlet key={location.pathname} />
 					</MainLayout>
@@ -155,7 +186,11 @@ export function ErrorBoundary() {
 			<GenericError error={error} />
 		)
 	) : (
-		<GenericError error={{ statusText: 'Unknown error' }} />
+		<GenericError
+			error={{
+				statusText: 'Unknown error',
+			}}
+		/>
 	);
 
 	return (
@@ -167,7 +202,7 @@ export function ErrorBoundary() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="bg-background text-foreground relative flex h-full flex-col">
+			<body className="relative flex h-full flex-col bg-background text-foreground">
 				{main}
 				<Scripts />
 			</body>

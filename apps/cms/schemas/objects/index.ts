@@ -1,4 +1,3 @@
-// biome-ignore lint/performance/noBarrelFile:
 export { aboutItem } from './about-item';
 export { collectionCardItem } from './collection-card-item';
 export { faqItem } from './faq-item';

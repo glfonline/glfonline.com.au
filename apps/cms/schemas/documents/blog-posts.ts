@@ -27,7 +27,9 @@ export const blogPosts = defineType({
 			name: 'author',
 			title: 'Author',
 			type: 'reference',
-			to: { type: 'author' },
+			to: {
+				type: 'author',
+			},
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -40,7 +42,14 @@ export const blogPosts = defineType({
 			name: 'categories',
 			title: 'Categories',
 			type: 'array',
-			of: [{ type: 'reference', to: { type: 'category' } }],
+			of: [
+				{
+					type: 'reference',
+					to: {
+						type: 'category',
+					},
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -65,7 +74,10 @@ export const blogPosts = defineType({
 		},
 		prepare(selection) {
 			const { author } = selection;
-			return { ...selection, subtitle: author && `by ${author}` };
+			return {
+				...selection,
+				subtitle: author && `by ${author}`,
+			};
 		},
 	},
 });

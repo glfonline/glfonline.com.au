@@ -56,7 +56,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Blog() {
@@ -76,7 +78,7 @@ export default function Blog() {
 						<PostList />
 					</article>
 				</div>
-				<div className="hidden lg:-mr-6 lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
+				<div className="lg:-mr-6 hidden lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
 					<Sidebar />
 				</div>
 			</div>
@@ -90,7 +92,13 @@ function PostList() {
 	return (
 		<div className="mx-auto flex max-w-7xl flex-col gap-8">
 			<div className="flex">
-				<h1 className={getHeadingStyles({ size: '2' })}>Stay connected with our blogs</h1>
+				<h1
+					className={getHeadingStyles({
+						size: '2',
+					})}
+				>
+					Stay connected with our blogs
+				</h1>
 			</div>
 			<section aria-labelledby="gallery-heading">
 				<h2 className="sr-only" id="gallery-heading">
@@ -132,16 +140,16 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 	return (
 		<nav
 			aria-label="Pagination"
-			className="mx-auto mt-6 flex max-w-7xl items-center justify-between text-sm font-medium text-gray-700"
+			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
 					<button
-						type="button"
 						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							navigate(-1);
 						}}
+						type="button"
 					>
 						Previous
 					</button>
@@ -151,13 +159,13 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 			<div className="flex min-w-0 flex-1 justify-end">
 				{hasNextPage && (
 					<button
-						type="button"
 						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
 						onClick={() => {
 							const params = new URLSearchParams(location.search);
 							params.set('after', (after + POSTS_LIMIT).toString());
 							navigate(`${location.pathname}?${params.toString()}`);
 						}}
+						type="button"
 					>
 						Next
 					</button>
@@ -183,7 +191,9 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<Image
 						alt=""
-						breakpoints={[512]}
+						breakpoints={[
+							512,
+						]}
 						className="h-full w-full object-cover sm:absolute sm:inset-0"
 						layout="fullWidth"
 						priority={false}
@@ -193,14 +203,20 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 				</div>
 				<div className="flex min-w-0 flex-1 flex-col justify-between bg-white p-6">
 					<div className="flex flex-1 flex-col gap-4">
-						<h3 className={getHeadingStyles({ size: '3' })}>{heading}</h3>
+						<h3
+							className={getHeadingStyles({
+								size: '3',
+							})}
+						>
+							{heading}
+						</h3>
 						<div className="prose line-clamp-3">
 							<PortableText value={excerpt} />
 						</div>
 					</div>
 					<div className="mt-6 max-w-prose">
-						<p className="text-sm font-bold leading-5 text-gray-900">{author}</p>
-						<div className="text-sm font-bold italic text-gray-700">
+						<p className="font-bold text-gray-900 text-sm leading-5">{author}</p>
+						<div className="font-bold text-gray-700 text-sm italic">
 							<time dateTime={publishDate}>{new Date(publishDate).toDateString()}</time>
 						</div>
 					</div>
@@ -236,8 +252,8 @@ function Sidebar() {
 			)}
 			<CTA
 				cta={{
-					text: 'Shop now',
 					href: '/ladies',
+					text: 'Shop now',
 				}}
 				heading="Shop ladies clothing and accessories"
 				image={{
@@ -248,8 +264,8 @@ function Sidebar() {
 			/>
 			<CTA
 				cta={{
-					text: 'Shop now',
 					href: '/mens',
+					text: 'Shop now',
 				}}
 				heading="Shop mens clothing and accessories"
 				image={{
@@ -265,7 +281,12 @@ function Sidebar() {
 function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 	return (
 		<article className="flex flex-col gap-8">
-			<h2 className={getHeadingStyles({ size: '2' })} id="featured-posts">
+			<h2
+				className={getHeadingStyles({
+					size: '2',
+				})}
+				id="featured-posts"
+			>
 				Featured Post
 			</h2>
 			<div className="flex flex-col gap-6">
@@ -286,7 +307,7 @@ function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 					<span aria-hidden className="mx-2">
 						|
 					</span>
-					<span className="text-sm font-bold italic text-gray-700">
+					<span className="font-bold text-gray-700 text-sm italic">
 						<time dateTime={publishDate}>{new Date(publishDate).toDateString()}</time>
 					</span>
 				</div>
@@ -302,7 +323,10 @@ function CTA({
 	image,
 	theme,
 }: {
-	cta: { text: string; href: string };
+	cta: {
+		text: string;
+		href: string;
+	};
 	heading: string;
 	subHeading: string;
 	image: {
@@ -322,10 +346,17 @@ function CTA({
 				width={320}
 			/>
 			<div
-				className="bg-true-black/50 relative flex flex-1 flex-col items-center gap-2 px-8 py-16 text-center text-white"
+				className="relative flex flex-1 flex-col items-center gap-2 bg-true-black/50 px-8 py-16 text-center text-white"
 				data-theme={theme}
 			>
-				<h2 className={getHeadingStyles({ size: '2', color: 'light' })}>{heading}</h2>
+				<h2
+					className={getHeadingStyles({
+						color: 'light',
+						size: '2',
+					})}
+				>
+					{heading}
+				</h2>
 				<p className="tex-lg font-bold uppercase">{subHeading}</p>
 				<ButtonLink href={cta.href} variant="brand">
 					{cta.text}

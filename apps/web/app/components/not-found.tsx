@@ -10,13 +10,13 @@ export function NotFound() {
 			</div>
 			<div className="isolate flex flex-col gap-4 border bg-white px-6 py-24 text-center lg:px-8">
 				<div className="flex flex-col gap-2">
-					<p className="text-brand-600 text-base font-semibold">404</p>
+					<p className="font-semibold text-base text-brand-600">404</p>
 					<Heading headingElement="h1" size="2">
 						Page not found
 					</Heading>
 				</div>
 				<div className="flex flex-col gap-6">
-					<p className="text-base leading-7 text-gray-600">Sorry, we couldn’t find the page you’re looking for.</p>
+					<p className="text-base text-gray-600 leading-7">Sorry, we couldn’t find the page you’re looking for.</p>
 					<div className="flex items-center justify-center gap-x-6">
 						<ButtonLink href="/" variant="neutral">
 							Go back home
