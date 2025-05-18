@@ -20,7 +20,7 @@
 		"@glfonline/tsconfig": "workspace:^",
 		"@glfonline/web": "workspace:^",
 		"@playwright/test": "^1.51.1",
-		"@types/node": "^22.13.13",
+		"@types/node": "^22.13.17",
 		"dotenv": "^16.4.7",
 		"tiny-invariant": "^1.3.3"
 	}
