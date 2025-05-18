@@ -68,8 +68,8 @@ export function useFieldIds(idProp?: string) {
 	const messageId = `${inputId}--message`;
 
 	return {
-		inputId,
 		descriptionId,
+		inputId,
 		messageId,
 	};
 }

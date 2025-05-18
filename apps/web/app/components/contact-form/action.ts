@@ -31,8 +31,8 @@ export async function action({ request }: ActionFunctionArgs) {
 		 */
 		const challengeResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 			body: JSON.stringify({
-				secret: process.env.TURNSTILE_SECRET_KEY,
 				response: token,
+				secret: process.env.TURNSTILE_SECRET_KEY,
 				...(clientIpAddress && {
 					remoteip: clientIpAddress,
 				}),
@@ -49,9 +49,7 @@ export async function action({ request }: ActionFunctionArgs) {
 
 		/** Format HTML for contact form notification email */
 		const mailOptions = {
-			to: EMAIL_ADDRESS,
 			from: 'contact_form@glfonline.com.au',
-			subject: `New GLF Online Contact Form Submission from ${first_name}`,
 			html: dedent /* html */`
 				<div>
 					<h1>New GLF Online Contact Form Submission</h1>
@@ -64,6 +62,8 @@ export async function action({ request }: ActionFunctionArgs) {
 					</ul>
 				</div>
 			`.trim(),
+			subject: `New GLF Online Contact Form Submission from ${first_name}`,
+			to: EMAIL_ADDRESS,
 		};
 
 		/** Send email with Sendgrid */

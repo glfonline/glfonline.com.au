@@ -11,8 +11,8 @@ if (!process.env.ENCRYPTION_KEY) {
 
 const sessionStorage = createCookieSessionStorage({
 	cookie: {
-		name: 'session',
 		httpOnly: true,
+		name: 'session',
 		path: '/',
 		sameSite: 'lax',
 		secrets: [
@@ -54,8 +54,8 @@ export function addToCart(cart: Array<CartItem>, variantId: string, quantity: nu
 	}
 	if (!added) {
 		cart.push({
-			variantId,
 			quantity,
+			variantId,
 		});
 	}
 	return cart;
@@ -72,8 +72,8 @@ export function updateCartItem(cart: Array<CartItem>, variantId: string, quantit
 	}
 	if (!updated) {
 		cart.push({
-			variantId,
 			quantity,
+			variantId,
 		});
 	}
 	return cart;

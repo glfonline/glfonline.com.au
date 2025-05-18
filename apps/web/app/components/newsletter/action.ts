@@ -20,8 +20,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 		 */
 		const challengeResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 			body: JSON.stringify({
-				secret: process.env.TURNSTILE_SECRET_KEY,
 				response: data.token,
+				secret: process.env.TURNSTILE_SECRET_KEY,
 				...(clientIpAddress && {
 					remoteip: clientIpAddress,
 				}),
@@ -46,6 +46,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 		url.searchParams.set('GENDER', data.gender);
 
 		await fetch(url.href, {
+			body: null,
+			credentials: 'omit',
 			headers: {
 				accept: '*/*',
 				'accept-language': 'en-US,en;q=0.6',
@@ -56,11 +58,9 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 				'sec-fetch-site': 'cross-site',
 				'sec-gpc': '1',
 			},
-			referrerPolicy: 'same-origin',
-			body: null,
 			method: 'GET',
 			mode: 'cors',
-			credentials: 'omit',
+			referrerPolicy: 'same-origin',
 		});
 
 		return {

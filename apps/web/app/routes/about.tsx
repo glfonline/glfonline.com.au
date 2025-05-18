@@ -63,6 +63,7 @@ export default function AboutPage() {
 					<Fragment key={_key}>
 						<Hero
 							image={{
+								alt: aboutImage.asset.altText ?? '',
 								url: urlFor({
 									_ref: aboutImage.asset._id,
 									crop: aboutImage.crop,
@@ -73,7 +74,6 @@ export default function AboutPage() {
 									.height(385)
 									.dpr(2)
 									.url(),
-								alt: aboutImage.asset.altText ?? '',
 							}}
 						/>
 						<AboutSection

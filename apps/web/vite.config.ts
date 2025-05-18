@@ -15,11 +15,11 @@ installGlobals({
 });
 
 export default defineConfig({
+	build: {
+		sourcemap: true,
+	},
 	plugins: [
 		remix({
-			ignoredRouteFiles: [
-				'**/.*',
-			],
 			future: {
 				unstable_optimizeDeps: true,
 				v3_fetcherPersist: true,
@@ -28,6 +28,9 @@ export default defineConfig({
 				v3_singleFetch: true,
 				v3_throwAbortReason: true,
 			},
+			ignoredRouteFiles: [
+				'**/.*',
+			],
 			presets: [
 				vercelPreset(),
 			],
@@ -40,9 +43,5 @@ export default defineConfig({
 
 	server: {
 		port: 3000,
-	},
-
-	build: {
-		sourcemap: true,
 	},
 });

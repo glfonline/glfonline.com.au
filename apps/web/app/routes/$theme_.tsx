@@ -19,13 +19,13 @@ const ThemeSchema = z.object({
 
 const CollectionSchema = z.object({
 	_id: z.string(),
-	theme: z.string(),
+	brandsWeLove,
 	collectionCards: z.array(
 		z.object({
 			_key: z.string(),
 			href: z.string(),
-			label: z.string(),
 			image: imageWithAltSchema,
+			label: z.string(),
 			span: z.enum([
 				'2',
 				'3',
@@ -33,7 +33,7 @@ const CollectionSchema = z.object({
 			]),
 		}),
 	),
-	brandsWeLove,
+	theme: z.string(),
 });
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -70,10 +70,12 @@ export default function CollectionsPage() {
 				{collection.collectionCards.map((collection, index) => (
 					<CollectionCard
 						cta={{
-							text: collection.label,
 							href: collection.href,
+							text: collection.label,
 						}}
 						image={{
+							alt: collection.image.asset.altText ?? '',
+							objectPosition: 'top',
 							src: urlFor({
 								_ref: collection.image.asset._id,
 								crop: collection.image.crop,
@@ -84,8 +86,6 @@ export default function CollectionsPage() {
 								.height(384)
 								.dpr(2)
 								.url(),
-							alt: collection.image.asset.altText ?? '',
-							objectPosition: 'top',
 						}}
 						key={collection._key}
 						priority={index === 0}

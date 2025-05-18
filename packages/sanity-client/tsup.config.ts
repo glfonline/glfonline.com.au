@@ -1,11 +1,11 @@
 import { defineConfig } from 'tsup';
 
 export default defineConfig((options) => ({
+	clean: !options.watch,
+	dts: true,
 	entry: [
 		'src/index.ts',
 	],
-	clean: !options.watch,
-	dts: true,
 	format: [
 		'esm',
 	],

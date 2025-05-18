@@ -63,6 +63,7 @@ export default function TestimonialsPage() {
 			<div className="flex w-full flex-col gap-10">
 				<Hero
 					image={{
+						alt: heroImage.asset.altText ?? '',
 						url: urlFor({
 							_ref: heroImage.asset._id,
 							crop: heroImage.crop,
@@ -73,7 +74,6 @@ export default function TestimonialsPage() {
 							.height(385)
 							.dpr(2)
 							.url(),
-						alt: heroImage.asset.altText ?? '',
 					}}
 					title={title}
 				/>

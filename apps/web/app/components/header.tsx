@@ -94,7 +94,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						</button>
 
 						{/* Search */}
-						<button type="button" className="ml-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
+						<button className="ml-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch} type="button">
 							<span className="sr-only">Search</span>
 							<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 						</button>
@@ -110,7 +110,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 						<div className="flex items-center gap-8 lg:ml-8">
 							<div className="flex">
 								<div className="hidden lg:flex">
-									<button type="button" className="-m-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch}>
+									<button className="-m-2 p-2 text-gray-600 hover:text-gray-800" onClick={toggleSearch} type="button">
 										<span className="sr-only">Search</span>
 										<MagnifyingGlassIcon aria-hidden="true" className="h-6 w-6" />
 									</button>

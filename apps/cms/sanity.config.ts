@@ -5,20 +5,17 @@ import { structure } from './desk';
 import { schemaTypes } from './schemas';
 
 export default defineConfig({
-	name: 'default',
-	title: 'GLF Online',
-
-	projectId: 'zah69run',
 	dataset: 'production',
-
+	name: 'default',
 	plugins: [
 		structureTool({
 			structure,
 		}),
 		visionTool(),
 	],
-
+	projectId: 'zah69run',
 	schema: {
 		types: schemaTypes,
 	},
+	title: 'GLF Online',
 });

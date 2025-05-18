@@ -1,6 +1,20 @@
 {
 	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.4/schema.json",
+	"assist": {
+		"actions": {
+			"source": {
+				"organizeImports": "on",
+				"recommended": true,
+				"useSortedAttributes": "on",
+				"useSortedKeys": "off",
+				"useSortedProperties": "on"
+			}
+		}
+	},
 	"css": {
+		"assist": {
+			"enabled": true
+		},
 		"formatter": {
 			"enabled": true,
 			"indentStyle": "tab",
@@ -8,16 +22,10 @@
 			"lineEnding": "lf",
 			"lineWidth": 120,
 			"quoteStyle": "single"
+		},
+		"linter": {
+			"enabled": true
 		}
-	},
-	"formatter": {
-		"attributePosition": "auto",
-		"enabled": true,
-		"formatWithErrors": false,
-		"indentStyle": "tab",
-		"indentWidth": 2,
-		"lineEnding": "lf",
-		"lineWidth": 120
 	},
 	"files": {
 		"includes": [
@@ -36,20 +44,39 @@
 			"!**/apps/web/app/styles/tailwind.css"
 		]
 	},
+	"formatter": {
+		"attributePosition": "auto",
+		"enabled": true,
+		"formatWithErrors": false,
+		"indentStyle": "tab",
+		"indentWidth": 2,
+		"lineEnding": "lf",
+		"lineWidth": 120
+	},
 	"javascript": {
 		"formatter": {
 			"arrowParentheses": "always",
 			"attributePosition": "auto",
 			"bracketSameLine": false,
 			"bracketSpacing": true,
+			"enabled": true,
 			"expand": "always",
+			"indentStyle": "tab",
+			"indentWidth": 2,
 			"jsxQuoteStyle": "double",
+			"lineEnding": "lf",
+			"lineWidth": 120,
 			"quoteProperties": "asNeeded",
 			"quoteStyle": "single",
 			"semicolons": "always",
 			"trailingCommas": "all"
 		},
 		"globals": ["React", "JSX"]
+	},
+	"json": {
+		"assist": {
+			"enabled": false
+		}
 	},
 	"linter": {
 		"enabled": true,
@@ -61,15 +88,21 @@
 				"noSvgWithoutTitle": "off",
 				"useSemanticElements": "off"
 			},
-			"complexity": {},
+			"complexity": {
+				"recommended": true
+			},
 			"correctness": {
 				"noNodejsModules": "off",
 				"noUndeclaredDependencies": "off",
+				"recommended": true,
 				"useImportExtensions": "off"
 			},
-			"performance": {},
+			"performance": {
+				"recommended": true
+			},
 			"security": {
-				"noDangerouslySetInnerHtml": "off"
+				"noDangerouslySetInnerHtml": "off",
+				"recommended": true
 			},
 			"style": {
 				"noDefaultExport": "off",
@@ -96,12 +129,11 @@
 			},
 			"suspicious": {
 				"noArrayIndexKey": "off",
+				"noConsole": { "level": "off", "options": { "allow": ["log"] } },
 				"noEmptyBlockStatements": "off",
 				"noExplicitAny": "off",
-				"noReactSpecificProps": "off",
-				"noConsole": { "level": "off", "options": { "allow": ["log"] } }
+				"noReactSpecificProps": "off"
 			}
 		}
-	},
-	"assist": { "actions": { "source": { "organizeImports": "on" } } }
+	}
 }

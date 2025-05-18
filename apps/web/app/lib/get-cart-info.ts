@@ -43,19 +43,19 @@ export async function getCartInfo(items: Array<CartItem>): Promise<CartResult> {
 		// Check if we have a valid cart with checkout URL
 		if (json.cartCreate?.cart?.checkoutUrl)
 			return {
-				type: 'success',
 				cart: json.cartCreate.cart,
+				type: 'success',
 			};
 
 		// Invalid cart response - return error
 		return {
-			type: 'error',
 			error: 'Invalid cart response. Cart could not be created.',
+			type: 'error',
 		};
 	} catch (err) {
 		return {
-			type: 'error',
 			error: `Failed to create cart: ${err instanceof Error ? err.message : String(err)}`,
+			type: 'error',
 		};
 	}
 }

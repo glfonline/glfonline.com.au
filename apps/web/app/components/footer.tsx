@@ -78,13 +78,11 @@ export function Footer() {
 
 const descriptionList = [
 	{
+		description: <>{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia</>,
 		heading: 'Address',
 		icon: HouseIcon,
-		description: <>{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia</>,
 	},
 	{
-		heading: 'Hours',
-		icon: ClockIcon,
 		description: (
 			<ul role="list">
 				{Object.entries(HOURS).map(([key, value], index) => (
@@ -95,10 +93,10 @@ const descriptionList = [
 				))}
 			</ul>
 		),
+		heading: 'Hours',
+		icon: ClockIcon,
 	},
 	{
-		heading: 'Phone number',
-		icon: PhoneIcon,
 		description: (
 			<>
 				{CONTACT_NUMBERS.map(({ name, phone }, index) => (
@@ -114,10 +112,10 @@ const descriptionList = [
 				))}
 			</>
 		),
+		heading: 'Phone number',
+		icon: PhoneIcon,
 	},
 	{
-		heading: 'Email',
-		icon: MailIcon,
 		description: (
 			<>
 				<a
@@ -128,5 +126,7 @@ const descriptionList = [
 				</a>
 			</>
 		),
+		heading: 'Email',
+		icon: MailIcon,
 	},
 ];

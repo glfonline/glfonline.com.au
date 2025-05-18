@@ -104,11 +104,11 @@ function parseRequestParameters(params: unknown, request: Request) {
 	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};
 
 	return {
-		params: paramsResult.data,
 		after,
-		sort,
-		productType,
 		filterOptions,
+		params: paramsResult.data,
+		productType,
+		sort,
 	};
 }
 
@@ -124,9 +124,9 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 			filterOptions,
 			handle: collectionHandle,
 			itemsPerPage: ITEMS_PER_PAGE,
+			productType,
 			sortBy: sort,
 			theme,
-			productType,
 		}),
 		getProductFilterOptions({
 			collectionHandle,
@@ -137,11 +137,11 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 
 	// Process collection data - now ensures products is always defined
 	const collection = processCollectionData({
-		collectionPromise,
-		theme,
 		collectionHandle,
-		sort,
+		collectionPromise,
 		filterOptions,
+		sort,
+		theme,
 	});
 
 	// Process options data
@@ -179,8 +179,8 @@ export default function CollectionPage() {
 		<div className="flex flex-col gap-12 py-9" data-theme={theme}>
 			<Hero
 				image={{
-					url: imageMap[theme],
 					alt: image.altText ?? '',
+					url: imageMap[theme],
 				}}
 				title={title}
 			/>

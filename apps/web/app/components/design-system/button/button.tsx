@@ -36,7 +36,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 		>
 			{children}
 			<span aria-live="assertive" className={clsx(isLoading ? undefined : 'sr-only')}>
-				<span role="status" aria-live="polite">
+				<span aria-live="polite" role="status">
 					{isLoading && (
 						<>
 							<Spinner />

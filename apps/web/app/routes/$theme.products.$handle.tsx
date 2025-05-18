@@ -92,8 +92,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 	// If the item isn't in the cart yet, add it
 	if (!existingItem) {
 		tempCart.push({
-			variantId,
 			quantity: 1,
+			variantId,
 		});
 	}
 
@@ -126,8 +126,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 	// If Shopify rejects the cart, show a user-friendly error message
 	return data(
 		{
-			success: false,
 			error: 'Unable to add item to cart. The item might be out of stock or unavailable.',
+			success: false,
 		},
 		{
 			headers: {
@@ -140,8 +140,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	invariant(data, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.product.title,
 		description: data.product.description,
+		title: data.product.title,
 	});
 	return [
 		seoMeta,
@@ -182,10 +182,10 @@ export default function ProductPage() {
 					<ImageGallery
 						images={product.images.edges.map(({ node: { id, altText, url, height, width } }) => ({
 							node: {
-								id,
 								altText,
-								url,
 								height,
+								id,
+								url,
 								width,
 							},
 						}))}

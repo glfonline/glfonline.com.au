@@ -53,8 +53,8 @@ const CheckoutScheme = z.object({
 });
 
 const QuantityScheme = z.object({
-	variantId: z.string().min(1),
 	quantity: z.coerce.number(),
+	variantId: z.string().min(1),
 });
 
 const RemoveScheme = z.object({

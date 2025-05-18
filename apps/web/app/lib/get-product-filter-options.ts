@@ -25,9 +25,7 @@ export async function getProductFilterOptions({
 	let cursor = after;
 	while (hasNextPage) {
 		const { collection } = await shopifyClient(COLLECTION_OPTIONS_QUERY, {
-			handle: collectionHandle,
 			after: cursor,
-			first,
 			filters: [
 				{
 					available: true,
@@ -36,6 +34,8 @@ export async function getProductFilterOptions({
 					tag: capitalise(theme),
 				},
 			],
+			first,
+			handle: collectionHandle,
 		});
 		const { products } = schema.parse(collection);
 		for (const { node } of products.edges) {
@@ -74,10 +74,6 @@ export async function getProductFilterOptions({
 
 const schema = z.object({
 	products: z.object({
-		pageInfo: z.object({
-			endCursor: z.string(),
-			hasNextPage: z.boolean(),
-		}),
 		edges: z.array(
 			z.object({
 				node: z.object({
@@ -92,6 +88,10 @@ const schema = z.object({
 				}),
 			}),
 		),
+		pageInfo: z.object({
+			endCursor: z.string(),
+			hasNextPage: z.boolean(),
+		}),
 	}),
 });
 

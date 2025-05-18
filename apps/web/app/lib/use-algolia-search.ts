@@ -21,10 +21,7 @@ export type Product = {
 
 export function useAlgoliaSearch(query: string) {
 	return useQuery({
-		queryKey: [
-			'products',
-			query,
-		],
+		placeholderData: keepPreviousData,
 		queryFn: async () => {
 			if (query) {
 				return await search<Product>({
@@ -37,7 +34,10 @@ export function useAlgoliaSearch(query: string) {
 				hits: [],
 			};
 		},
-		placeholderData: keepPreviousData,
+		queryKey: [
+			'products',
+			query,
+		],
 		// staleTime: 5 * 60 * 1000,
 	});
 }

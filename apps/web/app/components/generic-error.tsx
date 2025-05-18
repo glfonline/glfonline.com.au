@@ -26,11 +26,11 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 										__html: addLinksToStackTrace(error.data),
 									}}
 									style={{
-										padding: '2rem',
 										background: 'hsla(10, 50%, 50%, 0.1)',
 										color: 'red',
-										overflow: 'auto',
 										maxWidth: '100%',
+										overflow: 'auto',
+										padding: '2rem',
 									}}
 								/>
 							)}

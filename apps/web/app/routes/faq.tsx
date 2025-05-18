@@ -14,13 +14,13 @@ import { getSeoMeta } from '../seo';
 export const headers = routeHeaders;
 
 const FaqSchema = z.object({
-	heroImage: imageWithAltSchema,
 	faqs: z
 		.object({
-			question: z.nullable(z.string().min(1)),
 			answerRaw: z.any(),
+			question: z.nullable(z.string().min(1)),
 		})
 		.array(),
+	heroImage: imageWithAltSchema,
 });
 
 export async function loader() {
@@ -59,6 +59,7 @@ export default function FaqPage() {
 		<div className="bg-white">
 			<Hero
 				image={{
+					alt: faqPage.heroImage.asset.altText ?? '',
 					url: urlFor({
 						_ref: faqPage.heroImage.asset._id,
 						crop: faqPage.heroImage.crop,
@@ -69,7 +70,6 @@ export default function FaqPage() {
 						.height(385)
 						.dpr(2)
 						.url(),
-					alt: faqPage.heroImage.asset.altText ?? '',
 				}}
 				title="FAQs"
 			/>

@@ -25,23 +25,23 @@ import type { Theme } from '../types';
 export const headers = routeHeaders;
 
 const HomePageSchema = z.object({
-	heroImage: imageWithAltSchema,
-	heading: z.array(z.string()),
+	brandsWeLove,
 	descriptionRaw: z.any(),
+	heading: z.array(z.string()),
+	heroImage: imageWithAltSchema,
 	themeCards: z.array(
 		z.object({
 			_key: z.string(),
 			heading: z.string(),
 			href: z.string(),
-			label: z.string(),
 			image: imageWithAltSchema,
+			label: z.string(),
 			theme: z.enum([
 				'ladies',
 				'mens',
 			]),
 		}),
 	),
-	brandsWeLove,
 });
 
 export async function loader() {
@@ -140,8 +140,8 @@ function CollectionPromo() {
 			{themeCards.map((card) => (
 				<CollectionCard
 					cta={{
-						text: card.label,
 						href: card.href,
+						text: card.label,
 					}}
 					heading={card.heading}
 					image={{
@@ -228,9 +228,9 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 type ObjectPosition = 'center' | 'top' | 'right' | 'bottom' | 'left';
 
 const objectPositionMap: Record<ObjectPosition, `object-${ObjectPosition}`> = {
-	center: 'object-center',
-	top: 'object-top',
-	right: 'object-right',
 	bottom: 'object-bottom',
+	center: 'object-center',
 	left: 'object-left',
+	right: 'object-right',
+	top: 'object-top',
 };

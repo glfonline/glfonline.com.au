@@ -10,8 +10,8 @@ export async function loader() {
 
 		async function getProductPages(cursor?: string) {
 			const newPages = await shopifyClient(ALL_PRODUCTS_QUERY, {
-				first: 250,
 				cursor,
+				first: 250,
 			});
 
 			pages = pages.concat(newPages.products.edges);
@@ -28,8 +28,8 @@ export async function loader() {
 		return allProductPage.map(({ node }) => {
 			const theme = node.tags.map((tag) => tag.toLowerCase()).includes('ladies') ? 'ladies' : 'mens';
 			return {
-				loc: `${WEB_ADDRESS}/${theme}/products/${node.handle}`,
 				changefreq: 'monthly',
+				loc: `${WEB_ADDRESS}/${theme}/products/${node.handle}`,
 				priority: '0.8',
 			};
 		});
@@ -72,8 +72,8 @@ export async function loader() {
 	return new Response(sitemapString, {
 		headers: {
 			'Cache-Control': `public, max-age=${60 * 10}, s-maxage=${60 * 60 * 24}`,
-			'Content-Type': 'application/xml',
 			'Content-Length': String(Buffer.byteLength(sitemapString)),
+			'Content-Type': 'application/xml',
 		},
 	});
 }

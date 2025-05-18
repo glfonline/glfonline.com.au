@@ -34,14 +34,14 @@ export function LoadingProgress() {
 
 	return (
 		<div
-			tabIndex={0}
 			aria-hidden={!isActive}
+			aria-valuemax={100}
+			aria-valuemin={0}
+			aria-valuenow={progress}
 			aria-valuetext={isActive ? 'Loading' : undefined}
 			className="fixed inset-x-0 left-0 top-0 z-50 h-1 animate-pulse"
 			role="progressbar"
-			aria-valuenow={progress}
-			aria-valuemin={0}
-			aria-valuemax={100}
+			tabIndex={0}
 		>
 			<div
 				className={clsx(

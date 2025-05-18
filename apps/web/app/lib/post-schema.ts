@@ -3,19 +3,19 @@ import { imageWithAltSchema } from './image-with-alt-schema';
 
 export const PostSchema = z.object({
 	_id: z.string(),
-	title: z.string(),
-	slug: z.object({
-		current: z.string(),
-	}),
 	author: z.object({
 		name: z.string(),
 	}),
-	mainImage: imageWithAltSchema,
-	publishedAt: z.string().datetime(),
+	bodyRaw: z.any(),
 	categories: z.array(
 		z.object({
 			title: z.string(),
 		}),
 	),
-	bodyRaw: z.any(),
+	mainImage: imageWithAltSchema,
+	publishedAt: z.string().datetime(),
+	slug: z.object({
+		current: z.string(),
+	}),
+	title: z.string(),
 });

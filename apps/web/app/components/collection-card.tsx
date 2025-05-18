@@ -58,9 +58,9 @@ const spanMap = {
 };
 
 const objectPositionMap = {
-	center: 'object-center',
-	top: 'object-top',
-	right: 'object-right',
 	bottom: 'object-bottom',
+	center: 'object-center',
 	left: 'object-left',
+	right: 'object-right',
+	top: 'object-top',
 } as const;
