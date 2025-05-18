@@ -260,7 +260,7 @@
 				"useParseIntRadix": "on",
 				"useSingleJsDocAsterisk": "on",
 				"useSortedClasses": "on",
-				"useSymbolDescription": "off"
+				"useSymbolDescription": "on"
 			},
 			"performance": {
 				"recommended": true,
@@ -282,25 +282,25 @@
 			"style": {
 				"noDefaultExport": "off",
 				"noImplicitBoolean": "off",
-				"noInferrableTypes": "error",
+				"noInferrableTypes": "on",
 				"noNamespaceImport": "off",
-				"noParameterAssign": "error",
-				"noUnusedTemplateLiteral": "error",
-				"noUselessElse": "error",
-				"useAsConstAssertion": "error",
+				"noParameterAssign": "on",
+				"noUnusedTemplateLiteral": "on",
+				"noUselessElse": "on",
+				"useAsConstAssertion": "on",
 				"useBlockStatements": "off",
 				"useConsistentArrayType": {
-					"level": "error",
+					"level": "on",
 					"options": { "syntax": "generic" }
 				},
-				"useConst": "error",
-				"useDefaultParameterLast": "error",
-				"useEnumInitializers": "error",
+				"useConst": "on",
+				"useDefaultParameterLast": "on",
+				"useEnumInitializers": "on",
 				"useFilenamingConvention": "off",
 				"useNamingConvention": "off",
-				"useNumberNamespace": "error",
-				"useSelfClosingElements": "error",
-				"useSingleVarDeclarator": "error"
+				"useNumberNamespace": "on",
+				"useSelfClosingElements": "on",
+				"useSingleVarDeclarator": "on"
 			},
 			"suspicious": {
 				"noArrayIndexKey": "off",
