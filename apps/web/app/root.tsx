@@ -1,18 +1,18 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
 import {
+	isRouteErrorResponse,
 	Links,
 	Meta,
 	type MetaFunction,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
-	isRouteErrorResponse,
 	useLocation,
 	useRouteError,
 } from '@remix-run/react';
 import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { type SeoHandleFunction, getSeoMeta } from '@shopify/hydrogen';
+import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';

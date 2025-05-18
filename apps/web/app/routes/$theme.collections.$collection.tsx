@@ -21,8 +21,8 @@ import { Hero } from '../components/hero';
 import { capitalise } from '../lib/capitalise';
 import { badRequest, notFound, serverError } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
-import { type SortBy, getProductsFromCollectionByTag } from '../lib/get-collection-products';
-import { PRODUCT_TYPE, getProductFilterOptions } from '../lib/get-product-filter-options';
+import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collection-products';
+import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({

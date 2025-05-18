@@ -1,4 +1,4 @@
-import { type SeoConfig, initSeo } from 'remix-seo';
+import { initSeo, type SeoConfig } from 'remix-seo';
 
 export const seoConfig = {
 	title: 'Ladies and Mens golf clothing and apparel, skorts and clearance items',

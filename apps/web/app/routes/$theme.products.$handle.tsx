@@ -1,6 +1,6 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction, data } from '@remix-run/node';
+import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -9,7 +9,7 @@ import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
-import { Heading, getHeadingStyles } from '../components/design-system/heading';
+import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';

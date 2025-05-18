@@ -12,7 +12,9 @@
 	},
 	"main": "./dist/index.js",
 	"types": "./dist/index.d.ts",
-	"files": ["dist/**"],
+	"files": [
+		"dist/**"
+	],
 	"scripts": {
 		"build": "pnpm run build:ts-gql && pnpm run build:tsup",
 		"build:ts-gql": "ts-gql build",

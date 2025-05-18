@@ -1,5 +1,5 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, data } from '@remix-run/node';
+import { data, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Fragment } from 'react';
 import { z } from 'zod';

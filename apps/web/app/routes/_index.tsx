@@ -1,5 +1,5 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { type MetaFunction, data } from '@remix-run/node';
+import { data, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
