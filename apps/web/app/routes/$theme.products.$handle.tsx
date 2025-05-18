@@ -1,6 +1,6 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
+import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
@@ -54,7 +54,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			handle: result.data.handle,
 		});
 		if (!product) notFound();
-		return data(
+		return json(
 			{
 				product,
 				theme: result.data.theme,
@@ -69,7 +69,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	notFound();
 }
 
-export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof data<ActionData>>> {
+export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof json<ActionData>>> {
 	const [formData, session] = await Promise.all([
 		request.formData(),
 		getSession(request),
@@ -111,7 +111,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 			1,
 		);
 		await session.setCart(updatedCart);
-		return data(
+		return json(
 			{
 				success: true,
 			},
@@ -124,7 +124,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 	}
 
 	// If Shopify rejects the cart, show a user-friendly error message
-	return data(
+	return json(
 		{
 			error: 'Unable to add item to cart. The item might be out of stock or unavailable.',
 			success: false,
@@ -232,7 +232,7 @@ export default function ProductPage() {
 												id={node.id}
 												name={form.fields.variantId()}
 												onChange={(event) => {
-													setVariant(product.variants.edges.find(({ node }) => node.id === event.target.value));
+													setVariant(product.variants.edges.find((v) => v.node.id === event.target.value));
 												}}
 												type="radio"
 												value={node.id}

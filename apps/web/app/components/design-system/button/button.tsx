@@ -4,6 +4,7 @@ import { mergeRefs } from '../../../lib/merge-refs';
 import { Spinner } from '../spinner';
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
 	{ children, className, isLoading, onClick, size, type = 'button', variant, ...consumerProps },
 	forwardedRef,

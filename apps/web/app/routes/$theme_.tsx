@@ -67,29 +67,29 @@ export default function CollectionsPage() {
 	return (
 		<div data-theme={theme}>
 			<div className="grid gap-4 lg:grid-cols-5">
-				{collection.collectionCards.map((collection, index) => (
+				{collection.collectionCards.map((c, index) => (
 					<CollectionCard
 						cta={{
-							href: collection.href,
-							text: collection.label,
+							href: c.href,
+							text: c.label,
 						}}
 						image={{
-							alt: collection.image.asset.altText ?? '',
+							alt: c.image.asset.altText ?? '',
 							objectPosition: 'top',
 							src: urlFor({
-								_ref: collection.image.asset._id,
-								crop: collection.image.crop,
-								hotspot: collection.image.hotspot,
+								_ref: c.image.asset._id,
+								crop: c.image.crop,
+								hotspot: c.image.hotspot,
 							})
 								.auto('format')
-								.width((1280 / 5) * Number(collection.span))
+								.width((1280 / 5) * Number(c.span))
 								.height(384)
 								.dpr(2)
 								.url(),
 						}}
-						key={collection._key}
+						key={c._key}
 						priority={index === 0}
-						span={collection.span}
+						span={c.span}
 					/>
 				))}
 			</div>

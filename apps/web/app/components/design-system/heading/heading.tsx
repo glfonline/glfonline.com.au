@@ -2,6 +2,7 @@ import { assert, isDefined } from 'emery';
 import { forwardRef } from 'react';
 import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
 	{ children, className, color, headingElement, size, weight, ...consumerProps },
 	forwardedRef,

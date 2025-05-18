@@ -5,6 +5,7 @@ import { CheckCircleIcon } from '../../vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';
 import { FieldContextProvider, type FieldContextType } from './context';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 	{
 		children,

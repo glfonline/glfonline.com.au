@@ -64,7 +64,7 @@ export const meta: MetaFunction<typeof loader> = () => {
 
 export default function Index() {
 	const loaderData = useLoaderData<typeof loader>();
-	const brandsWeLove = loaderData?.brandsWeLove || [];
+	const brands = loaderData?.brandsWeLove || [];
 
 	return (
 		<>
@@ -72,7 +72,7 @@ export default function Index() {
 				<Hero />
 				<CollectionPromo />
 			</article>
-			<BrandsWeLove brands={brandsWeLove} />
+			<BrandsWeLove brands={brands} />
 			<ContactForm />
 			<NewsletterSignup />
 			<StoreLocationMap />

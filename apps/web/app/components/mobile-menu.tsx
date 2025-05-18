@@ -20,7 +20,12 @@ import type { loader } from '../../app/root';
 import { type NavItem, socialLinks } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
-export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: boolean) => void }) {
+type MobileMenuProps = {
+	open: boolean;
+	setOpen: (open: boolean) => void;
+};
+
+export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 	useEffect(() => {
 		if (open) {
 			const onClose = () => {

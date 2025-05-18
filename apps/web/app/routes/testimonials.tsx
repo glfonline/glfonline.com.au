@@ -1,5 +1,5 @@
 import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
-import { data, type MetaFunction } from '@remix-run/node';
+import { data as json, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
@@ -28,11 +28,11 @@ const TestimonialsSchema = z.object({
 });
 
 export async function loader() {
-	const { TestimonialsPage } = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
+	const res = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
 		id: 'testimonials',
 	});
-	const { testimonials, heroImage } = TestimonialsSchema.parse(TestimonialsPage);
-	return data(
+	const { testimonials, heroImage } = TestimonialsSchema.parse(res.TestimonialsPage);
+	return json(
 		{
 			heroImage,
 			testimonials,

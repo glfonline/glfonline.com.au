@@ -29,14 +29,14 @@ export function Footer() {
 								{footerNavigation.map((col, index) => (
 									<div className="flex md:justify-center" key={index}>
 										<ul>
-											{col.map((col) => (
-												<li className="mt-3 first:mt-0" key={col.href}>
+											{col.map((c) => (
+												<li className="mt-3 first:mt-0" key={c.href}>
 													<Link
 														className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
 														prefetch="intent"
-														to={col.href}
+														to={c.href}
 													>
-														{col.label}
+														{c.label}
 													</Link>
 												</li>
 											))}

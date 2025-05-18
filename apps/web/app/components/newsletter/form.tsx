@@ -72,9 +72,7 @@ export function NewsletterSignup() {
 						<div className="flex min-h-[65px] items-center flex-col gap-1 sm:col-span-4">
 							{isMounted && (
 								<Turnstile
-									onVerify={(token) => {
-										setToken(token);
-									}}
+									onVerify={setToken}
 									sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 									size="normal"
 									style={{

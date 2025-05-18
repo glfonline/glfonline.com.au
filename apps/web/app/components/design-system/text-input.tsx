@@ -2,6 +2,7 @@ import { clsx } from 'clsx';
 import { forwardRef } from 'react';
 import { useFieldContext } from './field/context';
 
+// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const TextInput = forwardRef<HTMLInputElement, React.InputHTMLAttributes<HTMLInputElement>>(function TextInput(
 	{ className, type = 'text', ...consumerProps }: React.InputHTMLAttributes<HTMLInputElement>,
 	forwardedRef,

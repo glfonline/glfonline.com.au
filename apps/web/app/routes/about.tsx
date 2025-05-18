@@ -28,11 +28,11 @@ const AboutSchema = z.object({
 });
 
 export async function loader() {
-	const { AboutPage } = await sanityClient(ABOUT_PAGE_QUERY, {
+	const res = await sanityClient(ABOUT_PAGE_QUERY, {
 		id: 'about',
 	});
 
-	const { sections } = AboutSchema.parse(AboutPage);
+	const { sections } = AboutSchema.parse(res.AboutPage);
 	return data(
 		{
 			sections,
