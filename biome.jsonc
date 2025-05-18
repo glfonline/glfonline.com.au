@@ -374,12 +374,27 @@
 				"noUnsafeNegation": "on",
 				"noVar": "on",
 				"useAdjacentOverloadSignatures": "on",
-				"useAwait": "on"
+				"useAwait": "on",
+				"useDefaultSwitchClauseLast": "on",
+				"useErrorMessage": "on",
+				"useGetterReturn": "on",
+				"useGoogleFontDisplay": "off",
+				"useGuardForIn": "on",
+				"useIsArray": "on",
+				"useNamespaceKeyword": "on",
+				"useNumberToFixedDigitsArgument": "on",
+				"useStrictMode": "on",
+				"useValidTypeof": "on"
 			}
 		}
 	},
 	"overrides": [],
 	"plugins": [],
 	"root": true,
-	"vcs": null
+	"vcs": {
+		"clientKind": "git",
+		"defaultBranch": "main",
+		"enabled": true,
+		"useIgnoreFile": true
+	}
 }
