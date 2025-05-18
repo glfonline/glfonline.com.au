@@ -2,11 +2,11 @@
 	"$schema": "https://turbo.build/schema.json",
 	"extends": ["//"],
 	"tasks": {
-		"check:types": {
-			"dependsOn": []
-		},
 		"build": {
 			"env": ["BASE_URL", "CI", "PORT"]
+		},
+		"check:types": {
+			"dependsOn": []
 		}
 	}
 }

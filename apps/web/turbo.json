@@ -2,13 +2,13 @@
 	"$schema": "https://turbo.build/schema.json",
 	"extends": ["//"],
 	"tasks": {
-		"check:types": {
-			"dependsOn": ["^build"]
-		},
 		"build": {
 			"dependsOn": ["^build"],
 			"env": ["ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_API_KEY", "TURNSTILE_SECRET_KEY", "SENTRY_AUTH_TOKEN"],
 			"outputs": [".cache/**", "build/**", "public/build/**"]
+		},
+		"check:types": {
+			"dependsOn": ["^build"]
 		}
 	}
 }

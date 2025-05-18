@@ -2,9 +2,9 @@
 	"$schema": "https://json.schemastore.org/tsconfig",
 	"display": "dom",
 	"compilerOptions": {
+		"allowJs": true,
 		"allowUnreachableCode": false,
 		"allowUnusedLabels": false,
-		"allowJs": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"isolatedModules": true,
