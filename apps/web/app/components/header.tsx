@@ -33,7 +33,7 @@ function TopNav() {
 	return (
 		<div className="bg-white">
 			<div className="mx-auto flex h-12 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-				<p className="flex-1 text-center text-sm font-bold uppercase lg:flex-none">
+				<p className="flex-1 text-center font-bold text-sm uppercase lg:flex-none">
 					Free delivery on orders over $100 Australia wide
 				</p>
 
@@ -44,7 +44,7 @@ function TopNav() {
 					<div className="inline-flex gap-3">
 						{socialLinks.map((link) => (
 							<a
-								className="focus:ring-brand inline-flex focus:outline-none focus:ring-2"
+								className="inline-flex focus:outline-none focus:ring-2 focus:ring-brand"
 								href={link.href}
 								key={link.href}
 							>
@@ -69,7 +69,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 	return (
 		<div className="bg-white">
 			<SearchDialog isSearchOpen={isSearchOpen} setSearchOpen={setSearchOpen} />
-			<div className="mx-auto max-w-7xl border-y border-gray-200">
+			<div className="mx-auto max-w-7xl border-gray-200 border-y">
 				<div className="flex h-14 items-center justify-between">
 					{/* Logo (lg+) */}
 					<NavLink className="hidden h-full items-center lg:flex lg:px-8 xl:w-80" to="/">
@@ -123,7 +123,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 										aria-hidden="true"
 										className="h-6 w-6 flex-shrink-0 text-gray-600 group-hover:text-gray-800"
 									/>
-									<span className="text-sm text-gray-700 group-hover:text-gray-800">{cartCount}</span>
+									<span className="text-gray-700 text-sm group-hover:text-gray-800">{cartCount}</span>
 									<span className="sr-only">items in cart, view bag</span>
 								</NavLink>
 							</div>
@@ -145,7 +145,7 @@ function MegaMenu() {
 	const { mainNavigation } = useLoaderData<typeof loader>();
 	return (
 		<div className="hidden h-full lg:flex lg:flex-1">
-			<div className="grid h-full w-full auto-cols-fr grid-flow-col justify-center divide-x divide-gray-200 border-l border-gray-200">
+			<div className="grid h-full w-full auto-cols-fr grid-flow-col justify-center divide-x divide-gray-200 border-gray-200 border-l">
 				{mainNavigation.navCategories.map((category, index) => (
 					<Popover className="flex" data-theme={category.theme} key={index}>
 						{({ open }) => (
@@ -190,7 +190,7 @@ function MegaMenu() {
 																	<div className="p-6">
 																		<PopoverButton
 																			as={NavLink}
-																			className="block font-bold uppercase text-gray-900"
+																			className="block font-bold text-gray-900 uppercase"
 																			to={item.href}
 																		>
 																			<span aria-hidden="true" className="absolute inset-0 z-10" />
@@ -271,7 +271,7 @@ function CategorySection({
 	const id = useId();
 	return (
 		<div className={spanMap[getSpan(section.items.length)]}>
-			<p className="font-bold uppercase text-gray-900" id={id}>
+			<p className="font-bold text-gray-900 uppercase" id={id}>
 				{section.label}
 			</p>
 			<div className="grid grid-cols-2 gap-x-8 gap-y-10">

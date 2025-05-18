@@ -253,13 +253,13 @@
 				"useExportsLast": "off",
 				"useForComponent": "off",
 				"useGoogleFontPreconnect": "off",
-				"useIterableCallbackReturn": "off",
+				"useIterableCallbackReturn": "on",
 				"useNamedOperation": "off",
 				"useNamingConvention": "off",
-				"useNumericSeparators": "off",
-				"useParseIntRadix": "off",
-				"useSingleJsDocAsterisk": "off",
-				"useSortedClasses": "off",
+				"useNumericSeparators": "on",
+				"useParseIntRadix": "on",
+				"useSingleJsDocAsterisk": "on",
+				"useSortedClasses": "on",
 				"useSymbolDescription": "off"
 			},
 			"performance": {

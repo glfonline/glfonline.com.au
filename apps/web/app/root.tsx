@@ -149,7 +149,7 @@ function App() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="bg-background text-foreground relative flex min-h-full flex-col">
+			<body className="relative flex min-h-full flex-col bg-background text-foreground">
 				{process.env.NODE_ENV === 'production' && (
 					<>
 						<GoogleAnalytics />
@@ -202,7 +202,7 @@ export function ErrorBoundary() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="bg-background text-foreground relative flex h-full flex-col">
+			<body className="relative flex h-full flex-col bg-background text-foreground">
 				{main}
 				<Scripts />
 			</body>

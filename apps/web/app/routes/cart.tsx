@@ -135,7 +135,7 @@ export default function CartPage() {
 	) {
 		return (
 			<div className="bg-white">
-				<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 text-center sm:px-6 lg:max-w-7xl lg:px-8">
+				<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 text-center sm:px-6 lg:max-w-7xl lg:px-8">
 					<div className="flex flex-col gap-6">
 						<Heading headingElement="h1" size="2">
 							Shopping Cart
@@ -157,7 +157,7 @@ export default function CartPage() {
 
 	return (
 		<div className="bg-white">
-			<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 sm:px-6 lg:max-w-7xl lg:px-8">
+			<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 sm:px-6 lg:max-w-7xl lg:px-8">
 				<Heading headingElement="h1" size="2">
 					Shopping Cart
 				</Heading>
@@ -168,7 +168,7 @@ export default function CartPage() {
 						</h2>
 
 						{Array.isArray(cart.lines.edges) ? (
-							<ul className="divide-y divide-gray-200 border-b border-t border-gray-200" role="list">
+							<ul className="divide-y divide-gray-200 border-gray-200 border-t border-b" role="list">
 								{cart.lines.edges.map(({ node }) => {
 									const theme = node.merchandise.product.tags.includes('ladies') ? 'ladies' : 'mens';
 									return (
@@ -208,7 +208,7 @@ export default function CartPage() {
 																<p className="text-gray-500">{node.merchandise.title}</p>
 															</div>
 														)}
-														<p className="mt-1 text-sm text-gray-900">
+														<p className="mt-1 text-gray-900 text-sm">
 															{formatMoney(node.cost.amountPerQuantity.amount, 'AUD')}
 														</p>
 													</div>
@@ -223,7 +223,7 @@ export default function CartPage() {
 													</div>
 												</div>
 
-												<p className="mt-4 flex space-x-2 text-sm text-gray-700">
+												<p className="mt-4 flex space-x-2 text-gray-700 text-sm">
 													{node.merchandise.currentlyNotInStock ? (
 														<ClockIcon aria-hidden="true" className="h-5 w-5 flex-shrink-0 text-gray-300" />
 													) : (
@@ -245,18 +245,18 @@ export default function CartPage() {
 						className="mt-16 flex flex-col gap-6 bg-gray-50 px-4 py-6 sm:p-6 lg:col-span-5 lg:mt-0 lg:p-8"
 						method="post"
 					>
-						<h2 className="text-lg text-gray-900" id="summary-heading">
+						<h2 className="text-gray-900 text-lg" id="summary-heading">
 							Order summary
 						</h2>
 
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
-								<dt className="text-sm text-gray-600">Subtotal</dt>
-								<dd className="text-sm text-gray-900">{formatMoney(cart.cost.subtotalAmount.amount || 0, 'AUD')}</dd>
+								<dt className="text-gray-600 text-sm">Subtotal</dt>
+								<dd className="text-gray-900 text-sm">{formatMoney(cart.cost.subtotalAmount.amount || 0, 'AUD')}</dd>
 							</div>
 						</dl>
 
-						<p className="text-sm text-gray-600">Taxes and shipping are calculated at checkout</p>
+						<p className="text-gray-600 text-sm">Taxes and shipping are calculated at checkout</p>
 
 						{cart.checkoutUrl && (
 							<>
@@ -292,16 +292,16 @@ function QuantityPicker({
 
 	return (
 		<div className="flex flex-col items-start gap-2">
-			<span className="text-sm text-gray-700 hover:text-gray-800">Quantity</span>
+			<span className="text-gray-700 text-sm hover:text-gray-800">Quantity</span>
 			<span className="isolate inline-flex shadow-sm">
 				<fetcher.Form method="post">
 					<input name="variantId" type="hidden" value={variantId} />
 					<input name="quantity" type="hidden" value={quantity - 1} />
 					<button
 						className={clsx(
-							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
+							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-gray-700 text-sm',
 							'hover:bg-gray-50',
-							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
+							'focus:z-10 focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary',
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
@@ -316,7 +316,7 @@ function QuantityPicker({
 				<span
 					className={clsx(
 						fetcher.state === 'loading' && 'opacity-50',
-						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-sm text-gray-700',
+						'-ml-px relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-gray-700 text-sm',
 					)}
 				>
 					{quantity}
@@ -326,9 +326,9 @@ function QuantityPicker({
 					<input name="quantity" type="hidden" value={quantity + 1} />
 					<button
 						className={clsx(
-							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-sm text-gray-700',
+							'-ml-px relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-gray-700 text-sm',
 							'hover:bg-gray-50',
-							'focus:border-brand-primary focus:ring-brand-primary focus:z-10 focus:outline-none focus:ring-1',
+							'focus:z-10 focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary',
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
@@ -349,12 +349,12 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
 
 	return (
-		<fetcher.Form className="absolute right-0 top-0" method="post">
+		<fetcher.Form className="absolute top-0 right-0" method="post">
 			<input name="variantId" type="hidden" value={variantId} />
 			<button
 				className={clsx(
 					'-m-2 inline-flex bg-white p-2 text-gray-400',
-					'focus:ring-brand-primary hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2',
+					'hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2',
 				)}
 				name={INTENT}
 				type="submit"

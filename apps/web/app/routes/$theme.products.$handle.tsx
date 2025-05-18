@@ -220,7 +220,7 @@ export default function ProductPage() {
 						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
 							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
 								<div className="flex items-center justify-between">
-									<legend className="text-sm font-bold text-gray-900">Options</legend>
+									<legend className="font-bold text-gray-900 text-sm">Options</legend>
 								</div>
 								<div className="flex flex-wrap gap-3">
 									{product.variants.edges.map(({ node }) => (
@@ -239,11 +239,11 @@ export default function ProductPage() {
 											/>
 											<span
 												className={clsx(
-													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 text-sm font-bold uppercase',
+													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 font-bold text-sm uppercase',
 													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
 													node.availableForSale ? 'cursor-pointer focus:outline-none' : 'cursor-not-allowed opacity-25',
-													'[:focus+&]:ring-brand-500 [:focus+&]:ring-2 [:focus+&]:ring-offset-2',
-													'[:checked+&]:bg-brand-primary [:checked+&]:hover:bg-brand-light [:checked+&]:border-transparent [:checked+&]:text-white',
+													'[:focus+&]:ring-2 [:focus+&]:ring-brand-500 [:focus+&]:ring-offset-2',
+													'[:checked+&]:border-transparent [:checked+&]:bg-brand-primary [:checked+&]:text-white [:checked+&]:hover:bg-brand-light',
 												)}
 											>
 												{node.title}
@@ -269,7 +269,7 @@ export default function ProductPage() {
 									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
 								</Button>
 
-								{formError && <p className="text-red-500 text-sm mt-2">{formError}</p>}
+								{formError && <p className="mt-2 text-red-500 text-sm">{formError}</p>}
 							</div>
 						</Form>
 
@@ -311,7 +311,7 @@ function ImageGallery({
 				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
 					{images.map(({ node }) => (
 						<Tab
-							className="focus:ring-brand relative flex h-24 cursor-pointer items-center justify-center bg-white text-sm font-medium uppercase text-gray-900 hover:bg-gray-50 focus:outline-none focus:ring focus:ring-opacity-50 focus:ring-offset-4"
+							className="relative flex h-24 cursor-pointer items-center justify-center bg-white font-medium text-gray-900 text-sm uppercase hover:bg-gray-50 focus:outline-none focus:ring focus:ring-brand focus:ring-opacity-50 focus:ring-offset-4"
 							key={node.id}
 						>
 							{({ selected }) => {

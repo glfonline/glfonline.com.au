@@ -58,13 +58,13 @@ export function LoadingProgress() {
 			aria-valuemin={0}
 			aria-valuenow={progress}
 			aria-valuetext={isActive ? 'Loading' : undefined}
-			className="fixed inset-x-0 left-0 top-0 z-50 h-1 animate-pulse"
+			className="fixed inset-x-0 top-0 left-0 z-50 h-1 animate-pulse"
 			role="progressbar"
 			tabIndex={0}
 		>
 			<div
 				className={clsx(
-					'bg-brand-primary h-full transition-all duration-500 ease-in-out',
+					'h-full bg-brand-primary transition-all duration-500 ease-in-out',
 					navigation.state === 'idle' && animationComplete && 'w-0 transition-none',
 					navigation.state === 'submitting' && 'w-4/12',
 					navigation.state === 'loading' && 'w-10/12',

@@ -78,7 +78,7 @@ export default function Blog() {
 						<PostList />
 					</article>
 				</div>
-				<div className="hidden lg:-mr-6 lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
+				<div className="lg:-mr-6 hidden lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
 					<Sidebar />
 				</div>
 			</div>
@@ -140,7 +140,7 @@ export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean;
 	return (
 		<nav
 			aria-label="Pagination"
-			className="mx-auto mt-6 flex max-w-7xl items-center justify-between text-sm font-medium text-gray-700"
+			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
@@ -215,8 +215,8 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 						</div>
 					</div>
 					<div className="mt-6 max-w-prose">
-						<p className="text-sm font-bold leading-5 text-gray-900">{author}</p>
-						<div className="text-sm font-bold italic text-gray-700">
+						<p className="font-bold text-gray-900 text-sm leading-5">{author}</p>
+						<div className="font-bold text-gray-700 text-sm italic">
 							<time dateTime={publishDate}>{new Date(publishDate).toDateString()}</time>
 						</div>
 					</div>
@@ -307,7 +307,7 @@ function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 					<span aria-hidden className="mx-2">
 						|
 					</span>
-					<span className="text-sm font-bold italic text-gray-700">
+					<span className="font-bold text-gray-700 text-sm italic">
 						<time dateTime={publishDate}>{new Date(publishDate).toDateString()}</time>
 					</span>
 				</div>
@@ -346,7 +346,7 @@ function CTA({
 				width={320}
 			/>
 			<div
-				className="bg-true-black/50 relative flex flex-1 flex-col items-center gap-2 px-8 py-16 text-center text-white"
+				className="relative flex flex-1 flex-col items-center gap-2 bg-true-black/50 px-8 py-16 text-center text-white"
 				data-theme={theme}
 			>
 				<h2

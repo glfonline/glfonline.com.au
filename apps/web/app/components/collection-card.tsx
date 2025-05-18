@@ -37,7 +37,7 @@ export function CollectionCard({ cta, image, span = '5', priority }: CollectionC
 			/>
 			<div
 				className={clsx(
-					'from-true-black/75 isolate h-full w-full flex-1 justify-end gap-4 bg-gradient-to-t via-transparent p-8',
+					'isolate h-full w-full flex-1 justify-end gap-4 bg-gradient-to-t from-true-black/75 via-transparent p-8',
 					span === '5' ? 'grid justify-center lg:grid-cols-5' : 'flex',
 				)}
 			>

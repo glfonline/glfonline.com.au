@@ -69,7 +69,7 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 						leaveTo="-translate-x-full"
 					>
 						<DialogPanel className="relative flex w-full max-w-xs flex-col overflow-y-auto bg-white shadow-xl">
-							<div className="flex px-4 pb-2 pt-5">
+							<div className="flex px-4 pt-5 pb-2">
 								<button
 									className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400"
 									onClick={() => {
@@ -84,14 +84,14 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 
 							{/* NavLinks */}
 							<TabGroup as="div" className="mt-2">
-								<div className="border-b border-gray-200">
+								<div className="border-gray-200 border-b">
 									<TabList className="-mb-px flex space-x-8 px-4">
 										{mainNavigation.navCategories.map((category) => (
 											<Tab
 												className={({ selected }) =>
 													clsx(
 														selected ? 'border-brand-primary text-brand-primary' : 'border-transparent text-gray-900',
-														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 text-base font-bold uppercase',
+														'flex-1 whitespace-nowrap border-b-2 px-1 py-4 font-bold text-base uppercase',
 													)
 												}
 												data-theme={category.theme}
@@ -114,10 +114,10 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 							</TabGroup>
 
 							{/* More Nav Links */}
-							<div className="flex flex-col gap-1 border-gray-200 px-4 pb-6 pt-1">
+							<div className="flex flex-col gap-1 border-gray-200 px-4 pt-1 pb-6">
 								{mainNavigation.pages.map((page) => (
 									<div className="flow-root" key={page.label}>
-										<NavLink className="block p-2 font-bold uppercase text-gray-900" to={page.href}>
+										<NavLink className="block p-2 font-bold text-gray-900 uppercase" to={page.href}>
 											{page.label}
 										</NavLink>
 									</div>
@@ -125,12 +125,12 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 							</div>
 
 							{/* Social Links */}
-							<div className="mt-auto flex flex-shrink-0 justify-between border-t border-gray-200 p-4">
+							<div className="mt-auto flex flex-shrink-0 justify-between border-gray-200 border-t p-4">
 								<div className="text-gray-500">&copy; GLF Online {new Date().getFullYear()}</div>
 								<div className="flex gap-4">
 									{socialLinks.map((link) => (
 										<a
-											className="focus:text-primary text-gray-400 transition duration-150 ease-in-out hover:text-gray-500 focus:outline-none"
+											className="text-gray-400 transition duration-150 ease-in-out hover:text-gray-500 focus:text-primary focus:outline-none"
 											href={link.href}
 											key={link.href}
 										>
@@ -159,7 +159,7 @@ function Section({
 	return (
 		<Disclosure>
 			<DisclosureButton
-				className="relative flex items-center justify-between gap-1 rounded-md p-2 font-bold uppercase text-gray-900 hover:bg-gray-50 focus:z-10 focus:bg-gray-100"
+				className="relative flex items-center justify-between gap-1 rounded-md p-2 font-bold text-gray-900 uppercase hover:bg-gray-50 focus:z-10 focus:bg-gray-100"
 				id={id}
 			>
 				{section.label}

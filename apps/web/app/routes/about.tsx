@@ -117,7 +117,7 @@ function AboutSection({
 					<Divider />
 				</div>
 			</div>
-			<div className="prose prose-a:font-bold max-w-none gap-8 md:columns-2 lg:columns-3">{children}</div>
+			<div className="prose max-w-none gap-8 prose-a:font-bold md:columns-2 lg:columns-3">{children}</div>
 		</div>
 	);
 }

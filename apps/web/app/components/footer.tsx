@@ -15,7 +15,7 @@ export function Footer() {
 					<div className="flex flex-col md:col-span-3 md:flex-row">
 						<Link
 							aria-current="page"
-							className="focus:shadow-outline-primary focus:ring-brand -m-4 my-auto flex rounded-lg p-4 focus:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2"
+							className="-m-4 my-auto flex rounded-lg p-4 focus:bg-gray-50 focus:shadow-outline-primary focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
 							prefetch="intent"
 							to="/"
 						>
@@ -24,7 +24,7 @@ export function Footer() {
 								<HorizontalLogo className="h-16 w-auto" />
 							</div>
 						</Link>
-						<nav className="mt-6 w-full flex-1 text-base leading-6 md:ml-12 md:mt-0">
+						<nav className="mt-6 w-full flex-1 text-base leading-6 md:mt-0 md:ml-12">
 							<div className="grid w-full grid-cols-2 justify-center">
 								{footerNavigation.map((col, index) => (
 									<div className="flex md:justify-center" key={index}>
@@ -32,7 +32,7 @@ export function Footer() {
 											{col.map((c) => (
 												<li className="mt-3 first:mt-0" key={c.href}>
 													<Link
-														className="hover:text-primary focus:text-primary font-bold text-gray-700 transition duration-150 ease-in-out focus:underline focus:outline-none"
+														className="font-bold text-gray-700 transition duration-150 ease-in-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
 														prefetch="intent"
 														to={c.href}
 													>
@@ -46,24 +46,24 @@ export function Footer() {
 							</div>
 						</nav>
 					</div>
-					<dl className="mt-6 w-full text-base leading-6 text-gray-600 md:col-span-2 md:mt-0">
+					<dl className="mt-6 w-full text-base text-gray-600 leading-6 md:col-span-2 md:mt-0">
 						{descriptionList.map(({ heading, icon: Icon, description }) => (
 							<div className="mt-3 first:mt-0" key={heading}>
 								<dt className="sr-only">{heading}</dt>
 								<dd className="group flex gap-3">
-									<Icon className="group-hover:text-primary h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out" />
+									<Icon className="h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
 									{description}
 								</dd>
 							</div>
 						))}
 					</dl>
 				</div>
-				<div className="mt-8 border-t border-gray-200 bg-white">
+				<div className="mt-8 border-gray-200 border-t bg-white">
 					<div className="mx-auto py-6 text-center md:px-6">
-						<p className="text-center text-base leading-6 text-gray-700">
+						<p className="text-center text-base text-gray-700 leading-6">
 							Website by{' '}
 							<a
-								className="hover:text-primary focus:text-primary font-bold transition duration-150 ease-out focus:underline focus:outline-none"
+								className="font-bold transition duration-150 ease-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
 								href="https://www.lukebennett.com.au/"
 							>
 								Luke Bennett
@@ -102,7 +102,7 @@ const descriptionList = [
 				{CONTACT_NUMBERS.map(({ name, phone }, index) => (
 					<Fragment key={name}>
 						<a
-							className="focus:text-primary inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+							className="inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
 							href={`tel:${phone}`}
 						>
 							{name}: {phone}
@@ -119,7 +119,7 @@ const descriptionList = [
 		description: (
 			<>
 				<a
-					className="focus:text-primary text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:underline focus:outline-none"
+					className="text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
 					href={`mailto:${EMAIL_ADDRESS}`}
 				>
 					{EMAIL_ADDRESS}

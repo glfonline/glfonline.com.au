@@ -23,7 +23,7 @@ export function StoreLocationMap() {
 					title="Golf Ladies First Port Macquarie Location"
 				/>
 			)}
-			{isLoaded && <Spinner className="text-primary relative h-8 w-8" />}
+			{isLoaded && <Spinner className="relative h-8 w-8 text-primary" />}
 		</div>
 	);
 }

@@ -29,7 +29,7 @@ export function Hero({
 				/>
 			)}
 			{title && (
-				<span className="bg-true-black/75 isolate px-6 py-2">
+				<span className="isolate bg-true-black/75 px-6 py-2">
 					<Heading className="isolate" color="light" size="2">
 						{title}
 					</Heading>

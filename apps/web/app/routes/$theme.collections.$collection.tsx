@@ -189,7 +189,7 @@ export default function CollectionPage() {
 				<MobileFilters mobileFiltersOpen={mobileFiltersOpen} setMobileFiltersOpen={setMobileFiltersOpen} />
 
 				<main className="mx-auto max-w-2xl px-4 lg:max-w-7xl lg:px-8 xl:px-0">
-					<div className="pb-24 pt-12 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
+					<div className="pt-12 pb-24 lg:grid lg:grid-cols-3 lg:gap-x-8 xl:grid-cols-4">
 						<Filters setMobileFiltersOpen={setMobileFiltersOpen} />
 
 						<section aria-labelledby="product-heading" className="mt-6 lg:col-span-2 lg:mt-0 xl:col-span-3">
@@ -201,7 +201,7 @@ export default function CollectionPage() {
 								{products.length > 0 ? (
 									products.map(({ node }) => <ProductCard key={node.id} node={node as ProductNode} />)
 								) : (
-									<p className="col-start-1 col-end-[-1] text-center text-xl font-bold uppercase">No products found</p>
+									<p className="col-start-1 col-end-[-1] text-center font-bold text-xl uppercase">No products found</p>
 								)}
 							</div>
 							<Pagination
@@ -245,7 +245,7 @@ function Filters({ setMobileFiltersOpen }: { setMobileFiltersOpen: React.Dispatc
 				}}
 				type="button"
 			>
-				<span className="text-sm font-medium text-gray-700">Filters</span>
+				<span className="font-medium text-gray-700 text-sm">Filters</span>
 				<PlusIcon aria-hidden="true" className="ml-1 h-5 w-5 flex-shrink-0 text-gray-400" />
 			</button>
 
@@ -291,7 +291,7 @@ function MobileFilters({
 					>
 						<DialogPanel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl">
 							<div className="flex items-center justify-between">
-								<h2 className="text-lg font-medium text-gray-900">Filters</h2>
+								<h2 className="font-medium text-gray-900 text-lg">Filters</h2>
 								<button
 									className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
 									onClick={() => {
@@ -344,7 +344,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 					<span aria-hidden="true" className="block h-full w-full bg-gray-200" />
 				)}
 				{isOnSale && (
-					<div className="pointer-events-none absolute left-0 right-0 top-0 aspect-square">
+					<div className="pointer-events-none absolute top-0 right-0 left-0 aspect-square">
 						<DiagonalBanner>On Sale</DiagonalBanner>
 					</div>
 				)}
@@ -521,7 +521,7 @@ export function Pagination({
 	return (
 		<nav
 			aria-label="Pagination"
-			className="mx-auto mt-6 flex max-w-7xl items-center justify-between text-sm font-medium text-gray-700"
+			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
