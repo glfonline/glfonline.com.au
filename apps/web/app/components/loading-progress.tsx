@@ -17,17 +17,36 @@ export function LoadingProgress() {
 	})();
 
 	useEffect(() => {
-		(async () => {
-			try {
-				if (!elementRef.current) return;
-				if (isActive) setAnimationComplete(false);
-				const animations = elementRef.current.getAnimations?.() || [];
-				await Promise.all(animations.map(({ finished }) => finished));
-				if (!isActive) setAnimationComplete(true);
-			} catch {
-				// Noop
-			}
-		})();
+		let isMounted = true;
+
+		// Using a non-async function to properly handle the promise
+		const handleAnimations = () => {
+			// Set initial state
+			if (isActive) setAnimationComplete(false);
+
+			if (!elementRef.current) return;
+
+			const animations = elementRef.current.getAnimations?.() || [];
+
+			// Handle the promise explicitly
+			Promise.all(animations.map(({ finished }) => finished))
+				.then(() => {
+					// Check if component is still mounted before updating state
+					if (isMounted && !isActive) {
+						setAnimationComplete(true);
+					}
+				})
+				.catch(() => {
+					// Noop - catching any errors
+				});
+		};
+
+		// Call the function (no floating promise now)
+		handleAnimations();
+
+		return () => {
+			isMounted = false;
+		};
 	}, [
 		isActive,
 	]);

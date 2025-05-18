@@ -11,12 +11,14 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 	const fetchers = useFetchers();
 	const fetcher = fetchers.find((f) => f.formAction === '/api/newsletter');
 	useEffect(() => {
-		async function handleSuccess() {
-			await wait(2000);
-			onClose();
-		}
 		if (fetcher?.data?.ok) {
-			handleSuccess();
+			wait(2000)
+				.then(() => {
+					onClose();
+				})
+				.catch(() => {
+					// noop
+				});
 		}
 	}, [
 		fetcher,
