@@ -1,7 +1,12 @@
 {
-	"$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
+	"$schema": "https://biomejs.dev/schemas/2.0.0-beta.4/schema.json",
 	"css": {
 		"formatter": {
+			"enabled": true,
+			"indentStyle": "tab",
+			"indentWidth": 2,
+			"lineEnding": "lf",
+			"lineWidth": 120,
 			"quoteStyle": "single"
 		}
 	},
@@ -15,19 +20,20 @@
 		"lineWidth": 120
 	},
 	"files": {
-		"ignore": [
-			"**/__generated__",
-			"**/.cache",
-			"**/.env",
-			"**/.sanity",
-			"**/.tsconfig.tsbuildinfo",
-			"**/.turbo",
-			"**/build",
-			"**/dist",
-			"**/node_modules",
-			"**/pnpm-lock.yaml",
-			"apps/web/api",
-			"apps/web/app/styles/tailwind.css"
+		"includes": [
+			"**",
+			"!**/__generated__",
+			"!**/.cache",
+			"!**/.env",
+			"!**/.sanity",
+			"!**/.tsconfig.tsbuildinfo",
+			"!**/.turbo",
+			"!**/build",
+			"!**/dist",
+			"!**/node_modules",
+			"!**/pnpm-lock.yaml",
+			"!**/apps/web/api",
+			"!**/apps/web/app/styles/tailwind.css"
 		]
 	},
 	"javascript": {
@@ -47,57 +53,53 @@
 	"linter": {
 		"enabled": true,
 		"rules": {
-			"all": true,
 			"a11y": {
-				"all": true,
 				"noAriaHiddenOnFocusable": "off",
 				"noRedundantRoles": "off",
 				"noSvgWithoutTitle": "off",
 				"useSemanticElements": "off"
 			},
-			"complexity": {
-				"all": true
-			},
+			"complexity": {},
 			"correctness": {
-				"all": true,
 				"noNodejsModules": "off",
 				"noUndeclaredDependencies": "off",
 				"useImportExtensions": "off"
 			},
-			"performance": {
-				"all": true
-			},
+			"performance": {},
 			"security": {
-				"all": true,
 				"noDangerouslySetInnerHtml": "off"
 			},
 			"style": {
-				"all": true,
 				"noDefaultExport": "off",
 				"noImplicitBoolean": "off",
+				"noInferrableTypes": "error",
 				"noNamespaceImport": "off",
+				"noParameterAssign": "error",
+				"noUnusedTemplateLiteral": "error",
+				"noUselessElse": "error",
+				"useAsConstAssertion": "error",
 				"useBlockStatements": "off",
 				"useConsistentArrayType": {
 					"level": "error",
-					"options": {
-						"syntax": "generic"
-					}
+					"options": { "syntax": "generic" }
 				},
+				"useConst": "error",
+				"useDefaultParameterLast": "error",
+				"useEnumInitializers": "error",
 				"useFilenamingConvention": "off",
 				"useNamingConvention": "off",
-				"useShorthandArrayType": "off"
+				"useNumberNamespace": "error",
+				"useSelfClosingElements": "error",
+				"useSingleVarDeclarator": "error"
 			},
 			"suspicious": {
-				"all": true,
 				"noArrayIndexKey": "off",
-				"noConsoleLog": "off",
 				"noEmptyBlockStatements": "off",
 				"noExplicitAny": "off",
-				"noReactSpecificProps": "off"
+				"noReactSpecificProps": "off",
+				"noConsole": { "level": "off", "options": { "allow": ["log"] } }
 			}
 		}
 	},
-	"organizeImports": {
-		"enabled": true
-	}
+	"assist": { "actions": { "source": { "organizeImports": "on" } } }
 }
