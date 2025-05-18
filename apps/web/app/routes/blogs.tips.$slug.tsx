@@ -2,7 +2,7 @@ import { type LoaderFunctionArgs, redirect } from '@remix-run/node';
 import { assert, isString } from 'emery';
 import { notFound } from '../lib/errors.server';
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export function loader({ params }: LoaderFunctionArgs) {
 	const { slug } = params;
 	assert(isString(slug));
 	const obj = redirects.find((r) => r.slug === slug);
