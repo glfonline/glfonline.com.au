@@ -27,8 +27,14 @@ export const brand = defineType({
 			type: 'string',
 			options: {
 				list: [
-					{ title: 'Ladies', value: 'ladies' },
-					{ title: 'Mens', value: 'mens' },
+					{
+						title: 'Ladies',
+						value: 'ladies',
+					},
+					{
+						title: 'Mens',
+						value: 'mens',
+					},
 				],
 				layout: 'radio',
 				direction: 'horizontal',

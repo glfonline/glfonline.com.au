@@ -3,7 +3,10 @@ import { clsx } from 'clsx';
 import { ButtonLink } from './design-system/button';
 
 export type CollectionCardProps = {
-	cta: { text: string; href: string };
+	cta: {
+		text: string;
+		href: string;
+	};
 	image: {
 		src: string;
 		alt?: string;
@@ -18,7 +21,12 @@ export function CollectionCard({ cta, image, span = '5', priority }: CollectionC
 		<div className={clsx('relative flex h-96', spanMap[span])}>
 			<Image
 				alt={image.alt || ''}
-				breakpoints={[640, 768, 1024, 1280]}
+				breakpoints={[
+					640,
+					768,
+					1024,
+					1280,
+				]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'center'],

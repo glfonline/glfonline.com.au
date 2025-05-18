@@ -11,8 +11,14 @@ export const themePage = defineField({
 			title: 'Theme',
 			options: {
 				list: [
-					{ title: 'Ladies', value: 'ladies' },
-					{ title: 'Mens', value: 'mens' },
+					{
+						title: 'Ladies',
+						value: 'ladies',
+					},
+					{
+						title: 'Mens',
+						value: 'mens',
+					},
 				],
 				layout: 'radio',
 				direction: 'horizontal',
@@ -25,7 +31,11 @@ export const themePage = defineField({
 			name: 'collectionCards',
 			type: 'array',
 			title: 'Collection Cards',
-			of: [{ type: 'collectionCard.item' }],
+			of: [
+				{
+					type: 'collectionCard.item',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({
@@ -35,7 +45,11 @@ export const themePage = defineField({
 			of: [
 				{
 					type: 'reference',
-					to: [{ type: 'brand' }],
+					to: [
+						{
+							type: 'brand',
+						},
+					],
 				},
 			],
 		}),

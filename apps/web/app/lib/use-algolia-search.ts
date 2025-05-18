@@ -12,14 +12,19 @@ export type Product = {
 			value: string;
 			matchLevel: string;
 			fullyHighlighted: boolean;
-			matchedWords: [string];
+			matchedWords: [
+				string,
+			];
 		};
 	};
 };
 
 export function useAlgoliaSearch(query: string) {
 	return useQuery({
-		queryKey: ['products', query],
+		queryKey: [
+			'products',
+			query,
+		],
 		queryFn: async () => {
 			if (query) {
 				return await search<Product>({

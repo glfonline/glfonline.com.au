@@ -12,6 +12,10 @@ export const PostSchema = z.object({
 	}),
 	mainImage: imageWithAltSchema,
 	publishedAt: z.string().datetime(),
-	categories: z.array(z.object({ title: z.string() })),
+	categories: z.array(
+		z.object({
+			title: z.string(),
+		}),
+	),
 	bodyRaw: z.any(),
 });

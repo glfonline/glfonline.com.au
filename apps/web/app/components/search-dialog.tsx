@@ -108,7 +108,9 @@ function SearchResults({
 	query,
 	setSearchOpen,
 }: {
-	data?: { hits: Array<Hit<Product>> };
+	data?: {
+		hits: Array<Hit<Product>>;
+	};
 	isLoading: boolean;
 	isPreviousData: boolean;
 	query: string;
@@ -126,7 +128,9 @@ function SearchResults({
 			<ComboboxOptions
 				className="max-h-96 scroll-py-3 overflow-y-auto p-3"
 				static
-				style={{ opacity: isPreviousData ? 0.5 : 1 }}
+				style={{
+					opacity: isPreviousData ? 0.5 : 1,
+				}}
 			>
 				{data.hits.map((product) => (
 					<ComboboxOption
@@ -143,7 +147,10 @@ function SearchResults({
 										setSearchOpen(false);
 									}}
 									prefetch="intent"
-									to={makeProductHref({ handle: product.handle, tags: product.tags })}
+									to={makeProductHref({
+										handle: product.handle,
+										tags: product.tags,
+									})}
 								>
 									{product.image ? (
 										<Image

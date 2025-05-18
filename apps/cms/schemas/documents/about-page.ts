@@ -11,7 +11,11 @@ export const aboutPage = defineField({
 			name: 'sections',
 			type: 'array',
 			title: 'Sections',
-			of: [{ type: 'about.item' }],
+			of: [
+				{
+					type: 'about.item',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 	],

@@ -49,11 +49,29 @@ export const handle = {
 
 export const links: LinksFunction = () => {
 	return [
-		{ rel: 'preconnect', href: 'https://cdn.shopify.com' },
-		{ rel: 'preconnect', href: 'https://shop.app' },
-		{ rel: 'stylesheet', href: fontCssUrl, as: 'style' },
-		{ rel: 'stylesheet', href: tailwindCssUrl, as: 'style' },
-		{ rel: 'icon', type: 'image/svg+xml', href: favicon },
+		{
+			rel: 'preconnect',
+			href: 'https://cdn.shopify.com',
+		},
+		{
+			rel: 'preconnect',
+			href: 'https://shop.app',
+		},
+		{
+			rel: 'stylesheet',
+			href: fontCssUrl,
+			as: 'style',
+		},
+		{
+			rel: 'stylesheet',
+			href: tailwindCssUrl,
+			as: 'style',
+		},
+		{
+			rel: 'icon',
+			type: 'image/svg+xml',
+			href: favicon,
+		},
 	];
 };
 
@@ -68,7 +86,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		// Clear the cart if we get an error
 		if (cartResult.type === 'error') {
 			await session.setCart([]);
-			const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
+			const [{ shop }, mainNavigation] = await Promise.all([
+				shopifyClient(SHOP_QUERY),
+				getMainNavigation(),
+			]);
 			return {
 				cartCount: 0,
 				mainNavigation,
@@ -77,7 +98,10 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		}
 	}
 
-	const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
+	const [{ shop }, mainNavigation] = await Promise.all([
+		shopifyClient(SHOP_QUERY),
+		getMainNavigation(),
+	]);
 
 	// Calculate total quantity by summing all item quantities
 	let cartCount = 0;
@@ -113,7 +137,9 @@ function App() {
 				gtag.pageview(location.pathname, id);
 			}
 		}
-	}, [location.pathname]);
+	}, [
+		location.pathname,
+	]);
 
 	return (
 		<html className="h-full" lang="en">
@@ -132,7 +158,12 @@ function App() {
 					</>
 				)}
 				<LoadingProgress />
-				<PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+				<PersistQueryClientProvider
+					client={queryClient}
+					persistOptions={{
+						persister,
+					}}
+				>
 					<MainLayout>
 						<Outlet key={location.pathname} />
 					</MainLayout>
@@ -155,7 +186,11 @@ export function ErrorBoundary() {
 			<GenericError error={error} />
 		)
 	) : (
-		<GenericError error={{ statusText: 'Unknown error' }} />
+		<GenericError
+			error={{
+				statusText: 'Unknown error',
+			}}
+		/>
 	);
 
 	return (

@@ -23,16 +23,28 @@ export const headers = routeHeaders;
 
 const ProductSchema = z.object({
 	handle: z.string().min(1),
-	theme: z.enum(['ladies', 'mens']),
+	theme: z.enum([
+		'ladies',
+		'mens',
+	]),
 });
 
 const CartSchema = z.object({
-	variantId: z.string({ required_error: 'Please select an option' }).min(1),
+	variantId: z
+		.string({
+			required_error: 'Please select an option',
+		})
+		.min(1),
 });
 
 // Define types for our action return values
-type ActionSuccess = { success: true };
-type ActionError = { success: false; error: string };
+type ActionSuccess = {
+	success: true;
+};
+type ActionError = {
+	success: false;
+	error: string;
+};
 type ActionData = ActionSuccess | ActionError;
 
 export async function loader({ params }: LoaderFunctionArgs) {
@@ -43,7 +55,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 		});
 		if (!product) notFound();
 		return data(
-			{ product, theme: result.data.theme },
+			{
+				product,
+				theme: result.data.theme,
+			},
 			{
 				headers: {
 					'Cache-Control': CACHE_NONE,
@@ -55,7 +70,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof data<ActionData>>> {
-	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
+	const [formData, session] = await Promise.all([
+		request.formData(),
+		getSession(request),
+	]);
 	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
 
 	// Get current cart
@@ -73,7 +91,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 
 	// If the item isn't in the cart yet, add it
 	if (!existingItem) {
-		tempCart.push({ variantId, quantity: 1 });
+		tempCart.push({
+			variantId,
+			quantity: 1,
+		});
 	}
 
 	// Validate the potential new cart with Shopify first
@@ -82,9 +103,24 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 	// Only update the session if Shopify accepts the cart
 	if (cartResult.type === 'success') {
 		// Update the real cart now that we know it's valid
-		const updatedCart = addToCart([...currentCart], variantId, 1);
+		const updatedCart = addToCart(
+			[
+				...currentCart,
+			],
+			variantId,
+			1,
+		);
 		await session.setCart(updatedCart);
-		return data({ success: true }, { headers: { 'Set-Cookie': await session.commitSession() } });
+		return data(
+			{
+				success: true,
+			},
+			{
+				headers: {
+					'Set-Cookie': await session.commitSession(),
+				},
+			},
+		);
 	}
 
 	// If Shopify rejects the cart, show a user-friendly error message
@@ -93,7 +129,11 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 			success: false,
 			error: 'Unable to add item to cart. The item might be out of stock or unavailable.',
 		},
-		{ headers: { 'Set-Cookie': await session.commitSession() } },
+		{
+			headers: {
+				'Set-Cookie': await session.commitSession(),
+			},
+		},
 	);
 }
 
@@ -103,7 +143,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		title: data.product.title,
 		description: data.product.description,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function ProductPage() {
@@ -139,7 +181,13 @@ export default function ProductPage() {
 				<div className="lg:grid lg:grid-cols-2 lg:items-start lg:gap-x-8">
 					<ImageGallery
 						images={product.images.edges.map(({ node: { id, altText, url, height, width } }) => ({
-							node: { id, altText, url, height, width },
+							node: {
+								id,
+								altText,
+								url,
+								height,
+								width,
+							},
 						}))}
 						isOnSale={isOnSale}
 					/>
@@ -152,7 +200,11 @@ export default function ProductPage() {
 							</Heading>
 							<h2 className="sr-only">Product information</h2>
 							{variant?.node.price && (
-								<p className={getHeadingStyles({ size: '2' })}>
+								<p
+									className={getHeadingStyles({
+										size: '2',
+									})}
+								>
 									{isOnSale && variant.node.compareAtPrice?.amount && (
 										<del>
 											<span className="sr-only">was </span>
@@ -268,7 +320,9 @@ function ImageGallery({
 										<span className="absolute inset-0 overflow-hidden">
 											<Image
 												alt={node.altText || ''}
-												breakpoints={[276]}
+												breakpoints={[
+													276,
+												]}
 												className="h-full w-full object-cover object-center"
 												height={192}
 												layout="constrained"
@@ -298,7 +352,12 @@ function ImageGallery({
 						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
 							<Image
 								alt={node.altText || ''}
-								breakpoints={[640, 768, 1024, 1280]}
+								breakpoints={[
+									640,
+									768,
+									1024,
+									1280,
+								]}
 								className="h-full w-full object-contain object-center sm:rounded-lg"
 								height={624}
 								layout="constrained"

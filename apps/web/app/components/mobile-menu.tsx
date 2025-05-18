@@ -31,7 +31,10 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 				document.removeEventListener('click', onClose);
 			};
 		}
-	}, [open, setOpen]);
+	}, [
+		open,
+		setOpen,
+	]);
 
 	const { mainNavigation } = useLoaderData<typeof loader>();
 
@@ -139,7 +142,14 @@ export function MobileMenu({ open, setOpen }: { open: boolean; setOpen: (open: b
 		</Transition>
 	);
 }
-function Section({ section }: { section: { label: string; items: Array<Array<NavItem>> } }) {
+function Section({
+	section,
+}: {
+	section: {
+		label: string;
+		items: Array<Array<NavItem>>;
+	};
+}) {
 	const id = useId();
 	return (
 		<Disclosure>

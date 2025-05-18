@@ -15,7 +15,11 @@ export const faqItem = defineField({
 			name: 'answer',
 			type: 'array',
 			title: 'Answer',
-			of: [{ type: 'block' }],
+			of: [
+				{
+					type: 'block',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 	],

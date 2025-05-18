@@ -56,7 +56,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Blog() {
@@ -90,7 +92,13 @@ function PostList() {
 	return (
 		<div className="mx-auto flex max-w-7xl flex-col gap-8">
 			<div className="flex">
-				<h1 className={getHeadingStyles({ size: '2' })}>Stay connected with our blogs</h1>
+				<h1
+					className={getHeadingStyles({
+						size: '2',
+					})}
+				>
+					Stay connected with our blogs
+				</h1>
 			</div>
 			<section aria-labelledby="gallery-heading">
 				<h2 className="sr-only" id="gallery-heading">
@@ -183,7 +191,9 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<Image
 						alt=""
-						breakpoints={[512]}
+						breakpoints={[
+							512,
+						]}
 						className="h-full w-full object-cover sm:absolute sm:inset-0"
 						layout="fullWidth"
 						priority={false}
@@ -193,7 +203,13 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 				</div>
 				<div className="flex min-w-0 flex-1 flex-col justify-between bg-white p-6">
 					<div className="flex flex-1 flex-col gap-4">
-						<h3 className={getHeadingStyles({ size: '3' })}>{heading}</h3>
+						<h3
+							className={getHeadingStyles({
+								size: '3',
+							})}
+						>
+							{heading}
+						</h3>
 						<div className="prose line-clamp-3">
 							<PortableText value={excerpt} />
 						</div>
@@ -265,7 +281,12 @@ function Sidebar() {
 function FeaturedPost({ imgSrc, excerpt, author, publishDate }: PostProps) {
 	return (
 		<article className="flex flex-col gap-8">
-			<h2 className={getHeadingStyles({ size: '2' })} id="featured-posts">
+			<h2
+				className={getHeadingStyles({
+					size: '2',
+				})}
+				id="featured-posts"
+			>
 				Featured Post
 			</h2>
 			<div className="flex flex-col gap-6">
@@ -302,7 +323,10 @@ function CTA({
 	image,
 	theme,
 }: {
-	cta: { text: string; href: string };
+	cta: {
+		text: string;
+		href: string;
+	};
 	heading: string;
 	subHeading: string;
 	image: {
@@ -325,7 +349,14 @@ function CTA({
 				className="bg-true-black/50 relative flex flex-1 flex-col items-center gap-2 px-8 py-16 text-center text-white"
 				data-theme={theme}
 			>
-				<h2 className={getHeadingStyles({ size: '2', color: 'light' })}>{heading}</h2>
+				<h2
+					className={getHeadingStyles({
+						size: '2',
+						color: 'light',
+					})}
+				>
+					{heading}
+				</h2>
 				<p className="tex-lg font-bold uppercase">{subHeading}</p>
 				<ButtonLink href={cta.href} variant="brand">
 					{cta.text}

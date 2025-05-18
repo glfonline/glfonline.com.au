@@ -4,7 +4,9 @@ export const imageWithAlt = defineField({
 	name: 'imageWithAlt',
 	type: 'image',
 	title: 'Image',
-	options: { hotspot: true },
+	options: {
+		hotspot: true,
+	},
 	fields: [
 		defineField({
 			name: 'alt',

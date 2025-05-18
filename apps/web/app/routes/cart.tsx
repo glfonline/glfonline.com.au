@@ -17,16 +17,25 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnTyp
 	const cartResult = await getCartInfo(cart);
 
 	// Clear cart if there was an error fetching cart info
-	if (['error', 'empty'].includes(cartResult.type)) {
+	if (
+		[
+			'error',
+			'empty',
+		].includes(cartResult.type)
+	) {
 		await session.setCart([]);
 		return data(cartResult, {
-			headers: { 'Set-Cookie': await session.commitSession() },
+			headers: {
+				'Set-Cookie': await session.commitSession(),
+			},
 		});
 	}
 
 	// Otherwise return the successful cart
 	return data(cartResult, {
-		headers: { 'Set-Cookie': await session.commitSession() },
+		headers: {
+			'Set-Cookie': await session.commitSession(),
+		},
 	});
 }
 
@@ -53,7 +62,10 @@ const RemoveScheme = z.object({
 });
 
 export async function action({ request }: ActionFunctionArgs) {
-	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
+	const [formData, session] = await Promise.all([
+		request.formData(),
+		getSession(request),
+	]);
 	const intent = formData.get(INTENT);
 
 	switch (intent) {
@@ -71,7 +83,9 @@ export async function action({ request }: ActionFunctionArgs) {
 			return data(
 				{},
 				{
-					headers: { 'Set-Cookie': await session.commitSession() },
+					headers: {
+						'Set-Cookie': await session.commitSession(),
+					},
 				},
 			);
 		}
@@ -84,7 +98,9 @@ export async function action({ request }: ActionFunctionArgs) {
 			return data(
 				{},
 				{
-					headers: { 'Set-Cookie': await session.commitSession() },
+					headers: {
+						'Set-Cookie': await session.commitSession(),
+					},
 				},
 			);
 		}
@@ -99,7 +115,9 @@ export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
 		title: 'Cart',
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function CartPage() {
@@ -107,7 +125,14 @@ export default function CartPage() {
 	const navigation = useNavigation();
 
 	// Handle null case or empty cart
-	if (['empty', 'error'].includes(cartResult.type) || !cartResult.cart || cartResult.cart.lines.edges.length === 0) {
+	if (
+		[
+			'empty',
+			'error',
+		].includes(cartResult.type) ||
+		!cartResult.cart ||
+		cartResult.cart.lines.edges.length === 0
+	) {
 		return (
 			<div className="bg-white">
 				<div className="mx-auto max-w-2xl px-4 pb-24 pt-16 text-center sm:px-6 lg:max-w-7xl lg:px-8">

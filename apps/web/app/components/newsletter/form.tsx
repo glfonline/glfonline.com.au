@@ -47,7 +47,12 @@ export function NewsletterSignup() {
 								Which list would you like to sign up to?
 							</legend>
 							<div className="space-y-4 mt-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-								{(['Ladies', 'Mens'] as const).map((options) => (
+								{(
+									[
+										'Ladies',
+										'Mens',
+									] as const
+								).map((options) => (
 									<div className="flex items-center gap-3" key={options}>
 										<input
 											className="text-brand-primary focus:ring-brand-light h-5 w-5 border-gray-300"
@@ -72,7 +77,9 @@ export function NewsletterSignup() {
 									}}
 									sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 									size="normal"
-									style={{ width: '100%' }}
+									style={{
+										width: '100%',
+									}}
 									theme="light"
 								/>
 							)}

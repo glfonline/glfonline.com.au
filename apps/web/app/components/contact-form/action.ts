@@ -33,7 +33,9 @@ export async function action({ request }: ActionFunctionArgs) {
 			body: JSON.stringify({
 				secret: process.env.TURNSTILE_SECRET_KEY,
 				response: token,
-				...(clientIpAddress && { remoteip: clientIpAddress }),
+				...(clientIpAddress && {
+					remoteip: clientIpAddress,
+				}),
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -67,10 +69,16 @@ export async function action({ request }: ActionFunctionArgs) {
 		/** Send email with Sendgrid */
 		sendgrid.setApiKey(requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY));
 		const sendgridResponse = await sendgrid.send(mailOptions);
-		console.log({ sendgridResponse });
-		return { ok: true };
+		console.log({
+			sendgridResponse,
+		});
+		return {
+			ok: true,
+		};
 	} catch (err) {
 		console.error(err);
-		return { ok: false };
+		return {
+			ok: false,
+		};
 	}
 }

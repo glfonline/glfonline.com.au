@@ -17,7 +17,11 @@ export const testimonialsPage = defineField({
 			name: 'testimonials',
 			type: 'array',
 			title: 'FAQs',
-			of: [{ type: 'testimonial.item' }],
+			of: [
+				{
+					type: 'testimonial.item',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 	],

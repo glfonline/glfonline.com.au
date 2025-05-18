@@ -27,7 +27,10 @@ import { getSeoMeta } from '../seo';
 
 const CollectionSchema = z.object({
 	collection: z.string().min(1),
-	theme: z.enum(['ladies', 'mens']),
+	theme: z.enum([
+		'ladies',
+		'mens',
+	]),
 });
 
 const SortSchema = z
@@ -125,11 +128,21 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 			theme,
 			productType,
 		}),
-		getProductFilterOptions({ collectionHandle, first: 250, theme }),
+		getProductFilterOptions({
+			collectionHandle,
+			first: 250,
+			theme,
+		}),
 	]);
 
 	// Process collection data - now ensures products is always defined
-	const collection = processCollectionData({ collectionPromise, theme, collectionHandle, sort, filterOptions });
+	const collection = processCollectionData({
+		collectionPromise,
+		theme,
+		collectionHandle,
+		sort,
+		filterOptions,
+	});
 
 	// Process options data
 	const options = optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
@@ -152,7 +165,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 		title: `Shop ${data.title}`,
 	});
 
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function CollectionPage() {
@@ -162,7 +177,13 @@ export default function CollectionPage() {
 
 	return (
 		<div className="flex flex-col gap-12 py-9" data-theme={theme}>
-			<Hero image={{ url: imageMap[theme], alt: image.altText ?? '' }} title={title} />
+			<Hero
+				image={{
+					url: imageMap[theme],
+					alt: image.altText ?? '',
+				}}
+				title={title}
+			/>
 
 			<div>
 				<MobileFilters mobileFiltersOpen={mobileFiltersOpen} setMobileFiltersOpen={setMobileFiltersOpen} />
@@ -308,7 +329,10 @@ function ProductCard({ node }: { node: ProductNode }) {
 			<div className="aspect-[3/4] group-hover:opacity-75 sm:aspect-auto sm:h-96">
 				{node.featuredImage?.url ? (
 					<Image
-						breakpoints={[320, 640]}
+						breakpoints={[
+							320,
+							640,
+						]}
 						className="h-full w-full"
 						layout="fullWidth"
 						objectFit="contain"
@@ -370,7 +394,10 @@ function DisplayOptions() {
 								<li key={key}>
 									<Link
 										className="inline-flex items-center gap-2 text-gray-500 hover:text-gray-700"
-										to={clearSearchUrl({ key, location })}
+										to={clearSearchUrl({
+											key,
+											location,
+										})}
 									>
 										<svg className="h-2 w-2" fill="none" stroke="currentColor" viewBox="0 0 8 8">
 											<path d="M1 1l6 6m0-6L1 7" strokeLinecap="round" strokeWidth="1.5" />
@@ -387,7 +414,12 @@ function DisplayOptions() {
 				</div>
 			)}
 			{options.map((option) => {
-				if (!['Size', PRODUCT_TYPE].includes(option.name)) {
+				if (
+					![
+						'Size',
+						PRODUCT_TYPE,
+					].includes(option.name)
+				) {
 					return null;
 				}
 				if (option.name === PRODUCT_TYPE && option.values.length <= 1) {
@@ -524,14 +556,38 @@ export function Pagination({
 }
 
 const sortOptions = [
-	{ label: 'Default', value: 'collection-default' },
-	{ label: 'Newest', value: 'latest-desc' },
-	{ label: 'Price: Low to High', value: 'price-asc' },
-	{ label: 'Price: High to Low', value: 'price-desc' },
-	{ label: 'Relevance', value: 'relevance' },
-	{ label: 'Title: A-Z', value: 'title-asc' },
-	{ label: 'Title: Z-A', value: 'title-desc' },
-	{ label: 'Trending', value: 'trending-desc' },
+	{
+		label: 'Default',
+		value: 'collection-default',
+	},
+	{
+		label: 'Newest',
+		value: 'latest-desc',
+	},
+	{
+		label: 'Price: Low to High',
+		value: 'price-asc',
+	},
+	{
+		label: 'Price: High to Low',
+		value: 'price-desc',
+	},
+	{
+		label: 'Relevance',
+		value: 'relevance',
+	},
+	{
+		label: 'Title: A-Z',
+		value: 'title-asc',
+	},
+	{
+		label: 'Title: Z-A',
+		value: 'title-desc',
+	},
+	{
+		label: 'Trending',
+		value: 'trending-desc',
+	},
 ] satisfies Array<{
 	label: string;
 	value: SortBy;

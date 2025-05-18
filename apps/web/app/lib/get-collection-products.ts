@@ -38,12 +38,25 @@ export async function getProductsFromCollectionByTag({
 			first: itemsPerPage,
 			handle,
 			filters: [
-				{ available: true },
-				{ tag: capitalise(theme) },
-				...(productType ? [{ productType }] : []),
+				{
+					available: true,
+				},
+				{
+					tag: capitalise(theme),
+				},
+				...(productType
+					? [
+							{
+								productType,
+							},
+						]
+					: []),
 				...(filterOptions
 					? Object.entries(filterOptions).map(([key, value]) => ({
-							variantOption: { name: key, value },
+							variantOption: {
+								name: key,
+								value,
+							},
 						}))
 					: []),
 			],

@@ -260,7 +260,14 @@ function getSpan(value: number) {
 	return 1;
 }
 
-function CategorySection({ section }: { section: { label: string; items: Array<Array<NavItem>> } }) {
+function CategorySection({
+	section,
+}: {
+	section: {
+		label: string;
+		items: Array<Array<NavItem>>;
+	};
+}) {
 	const id = useId();
 	return (
 		<div className={spanMap[getSpan(section.items.length)]}>

@@ -35,14 +35,19 @@ const HomePageSchema = z.object({
 			href: z.string(),
 			label: z.string(),
 			image: imageWithAltSchema,
-			theme: z.enum(['ladies', 'mens']),
+			theme: z.enum([
+				'ladies',
+				'mens',
+			]),
 		}),
 	),
 	brandsWeLove,
 });
 
 export async function loader() {
-	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, { id: 'home' });
+	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, {
+		id: 'home',
+	});
 	return data(HomePageSchema.parse(HomePage), {
 		headers: {
 			'Cache-Control': CACHE_SHORT,
@@ -52,7 +57,9 @@ export async function loader() {
 
 export const meta: MetaFunction<typeof loader> = () => {
 	const seoMeta = getSeoMeta();
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Index() {
@@ -80,7 +87,11 @@ function Hero() {
 			<div className="bg-white px-4 py-12 sm:px-6 md:w-80 lg:px-8">
 				<div className="flex flex-col gap-6 px-4">
 					<VerticalLogo className="mx-auto hidden w-full max-w-xs text-black md:block" />
-					<h1 className={getHeadingStyles({ size: '2' })}>
+					<h1
+						className={getHeadingStyles({
+							size: '2',
+						})}
+					>
 						{heading.map((line, index) => (
 							<Fragment key={index}>
 								{line}
@@ -97,7 +108,12 @@ function Hero() {
 			<div className="flex-1">
 				<Image
 					alt={heroImage.asset.altText ?? ''}
-					breakpoints={[640, 768, 1024, 1280]}
+					breakpoints={[
+						640,
+						768,
+						1024,
+						1280,
+					]}
 					className="h-full w-full object-cover"
 					layout="fullWidth"
 					priority
@@ -123,7 +139,10 @@ function CollectionPromo() {
 		<div className="mx-auto grid w-full max-w-lg gap-4 sm:max-w-7xl md:grid-cols-2">
 			{themeCards.map((card) => (
 				<CollectionCard
-					cta={{ text: card.label, href: card.href }}
+					cta={{
+						text: card.label,
+						href: card.href,
+					}}
 					heading={card.heading}
 					image={{
 						src: urlFor({
@@ -146,7 +165,10 @@ function CollectionPromo() {
 }
 
 type CollectionCardProps = {
-	cta: { text: string; href: string };
+	cta: {
+		text: string;
+		href: string;
+	};
 	heading: string;
 	image: {
 		src: string;
@@ -162,7 +184,15 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 		<div className="relative aspect-square">
 			<Image
 				alt={image.alt || ''}
-				breakpoints={[1264, 1080, 960, 828, 750, 640, 632]}
+				breakpoints={[
+					1264,
+					1080,
+					960,
+					828,
+					750,
+					640,
+					632,
+				]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'top'],

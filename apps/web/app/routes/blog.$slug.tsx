@@ -21,7 +21,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	const page = PostSchema.parse(allPost[0]);
 	if (!page) notFound();
 	return data(
-		{ page },
+		{
+			page,
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -35,7 +37,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.page.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function Page() {

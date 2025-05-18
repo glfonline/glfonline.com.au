@@ -34,7 +34,9 @@ export async function loader() {
 
 	const { sections } = AboutSchema.parse(AboutPage);
 	return data(
-		{ sections },
+		{
+			sections,
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -47,7 +49,9 @@ export const meta: MetaFunction = () => {
 	const seoMeta = getSeoMeta({
 		title: 'About',
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function AboutPage() {
@@ -103,7 +107,13 @@ function AboutSection({
 		<div className="flex flex-col gap-10 px-4 py-12 sm:px-6 lg:px-8">
 			<div className="prose grid max-w-none gap-8 md:grid-cols-2 lg:grid-cols-3">
 				<div>
-					<heading.level className={getHeadingStyles({ size: '2' })}>{heading.text}</heading.level>
+					<heading.level
+						className={getHeadingStyles({
+							size: '2',
+						})}
+					>
+						{heading.text}
+					</heading.level>
 					<Divider />
 				</div>
 			</div>

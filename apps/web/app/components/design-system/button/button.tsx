@@ -15,13 +15,21 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 			if (isLoading) return;
 			onClick?.(event);
 		},
-		[isLoading, onClick],
+		[
+			isLoading,
+			onClick,
+		],
 	);
 
 	return (
 		<button
 			{...consumerProps}
-			className={getButtonStyles({ className, isLoading, size, variant })}
+			className={getButtonStyles({
+				className,
+				isLoading,
+				size,
+				variant,
+			})}
 			onClick={handleOnClick}
 			ref={mergeRefs(internalRef, forwardedRef)}
 			type={type}

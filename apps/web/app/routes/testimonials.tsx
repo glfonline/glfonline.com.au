@@ -33,7 +33,11 @@ export async function loader() {
 	});
 	const { testimonials, heroImage } = TestimonialsSchema.parse(TestimonialsPage);
 	return data(
-		{ heroImage, testimonials, title: 'Testimonials' },
+		{
+			heroImage,
+			testimonials,
+			title: 'Testimonials',
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -47,7 +51,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function TestimonialsPage() {
@@ -88,7 +94,16 @@ function Testimonials() {
 					<li className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12" key={_key}>
 						<Image
 							alt={testimonialImage.asset.altText ?? ''}
-							breakpoints={[640, 750, 767, 828, 960, 1080, 1280, 1534]}
+							breakpoints={[
+								640,
+								750,
+								767,
+								828,
+								960,
+								1080,
+								1280,
+								1534,
+							]}
 							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 							layout="fullWidth"
 							priority={false}

@@ -6,7 +6,10 @@ export function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
 	/** @todo get gid from query */
 	const shopId = parseGid('gid://shopify/Shop/10809832').id;
-	const body = robotsTxtData({ url: url.origin, shopId });
+	const body = robotsTxtData({
+		url: url.origin,
+		shopId,
+	});
 
 	return new Response(body, {
 		status: 200,
@@ -50,7 +53,10 @@ function robotsTxtData({ url, shopId }: { shopId?: string; url?: string }) {
 
 	return `
 User-agent: *
-${generalDisallowRules({ sitemapUrl, shopId })}
+${generalDisallowRules({
+	sitemapUrl,
+	shopId,
+})}
 
 # Google adsbot ignores robots.txt unless specifically named!
 User-agent: adsbot-google
@@ -69,11 +75,17 @@ Disallow: /
 
 User-agent: AhrefsBot
 Crawl-delay: 10
-${generalDisallowRules({ sitemapUrl, shopId })}
+${generalDisallowRules({
+	sitemapUrl,
+	shopId,
+})}
 
 User-agent: AhrefsSiteAudit
 Crawl-delay: 10
-${generalDisallowRules({ sitemapUrl, shopId })}
+${generalDisallowRules({
+	sitemapUrl,
+	shopId,
+})}
 
 User-agent: MJ12bot
 Crawl-Delay: 10

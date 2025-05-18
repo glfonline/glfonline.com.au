@@ -68,7 +68,9 @@ export function ContactForm() {
 								}}
 								sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 								size="normal"
-								style={{ width: '100%' }}
+								style={{
+									width: '100%',
+								}}
 								theme="light"
 							/>
 						)}

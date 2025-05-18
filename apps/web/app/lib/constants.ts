@@ -33,7 +33,11 @@ export type NavItem = {
 	href: string;
 };
 
-export const socialLinks: Array<NavItem & { icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element }> = [
+export const socialLinks: Array<
+	NavItem & {
+		icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+	}
+> = [
 	{
 		label: 'Facebook',
 		href: FACEBOOK_URL,

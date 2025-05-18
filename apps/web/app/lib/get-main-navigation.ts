@@ -33,7 +33,13 @@ const mainNavigationSchema = z.object({
 			),
 		}),
 	),
-	pages: z.array(z.object({ _key: z.string(), label: z.string(), href: z.string() })),
+	pages: z.array(
+		z.object({
+			_key: z.string(),
+			label: z.string(),
+			href: z.string(),
+		}),
+	),
 });
 
 export async function getMainNavigation() {

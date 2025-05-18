@@ -7,6 +7,9 @@ export const brandsWeLove = z.array(
 		label: z.string(),
 		href: z.string(),
 		image: imageWithAltSchema,
-		theme: z.enum(['ladies', 'mens']),
+		theme: z.enum([
+			'ladies',
+			'mens',
+		]),
 	}),
 );

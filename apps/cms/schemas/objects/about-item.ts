@@ -21,7 +21,11 @@ export const aboutItem = defineField({
 			name: 'content',
 			type: 'array',
 			title: 'Content',
-			of: [{ type: 'block' }],
+			of: [
+				{
+					type: 'block',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 	],

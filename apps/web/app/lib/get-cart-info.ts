@@ -26,7 +26,10 @@ export type CartResult = CartSuccess | CartError | CartEmpty;
 
 export async function getCartInfo(items: Array<CartItem>): Promise<CartResult> {
 	try {
-		if (items.length === 0) return { type: 'empty' };
+		if (items.length === 0)
+			return {
+				type: 'empty',
+			};
 
 		const json = await shopifyClient(CREATE_CART_MUTATION, {
 			input: {

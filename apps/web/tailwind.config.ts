@@ -143,7 +143,9 @@ function withOpacity(variableName: string): any {
 }
 
 export default {
-	content: ['./app/**/*.{js,ts,jsx,tsx}'],
+	content: [
+		'./app/**/*.{js,ts,jsx,tsx}',
+	],
 	theme: {
 		extend: {
 			colors: {
@@ -243,7 +245,10 @@ export default {
 				sm: 'calc(var(--radius) - 4px)',
 			},
 			fontFamily: {
-				sans: ['Century Gothic', ...defaultTheme.fontFamily.sans],
+				sans: [
+					'Century Gothic',
+					...defaultTheme.fontFamily.sans,
+				],
 			},
 			ringColor: {
 				brand: {
@@ -252,15 +257,28 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: { height: '0' },
-					to: { height: 'var(--radix-accordion-content-height)' },
+					from: {
+						height: '0',
+					},
+					to: {
+						height: 'var(--radix-accordion-content-height)',
+					},
 				},
 				'accordion-up': {
-					from: { height: 'var(--radix-accordion-content-height)' },
-					to: { height: '0' },
+					from: {
+						height: 'var(--radix-accordion-content-height)',
+					},
+					to: {
+						height: '0',
+					},
 				},
 			},
 		},
 	},
-	plugins: [animatePlugin, formsPlugin, glfPlugin, typographyPlugin],
+	plugins: [
+		animatePlugin,
+		formsPlugin,
+		glfPlugin,
+		typographyPlugin,
+	],
 } satisfies Config;

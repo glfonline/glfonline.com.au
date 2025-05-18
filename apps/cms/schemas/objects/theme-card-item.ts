@@ -35,8 +35,14 @@ export const themeCardItem = defineField({
 			title: 'Theme',
 			options: {
 				list: [
-					{ title: 'Ladies', value: 'ladies' },
-					{ title: 'Mens', value: 'mens' },
+					{
+						title: 'Ladies',
+						value: 'ladies',
+					},
+					{
+						title: 'Mens',
+						value: 'mens',
+					},
 				],
 				layout: 'radio',
 				direction: 'horizontal',

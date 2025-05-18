@@ -11,7 +11,10 @@ import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
 const ThemeSchema = z.object({
-	theme: z.enum(['ladies', 'mens']),
+	theme: z.enum([
+		'ladies',
+		'mens',
+	]),
 });
 
 const CollectionSchema = z.object({
@@ -23,7 +26,11 @@ const CollectionSchema = z.object({
 			href: z.string(),
 			label: z.string(),
 			image: imageWithAltSchema,
-			span: z.enum(['2', '3', '5']),
+			span: z.enum([
+				'2',
+				'3',
+				'5',
+			]),
 		}),
 	),
 	brandsWeLove,
@@ -36,7 +43,10 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			id: result.data.theme,
 		});
 		const collection = CollectionSchema.parse(ThemePage);
-		return { collection, theme: result.data.theme };
+		return {
+			collection,
+			theme: result.data.theme,
+		};
 	}
 	notFound();
 }
@@ -46,7 +56,9 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 		title: `Shop ${params.theme === 'ladies' ? 'Ladies' : 'Mens'}`,
 	});
 
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function CollectionsPage() {

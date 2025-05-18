@@ -22,7 +22,9 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 			body: JSON.stringify({
 				secret: process.env.TURNSTILE_SECRET_KEY,
 				response: data.token,
-				...(clientIpAddress && { remoteip: clientIpAddress }),
+				...(clientIpAddress && {
+					remoteip: clientIpAddress,
+				}),
 			}),
 			headers: {
 				'Content-Type': 'application/json',
@@ -61,9 +63,13 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 			credentials: 'omit',
 		});
 
-		return { ok: true };
+		return {
+			ok: true,
+		};
 	} catch {
 		/** @todo */
-		return { ok: false };
+		return {
+			ok: false,
+		};
 	}
 }

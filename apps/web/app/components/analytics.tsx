@@ -27,7 +27,11 @@ ${trackingIds.map((id) => `gtag('config', '${id}', {page_path: window.location.p
 export function MetaAnalytics() {
 	return (
 		<>
-			<script dangerouslySetInnerHTML={{ __html: metaInitScript }} />
+			<script
+				dangerouslySetInnerHTML={{
+					__html: metaInitScript,
+				}}
+			/>
 			<noscript
 				dangerouslySetInnerHTML={{
 					__html: `<img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=${pixelId}&ev=PageView&noscript=1"/>`,

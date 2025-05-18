@@ -42,6 +42,7 @@
 			"attributePosition": "auto",
 			"bracketSameLine": false,
 			"bracketSpacing": true,
+			"expand": "always",
 			"jsxQuoteStyle": "double",
 			"quoteProperties": "asNeeded",
 			"quoteStyle": "single",

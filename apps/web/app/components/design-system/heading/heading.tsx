@@ -11,7 +11,12 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Hea
 	return (
 		<HeadingElement
 			{...consumerProps}
-			className={getHeadingStyles({ className, color, size, weight })}
+			className={getHeadingStyles({
+				className,
+				color,
+				size,
+				weight,
+			})}
 			ref={forwardedRef}
 		>
 			{children}

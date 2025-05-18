@@ -18,7 +18,10 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 		if (fetcher?.data?.ok) {
 			handleSuccess();
 		}
-	}, [fetcher, onClose]);
+	}, [
+		fetcher,
+		onClose,
+	]);
 
 	return (
 		<Transition appear show={isOpen}>

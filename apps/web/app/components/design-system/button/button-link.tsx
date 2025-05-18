@@ -11,7 +11,11 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 		return (
 			<Link
 				{...consumerProps}
-				className={getButtonStyles({ className, size, variant })}
+				className={getButtonStyles({
+					className,
+					size,
+					variant,
+				})}
 				prefetch="intent"
 				ref={forwardedRef}
 				to={href}
@@ -21,7 +25,16 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 		);
 	}
 	return (
-		<a {...consumerProps} className={getButtonStyles({ className, size, variant })} href={href} ref={forwardedRef}>
+		<a
+			{...consumerProps}
+			className={getButtonStyles({
+				className,
+				size,
+				variant,
+			})}
+			href={href}
+			ref={forwardedRef}
+		>
 			{children}
 		</a>
 	);

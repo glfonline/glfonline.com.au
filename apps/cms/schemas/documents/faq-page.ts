@@ -17,7 +17,11 @@ export const faqPage = defineField({
 			name: 'faqs',
 			type: 'array',
 			title: 'FAQs',
-			of: [{ type: 'faq.item' }],
+			of: [
+				{
+					type: 'faq.item',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 	],

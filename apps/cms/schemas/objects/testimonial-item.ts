@@ -15,7 +15,11 @@ export const testimonialItem = defineField({
 			name: 'quote',
 			type: 'array',
 			title: 'Quote',
-			of: [{ type: 'block' }],
+			of: [
+				{
+					type: 'block',
+				},
+			],
 			validation: (Rule) => Rule.required(),
 		}),
 		defineField({

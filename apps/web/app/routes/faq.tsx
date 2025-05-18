@@ -15,15 +15,25 @@ export const headers = routeHeaders;
 
 const FaqSchema = z.object({
 	heroImage: imageWithAltSchema,
-	faqs: z.object({ question: z.nullable(z.string().min(1)), answerRaw: z.any() }).array(),
+	faqs: z
+		.object({
+			question: z.nullable(z.string().min(1)),
+			answerRaw: z.any(),
+		})
+		.array(),
 });
 
 export async function loader() {
-	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, { id: 'faqs' });
+	const { FaqPage } = await sanityClient(GET_FAQS_PAGES, {
+		id: 'faqs',
+	});
 	const faqPage = FaqSchema.parse(FaqPage);
 
 	return data(
-		{ faqPage, title: 'Frequently Asked Questions' },
+		{
+			faqPage,
+			title: 'Frequently Asked Questions',
+		},
 		{
 			headers: {
 				'Cache-Control': CACHE_LONG,
@@ -37,7 +47,9 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	const seoMeta = getSeoMeta({
 		title: data.title,
 	});
-	return [seoMeta];
+	return [
+		seoMeta,
+	];
 };
 
 export default function FaqPage() {

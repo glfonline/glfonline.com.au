@@ -28,7 +28,9 @@ export function LoadingProgress() {
 				// Noop
 			}
 		})();
-	}, [isActive]);
+	}, [
+		isActive,
+	]);
 
 	return (
 		<div

@@ -10,7 +10,11 @@ export function useClientOnlyMount() {
 
 	useEffect(() => {
 		handleMount();
-	}, [handleMount]);
+	}, [
+		handleMount,
+	]);
 
-	return { isMounted };
+	return {
+		isMounted,
+	};
 }
