@@ -155,7 +155,6 @@
 				"noUselessTypeConstraint": "on",
 				"noUselessUndefinedInitialization": "on",
 				"noVoid": "on",
-				"noWith": "on",
 				"useArrowFunction": "on",
 				"useDateNow": "on",
 				"useFlatMap": "on",
@@ -178,7 +177,6 @@
 				"noConstructorReturn": "on",
 				"noEmptyCharacterClassInRegex": "on",
 				"noEmptyPattern": "on",
-				"noFlatMapIdentity": "on",
 				"noGlobalObjectCalls": "on",
 				"noInnerDeclarations": "on",
 				"noInvalidBuiltinInstantiation": "on",
@@ -214,10 +212,8 @@
 				"noUnusedLabels": "on",
 				"noUnusedPrivateClassMembers": "on",
 				"noUnusedVariables": "on",
-				"noUselessContinue": "on",
 				"noVoidElementsWithChildren": "on",
 				"noVoidTypeReturn": "on",
-				"useArrayLiterals": "on",
 				"useExhaustiveDependencies": "on",
 				"useHookAtTopLevel": "on",
 				"useIsNan": "on",
@@ -283,7 +279,6 @@
 				"noDefaultExport": "off",
 				"noImplicitBoolean": "off",
 				"noInferrableTypes": "on",
-				"noNamespaceImport": "off",
 				"noParameterAssign": "on",
 				"noUnusedTemplateLiteral": "on",
 				"noUselessElse": "on",
@@ -383,8 +378,7 @@
 				"useIsArray": "on",
 				"useNamespaceKeyword": "on",
 				"useNumberToFixedDigitsArgument": "on",
-				"useStrictMode": "on",
-				"useValidTypeof": "on"
+				"useStrictMode": "on"
 			}
 		}
 	},
