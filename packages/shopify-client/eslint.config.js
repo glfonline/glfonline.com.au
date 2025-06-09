@@ -1,16 +1,26 @@
 // @ts-check
 
 import tsGqlPlugin from '@ts-gql/eslint-plugin';
-import { config } from 'typescript-eslint';
+import tseslint from 'typescript-eslint';
 
-export default config({
-	files: [
-		'./src/**/*.{js,mjs,cjs,ts}',
-	],
-	plugins: {
-		'@ts-gql': tsGqlPlugin,
+export default tseslint.config(
+	{
+		ignores: [
+			'**/__generated__/**',
+			'**/dist/**',
+			'**/node_modules/**',
+		],
 	},
-	rules: {
-		'@ts-gql/ts-gql': 'error',
+	...tseslint.configs.recommended,
+	{
+		files: [
+			'./src/**/*.{js,mjs,cjs,ts}',
+		],
+		plugins: {
+			'@ts-gql': tsGqlPlugin,
+		},
+		rules: {
+			'@ts-gql/ts-gql': 'error',
+		},
 	},
-});
+);
