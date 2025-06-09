@@ -34,19 +34,6 @@ import { seoConfig } from './seo';
 // @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
-const seo: SeoHandleFunction<typeof loader> = ({ data, pathname }) => {
-	return {
-		title: data.shop.name,
-		titleTemplate: seoConfig.titleTemplate,
-		description: data.shop.description || seoConfig.description,
-		url: `https://www.glfonline.com.au${pathname}`,
-	};
-};
-
-export const handle = {
-	seo,
-};
-
 export const links: LinksFunction = () => {
 	return [
 		{
@@ -116,10 +103,35 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	};
 }
 
+const seo: SeoHandleFunction<typeof loader> = ({ pathname, data }) => {
+	if (!data) {
+		return {
+			title: seoConfig.title,
+			titleTemplate: seoConfig.titleTemplate,
+			description: seoConfig.description,
+			url: `https://www.glfonline.com.au${pathname}`,
+		};
+	}
+
+	// SeoHandleFunction isn't correctly inferring the type for data, so we need use a type assertion
+	const loaderData = data as Awaited<ReturnType<typeof loader>>;
+
+	return {
+		title: loaderData.shop.name,
+		titleTemplate: seoConfig.titleTemplate,
+		description: loaderData.shop.description || seoConfig.description,
+		url: `https://www.glfonline.com.au${pathname}`,
+	};
+};
+
+export const handle = {
+	seo,
+};
+
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
 	return getSeoMeta({
 		...seoConfig,
-		title: data?.shop.name || seoConfig.title,
+		title: data?.shop?.name || seoConfig.title,
 	});
 };
 
