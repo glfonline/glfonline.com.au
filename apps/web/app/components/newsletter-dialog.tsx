@@ -1,6 +1,6 @@
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
-import { useFetchers } from '@remix-run/react';
 import { Fragment, useEffect } from 'react';
+import { useFetchers } from 'react-router';
 import { NewsletterSignup } from './newsletter/form';
 
 function wait(ms: number) {
