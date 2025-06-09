@@ -85,7 +85,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 
 		// Clear the cart if we get an error
 		if (cartResult.type === 'error') {
-			await session.setCart([]);
+			session.setCart([]);
 			const [{ shop: shopData }, navigationData] = await Promise.all([
 				shopifyClient(SHOP_QUERY),
 				getMainNavigation(),
