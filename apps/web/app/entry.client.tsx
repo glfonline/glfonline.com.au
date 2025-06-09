@@ -4,37 +4,9 @@
  * @see https://remix.run/file-conventions/entry.client
  */
 
-import * as Sentry from '@sentry/remix';
-import { StrictMode, startTransition, useEffect } from 'react';
+import { StrictMode, startTransition } from 'react';
 import { hydrateRoot } from 'react-dom/client';
-import { useLocation, useMatches } from 'react-router';
 import { HydratedRouter } from 'react-router/dom';
-import { SENTRY_DSN } from './lib/constants';
-
-Sentry.init({
-	autoInstrumentRemix: true,
-	dsn: SENTRY_DSN,
-	environment: process.env.NODE_ENV,
-	integrations: [
-		Sentry.browserTracingIntegration({
-			useEffect,
-			useLocation,
-			useMatches,
-		}),
-
-		// Replay is only available in the client.
-		Sentry.replayIntegration(),
-	],
-
-	// Capture Replay for 10% of all sessions, plus for 100% of sessions with an
-	// error.
-	replaysOnErrorSampleRate: 1.0,
-	replaysSessionSampleRate: 0.1,
-
-	// Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-	// We recommend adjusting this value in production.
-	tracesSampleRate: 1.0,
-});
 
 startTransition(() => {
 	hydrateRoot(

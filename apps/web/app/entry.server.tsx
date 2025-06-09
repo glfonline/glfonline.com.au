@@ -6,18 +6,9 @@
 
 import { PassThrough } from 'node:stream';
 import { createReadableStreamFromReadable } from '@react-router/node';
-import * as Sentry from '@sentry/remix';
 import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
 import { type AppLoadContext, type EntryContext, ServerRouter } from 'react-router';
-import { SENTRY_DSN } from './lib/constants';
-
-Sentry.init({
-	autoInstrumentRemix: true,
-	dsn: SENTRY_DSN,
-	environment: process.env.NODE_ENV,
-	tracesSampleRate: 1,
-});
 
 // Reject/cancel all pending promises after 5 seconds
 export const STREAM_TIMEOUT = 5000;

@@ -1,5 +1,4 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
 import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
@@ -125,7 +124,7 @@ const persister = createSyncStoragePersister({
 	storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 });
 
-function App() {
+export default function App() {
 	const location = useLocation();
 
 	useEffect(() => {
@@ -174,7 +173,6 @@ function App() {
 
 export function ErrorBoundary() {
 	const error = useRouteError();
-	captureRemixErrorBoundaryError(error);
 
 	const main = isRouteErrorResponse(error) ? (
 		error.status === 404 ? (
@@ -206,5 +204,3 @@ export function ErrorBoundary() {
 		</html>
 	);
 }
-
-export default withSentry(App);
