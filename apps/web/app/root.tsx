@@ -1,8 +1,15 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { useEffect } from 'react';
 import {
 	isRouteErrorResponse,
 	Links,
+	type LinksFunction,
+	type LoaderFunctionArgs,
 	Meta,
 	type MetaFunction,
 	Outlet,
@@ -10,29 +17,20 @@ import {
 	ScrollRestoration,
 	useLocation,
 	useRouteError,
-} from '@remix-run/react';
-import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { useEffect } from 'react';
+} from 'react-router';
 import favicon from '../assets/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
 import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-// @ts-expect-error
-import fontCssUrl from './font.css?url';
+import fontStylesheet from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import { seoConfig } from './seo';
-// @ts-expect-error
-import tailwindCssUrl from './tailwind.css?url';
+import tailwindStylesheet from './tailwind.css?url';
 
 export const links: LinksFunction = () => {
 	return [
@@ -45,19 +43,17 @@ export const links: LinksFunction = () => {
 			href: 'https://shop.app',
 		},
 		{
-			rel: 'stylesheet',
-			href: fontCssUrl,
-			as: 'style',
-		},
-		{
-			rel: 'stylesheet',
-			href: tailwindCssUrl,
-			as: 'style',
-		},
-		{
 			rel: 'icon',
 			type: 'image/svg+xml',
 			href: favicon,
+		},
+		{
+			rel: 'stylesheet',
+			href: fontStylesheet,
+		},
+		{
+			rel: 'stylesheet',
+			href: tailwindStylesheet,
 		},
 	];
 };
@@ -140,7 +136,7 @@ const persister = createSyncStoragePersister({
 	storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 });
 
-function App() {
+export default function App() {
 	const location = useLocation();
 
 	useEffect(() => {
@@ -189,7 +185,6 @@ function App() {
 
 export function ErrorBoundary() {
 	const error = useRouteError();
-	captureRemixErrorBoundaryError(error);
 
 	const main = isRouteErrorResponse(error) ? (
 		error.status === 404 ? (
@@ -221,5 +216,3 @@ export function ErrorBoundary() {
 		</html>
 	);
 }
-
-export default withSentry(App);

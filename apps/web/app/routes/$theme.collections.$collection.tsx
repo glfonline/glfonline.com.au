@@ -9,10 +9,17 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
+import {
+	Link,
+	type LoaderFunctionArgs,
+	type Location,
+	type MetaFunction,
+	useLoaderData,
+	useLocation,
+	useNavigate,
+} from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button } from '../components/design-system/button';

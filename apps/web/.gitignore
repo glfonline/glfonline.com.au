@@ -3,6 +3,7 @@ __generated__
 .env
 .env.sentry-build-plugin
 .output
+.react-router
 .sentryclirc
 .vercel
 api
