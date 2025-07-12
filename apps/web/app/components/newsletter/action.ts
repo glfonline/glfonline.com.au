@@ -8,7 +8,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 		/** Get the form data out of the request */
 		const formData = await request.formData();
 		/** Parse the data to ensure it's in the expected format */
-		const parseResult = NewsletterSchema.safeParse(Object.fromEntries(formData));
+		const parseResult = NewsletterSchema.safeParse(Object.fromEntries(formData.entries()));
 
 		if (!parseResult.success) {
 			return {

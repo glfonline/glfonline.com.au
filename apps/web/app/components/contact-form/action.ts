@@ -12,7 +12,7 @@ export async function action({ request }: ActionFunctionArgs) {
 		const formData = await request.formData();
 
 		/** Convert FormData to object with proper type coercion for checkboxes */
-		const rawData = Object.fromEntries(formData);
+		const rawData = Object.fromEntries(formData.entries());
 		const formDataWithCoercion = {
 			...rawData,
 			// Convert checkbox: 'on' (native form) or 'true' (JS form) to boolean true, undefined/false to false
