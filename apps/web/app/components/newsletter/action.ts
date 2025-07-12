@@ -1,5 +1,4 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
-import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { FormResponse } from '../../types';
 import { NewsletterSchema } from './schema';
@@ -9,7 +8,16 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 		/** Get the form data out of the request */
 		const formData = await request.formData();
 		/** Parse the data to ensure it's in the expected format */
-		const data = parseForm(NewsletterSchema, formData);
+		const parseResult = NewsletterSchema.safeParse(Object.fromEntries(formData));
+
+		if (!parseResult.success) {
+			return {
+				ok: false,
+				serverIssues: parseResult.error.issues,
+			};
+		}
+
+		const data = parseResult.data;
 
 		/** Attempt to parse users IP address from request object */
 		const clientIpAddress = getClientIPAddress(request);

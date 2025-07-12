@@ -2,13 +2,14 @@ import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { useForm } from '@tanstack/react-form';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
-import { useZorm } from 'react-zorm';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
+import { FieldMessage } from '../components/design-system/field';
 import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
@@ -30,11 +31,7 @@ const ProductSchema = z.object({
 });
 
 const CartSchema = z.object({
-	variantId: z
-		.string({
-			required_error: 'Please select an option',
-		})
-		.min(1),
+	variantId: z.string().min(1, 'Please select an option'),
 });
 
 // Define types for our action return values
@@ -74,7 +71,19 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 		request.formData(),
 		getSession(request),
 	]);
-	const { variantId } = CartSchema.parse(Object.fromEntries(formData.entries()));
+
+	// Parse form data and handle validation errors
+	const parseResult = CartSchema.safeParse(Object.fromEntries(formData.entries()));
+
+	if (!parseResult.success) {
+		// Return validation error instead of throwing
+		return json({
+			error: 'Please select an option',
+			success: false,
+		});
+	}
+
+	const { variantId } = parseResult.data;
 
 	// Get current cart
 	const currentCart = await session.getCart();
@@ -152,16 +161,25 @@ export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 	const actionData = useActionData<typeof action>();
 
-	const [variant, setVariant] = useState(
-		product.variants.edges.find(({ node: { availableForSale } }) => availableForSale),
-	);
+	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
 	const isOnSale = product.variants.edges.some(
 		({ node: { compareAtPrice, price } }) =>
 			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
 	);
 
-	const form = useZorm('cart_form', CartSchema);
+	const form = useForm({
+		defaultValues: {
+			variantId: '',
+		},
+		validators: {
+			onChange: CartSchema,
+			onSubmit: CartSchema,
+		},
+		onSubmit: () => {
+			// Validation passed, let Remix handle the submission
+		},
+	});
 
 	const formError = actionData && !actionData.success ? actionData.error : undefined;
 
@@ -217,59 +235,117 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<Form className="flex flex-col gap-6" method="post" ref={form.ref} replace>
-							<fieldset className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}>
-								<div className="flex items-center justify-between">
-									<legend className="font-bold text-gray-900 text-sm">Options</legend>
-								</div>
-								<div className="flex flex-wrap gap-3">
-									{product.variants.edges.map(({ node }) => (
-										<label className="relative" htmlFor={node.id} key={node.id}>
-											<input
-												checked={variant?.node.id === node.id}
-												className="sr-only"
-												disabled={!node.availableForSale}
-												id={node.id}
-												name={form.fields.variantId()}
-												onChange={(event) => {
-													setVariant(product.variants.edges.find((v) => v.node.id === event.target.value));
-												}}
-												type="radio"
-												value={node.id}
-											/>
-											<span
-												className={clsx(
-													'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 font-bold text-sm uppercase',
-													'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-													node.availableForSale ? 'cursor-pointer focus:outline-none' : 'cursor-not-allowed opacity-25',
-													'[:focus+&]:ring-2 [:focus+&]:ring-brand-500 [:focus+&]:ring-offset-2',
-													'[:checked+&]:border-transparent [:checked+&]:bg-brand-primary [:checked+&]:text-white [:checked+&]:hover:bg-brand-light',
-												)}
+						<Form
+							className="flex flex-col gap-6"
+							method="post"
+							onSubmit={(event) => {
+								// Let TanStack form validate first
+								const isValid = form.validateAllFields('submit');
+								if (!isValid) {
+									event.preventDefault();
+									event.stopPropagation();
+									return;
+								}
+								// If valid, let Remix handle the submission
+								return;
+							}}
+							replace
+						>
+							<form.Field name="variantId">
+								{(field) => {
+									const errorMessage = field.state.meta.errors
+										.map((error) => error?.message)
+										.filter(Boolean)
+										.join(', ');
+									return (
+										<>
+											<fieldset
+												aria-describedby={errorMessage ? `${field.name}-error` : undefined}
+												aria-invalid={errorMessage ? true : undefined}
+												className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}
 											>
-												{node.title}
-											</span>
-										</label>
-									))}
-								</div>
-							</fieldset>
+												<div className="flex items-center justify-between">
+													<legend className="font-bold text-gray-900 text-sm">Options</legend>
+												</div>
+												<div className="flex flex-wrap gap-3">
+													{product.variants.edges.map(({ node }) => (
+														<label className="relative" htmlFor={node.id} key={node.id}>
+															<input
+																aria-describedby={errorMessage ? `${field.name}-error` : undefined}
+																checked={variant?.node.id === node.id}
+																className="sr-only"
+																disabled={!node.availableForSale}
+																id={node.id}
+																name={field.name}
+																onChange={(event) => {
+																	field.handleChange(event.target.value);
+																	setVariant(product.variants.edges.find((v) => v.node.id === event.target.value));
+																}}
+																type="radio"
+																value={node.id}
+															/>
+															<span
+																className={clsx(
+																	'inline-flex h-12 min-w-[3rem] items-center justify-center border px-3 font-bold text-sm uppercase',
+																	'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
+																	node.availableForSale
+																		? 'cursor-pointer focus:outline-none'
+																		: 'cursor-not-allowed opacity-25',
+																	'[:focus+&]:ring-2 [:focus+&]:ring-brand-500 [:focus+&]:ring-offset-2',
+																	'[:checked+&]:border-transparent [:checked+&]:bg-brand-primary [:checked+&]:text-white [:checked+&]:hover:bg-brand-light',
+																)}
+															>
+																{node.title}
+															</span>
+														</label>
+													))}
+												</div>
+											</fieldset>
 
-							<div className="flex flex-col gap-4">
-								{sizingChart && (
-									<ButtonLink href={sizingChart.href} rel="noreferrer noopener" target="_blank">
-										{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
-									</ButtonLink>
-								)}
+											<div className="flex flex-col gap-4">
+												{sizingChart && (
+													<ButtonLink href={sizingChart.href} rel="noreferrer noopener" target="_blank">
+														{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
+													</ButtonLink>
+												)}
 
-								<Button
-									disabled={!product.availableForSale}
-									isLoading={navigation.state !== 'idle'}
-									type="submit"
-									variant="neutral"
-								>
-									{product.availableForSale ? form.errors.variantId()?.message || buttonText : 'Sold Out'}
-								</Button>
+												<form.Subscribe
+													selector={(state) => [
+														state.canSubmit,
+														state.isSubmitting,
+													]}
+												>
+													{([canSubmit, isSubmitting]) => (
+														<Button
+															disabled={!(product.availableForSale && canSubmit)}
+															isLoading={isSubmitting || navigation.state !== 'idle'}
+															type="submit"
+															variant="neutral"
+														>
+															{!product.availableForSale
+																? 'Sold Out'
+																: field.state.meta.errors.map((error) => error?.message).join(', ') || buttonText}
+														</Button>
+													)}
+												</form.Subscribe>
 
-								{formError && <p className="mt-2 text-red-500 text-sm">{formError}</p>}
+												{/* Display validation errors */}
+												{field.state.meta.errors.map((error) => error?.message).join(', ') && (
+													<FieldMessage
+														id={`${field.name}-error`}
+														message={field.state.meta.errors.map((error) => error?.message).join(', ')}
+														tone="critical"
+													/>
+												)}
+											</div>
+										</>
+									);
+								}}
+							</form.Field>
+
+							{/* Live region for server errors */}
+							<div aria-live="polite" className={formError ? undefined : 'sr-only'} role="alert">
+								{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
 							</div>
 						</Form>
 

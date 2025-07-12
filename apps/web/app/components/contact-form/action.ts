@@ -1,7 +1,6 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
 import sendgrid from '@sendgrid/mail';
 import dedent from 'dedent';
-import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 import { requiredEnv } from '../../lib/required-env';
@@ -11,11 +10,27 @@ export async function action({ request }: ActionFunctionArgs) {
 	try {
 		/** Get the form data out of the request */
 		const formData = await request.formData();
+
+		/** Convert FormData to object with proper type coercion for checkboxes */
+		const rawData = Object.fromEntries(formData);
+		const formDataWithCoercion = {
+			...rawData,
+			// Convert checkbox: 'on' (native form) or 'true' (JS form) to boolean true, undefined/false to false
+			agree_to_privacy_policy: rawData.agree_to_privacy_policy === 'on' || rawData.agree_to_privacy_policy === 'true',
+		};
+
 		/** Parse the data to ensure it's in the expected format */
-		const { agree_to_privacy_policy, first_name, email, last_name, message, phone_number, subject, token } = parseForm(
-			ContactFormSchema,
-			formData,
-		);
+		const parseResult = ContactFormSchema.safeParse(formDataWithCoercion);
+
+		if (!parseResult.success) {
+			return {
+				ok: false,
+				serverIssues: parseResult.error.issues,
+			};
+		}
+
+		const parsedData = parseResult.data;
+		const { agree_to_privacy_policy, first_name, email, last_name, message, phone_number, subject, token } = parsedData;
 
 		/** Make sure the user agrees to the Privacy Policy */
 		if (!agree_to_privacy_policy) {
