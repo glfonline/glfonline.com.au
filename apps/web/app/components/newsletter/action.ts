@@ -1,5 +1,6 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
+import { parseFormData } from '../../lib/parse-form-data';
 import type { FormResponse } from '../../types';
 import { NewsletterSchema } from './schema';
 
@@ -8,7 +9,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 		/** Get the form data out of the request */
 		const formData = await request.formData();
 		/** Parse the data to ensure it's in the expected format */
-		const parseResult = NewsletterSchema.safeParse(Object.fromEntries(formData.entries()));
+		const parseResult = parseFormData({
+			formData,
+			schema: NewsletterSchema,
+		});
 
 		if (!parseResult.success) {
 			return {

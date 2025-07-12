@@ -18,6 +18,7 @@ import { notFound } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
+import { parseFormData } from '../lib/parse-form-data';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
@@ -73,7 +74,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<ReturnTyp
 	]);
 
 	// Parse form data and handle validation errors
-	const parseResult = CartSchema.safeParse(Object.fromEntries(formData.entries()));
+	const parseResult = parseFormData({
+		formData,
+		schema: CartSchema,
+	});
 
 	if (!parseResult.success) {
 		// Return validation error instead of throwing

@@ -9,6 +9,7 @@ import { Heading } from '../components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { type CartResult, getCartInfo } from '../lib/get-cart-info';
+import { parseFormData } from '../lib/parse-form-data';
 import { getSeoMeta } from '../seo';
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartResult>>> {
@@ -70,7 +71,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	switch (intent) {
 		case ACTIONS.CHECKOUT_ACTION: {
-			const parseResult = CheckoutScheme.safeParse(Object.fromEntries(formData.entries()));
+			const parseResult = parseFormData({
+				formData,
+				schema: CheckoutScheme,
+			});
 			if (!parseResult.success) {
 				throw new Response('Invalid checkout data', {
 					status: 400,
@@ -82,7 +86,10 @@ export async function action({ request }: ActionFunctionArgs) {
 
 		case ACTIONS.INCREMENT_ACTION:
 		case ACTIONS.DECREMENT_ACTION: {
-			const parseResult = QuantityScheme.safeParse(Object.fromEntries(formData.entries()));
+			const parseResult = parseFormData({
+				formData,
+				schema: QuantityScheme,
+			});
 			if (!parseResult.success) {
 				throw new Response('Invalid quantity data', {
 					status: 400,
@@ -103,7 +110,10 @@ export async function action({ request }: ActionFunctionArgs) {
 		}
 
 		case ACTIONS.REMOVE_ACTION: {
-			const parseResult = RemoveScheme.safeParse(Object.fromEntries(formData.entries()));
+			const parseResult = parseFormData({
+				formData,
+				schema: RemoveScheme,
+			});
 			if (!parseResult.success) {
 				throw new Response('Invalid remove data', {
 					status: 400,

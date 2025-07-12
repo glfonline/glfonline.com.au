@@ -3,6 +3,7 @@ import sendgrid from '@sendgrid/mail';
 import dedent from 'dedent';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import { EMAIL_ADDRESS } from '../../lib/constants';
+import { parseFormData } from '../../lib/parse-form-data';
 import { requiredEnv } from '../../lib/required-env';
 import { ContactFormSchema } from './schema';
 
@@ -11,16 +12,16 @@ export async function action({ request }: ActionFunctionArgs) {
 		/** Get the form data out of the request */
 		const formData = await request.formData();
 
-		/** Convert FormData to object with proper type coercion for checkboxes */
-		const rawData = Object.fromEntries(formData.entries());
-		const formDataWithCoercion = {
-			...rawData,
-			// Convert checkbox: 'on' (native form) or 'true' (JS form) to boolean true, undefined/false to false
-			agree_to_privacy_policy: rawData.agree_to_privacy_policy === 'on' || rawData.agree_to_privacy_policy === 'true',
-		};
-
-		/** Parse the data to ensure it's in the expected format */
-		const parseResult = ContactFormSchema.safeParse(formDataWithCoercion);
+		/** Parse the data to ensure it's in the expected format with checkbox coercion */
+		const parseResult = parseFormData({
+			formData,
+			schema: ContactFormSchema,
+			preprocessor: (rawData) => ({
+				...rawData,
+				// Convert checkbox: 'on' (native form) or 'true' (JS form) to boolean true, undefined/false to false
+				agree_to_privacy_policy: rawData.agree_to_privacy_policy === 'on' || rawData.agree_to_privacy_policy === 'true',
+			}),
+		});
 
 		if (!parseResult.success) {
 			return {
