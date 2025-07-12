@@ -93,10 +93,10 @@ export function FieldMessage({ message, id, tone }: FieldMessageProps) {
 				tone === 'critical' && 'text-red-600',
 				tone === 'positive' && 'text-green-600',
 				tone === 'neutral' && 'text-gray-600',
-				'flex items-center gap-1 text-sm',
+				'flex items-start gap-1 text-sm',
 			)}
 		>
-			{Icon && <Icon className="h-5 w-5" />}
+			{Icon && <Icon className="h-5 w-5 shrink-0" />}
 			<span id={id}>{message}</span>
 		</div>
 	);

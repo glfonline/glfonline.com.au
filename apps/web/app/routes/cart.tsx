@@ -70,13 +70,25 @@ export async function action({ request }: ActionFunctionArgs) {
 
 	switch (intent) {
 		case ACTIONS.CHECKOUT_ACTION: {
-			const { checkoutUrl } = CheckoutScheme.parse(Object.fromEntries(formData.entries()));
+			const parseResult = CheckoutScheme.safeParse(Object.fromEntries(formData.entries()));
+			if (!parseResult.success) {
+				throw new Response('Invalid checkout data', {
+					status: 400,
+				});
+			}
+			const { checkoutUrl } = parseResult.data;
 			return redirect(checkoutUrl);
 		}
 
 		case ACTIONS.INCREMENT_ACTION:
 		case ACTIONS.DECREMENT_ACTION: {
-			const { quantity, variantId } = QuantityScheme.parse(Object.fromEntries(formData.entries()));
+			const parseResult = QuantityScheme.safeParse(Object.fromEntries(formData.entries()));
+			if (!parseResult.success) {
+				throw new Response('Invalid quantity data', {
+					status: 400,
+				});
+			}
+			const { quantity, variantId } = parseResult.data;
 			const cart = await session.getCart();
 			const newCart = updateCartItem(cart, variantId, quantity);
 			await session.setCart(newCart);
@@ -91,7 +103,13 @@ export async function action({ request }: ActionFunctionArgs) {
 		}
 
 		case ACTIONS.REMOVE_ACTION: {
-			const { variantId } = RemoveScheme.parse(Object.fromEntries(formData.entries()));
+			const parseResult = RemoveScheme.safeParse(Object.fromEntries(formData.entries()));
+			if (!parseResult.success) {
+				throw new Response('Invalid remove data', {
+					status: 400,
+				});
+			}
+			const { variantId } = parseResult.data;
 			const cart = await session.getCart();
 			const newCart = removeCartItem(cart, variantId);
 			await session.setCart(newCart);

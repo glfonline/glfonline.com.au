@@ -33,7 +33,12 @@ const BlogSchema = z
 
 export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
-	const { after = 0 } = BlogSchema.parse(Object.fromEntries(url.searchParams.entries()));
+	const parseResult = BlogSchema.safeParse(Object.fromEntries(url.searchParams.entries()));
+	const { after = 0 } = parseResult.success
+		? parseResult.data
+		: {
+				after: 0,
+			};
 	const [posts, featuredPost, count] = await Promise.all([
 		getBlogPosts({
 			limit: POSTS_LIMIT,

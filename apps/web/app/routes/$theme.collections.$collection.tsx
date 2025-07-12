@@ -96,9 +96,15 @@ function parseRequestParameters(params: unknown, request: Request) {
 	}
 
 	const url = new URL(request.url);
-	const { after, sort, productType, ...remainingFilterOptions } = SortSchema.parse(
-		Object.fromEntries(url.searchParams.entries()),
-	);
+	const parseResult = SortSchema.safeParse(Object.fromEntries(url.searchParams.entries()));
+
+	const { after, sort, productType, ...remainingFilterOptions } = parseResult.success
+		? parseResult.data
+		: {
+				after: undefined,
+				sort: undefined,
+				productType: undefined,
+			};
 
 	const filterOptionsResult = RecordSchema.safeParse(remainingFilterOptions);
 	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};

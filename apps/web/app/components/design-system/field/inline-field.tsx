@@ -13,7 +13,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function
 		id: idProp,
 		label,
 		message,
-		tone = 'neutral',
+		tone = 'critical',
 		...consumerProps
 	},
 	forwardedRef,
