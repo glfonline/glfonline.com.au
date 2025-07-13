@@ -128,7 +128,6 @@ const removeServerValidate = createServerValidate({
 	},
 });
 
-// Define a custom form state type that includes meta errors
 interface BaseFormState
 	extends ServerFormState<
 		z.infer<typeof checkoutScheme> | z.infer<typeof quantityScheme> | z.infer<typeof removeScheme>,
@@ -145,7 +144,6 @@ interface ErrorFormState extends BaseFormState {
 
 type CartFormState = BaseFormState | ErrorFormState;
 
-// Define a strict return type for the action
 export type CartActionResult = ReturnType<
 	typeof data<
 		| {

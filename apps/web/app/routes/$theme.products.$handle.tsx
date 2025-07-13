@@ -41,21 +41,19 @@ const cartSchema = z.object({
 	variantId: z.string().min(1, 'Please select an option'),
 });
 
-// Define form options for TanStack Form SSR
 const createFormOpts = (defaultVariantId: string) => {
 	return formOptions({
 		defaultValues: {
 			variantId: defaultVariantId,
 		},
 		validators: {
-			onChange: cartSchema,
+			onBlur: cartSchema,
 			onSubmit: cartSchema,
 		},
 	});
 };
 
-// Create server validation function
-const createServerValidateFn = (defaultVariantId: string) => {
+const makeCreateServerValidate = (defaultVariantId: string) => {
 	return createServerValidate({
 		...createFormOpts(defaultVariantId),
 		onServerValidate: ({ value }: { value: any }) => {
@@ -66,7 +64,6 @@ const createServerValidateFn = (defaultVariantId: string) => {
 	});
 };
 
-// Define a custom form state type that includes meta errors
 interface BaseFormState extends ServerFormState<z.infer<typeof cartSchema>, undefined> {}
 
 interface ErrorFormState extends BaseFormState {
@@ -79,7 +76,6 @@ interface ErrorFormState extends BaseFormState {
 
 type ProductFormState = BaseFormState | ErrorFormState;
 
-// Define a strict return type for the action
 export type ProductActionResult = ReturnType<
 	typeof json<
 		| {
@@ -122,12 +118,11 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 
 	try {
 		// Get the default variant ID from the form data or use empty string
-		const defaultVariantId = (formData.get('defaultVariantId') as string) || '';
-		const serverValidate = createServerValidateFn(defaultVariantId);
+		const defaultVariantId = String(formData.get('variantId') || '');
+		const serverValidate = makeCreateServerValidate(defaultVariantId);
 
 		// Use TanStack Form server validation
-		const validatedData = await serverValidate(formData);
-		const { variantId } = validatedData;
+		const { variantId } = await serverValidate(formData);
 
 		// Get current cart
 		const currentCart = await session.getCart();
@@ -219,7 +214,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 			);
 		}
 
-		// Some other error occurred while validating your form
+		// Some other error occurred while validating the form
 		throw err;
 	}
 }
@@ -241,10 +236,13 @@ export default function ProductPage() {
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
-	const isOnSale = product.variants.edges.some(
-		({ node: { compareAtPrice, price } }) =>
-			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
-	);
+	const isOnSale = product.variants.edges.some(({ node }) => {
+		// If there is no compareAtPrice, the variant is not on sale
+		if (!node.compareAtPrice) return false;
+
+		// Check if the variant is on sale by comparing prices
+		return Number.parseFloat(node.price.amount) < Number.parseFloat(node.compareAtPrice.amount);
+	});
 
 	// Use the form state from the error case, or initialFormState with the selected variant
 	const form = useForm({

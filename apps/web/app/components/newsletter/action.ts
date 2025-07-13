@@ -34,7 +34,6 @@ const serverValidate = createServerValidate({
 	},
 });
 
-// Define a custom form state type that includes meta errors
 interface BaseFormState extends ServerFormState<z.infer<typeof newsletterSchema>, undefined> {}
 
 interface ErrorFormState extends BaseFormState {
@@ -47,7 +46,6 @@ interface ErrorFormState extends BaseFormState {
 
 type NewsletterFormState = BaseFormState | ErrorFormState;
 
-// Define a strict return type for the action
 export type NewsletterActionResult = ReturnType<
 	typeof json<
 		| {

@@ -44,7 +44,6 @@ const serverValidate = createServerValidate({
 	},
 });
 
-// Define a custom form state type that includes meta errors
 interface BaseFormState extends ServerFormState<z.infer<typeof contactFormSchema>, undefined> {}
 
 interface ErrorFormState extends BaseFormState {
@@ -57,7 +56,6 @@ interface ErrorFormState extends BaseFormState {
 
 type ContactFormState = BaseFormState | ErrorFormState;
 
-// Define a strict return type for the action
 export type ContactActionResult = ReturnType<
 	typeof json<
 		| {
@@ -72,8 +70,8 @@ export type ContactActionResult = ReturnType<
 
 export async function action({ request }: ActionFunctionArgs): Promise<ContactActionResult> {
 	try {
-		// Use TanStack Form server validation
 		const formData = await request.formData();
+		// Use TanStack Form server validation
 		const { first_name, email, last_name, message, phone_number, subject, token } = await serverValidate(formData);
 
 		/** Attempt to parse users IP address from request object */
