@@ -56,7 +56,7 @@ const makeFormOpts = (defaultVariantId: string) => {
 const makeCreateServerValidate = (defaultVariantId: string) => {
 	return createServerValidate({
 		...makeFormOpts(defaultVariantId),
-		onServerValidate: ({ value }: { value: any }) => {
+		onServerValidate: ({ value }) => {
 			if (!value.variantId) {
 				return 'Please select an option';
 			}
