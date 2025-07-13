@@ -59,8 +59,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<Newslette
 	try {
 		// Use TanStack Form server validation
 		const formData = await request.formData();
-		const validatedData = await serverValidate(formData);
-		const data = validatedData;
+		const { token, email, first_name, last_name, gender } = await serverValidate(formData);
 
 		/** Attempt to parse users IP address from request object */
 		const clientIpAddress = getClientIPAddress(request);
@@ -71,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<Newslette
 		 */
 		const challengeResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 			body: JSON.stringify({
-				response: data.token,
+				response: token,
 				secret: process.env.TURNSTILE_SECRET_KEY,
 				...(clientIpAddress && {
 					remoteip: clientIpAddress,
@@ -91,10 +90,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<Newslette
 			'https://golfladiesfirst.us12.list-manage.com/subscribe/post?u=f7790536b053b57996dbc24d0&amp;id=f711b0e505',
 		);
 
-		url.searchParams.set('EMAIL', data.email);
-		url.searchParams.set('FNAME', data.first_name);
-		url.searchParams.set('LNAME', data.last_name);
-		url.searchParams.set('GENDER', data.gender);
+		url.searchParams.set('EMAIL', email);
+		url.searchParams.set('FNAME', first_name);
+		url.searchParams.set('LNAME', last_name);
+		url.searchParams.set('GENDER', gender);
 
 		await fetch(url.href, {
 			body: null,
