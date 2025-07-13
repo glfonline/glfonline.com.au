@@ -10,7 +10,6 @@ import { TextInput } from '../design-system/text-input';
 import type { action } from './action';
 import { newsletterSchema } from './schema';
 
-// Define form options for TanStack Form SSR
 const formOpts = formOptions({
 	defaultValues: {
 		first_name: '',

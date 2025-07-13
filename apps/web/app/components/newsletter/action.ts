@@ -11,7 +11,6 @@ import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
 import { newsletterSchema } from './schema';
 
-// Define form options for TanStack Form SSR
 const formOpts = formOptions({
 	defaultValues: {
 		first_name: '',

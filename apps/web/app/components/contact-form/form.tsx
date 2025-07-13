@@ -13,7 +13,6 @@ import { SplitBackground } from '../split-background';
 import type { action } from './action';
 import { contactFormSchema } from './schema';
 
-// Define form options for TanStack Form SSR
 const formOpts = formOptions({
 	defaultValues: {
 		first_name: '',

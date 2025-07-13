@@ -15,7 +15,6 @@ import { EMAIL_ADDRESS } from '../../lib/constants';
 import { requiredEnv } from '../../lib/required-env';
 import { contactFormSchema } from './schema';
 
-// Define form options for TanStack Form SSR
 const formOpts = formOptions({
 	defaultValues: {
 		first_name: '',
