@@ -174,8 +174,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 
 			case ACTIONS.INCREMENT_ACTION:
 			case ACTIONS.DECREMENT_ACTION: {
-				const validatedData = await quantityServerValidate(formData);
-				const { quantity, variantId } = validatedData;
+				const { quantity, variantId } = await quantityServerValidate(formData);
 				const cart = await session.getCart();
 				const newCart = updateCartItem(cart, variantId, quantity);
 				await session.setCart(newCart);
