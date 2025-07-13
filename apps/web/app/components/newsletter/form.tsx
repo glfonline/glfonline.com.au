@@ -66,9 +66,7 @@ export function NewsletterSignup() {
 					className="w-full py-8 sm:flex"
 					method="post"
 					name="newsletter_signup_form"
-					onSubmit={(event) => {
-						event.preventDefault();
-						event.stopPropagation();
+					onSubmit={() => {
 						form.handleSubmit();
 					}}
 				>
