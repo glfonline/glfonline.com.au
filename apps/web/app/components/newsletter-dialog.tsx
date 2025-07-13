@@ -1,6 +1,7 @@
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
 import { useFetchers } from '@remix-run/react';
 import { Fragment, useEffect } from 'react';
+import { noop } from '../lib/noop';
 import { NewsletterSignup } from './newsletter/form';
 
 function wait(ms: number) {
@@ -16,9 +17,7 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 				.then(() => {
 					onClose();
 				})
-				.catch(() => {
-					// noop
-				});
+				.catch(noop);
 		}
 	}, [
 		fetcher,

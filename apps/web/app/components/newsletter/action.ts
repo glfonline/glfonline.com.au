@@ -9,6 +9,7 @@ import {
 } from '@tanstack/react-form/remix';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
+import { noop } from '../../lib/noop';
 import { newsletterSchema } from './schema';
 
 const formOpts = formOptions({
@@ -25,12 +26,9 @@ const formOpts = formOptions({
 	},
 });
 
-// Create server validation function
 const serverValidate = createServerValidate({
 	...formOpts,
-	onServerValidate: () => {
-		// Additional server-side validation can be added here
-	},
+	onServerValidate: noop,
 });
 
 interface BaseFormState extends ServerFormState<z.infer<typeof newsletterSchema>, undefined> {}

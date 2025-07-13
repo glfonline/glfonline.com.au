@@ -32,11 +32,9 @@ const formOpts = formOptions({
 	},
 });
 
-// Create server validation function
 const serverValidate = createServerValidate({
 	...formOpts,
 	onServerValidate: ({ value }) => {
-		// Additional server-side validation
 		if (!value.agree_to_privacy_policy) {
 			return 'You must agree to the Privacy Policy';
 		}
