@@ -42,25 +42,29 @@ const CartSchema = z.object({
 });
 
 // Define form options for TanStack Form SSR
-const formOpts = formOptions({
-	defaultValues: {
-		variantId: '',
-	},
-	validators: {
-		onChange: CartSchema,
-		onSubmit: CartSchema,
-	},
-});
+const createFormOpts = (defaultVariantId: string) => {
+	return formOptions({
+		defaultValues: {
+			variantId: defaultVariantId,
+		},
+		validators: {
+			onChange: CartSchema,
+			onSubmit: CartSchema,
+		},
+	});
+};
 
 // Create server validation function
-const serverValidate = createServerValidate({
-	...formOpts,
-	onServerValidate: ({ value }) => {
-		if (!value.variantId) {
-			return 'Please select an option';
-		}
-	},
-});
+const createServerValidateFn = (defaultVariantId: string) => {
+	return createServerValidate({
+		...createFormOpts(defaultVariantId),
+		onServerValidate: ({ value }: { value: any }) => {
+			if (!value.variantId) {
+				return 'Please select an option';
+			}
+		},
+	});
+};
 
 // Define a custom form state type that includes meta errors
 interface BaseFormState extends ServerFormState<z.infer<typeof CartSchema>, undefined> {}
@@ -117,6 +121,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 	]);
 
 	try {
+		// Get the default variant ID from the form data or use empty string
+		const defaultVariantId = (formData.get('defaultVariantId') as string) || '';
+		const serverValidate = createServerValidateFn(defaultVariantId);
+
 		// Use TanStack Form server validation
 		const validatedData = await serverValidate(formData);
 		const { variantId } = validatedData;
@@ -238,9 +246,9 @@ export default function ProductPage() {
 			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
 	);
 
-	// Use the form state from the error case, or initialFormState
+	// Use the form state from the error case, or initialFormState with the selected variant
 	const form = useForm({
-		...formOpts,
+		...createFormOpts(variant?.node.id || ''),
 		transform: useTransform(
 			(baseForm) =>
 				actionData?.data && actionData.data.type === 'error'
@@ -256,7 +264,6 @@ export default function ProductPage() {
 
 	let buttonText = 'Add to cart';
 	if (navigation.state === 'submitting') buttonText = 'Adding...';
-	if (navigation.state === 'loading') buttonText = 'Added!';
 
 	const sizingChart = getSizingChart(product);
 
@@ -307,8 +314,7 @@ export default function ProductPage() {
 						<Form
 							className="flex flex-col gap-6"
 							method="post"
-							onSubmit={(event) => {
-								event.preventDefault();
+							onSubmit={() => {
 								form.handleSubmit();
 							}}
 							replace
@@ -339,6 +345,7 @@ export default function ProductPage() {
 																disabled={!node.availableForSale}
 																id={node.id}
 																name={field.name}
+																onBlur={field.handleBlur}
 																onChange={(event) => {
 																	field.handleChange(event.target.value);
 																	setVariant(product.variants.edges.find((v) => v.node.id === event.target.value));
@@ -377,18 +384,21 @@ export default function ProductPage() {
 														state.isSubmitting,
 													]}
 												>
-													{([canSubmit, isSubmitting]) => (
-														<Button
-															disabled={!(product.availableForSale && canSubmit)}
-															isLoading={isSubmitting || navigation.state !== 'idle'}
-															type="submit"
-															variant="neutral"
-														>
-															{!product.availableForSale
-																? 'Sold Out'
-																: ('meta' in field.state && field.state.meta.errors[0]?.message) || buttonText}
-														</Button>
-													)}
+													{([canSubmit, isSubmitting]) => {
+														const isUnavailable = !product.availableForSale;
+														return (
+															<Button
+																disabled={isUnavailable || !canSubmit}
+																isLoading={isSubmitting}
+																type="submit"
+																variant="neutral"
+															>
+																{isUnavailable
+																	? 'Sold Out'
+																	: ('meta' in field.state && field.state.meta.errors[0]?.message) || buttonText}
+															</Button>
+														);
+													}}
 												</form.Subscribe>
 
 												{/* Display validation errors */}
