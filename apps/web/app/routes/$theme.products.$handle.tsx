@@ -41,7 +41,7 @@ const cartSchema = z.object({
 	variantId: z.string().min(1, 'Please select an option'),
 });
 
-const createFormOpts = (defaultVariantId: string) => {
+const makeFormOpts = (defaultVariantId: string) => {
 	return formOptions({
 		defaultValues: {
 			variantId: defaultVariantId,
@@ -55,7 +55,7 @@ const createFormOpts = (defaultVariantId: string) => {
 
 const makeCreateServerValidate = (defaultVariantId: string) => {
 	return createServerValidate({
-		...createFormOpts(defaultVariantId),
+		...makeFormOpts(defaultVariantId),
 		onServerValidate: ({ value }: { value: any }) => {
 			if (!value.variantId) {
 				return 'Please select an option';
@@ -248,7 +248,7 @@ export default function ProductPage() {
 
 	// Use the form state from the error case, or initialFormState with the selected variant
 	const form = useForm({
-		...createFormOpts(variant?.node.id || ''),
+		...makeFormOpts(variant?.node.id || ''),
 		transform: useTransform(
 			(baseForm) =>
 				actionData?.data && actionData.data.type === 'error'
