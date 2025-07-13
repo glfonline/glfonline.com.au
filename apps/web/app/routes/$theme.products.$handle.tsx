@@ -214,8 +214,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 			);
 		}
 
-		// Some other error occurred while validating the form
-		throw err;
+		// Some other error occurred - let it bubble up to Remix's error boundary
+		throw new Response('Internal Server Error', {
+			status: 500,
+		});
 	}
 }
 

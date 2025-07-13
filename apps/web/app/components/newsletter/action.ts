@@ -147,20 +147,9 @@ export async function action({ request }: ActionFunctionArgs): Promise<Newslette
 			});
 		}
 
-		// Some other error occurred
-		const errorFormState: ErrorFormState = {
-			...initialFormState,
-			meta: {
-				errors: [
-					{
-						message: 'An unexpected error occurred',
-					},
-				],
-			},
-		};
-		return json({
-			type: 'error',
-			formState: errorFormState,
+		// Some other error occurred - let it bubble up to Remix's error boundary
+		throw new Response('Internal Server Error', {
+			status: 500,
 		});
 	}
 }

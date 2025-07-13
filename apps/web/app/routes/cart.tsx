@@ -249,28 +249,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 			);
 		}
 
-		// Some other error occurred
-		const errorFormState: ErrorFormState = {
-			...initialFormState,
-			meta: {
-				errors: [
-					{
-						message: 'An unexpected error occurred',
-					},
-				],
-			},
-		};
-		return data(
-			{
-				type: 'error',
-				formState: errorFormState,
-			},
-			{
-				headers: {
-					'Set-Cookie': await session.commitSession(),
-				},
-			},
-		);
+		// Some other error occurred - let it bubble up to Remix's error boundary
+		throw new Response('Internal Server Error', {
+			status: 500,
+		});
 	}
 }
 
