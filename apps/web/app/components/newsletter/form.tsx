@@ -8,7 +8,7 @@ import { Field, FieldMessage } from '../design-system/field';
 import { Heading } from '../design-system/heading';
 import { TextInput } from '../design-system/text-input';
 import type { action } from './action';
-import { NewsletterSchema } from './schema';
+import { newsletterSchema } from './schema';
 
 // Define form options for TanStack Form SSR
 const formOpts = formOptions({
@@ -20,8 +20,8 @@ const formOpts = formOptions({
 		token: '',
 	},
 	validators: {
-		onBlur: NewsletterSchema,
-		onSubmit: NewsletterSchema,
+		onBlur: newsletterSchema,
+		onSubmit: newsletterSchema,
 	},
 });
 

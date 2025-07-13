@@ -9,7 +9,7 @@ import {
 } from '@tanstack/react-form/remix';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
-import { NewsletterSchema } from './schema';
+import { newsletterSchema } from './schema';
 
 // Define form options for TanStack Form SSR
 const formOpts = formOptions({
@@ -21,8 +21,8 @@ const formOpts = formOptions({
 		token: '',
 	},
 	validators: {
-		onBlur: NewsletterSchema,
-		onSubmit: NewsletterSchema,
+		onBlur: newsletterSchema,
+		onSubmit: newsletterSchema,
 	},
 });
 
@@ -35,7 +35,7 @@ const serverValidate = createServerValidate({
 });
 
 // Define a custom form state type that includes meta errors
-interface BaseFormState extends ServerFormState<z.infer<typeof NewsletterSchema>, undefined> {}
+interface BaseFormState extends ServerFormState<z.infer<typeof newsletterSchema>, undefined> {}
 
 interface ErrorFormState extends BaseFormState {
 	meta: {

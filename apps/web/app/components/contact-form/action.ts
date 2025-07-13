@@ -13,7 +13,7 @@ import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 import { requiredEnv } from '../../lib/required-env';
-import { ContactFormSchema } from './schema';
+import { contactFormSchema } from './schema';
 
 // Define form options for TanStack Form SSR
 const formOpts = formOptions({
@@ -28,8 +28,8 @@ const formOpts = formOptions({
 		token: '',
 	},
 	validators: {
-		onBlur: ContactFormSchema,
-		onSubmit: ContactFormSchema,
+		onBlur: contactFormSchema,
+		onSubmit: contactFormSchema,
 	},
 });
 
@@ -45,7 +45,7 @@ const serverValidate = createServerValidate({
 });
 
 // Define a custom form state type that includes meta errors
-interface BaseFormState extends ServerFormState<z.infer<typeof ContactFormSchema>, undefined> {}
+interface BaseFormState extends ServerFormState<z.infer<typeof contactFormSchema>, undefined> {}
 
 interface ErrorFormState extends BaseFormState {
 	meta: {

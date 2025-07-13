@@ -11,7 +11,7 @@ import { TextArea } from '../design-system/text-area';
 import { TextInput } from '../design-system/text-input';
 import { SplitBackground } from '../split-background';
 import type { action } from './action';
-import { ContactFormSchema } from './schema';
+import { contactFormSchema } from './schema';
 
 // Define form options for TanStack Form SSR
 const formOpts = formOptions({
@@ -26,8 +26,8 @@ const formOpts = formOptions({
 		token: '',
 	},
 	validators: {
-		onBlur: ContactFormSchema,
-		onSubmit: ContactFormSchema,
+		onBlur: contactFormSchema,
+		onSubmit: contactFormSchema,
 	},
 });
 

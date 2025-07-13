@@ -55,16 +55,16 @@ const ACTIONS = {
 	REMOVE_ACTION: 'remove',
 };
 
-const CheckoutScheme = z.object({
+const checkoutScheme = z.object({
 	checkoutUrl: z.url(),
 });
 
-const QuantityScheme = z.object({
+const quantityScheme = z.object({
 	quantity: z.number(),
 	variantId: z.string().min(1),
 });
 
-const RemoveScheme = z.object({
+const removeScheme = z.object({
 	variantId: z.string().min(1),
 });
 
@@ -74,7 +74,7 @@ const checkoutFormOpts = formOptions({
 		checkoutUrl: '',
 	},
 	validators: {
-		onSubmit: CheckoutScheme,
+		onSubmit: checkoutScheme,
 	},
 });
 
@@ -84,7 +84,7 @@ const quantityFormOpts = formOptions({
 		variantId: '',
 	},
 	validators: {
-		onSubmit: QuantityScheme,
+		onSubmit: quantityScheme,
 	},
 });
 
@@ -93,7 +93,7 @@ const removeFormOpts = formOptions({
 		variantId: '',
 	},
 	validators: {
-		onSubmit: RemoveScheme,
+		onSubmit: removeScheme,
 	},
 });
 
@@ -131,7 +131,7 @@ const removeServerValidate = createServerValidate({
 // Define a custom form state type that includes meta errors
 interface BaseFormState
 	extends ServerFormState<
-		z.infer<typeof CheckoutScheme> | z.infer<typeof QuantityScheme> | z.infer<typeof RemoveScheme>,
+		z.infer<typeof checkoutScheme> | z.infer<typeof quantityScheme> | z.infer<typeof removeScheme>,
 		undefined
 	> {}
 

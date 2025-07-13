@@ -29,7 +29,7 @@ import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
 
-const ProductSchema = z.object({
+const productSchema = z.object({
 	handle: z.string().min(1),
 	theme: z.enum([
 		'ladies',
@@ -37,7 +37,7 @@ const ProductSchema = z.object({
 	]),
 });
 
-const CartSchema = z.object({
+const cartSchema = z.object({
 	variantId: z.string().min(1, 'Please select an option'),
 });
 
@@ -48,8 +48,8 @@ const createFormOpts = (defaultVariantId: string) => {
 			variantId: defaultVariantId,
 		},
 		validators: {
-			onChange: CartSchema,
-			onSubmit: CartSchema,
+			onChange: cartSchema,
+			onSubmit: cartSchema,
 		},
 	});
 };
@@ -67,7 +67,7 @@ const createServerValidateFn = (defaultVariantId: string) => {
 };
 
 // Define a custom form state type that includes meta errors
-interface BaseFormState extends ServerFormState<z.infer<typeof CartSchema>, undefined> {}
+interface BaseFormState extends ServerFormState<z.infer<typeof cartSchema>, undefined> {}
 
 interface ErrorFormState extends BaseFormState {
 	meta: {
@@ -93,7 +93,7 @@ export type ProductActionResult = ReturnType<
 >;
 
 export async function loader({ params }: LoaderFunctionArgs) {
-	const result = ProductSchema.safeParse(params);
+	const result = productSchema.safeParse(params);
 	if (result.success) {
 		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {
 			handle: result.data.handle,
