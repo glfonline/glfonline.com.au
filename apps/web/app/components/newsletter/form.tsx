@@ -66,9 +66,7 @@ export function NewsletterSignup() {
 					className="w-full py-8 sm:flex"
 					method="post"
 					name="newsletter_signup_form"
-					onSubmit={() => {
-						form.handleSubmit();
-					}}
+					onSubmit={form.handleSubmit}
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
 						<form.Field name="first_name">

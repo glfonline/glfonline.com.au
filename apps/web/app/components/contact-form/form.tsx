@@ -74,9 +74,7 @@ export function ContactForm() {
 					className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 					method="post"
 					name="contact_form"
-					onSubmit={() => {
-						form.handleSubmit();
-					}}
+					onSubmit={form.handleSubmit}
 				>
 					<form.Field name="first_name">
 						{(field) => (

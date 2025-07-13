@@ -311,14 +311,7 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<Form
-							className="flex flex-col gap-6"
-							method="post"
-							onSubmit={() => {
-								form.handleSubmit();
-							}}
-							replace
-						>
+						<Form className="flex flex-col gap-6" method="post" onSubmit={form.handleSubmit} replace>
 							<form.Field name="variantId">
 								{(field) => {
 									const errorMessage = field.state.meta.errors
