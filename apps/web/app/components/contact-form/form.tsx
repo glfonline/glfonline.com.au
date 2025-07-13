@@ -1,10 +1,11 @@
 import { Link, useFetcher } from '@remix-run/react';
-import { useForm } from '@tanstack/react-form';
+import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import { formOptions, initialFormState } from '@tanstack/react-form/remix';
 import Turnstile from 'react-turnstile';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { Checkbox } from '../design-system/checkbox';
-import { Field, InlineField } from '../design-system/field';
+import { Field, FieldMessage, InlineField } from '../design-system/field';
 import { Heading } from '../design-system/heading';
 import { TextArea } from '../design-system/text-area';
 import { TextInput } from '../design-system/text-input';
@@ -12,26 +13,41 @@ import { SplitBackground } from '../split-background';
 import type { action } from './action';
 import { ContactFormSchema } from './schema';
 
+// Define form options for TanStack Form SSR
+const formOpts = formOptions({
+	defaultValues: {
+		first_name: '',
+		last_name: '',
+		email: '',
+		phone_number: '',
+		subject: '',
+		message: '',
+		agree_to_privacy_policy: false,
+		token: '',
+	},
+	validators: {
+		onBlur: ContactFormSchema,
+		onSubmit: ContactFormSchema,
+	},
+});
+
 export function ContactForm() {
 	const { isMounted } = useClientOnlyMount();
 	const fetcher = useFetcher<typeof action>({
 		key: 'contact-form',
 	});
+
 	const form = useForm({
-		defaultValues: {
-			first_name: '',
-			last_name: '',
-			email: '',
-			phone_number: '',
-			subject: '',
-			message: '',
-			agree_to_privacy_policy: false,
-			token: '',
-		},
-		validators: {
-			onBlur: ContactFormSchema,
-			onSubmit: ContactFormSchema,
-		},
+		...formOpts,
+		transform: useTransform(
+			(baseForm) =>
+				fetcher.data && fetcher.data.type === 'error'
+					? mergeForm(baseForm, fetcher.data.formState)
+					: mergeForm(baseForm, initialFormState),
+			[
+				fetcher.data,
+			],
+		),
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {
 				action: '/api/contact',
@@ -39,6 +55,11 @@ export function ContactForm() {
 			});
 		},
 	});
+
+	const formError =
+		fetcher.data && fetcher.data.type === 'error' && 'meta' in fetcher.data.formState
+			? fetcher.data.formState.meta.errors[0]?.message
+			: undefined;
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
@@ -62,10 +83,7 @@ export function ContactForm() {
 				>
 					<form.Field name="first_name">
 						{(field) => (
-							<Field
-								label="First name"
-								message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
-							>
+							<Field label="First name" message={field.state.meta.errors[0]?.message || undefined}>
 								<TextInput
 									name={field.name}
 									onBlur={field.handleBlur}
@@ -78,10 +96,7 @@ export function ContactForm() {
 
 					<form.Field name="last_name">
 						{(field) => (
-							<Field
-								label="Last name"
-								message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
-							>
+							<Field label="Last name" message={field.state.meta.errors[0]?.message || undefined}>
 								<TextInput
 									name={field.name}
 									onBlur={field.handleBlur}
@@ -94,11 +109,7 @@ export function ContactForm() {
 
 					<form.Field name="email">
 						{(field) => (
-							<Field
-								className="sm:col-span-2"
-								label="Email"
-								message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
-							>
+							<Field className="sm:col-span-2" label="Email" message={field.state.meta.errors[0]?.message || undefined}>
 								<TextInput
 									name={field.name}
 									onBlur={field.handleBlur}
@@ -115,7 +126,7 @@ export function ContactForm() {
 							<Field
 								className="sm:col-span-2"
 								label="Phone number"
-								message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
+								message={field.state.meta.errors[0]?.message || undefined}
 							>
 								<TextInput
 									name={field.name}
@@ -133,7 +144,7 @@ export function ContactForm() {
 							<Field
 								className="sm:col-span-2"
 								label="Subject"
-								message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
+								message={field.state.meta.errors[0]?.message || undefined}
 							>
 								<TextInput
 									name={field.name}
@@ -150,7 +161,7 @@ export function ContactForm() {
 							<Field
 								className="sm:col-span-2"
 								label="Message"
-								message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
+								message={field.state.meta.errors[0]?.message || undefined}
 							>
 								<TextArea
 									name={field.name}
@@ -165,13 +176,11 @@ export function ContactForm() {
 					<form.Field name="agree_to_privacy_policy">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<InlineField
-									label={<PrivacyPolicyLabel />}
-									message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
-								>
+								<InlineField label={<PrivacyPolicyLabel />} message={field.state.meta.errors[0]?.message || undefined}>
 									<Checkbox
 										checked={field.state.value}
 										name={field.name}
+										onBlur={field.handleBlur}
 										onChange={(event) => field.handleChange(event.target.checked)}
 									/>
 								</InlineField>
@@ -217,11 +226,17 @@ export function ContactForm() {
 							</Button>
 						)}
 					</form.Subscribe>
+
+					{/* Live region for server errors */}
+					<div aria-live="polite" className={formError ? undefined : 'sr-only'} role="alert">
+						{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
+					</div>
+
 					{(() => {
-						if (fetcher.data?.ok === undefined) return null;
+						if (!fetcher.data) return null;
 						return (
 							<p className="text-center sm:col-span-2">
-								{fetcher.data.ok
+								{fetcher.data.type === 'success'
 									? 'Thank you for your message!'
 									: 'There was an error sending your message. Please try again later.'}
 							</p>

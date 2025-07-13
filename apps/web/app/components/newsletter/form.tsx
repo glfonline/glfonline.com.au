@@ -1,5 +1,6 @@
 import { useFetcher } from '@remix-run/react';
-import { useForm } from '@tanstack/react-form';
+import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import { formOptions, initialFormState } from '@tanstack/react-form/remix';
 import Turnstile from 'react-turnstile';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
@@ -9,23 +10,38 @@ import { TextInput } from '../design-system/text-input';
 import type { action } from './action';
 import { NewsletterSchema } from './schema';
 
+// Define form options for TanStack Form SSR
+const formOpts = formOptions({
+	defaultValues: {
+		first_name: '',
+		last_name: '',
+		email: '',
+		gender: '',
+		token: '',
+	},
+	validators: {
+		onBlur: NewsletterSchema,
+		onSubmit: NewsletterSchema,
+	},
+});
+
 export function NewsletterSignup() {
 	const { isMounted } = useClientOnlyMount();
 	const fetcher = useFetcher<typeof action>({
 		key: 'newsletter-form',
 	});
+
 	const form = useForm({
-		defaultValues: {
-			first_name: '',
-			last_name: '',
-			email: '',
-			gender: '',
-			token: '',
-		},
-		validators: {
-			onBlur: NewsletterSchema,
-			onSubmit: NewsletterSchema,
-		},
+		...formOpts,
+		transform: useTransform(
+			(baseForm) =>
+				fetcher.data && fetcher.data.type === 'error'
+					? mergeForm(baseForm, fetcher.data.formState)
+					: mergeForm(baseForm, initialFormState),
+			[
+				fetcher.data,
+			],
+		),
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {
 				action: '/api/newsletter',
@@ -33,6 +49,11 @@ export function NewsletterSignup() {
 			});
 		},
 	});
+
+	const formError =
+		fetcher.data && fetcher.data.type === 'error' && 'meta' in fetcher.data.formState
+			? fetcher.data.formState.meta.errors[0]?.message
+			: undefined;
 
 	return (
 		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
@@ -58,7 +79,7 @@ export function NewsletterSignup() {
 								<Field
 									className="sm:col-span-2"
 									label="First name"
-									message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
+									message={field.state.meta.errors[0]?.message || undefined}
 								>
 									<TextInput
 										name={field.name}
@@ -75,7 +96,7 @@ export function NewsletterSignup() {
 								<Field
 									className="sm:col-span-2"
 									label="Last name"
-									message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
+									message={field.state.meta.errors[0]?.message || undefined}
 								>
 									<TextInput
 										name={field.name}
@@ -92,7 +113,7 @@ export function NewsletterSignup() {
 								<Field
 									className="sm:col-span-4"
 									label="Email address"
-									message={field.state.meta.errors.map((error) => error?.message).join(', ') || undefined}
+									message={field.state.meta.errors[0]?.message || undefined}
 								>
 									<TextInput
 										name={field.name}
@@ -186,10 +207,15 @@ export function NewsletterSignup() {
 								</Button>
 							)}
 						</form.Subscribe>
+
+						{/* Live region for server errors */}
+						<div aria-live="polite" className={formError ? 'sm:col-span-4' : 'sr-only'} role="alert">
+							{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
+						</div>
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">
-					{fetcher.data?.ok && <p>Thank you for subscribing!</p>}
+					{fetcher.data?.type === 'success' && <p>Thank you for subscribing!</p>}
 					<p>* by clicking join, you agree to receive our newsletter as well as top tips to improve your game</p>
 				</div>
 			</div>

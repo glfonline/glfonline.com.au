@@ -2,7 +2,14 @@ import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import { useForm } from '@tanstack/react-form';
+import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import {
+	createServerValidate,
+	formOptions,
+	initialFormState,
+	type ServerFormState,
+	ServerValidateError,
+} from '@tanstack/react-form/remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
@@ -18,7 +25,6 @@ import { notFound } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { parseFormData } from '../lib/parse-form-data';
 import { getSeoMeta } from '../seo';
 
 export const headers = routeHeaders;
@@ -35,15 +41,52 @@ const CartSchema = z.object({
 	variantId: z.string().min(1, 'Please select an option'),
 });
 
-// Define types for our action return values
-type ActionSuccess = {
-	success: true;
-};
-type ActionError = {
-	success: false;
-	error: string;
-};
-type ActionData = ActionSuccess | ActionError;
+// Define form options for TanStack Form SSR
+const formOpts = formOptions({
+	defaultValues: {
+		variantId: '',
+	},
+	validators: {
+		onChange: CartSchema,
+		onSubmit: CartSchema,
+	},
+});
+
+// Create server validation function
+const serverValidate = createServerValidate({
+	...formOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.variantId) {
+			return 'Please select an option';
+		}
+	},
+});
+
+// Define a custom form state type that includes meta errors
+interface BaseFormState extends ServerFormState<z.infer<typeof CartSchema>, undefined> {}
+
+interface ErrorFormState extends BaseFormState {
+	meta: {
+		errors: Array<{
+			message: string;
+		}>;
+	};
+}
+
+type ProductFormState = BaseFormState | ErrorFormState;
+
+// Define a strict return type for the action
+export type ProductActionResult = ReturnType<
+	typeof json<
+		| {
+				type: 'success';
+		  }
+		| {
+				type: 'error';
+				formState: ProductFormState;
+		  }
+	>
+>;
 
 export async function loader({ params }: LoaderFunctionArgs) {
 	const result = ProductSchema.safeParse(params);
@@ -67,87 +110,110 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	notFound();
 }
 
-export async function action({ request }: ActionFunctionArgs): Promise<ReturnType<typeof json<ActionData>>> {
+export async function action({ request }: ActionFunctionArgs): Promise<ProductActionResult> {
 	const [formData, session] = await Promise.all([
 		request.formData(),
 		getSession(request),
 	]);
 
-	// Parse form data and handle validation errors
-	const parseResult = parseFormData({
-		formData,
-		schema: CartSchema,
-	});
+	try {
+		// Use TanStack Form server validation
+		const validatedData = await serverValidate(formData);
+		const { variantId } = validatedData;
 
-	if (!parseResult.success) {
-		// Return validation error instead of throwing
-		return json({
-			error: 'Please select an option',
-			success: false,
-		});
-	}
+		// Get current cart
+		const currentCart = await session.getCart();
 
-	const { variantId } = parseResult.data;
+		// First check if this variant is already in the cart
+		const existingItem = currentCart.find((item) => item.variantId === variantId);
 
-	// Get current cart
-	const currentCart = await session.getCart();
+		// Create a temporary cart to validate with Shopify
+		// Instead of directly modifying the cart, make a temporary copy with the new item
+		const tempCart = currentCart.map((item) => ({
+			...item,
+			quantity: item.variantId === variantId ? item.quantity + 1 : item.quantity,
+		}));
 
-	// First check if this variant is already in the cart
-	const existingItem = currentCart.find((item) => item.variantId === variantId);
+		// If the item isn't in the cart yet, add it
+		if (!existingItem) {
+			tempCart.push({
+				quantity: 1,
+				variantId,
+			});
+		}
 
-	// Create a temporary cart to validate with Shopify
-	// Instead of directly modifying the cart, make a temporary copy with the new item
-	const tempCart = currentCart.map((item) => ({
-		...item,
-		quantity: item.variantId === variantId ? item.quantity + 1 : item.quantity,
-	}));
+		// Validate the potential new cart with Shopify first
+		const cartResult = await getCartInfo(tempCart);
 
-	// If the item isn't in the cart yet, add it
-	if (!existingItem) {
-		tempCart.push({
-			quantity: 1,
-			variantId,
-		});
-	}
-
-	// Validate the potential new cart with Shopify first
-	const cartResult = await getCartInfo(tempCart);
-
-	// Only update the session if Shopify accepts the cart
-	if (cartResult.type === 'success') {
-		// Update the real cart now that we know it's valid
-		const updatedCart = addToCart(
-			[
-				...currentCart,
-			],
-			variantId,
-			1,
-		);
-		await session.setCart(updatedCart);
-		return json(
-			{
-				success: true,
-			},
-			{
-				headers: {
-					'Set-Cookie': await session.commitSession(),
+		// Only update the session if Shopify accepts the cart
+		if (cartResult.type === 'success') {
+			// Update the real cart now that we know it's valid
+			const updatedCart = addToCart(
+				[
+					...currentCart,
+				],
+				variantId,
+				1,
+			);
+			await session.setCart(updatedCart);
+			// Return success with session cookie
+			return json(
+				{
+					type: 'success',
 				},
-			},
-		);
-	}
+				{
+					headers: {
+						'Set-Cookie': await session.commitSession(),
+					},
+				},
+			);
+		}
 
-	// If Shopify rejects the cart, show a user-friendly error message
-	return json(
-		{
-			error: 'Unable to add item to cart. The item might be out of stock or unavailable.',
-			success: false,
-		},
-		{
-			headers: {
-				'Set-Cookie': await session.commitSession(),
-			},
-		},
-	);
+		// If Shopify rejects the cart, create a form state with error
+		throw new Error('Unable to add item to cart. The item might be out of stock or unavailable.');
+	} catch (err) {
+		if (err instanceof ServerValidateError) {
+			return json(
+				{
+					type: 'error',
+					formState: err.formState,
+				},
+				{
+					headers: {
+						'Set-Cookie': await session.commitSession(),
+					},
+				},
+			);
+		}
+
+		// For other errors, create a form state with the error message
+		if (err instanceof Error) {
+			const errorFormState: ErrorFormState = {
+				...initialFormState,
+				meta: {
+					errors: [
+						{
+							message: err.message,
+						},
+					],
+				},
+			};
+			return json(
+				{
+					type: 'error',
+					formState: errorFormState,
+				},
+				{
+					headers: {
+						'Set-Cookie': await session.commitSession(),
+					},
+				},
+			);
+		}
+
+		// Some other error occurred while validating your form
+		throw err;
+	}
 }
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
@@ -163,7 +229,7 @@ export const meta: MetaFunction<typeof loader> = ({ data }) => {
 
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
-	const actionData = useActionData<typeof action>();
+	const actionData = useActionData<ProductActionResult>();
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
@@ -172,26 +238,25 @@ export default function ProductPage() {
 			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
 	);
 
+	// Use the form state from the error case, or initialFormState
 	const form = useForm({
-		defaultValues: {
-			variantId: '',
-		},
-		validators: {
-			onChange: CartSchema,
-			onSubmit: CartSchema,
-		},
-		onSubmit: () => {
-			// Validation passed, let Remix handle the submission
-		},
+		...formOpts,
+		transform: useTransform(
+			(baseForm) =>
+				actionData?.data && actionData.data.type === 'error'
+					? mergeForm(baseForm, actionData.data.formState)
+					: mergeForm(baseForm, initialFormState),
+			[
+				actionData,
+			],
+		),
 	});
-
-	const formError = actionData && !actionData.success ? actionData.error : undefined;
 
 	const navigation = useNavigation();
 
 	let buttonText = 'Add to cart';
 	if (navigation.state === 'submitting') buttonText = 'Adding...';
-	if (navigation.state === 'loading' && !formError) buttonText = 'Added!';
+	if (navigation.state === 'loading') buttonText = 'Added!';
 
 	const sizingChart = getSizingChart(product);
 
@@ -243,15 +308,8 @@ export default function ProductPage() {
 							className="flex flex-col gap-6"
 							method="post"
 							onSubmit={(event) => {
-								// Let TanStack form validate first
-								const isValid = form.validateAllFields('submit');
-								if (!isValid) {
-									event.preventDefault();
-									event.stopPropagation();
-									return;
-								}
-								// If valid, let Remix handle the submission
-								return;
+								event.preventDefault();
+								form.handleSubmit();
 							}}
 							replace
 						>
@@ -328,16 +386,16 @@ export default function ProductPage() {
 														>
 															{!product.availableForSale
 																? 'Sold Out'
-																: field.state.meta.errors.map((error) => error?.message).join(', ') || buttonText}
+																: ('meta' in field.state && field.state.meta.errors[0]?.message) || buttonText}
 														</Button>
 													)}
 												</form.Subscribe>
 
 												{/* Display validation errors */}
-												{field.state.meta.errors.map((error) => error?.message).join(', ') && (
+												{'meta' in field.state && field.state.meta.errors[0]?.message && (
 													<FieldMessage
 														id={`${field.name}-error`}
-														message={field.state.meta.errors.map((error) => error?.message).join(', ')}
+														message={field.state.meta.errors[0].message}
 														tone="critical"
 													/>
 												)}
@@ -346,11 +404,6 @@ export default function ProductPage() {
 									);
 								}}
 							</form.Field>
-
-							{/* Live region for server errors */}
-							<div aria-live="polite" className={formError ? undefined : 'sr-only'} role="alert">
-								{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
-							</div>
 						</Form>
 
 						<div>

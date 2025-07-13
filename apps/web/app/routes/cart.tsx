@@ -1,6 +1,13 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction, redirect } from '@remix-run/node';
 import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
+import {
+	createServerValidate,
+	formOptions,
+	initialFormState,
+	type ServerFormState,
+	ServerValidateError,
+} from '@tanstack/react-form/remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
@@ -9,7 +16,6 @@ import { Heading } from '../components/design-system/heading';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { type CartResult, getCartInfo } from '../lib/get-cart-info';
-import { parseFormData } from '../lib/parse-form-data';
 import { getSeoMeta } from '../seo';
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartResult>>> {
@@ -50,11 +56,11 @@ const ACTIONS = {
 };
 
 const CheckoutScheme = z.object({
-	checkoutUrl: z.string().min(1),
+	checkoutUrl: z.url(),
 });
 
 const QuantityScheme = z.object({
-	quantity: z.coerce.number(),
+	quantity: z.number(),
 	variantId: z.string().min(1),
 });
 
@@ -62,45 +68,157 @@ const RemoveScheme = z.object({
 	variantId: z.string().min(1),
 });
 
-export async function action({ request }: ActionFunctionArgs) {
+// Define form options for each action type
+const checkoutFormOpts = formOptions({
+	defaultValues: {
+		checkoutUrl: '',
+	},
+	validators: {
+		onSubmit: CheckoutScheme,
+	},
+});
+
+const quantityFormOpts = formOptions({
+	defaultValues: {
+		quantity: 0,
+		variantId: '',
+	},
+	validators: {
+		onSubmit: QuantityScheme,
+	},
+});
+
+const removeFormOpts = formOptions({
+	defaultValues: {
+		variantId: '',
+	},
+	validators: {
+		onSubmit: RemoveScheme,
+	},
+});
+
+// Create server validation functions
+const checkoutServerValidate = createServerValidate({
+	...checkoutFormOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.checkoutUrl) {
+			return 'Checkout URL is required';
+		}
+	},
+});
+
+const quantityServerValidate = createServerValidate({
+	...quantityFormOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.variantId) {
+			return 'Variant ID is required';
+		}
+		if (value.quantity < 0) {
+			return 'Quantity must be positive';
+		}
+	},
+});
+
+const removeServerValidate = createServerValidate({
+	...removeFormOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.variantId) {
+			return 'Variant ID is required';
+		}
+	},
+});
+
+// Define a custom form state type that includes meta errors
+interface BaseFormState
+	extends ServerFormState<
+		z.infer<typeof CheckoutScheme> | z.infer<typeof QuantityScheme> | z.infer<typeof RemoveScheme>,
+		undefined
+	> {}
+
+interface ErrorFormState extends BaseFormState {
+	meta: {
+		errors: Array<{
+			message: string;
+		}>;
+	};
+}
+
+type CartFormState = BaseFormState | ErrorFormState;
+
+// Define a strict return type for the action
+export type CartActionResult = ReturnType<
+	typeof data<
+		| {
+				type: 'success';
+		  }
+		| {
+				type: 'error';
+				formState: CartFormState;
+		  }
+	>
+>;
+
+export async function action({ request }: ActionFunctionArgs): Promise<CartActionResult | ReturnType<typeof redirect>> {
 	const [formData, session] = await Promise.all([
 		request.formData(),
 		getSession(request),
 	]);
 	const intent = formData.get(INTENT);
 
-	switch (intent) {
-		case ACTIONS.CHECKOUT_ACTION: {
-			const parseResult = parseFormData({
-				formData,
-				schema: CheckoutScheme,
-			});
-			if (!parseResult.success) {
-				throw new Response('Invalid checkout data', {
-					status: 400,
-				});
+	try {
+		switch (intent) {
+			case ACTIONS.CHECKOUT_ACTION: {
+				const { checkoutUrl } = await checkoutServerValidate(formData);
+				return redirect(checkoutUrl);
 			}
-			const { checkoutUrl } = parseResult.data;
-			return redirect(checkoutUrl);
-		}
 
-		case ACTIONS.INCREMENT_ACTION:
-		case ACTIONS.DECREMENT_ACTION: {
-			const parseResult = parseFormData({
-				formData,
-				schema: QuantityScheme,
-			});
-			if (!parseResult.success) {
-				throw new Response('Invalid quantity data', {
-					status: 400,
-				});
+			case ACTIONS.INCREMENT_ACTION:
+			case ACTIONS.DECREMENT_ACTION: {
+				const validatedData = await quantityServerValidate(formData);
+				const { quantity, variantId } = validatedData;
+				const cart = await session.getCart();
+				const newCart = updateCartItem(cart, variantId, quantity);
+				await session.setCart(newCart);
+				return data(
+					{
+						type: 'success',
+					},
+					{
+						headers: {
+							'Set-Cookie': await session.commitSession(),
+						},
+					},
+				);
 			}
-			const { quantity, variantId } = parseResult.data;
-			const cart = await session.getCart();
-			const newCart = updateCartItem(cart, variantId, quantity);
-			await session.setCart(newCart);
+
+			case ACTIONS.REMOVE_ACTION: {
+				const { variantId } = await removeServerValidate(formData);
+				const cart = await session.getCart();
+				const newCart = removeCartItem(cart, variantId);
+				await session.setCart(newCart);
+				return data(
+					{
+						type: 'success',
+					},
+					{
+						headers: {
+							'Set-Cookie': await session.commitSession(),
+						},
+					},
+				);
+			}
+
+			default: {
+				throw new Error('Unexpected action');
+			}
+		}
+	} catch (err) {
+		if (err instanceof ServerValidateError) {
 			return data(
-				{},
+				{
+					type: 'error',
+					formState: err.formState,
+				},
 				{
 					headers: {
 						'Set-Cookie': await session.commitSession(),
@@ -109,22 +227,23 @@ export async function action({ request }: ActionFunctionArgs) {
 			);
 		}
 
-		case ACTIONS.REMOVE_ACTION: {
-			const parseResult = parseFormData({
-				formData,
-				schema: RemoveScheme,
-			});
-			if (!parseResult.success) {
-				throw new Response('Invalid remove data', {
-					status: 400,
-				});
-			}
-			const { variantId } = parseResult.data;
-			const cart = await session.getCart();
-			const newCart = removeCartItem(cart, variantId);
-			await session.setCart(newCart);
+		// For other errors, create a form state with the error message
+		if (err instanceof Error) {
+			const errorFormState: ErrorFormState = {
+				...initialFormState,
+				meta: {
+					errors: [
+						{
+							message: err.message,
+						},
+					],
+				},
+			};
 			return data(
-				{},
+				{
+					type: 'error',
+					formState: errorFormState,
+				},
 				{
 					headers: {
 						'Set-Cookie': await session.commitSession(),
@@ -133,9 +252,28 @@ export async function action({ request }: ActionFunctionArgs) {
 			);
 		}
 
-		default: {
-			throw new Error('Unexpected action');
-		}
+		// Some other error occurred
+		const errorFormState: ErrorFormState = {
+			...initialFormState,
+			meta: {
+				errors: [
+					{
+						message: 'An unexpected error occurred',
+					},
+				],
+			},
+		};
+		return data(
+			{
+				type: 'error',
+				formState: errorFormState,
+			},
+			{
+				headers: {
+					'Set-Cookie': await session.commitSession(),
+				},
+			},
+		);
 	}
 }
 

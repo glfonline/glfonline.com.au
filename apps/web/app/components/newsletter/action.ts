@@ -1,27 +1,71 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
+import { data as json } from '@remix-run/node';
+import {
+	createServerValidate,
+	formOptions,
+	initialFormState,
+	type ServerFormState,
+	ServerValidateError,
+} from '@tanstack/react-form/remix';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
-import { parseFormData } from '../../lib/parse-form-data';
-import type { FormResponse } from '../../types';
+import type { z } from 'zod';
 import { NewsletterSchema } from './schema';
 
-export async function action({ request }: ActionFunctionArgs): Promise<FormResponse> {
+// Define form options for TanStack Form SSR
+const formOpts = formOptions({
+	defaultValues: {
+		first_name: '',
+		last_name: '',
+		email: '',
+		gender: '',
+		token: '',
+	},
+	validators: {
+		onBlur: NewsletterSchema,
+		onSubmit: NewsletterSchema,
+	},
+});
+
+// Create server validation function
+const serverValidate = createServerValidate({
+	...formOpts,
+	onServerValidate: () => {
+		// Additional server-side validation can be added here
+	},
+});
+
+// Define a custom form state type that includes meta errors
+interface BaseFormState extends ServerFormState<z.infer<typeof NewsletterSchema>, undefined> {}
+
+interface ErrorFormState extends BaseFormState {
+	meta: {
+		errors: Array<{
+			message: string;
+		}>;
+	};
+}
+
+type NewsletterFormState = BaseFormState | ErrorFormState;
+
+// Define a strict return type for the action
+export type NewsletterActionResult = ReturnType<
+	typeof json<
+		| {
+				type: 'success';
+		  }
+		| {
+				type: 'error';
+				formState: NewsletterFormState;
+		  }
+	>
+>;
+
+export async function action({ request }: ActionFunctionArgs): Promise<NewsletterActionResult> {
 	try {
-		/** Get the form data out of the request */
+		// Use TanStack Form server validation
 		const formData = await request.formData();
-		/** Parse the data to ensure it's in the expected format */
-		const parseResult = parseFormData({
-			formData,
-			schema: NewsletterSchema,
-		});
-
-		if (!parseResult.success) {
-			return {
-				ok: false,
-				serverIssues: parseResult.error.issues,
-			};
-		}
-
-		const data = parseResult.data;
+		const validatedData = await serverValidate(formData);
+		const data = validatedData;
 
 		/** Attempt to parse users IP address from request object */
 		const clientIpAddress = getClientIPAddress(request);
@@ -75,13 +119,51 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 			referrerPolicy: 'same-origin',
 		});
 
-		return {
-			ok: true,
+		return json({
+			type: 'success',
+		});
+	} catch (err) {
+		console.error(err);
+
+		if (err instanceof ServerValidateError) {
+			return json({
+				type: 'error',
+				formState: err.formState,
+			});
+		}
+
+		// For other errors, create a form state with the error message
+		if (err instanceof Error) {
+			const errorFormState: ErrorFormState = {
+				...initialFormState,
+				meta: {
+					errors: [
+						{
+							message: err.message,
+						},
+					],
+				},
+			};
+			return json({
+				type: 'error',
+				formState: errorFormState,
+			});
+		}
+
+		// Some other error occurred
+		const errorFormState: ErrorFormState = {
+			...initialFormState,
+			meta: {
+				errors: [
+					{
+						message: 'An unexpected error occurred',
+					},
+				],
+			},
 		};
-	} catch {
-		/** @todo */
-		return {
-			ok: false,
-		};
+		return json({
+			type: 'error',
+			formState: errorFormState,
+		});
 	}
 }
