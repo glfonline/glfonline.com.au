@@ -97,7 +97,6 @@ const removeFormOpts = formOptions({
 	},
 });
 
-// Create server validation functions
 const checkoutServerValidate = createServerValidate({
 	...checkoutFormOpts,
 	onServerValidate: ({ value }) => {
