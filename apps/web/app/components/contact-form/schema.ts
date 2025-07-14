@@ -1,11 +1,8 @@
 import { z } from 'zod';
 
-export const ContactFormSchema = z.object({
-	agree_to_privacy_policy: z
-		.string()
-		.transform(Boolean)
-		.refine((val) => val, 'You must agree to the privacy policy'),
-	email: z.string().trim().min(1, 'Email is required').email('Invalid email'),
+export const contactFormSchema = z.object({
+	agree_to_privacy_policy: z.boolean().refine((val) => val === true, 'You must agree to the privacy policy'),
+	email: z.string().trim().min(1, 'Email is required').pipe(z.email('Invalid email')),
 	first_name: z.string().min(1, 'First name is required'),
 	last_name: z.string().min(1, 'Last name is required'),
 	message: z.string().min(1, 'Message is required'),

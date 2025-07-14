@@ -1,26 +1,75 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
+import { data as json } from '@remix-run/node';
 import sendgrid from '@sendgrid/mail';
+import {
+	createServerValidate,
+	formOptions,
+	initialFormState,
+	type ServerFormState,
+	ServerValidateError,
+} from '@tanstack/react-form/remix';
 import dedent from 'dedent';
-import { parseForm } from 'react-zorm';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
+import type { z } from 'zod';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 import { requiredEnv } from '../../lib/required-env';
-import { ContactFormSchema } from './schema';
+import { contactFormSchema } from './schema';
 
-export async function action({ request }: ActionFunctionArgs) {
-	try {
-		/** Get the form data out of the request */
-		const formData = await request.formData();
-		/** Parse the data to ensure it's in the expected format */
-		const { agree_to_privacy_policy, first_name, email, last_name, message, phone_number, subject, token } = parseForm(
-			ContactFormSchema,
-			formData,
-		);
+const formOpts = formOptions({
+	defaultValues: {
+		first_name: '',
+		last_name: '',
+		email: '',
+		phone_number: '',
+		subject: '',
+		message: '',
+		agree_to_privacy_policy: false,
+		token: '',
+	},
+	validators: {
+		onBlur: contactFormSchema,
+		onSubmit: contactFormSchema,
+	},
+});
 
-		/** Make sure the user agrees to the Privacy Policy */
-		if (!agree_to_privacy_policy) {
-			throw new Error('You must agree to the Privacy Policy');
+const serverValidate = createServerValidate({
+	...formOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.agree_to_privacy_policy) {
+			return 'You must agree to the Privacy Policy';
 		}
+	},
+});
+
+interface BaseFormState extends ServerFormState<z.infer<typeof contactFormSchema>, undefined> {}
+
+interface ErrorFormState extends BaseFormState {
+	meta: {
+		errors: Array<{
+			message: string;
+		}>;
+	};
+}
+
+type ContactFormState = BaseFormState | ErrorFormState;
+
+export type ContactActionResult = ReturnType<
+	typeof json<
+		| {
+				type: 'success';
+		  }
+		| {
+				type: 'error';
+				formState: ContactFormState;
+		  }
+	>
+>;
+
+export async function action({ request }: ActionFunctionArgs): Promise<ContactActionResult> {
+	try {
+		const formData = await request.formData();
+		// Use TanStack Form server validation
+		const { first_name, email, last_name, message, phone_number, subject, token } = await serverValidate(formData);
 
 		/** Attempt to parse users IP address from request object */
 		const clientIpAddress = getClientIPAddress(request);
@@ -72,13 +121,41 @@ export async function action({ request }: ActionFunctionArgs) {
 		console.log({
 			sendgridResponse,
 		});
-		return {
-			ok: true,
-		};
+
+		return json({
+			type: 'success',
+		});
 	} catch (err) {
 		console.error(err);
-		return {
-			ok: false,
-		};
+
+		if (err instanceof ServerValidateError) {
+			return json({
+				type: 'error',
+				formState: err.formState,
+			});
+		}
+
+		// For other errors, create a form state with the error message
+		if (err instanceof Error) {
+			const errorFormState: ErrorFormState = {
+				...initialFormState,
+				meta: {
+					errors: [
+						{
+							message: err.message,
+						},
+					],
+				},
+			};
+			return json({
+				type: 'error',
+				formState: errorFormState,
+			});
+		}
+
+		// Some other error occurred - let it bubble up to Remix's error boundary
+		throw new Response('Internal Server Error', {
+			status: 500,
+		});
 	}
 }

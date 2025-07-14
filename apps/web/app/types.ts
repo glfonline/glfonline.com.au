@@ -1,6 +1,6 @@
 import type { Storefront as HydrogenStorefront } from '@shopify/hydrogen';
 import type { CountryCode, CurrencyCode, LanguageCode } from '@shopify/hydrogen/storefront-api-types';
-import type { ZodIssue } from 'zod';
+import type { z } from 'zod';
 
 /**
  * Response type from the Remix Action Function
@@ -14,7 +14,7 @@ export type FormResponse = {
 	/**
 	 * Any server-side only issues
 	 */
-	serverIssues?: Array<ZodIssue>;
+	serverIssues?: Array<z.core.$ZodIssue>;
 };
 
 export type Theme = 'ladies' | 'mens';

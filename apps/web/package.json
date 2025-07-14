@@ -35,6 +35,7 @@
 		"@shopify/hydrogen": "^2025.1.4",
 		"@tanstack/query-core": "^5.76.2",
 		"@tanstack/query-sync-storage-persister": "^5.76.2",
+		"@tanstack/react-form": "^1.14.1",
 		"@tanstack/react-query": "^5.76.2",
 		"@tanstack/react-query-devtools": "^5.76.2",
 		"@tanstack/react-query-persist-client": "^5.76.2",
@@ -53,13 +54,12 @@
 		"react-dom": "^18.3.1",
 		"react-intersection-observer": "^9.16.0",
 		"react-turnstile": "^1.1.4",
-		"react-zorm": "^0.9.0",
 		"remeda": "^2.21.9",
 		"remix-seo": "^0.1.0",
 		"remix-utils": "^8.7.0",
 		"tailwind-merge": "^2.6.0",
 		"tiny-invariant": "^1.3.3",
-		"zod": "^3.24.4"
+		"zod": "^4.0.5"
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",

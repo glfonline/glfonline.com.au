@@ -1,24 +1,64 @@
 import { Link, useFetcher } from '@remix-run/react';
-import { useState } from 'react';
+import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import { formOptions, initialFormState } from '@tanstack/react-form/remix';
 import Turnstile from 'react-turnstile';
-import { useZorm } from 'react-zorm';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { Checkbox } from '../design-system/checkbox';
-import { Field, InlineField } from '../design-system/field';
+import { Field, FieldMessage, InlineField } from '../design-system/field';
 import { Heading } from '../design-system/heading';
 import { TextArea } from '../design-system/text-area';
 import { TextInput } from '../design-system/text-input';
 import { SplitBackground } from '../split-background';
 import type { action } from './action';
-import { ContactFormSchema } from './schema';
+import { contactFormSchema } from './schema';
+
+const formOpts = formOptions({
+	defaultValues: {
+		first_name: '',
+		last_name: '',
+		email: '',
+		phone_number: '',
+		subject: '',
+		message: '',
+		agree_to_privacy_policy: false,
+		token: '',
+	},
+	validators: {
+		onBlur: contactFormSchema,
+		onSubmit: contactFormSchema,
+	},
+});
 
 export function ContactForm() {
-	const fetcher = useFetcher<typeof action>();
-	const form = useZorm('contact_form', ContactFormSchema);
-	const [token, setToken] = useState('');
-
 	const { isMounted } = useClientOnlyMount();
+	const fetcher = useFetcher<typeof action>({
+		key: 'contact-form',
+	});
+
+	const form = useForm({
+		...formOpts,
+		transform: useTransform(
+			(baseForm) =>
+				fetcher.data && fetcher.data.type === 'error'
+					? mergeForm(baseForm, fetcher.data.formState)
+					: mergeForm(baseForm, initialFormState),
+			[
+				fetcher.data,
+			],
+		),
+		onSubmit: ({ value }) => {
+			fetcher.submit(value, {
+				action: '/api/contact',
+				method: 'post',
+			});
+		},
+	});
+
+	const formError =
+		fetcher.data && fetcher.data.type === 'error' && 'meta' in fetcher.data.formState
+			? fetcher.data.formState.meta.errors[0]?.message
+			: undefined;
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
@@ -34,55 +74,169 @@ export function ContactForm() {
 					className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 					method="post"
 					name="contact_form"
-					ref={form.ref}
+					onSubmit={form.handleSubmit}
 				>
-					<Field label="First name" message={form.errors.first_name()?.message}>
-						<TextInput name={form.fields.first_name()} />
-					</Field>
-					<Field label="Last name" message={form.errors.last_name()?.message}>
-						<TextInput name={form.fields.last_name()} />
-					</Field>
-					<Field className="sm:col-span-2" label="Email" message={form.errors.email()?.message}>
-						<TextInput name={form.fields.email()} type="email" />
-					</Field>
-					<Field className="sm:col-span-2" label="Phone number" message={form.errors.phone_number()?.message}>
-						<TextInput name={form.fields.phone_number()} type="tel" />
-					</Field>
-					<Field className="sm:col-span-2" label="Subject" message={form.errors.subject()?.message}>
-						<TextInput name={form.fields.subject()} />
-					</Field>
-					<Field className="sm:col-span-2" label="Message" message={form.errors.message()?.message}>
-						<TextArea name={form.fields.message()} />
-					</Field>
-					<div className="sm:col-span-2">
-						<InlineField label={<PrivacyPolicyLabel />} message={form.errors.agree_to_privacy_policy()?.message}>
-							<Checkbox name={form.fields.agree_to_privacy_policy()} />
-						</InlineField>
-					</div>
-					<div className="flex min-h-[65px] items-center sm:col-span-2">
-						{isMounted && (
-							<Turnstile
-								className="[&>*]:!w-full"
-								onVerify={setToken}
-								sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
-								size="normal"
-								style={{
-									width: '100%',
-								}}
-								theme="light"
-							/>
+					<form.Field name="first_name">
+						{(field) => (
+							<Field label="First name" message={field.state.meta.errors[0]?.message || undefined}>
+								<TextInput
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									value={field.state.value}
+								/>
+							</Field>
 						)}
-						<input name={form.fields.token()} type="hidden" value={token} />
+					</form.Field>
+
+					<form.Field name="last_name">
+						{(field) => (
+							<Field label="Last name" message={field.state.meta.errors[0]?.message || undefined}>
+								<TextInput
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									value={field.state.value}
+								/>
+							</Field>
+						)}
+					</form.Field>
+
+					<form.Field name="email">
+						{(field) => (
+							<Field className="sm:col-span-2" label="Email" message={field.state.meta.errors[0]?.message || undefined}>
+								<TextInput
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									type="email"
+									value={field.state.value}
+								/>
+							</Field>
+						)}
+					</form.Field>
+
+					<form.Field name="phone_number">
+						{(field) => (
+							<Field
+								className="sm:col-span-2"
+								label="Phone number"
+								message={field.state.meta.errors[0]?.message || undefined}
+							>
+								<TextInput
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									type="tel"
+									value={field.state.value}
+								/>
+							</Field>
+						)}
+					</form.Field>
+
+					<form.Field name="subject">
+						{(field) => (
+							<Field
+								className="sm:col-span-2"
+								label="Subject"
+								message={field.state.meta.errors[0]?.message || undefined}
+							>
+								<TextInput
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									value={field.state.value}
+								/>
+							</Field>
+						)}
+					</form.Field>
+
+					<form.Field name="message">
+						{(field) => (
+							<Field
+								className="sm:col-span-2"
+								label="Message"
+								message={field.state.meta.errors[0]?.message || undefined}
+							>
+								<TextArea
+									name={field.name}
+									onBlur={field.handleBlur}
+									onChange={(event) => field.handleChange(event.target.value)}
+									value={field.state.value}
+								/>
+							</Field>
+						)}
+					</form.Field>
+
+					<form.Field name="agree_to_privacy_policy">
+						{(field) => (
+							<div className="sm:col-span-2">
+								<InlineField label={<PrivacyPolicyLabel />} message={field.state.meta.errors[0]?.message || undefined}>
+									<Checkbox
+										checked={field.state.value}
+										name={field.name}
+										onBlur={field.handleBlur}
+										onChange={(event) => field.handleChange(event.target.checked)}
+									/>
+								</InlineField>
+							</div>
+						)}
+					</form.Field>
+
+					<form.Field name="token">
+						{(field) => (
+							<div className="flex min-h-[65px] items-center sm:col-span-2">
+								{isMounted && (
+									<Turnstile
+										className="[&>*]:!w-full"
+										onVerify={field.handleChange}
+										sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
+										size="normal"
+										style={{
+											width: '100%',
+										}}
+										theme="light"
+									/>
+								)}
+								<input name={field.name} type="hidden" value={field.state.value} />
+							</div>
+						)}
+					</form.Field>
+
+					<form.Subscribe
+						selector={(state) => [
+							state.canSubmit,
+							state.isSubmitting,
+						]}
+					>
+						{([canSubmit, isSubmitting]) => (
+							<Button
+								className="sm:col-span-2"
+								disabled={!canSubmit}
+								isLoading={isSubmitting || fetcher.state === 'loading'}
+								type="submit"
+								variant="neutral"
+							>
+								Submit
+							</Button>
+						)}
+					</form.Subscribe>
+
+					{/* Live region for server errors */}
+					<div aria-live="polite" className={formError ? undefined : 'sr-only'} role="alert">
+						{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
 					</div>
-					<Button className="sm:col-span-2" isLoading={fetcher.state === 'loading'} type="submit" variant="neutral">
-						Submit
-					</Button>
-					{fetcher.data?.ok === true && <p className="text-center sm:col-span-2">Thank you for your message!</p>}
-					{fetcher.data?.ok === false && (
-						<p className="text-center sm:col-span-2">
-							There was an error sending your message. Please try again later.
-						</p>
-					)}
+
+					{(() => {
+						if (!fetcher.data) return null;
+						return (
+							<p className="text-center sm:col-span-2">
+								{fetcher.data.type === 'success'
+									? 'Thank you for your message!'
+									: 'There was an error sending your message. Please try again later.'}
+							</p>
+						);
+					})()}
 				</fetcher.Form>
 			</div>
 		</article>

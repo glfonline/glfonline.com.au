@@ -1,15 +1,65 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
-import { parseForm } from 'react-zorm';
+import { data as json } from '@remix-run/node';
+import {
+	createServerValidate,
+	formOptions,
+	initialFormState,
+	type ServerFormState,
+	ServerValidateError,
+} from '@tanstack/react-form/remix';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
-import type { FormResponse } from '../../types';
-import { NewsletterSchema } from './schema';
+import type { z } from 'zod';
+import { noop } from '../../lib/noop';
+import { newsletterSchema } from './schema';
 
-export async function action({ request }: ActionFunctionArgs): Promise<FormResponse> {
+const formOpts = formOptions({
+	defaultValues: {
+		first_name: '',
+		last_name: '',
+		email: '',
+		gender: '',
+		token: '',
+	},
+	validators: {
+		onBlur: newsletterSchema,
+		onSubmit: newsletterSchema,
+	},
+});
+
+const serverValidate = createServerValidate({
+	...formOpts,
+	onServerValidate: noop,
+});
+
+interface BaseFormState extends ServerFormState<z.infer<typeof newsletterSchema>, undefined> {}
+
+interface ErrorFormState extends BaseFormState {
+	meta: {
+		errors: Array<{
+			message: string;
+		}>;
+	};
+}
+
+type NewsletterFormState = BaseFormState | ErrorFormState;
+
+export type NewsletterActionResult = ReturnType<
+	typeof json<
+		| {
+				type: 'success';
+		  }
+		| {
+				type: 'error';
+				formState: NewsletterFormState;
+		  }
+	>
+>;
+
+export async function action({ request }: ActionFunctionArgs): Promise<NewsletterActionResult> {
 	try {
-		/** Get the form data out of the request */
+		// Use TanStack Form server validation
 		const formData = await request.formData();
-		/** Parse the data to ensure it's in the expected format */
-		const data = parseForm(NewsletterSchema, formData);
+		const { token, email, first_name, last_name, gender } = await serverValidate(formData);
 
 		/** Attempt to parse users IP address from request object */
 		const clientIpAddress = getClientIPAddress(request);
@@ -20,7 +70,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 		 */
 		const challengeResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {
 			body: JSON.stringify({
-				response: data.token,
+				response: token,
 				secret: process.env.TURNSTILE_SECRET_KEY,
 				...(clientIpAddress && {
 					remoteip: clientIpAddress,
@@ -40,10 +90,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 			'https://golfladiesfirst.us12.list-manage.com/subscribe/post?u=f7790536b053b57996dbc24d0&amp;id=f711b0e505',
 		);
 
-		url.searchParams.set('EMAIL', data.email);
-		url.searchParams.set('FNAME', data.first_name);
-		url.searchParams.set('LNAME', data.last_name);
-		url.searchParams.set('GENDER', data.gender);
+		url.searchParams.set('EMAIL', email);
+		url.searchParams.set('FNAME', first_name);
+		url.searchParams.set('LNAME', last_name);
+		url.searchParams.set('GENDER', gender);
 
 		await fetch(url.href, {
 			body: null,
@@ -63,13 +113,40 @@ export async function action({ request }: ActionFunctionArgs): Promise<FormRespo
 			referrerPolicy: 'same-origin',
 		});
 
-		return {
-			ok: true,
-		};
-	} catch {
-		/** @todo */
-		return {
-			ok: false,
-		};
+		return json({
+			type: 'success',
+		});
+	} catch (err) {
+		console.error(err);
+
+		if (err instanceof ServerValidateError) {
+			return json({
+				type: 'error',
+				formState: err.formState,
+			});
+		}
+
+		// For other errors, create a form state with the error message
+		if (err instanceof Error) {
+			const errorFormState: ErrorFormState = {
+				...initialFormState,
+				meta: {
+					errors: [
+						{
+							message: err.message,
+						},
+					],
+				},
+			};
+			return json({
+				type: 'error',
+				formState: errorFormState,
+			});
+		}
+
+		// Some other error occurred - let it bubble up to Remix's error boundary
+		throw new Response('Internal Server Error', {
+			status: 500,
+		});
 	}
 }

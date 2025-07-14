@@ -1,6 +1,13 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction, redirect } from '@remix-run/node';
 import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
+import {
+	createServerValidate,
+	formOptions,
+	initialFormState,
+	type ServerFormState,
+	ServerValidateError,
+} from '@tanstack/react-form/remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';
@@ -48,40 +55,166 @@ const ACTIONS = {
 	REMOVE_ACTION: 'remove',
 };
 
-const CheckoutScheme = z.object({
-	checkoutUrl: z.string().min(1),
+const checkoutScheme = z.object({
+	checkoutUrl: z.url(),
 });
 
-const QuantityScheme = z.object({
-	quantity: z.coerce.number(),
+const quantityScheme = z.object({
+	quantity: z.number(),
 	variantId: z.string().min(1),
 });
 
-const RemoveScheme = z.object({
+const removeScheme = z.object({
 	variantId: z.string().min(1),
 });
 
-export async function action({ request }: ActionFunctionArgs) {
+// Define form options for each action type
+const checkoutFormOpts = formOptions({
+	defaultValues: {
+		checkoutUrl: '',
+	},
+	validators: {
+		onSubmit: checkoutScheme,
+	},
+});
+
+const quantityFormOpts = formOptions({
+	defaultValues: {
+		quantity: 0,
+		variantId: '',
+	},
+	validators: {
+		onSubmit: quantityScheme,
+	},
+});
+
+const removeFormOpts = formOptions({
+	defaultValues: {
+		variantId: '',
+	},
+	validators: {
+		onSubmit: removeScheme,
+	},
+});
+
+const checkoutServerValidate = createServerValidate({
+	...checkoutFormOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.checkoutUrl) {
+			return 'Checkout URL is required';
+		}
+	},
+});
+
+const quantityServerValidate = createServerValidate({
+	...quantityFormOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.variantId) {
+			return 'Variant ID is required';
+		}
+		if (value.quantity < 0) {
+			return 'Quantity must be positive';
+		}
+	},
+});
+
+const removeServerValidate = createServerValidate({
+	...removeFormOpts,
+	onServerValidate: ({ value }) => {
+		if (!value.variantId) {
+			return 'Variant ID is required';
+		}
+	},
+});
+
+interface BaseFormState
+	extends ServerFormState<
+		z.infer<typeof checkoutScheme> | z.infer<typeof quantityScheme> | z.infer<typeof removeScheme>,
+		undefined
+	> {}
+
+interface ErrorFormState extends BaseFormState {
+	meta: {
+		errors: Array<{
+			message: string;
+		}>;
+	};
+}
+
+type CartFormState = BaseFormState | ErrorFormState;
+
+export type CartActionResult = ReturnType<
+	typeof data<
+		| {
+				type: 'success';
+		  }
+		| {
+				type: 'error';
+				formState: CartFormState;
+		  }
+	>
+>;
+
+export async function action({ request }: ActionFunctionArgs): Promise<CartActionResult | ReturnType<typeof redirect>> {
 	const [formData, session] = await Promise.all([
 		request.formData(),
 		getSession(request),
 	]);
 	const intent = formData.get(INTENT);
 
-	switch (intent) {
-		case ACTIONS.CHECKOUT_ACTION: {
-			const { checkoutUrl } = CheckoutScheme.parse(Object.fromEntries(formData.entries()));
-			return redirect(checkoutUrl);
-		}
+	try {
+		switch (intent) {
+			case ACTIONS.CHECKOUT_ACTION: {
+				const { checkoutUrl } = await checkoutServerValidate(formData);
+				return redirect(checkoutUrl);
+			}
 
-		case ACTIONS.INCREMENT_ACTION:
-		case ACTIONS.DECREMENT_ACTION: {
-			const { quantity, variantId } = QuantityScheme.parse(Object.fromEntries(formData.entries()));
-			const cart = await session.getCart();
-			const newCart = updateCartItem(cart, variantId, quantity);
-			await session.setCart(newCart);
+			case ACTIONS.INCREMENT_ACTION:
+			case ACTIONS.DECREMENT_ACTION: {
+				const { quantity, variantId } = await quantityServerValidate(formData);
+				const cart = await session.getCart();
+				const newCart = updateCartItem(cart, variantId, quantity);
+				await session.setCart(newCart);
+				return data(
+					{
+						type: 'success',
+					},
+					{
+						headers: {
+							'Set-Cookie': await session.commitSession(),
+						},
+					},
+				);
+			}
+
+			case ACTIONS.REMOVE_ACTION: {
+				const { variantId } = await removeServerValidate(formData);
+				const cart = await session.getCart();
+				const newCart = removeCartItem(cart, variantId);
+				await session.setCart(newCart);
+				return data(
+					{
+						type: 'success',
+					},
+					{
+						headers: {
+							'Set-Cookie': await session.commitSession(),
+						},
+					},
+				);
+			}
+
+			default: {
+				throw new Error('Unexpected action');
+			}
+		}
+	} catch (err) {
+		if (err instanceof ServerValidateError) {
 			return data(
-				{},
+				{
+					type: 'error',
+					formState: err.formState,
+				},
 				{
 					headers: {
 						'Set-Cookie': await session.commitSession(),
@@ -90,13 +223,23 @@ export async function action({ request }: ActionFunctionArgs) {
 			);
 		}
 
-		case ACTIONS.REMOVE_ACTION: {
-			const { variantId } = RemoveScheme.parse(Object.fromEntries(formData.entries()));
-			const cart = await session.getCart();
-			const newCart = removeCartItem(cart, variantId);
-			await session.setCart(newCart);
+		// For other errors, create a form state with the error message
+		if (err instanceof Error) {
+			const errorFormState: ErrorFormState = {
+				...initialFormState,
+				meta: {
+					errors: [
+						{
+							message: err.message,
+						},
+					],
+				},
+			};
 			return data(
-				{},
+				{
+					type: 'error',
+					formState: errorFormState,
+				},
 				{
 					headers: {
 						'Set-Cookie': await session.commitSession(),
@@ -105,9 +248,10 @@ export async function action({ request }: ActionFunctionArgs) {
 			);
 		}
 
-		default: {
-			throw new Error('Unexpected action');
-		}
+		// Some other error occurred - let it bubble up to Remix's error boundary
+		throw new Response('Internal Server Error', {
+			status: 500,
+		});
 	}
 }
 

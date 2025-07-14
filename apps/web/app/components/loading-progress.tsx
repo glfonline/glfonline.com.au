@@ -1,6 +1,7 @@
 import { useNavigation } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { noop } from '../lib/noop';
 
 export function LoadingProgress() {
 	const elementRef = useRef<HTMLDivElement>(null);
@@ -36,9 +37,7 @@ export function LoadingProgress() {
 						setAnimationComplete(true);
 					}
 				})
-				.catch(() => {
-					// Noop - catching any errors
-				});
+				.catch(noop);
 		};
 
 		// Call the function (no floating promise now)
