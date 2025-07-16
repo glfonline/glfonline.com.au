@@ -1,6 +1,5 @@
 import type { ActionFunctionArgs } from '@remix-run/node';
 import { data as json } from '@remix-run/node';
-import sendgrid from '@sendgrid/mail';
 import {
 	createServerValidate,
 	formOptions,
@@ -10,6 +9,7 @@ import {
 } from '@tanstack/react-form/remix';
 import dedent from 'dedent';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
+import { Resend } from 'resend';
 import type { z } from 'zod';
 import { EMAIL_ADDRESS } from '../../lib/constants';
 import { requiredEnv } from '../../lib/required-env';
@@ -97,29 +97,30 @@ export async function action({ request }: ActionFunctionArgs): Promise<ContactAc
 		}
 
 		/** Format HTML for contact form notification email */
-		const mailOptions = {
-			from: 'contact_form@glfonline.com.au',
-			html: dedent /* html */`
-				<div>
-					<h1>New GLF Online Contact Form Submission</h1>
-					<ul>
-						<li>Name: ${first_name} ${last_name}</li>
-						<li>Email: ${email}</li>
-						<li>Email: ${phone_number}</li>
-						<li>Subject: ${subject}</li>
-						<li>Message: ${message}</li>
-					</ul>
-				</div>
-			`.trim(),
-			subject: `New GLF Online Contact Form Submission from ${first_name}`,
-			to: EMAIL_ADDRESS,
-		};
+		const htmlContent = dedent /* html */`
+			<div>
+				<h1>New GLF Online Contact Form Submission</h1>
+				<ul>
+					<li>Name: ${first_name} ${last_name}</li>
+					<li>Email: ${email}</li>
+					<li>Phone: ${phone_number}</li>
+					<li>Subject: ${subject}</li>
+					<li>Message: ${message}</li>
+				</ul>
+			</div>
+		`.trim();
 
-		/** Send email with Sendgrid */
-		sendgrid.setApiKey(requiredEnv('SENDGRID_API_KEY', process.env.SENDGRID_API_KEY));
-		const sendgridResponse = await sendgrid.send(mailOptions);
+		/** Send email with Resend */
+		const resend = new Resend(requiredEnv('RESEND_API_KEY', process.env.RESEND_API_KEY));
+		const resendResponse = await resend.emails.send({
+			from: 'contact_form@glfonline.com.au',
+			to: EMAIL_ADDRESS,
+			subject: `New GLF Online Contact Form Submission from ${first_name}`,
+			html: htmlContent,
+		});
+
 		console.log({
-			sendgridResponse,
+			resendResponse,
 		});
 
 		return json({

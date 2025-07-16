@@ -4,7 +4,7 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"env": ["ENCRYPTION_KEY", "NODE_ENV", "SENDGRID_API_KEY", "TURNSTILE_SECRET_KEY", "SENTRY_AUTH_TOKEN"],
+			"env": ["ENCRYPTION_KEY", "NODE_ENV", "RESEND_API_KEY", "TURNSTILE_SECRET_KEY", "SENTRY_AUTH_TOKEN"],
 			"outputs": [".cache/**", "build/**", "public/build/**"]
 		},
 		"check:types": {
