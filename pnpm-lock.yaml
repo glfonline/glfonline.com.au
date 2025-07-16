@@ -97,8 +97,8 @@ importers:
         specifier: ^3.4.0
         version: 3.5.0
       '@shopify/hydrogen':
-        specifier: ^2025.1.4
-        version: 2025.5.0(@react-router/dev@7.6.0(@types/node@22.16.3)(jiti@2.4.2)(react-router@6.30.0(react@18.3.1))(typescript@5.8.3)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))(yaml@2.8.0))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react-router@6.30.0(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))
+        specifier: 2025.1.4
+        version: 2025.1.4(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))
       '@tanstack/query-core':
         specifier: ^5.76.2
         version: 5.83.0
@@ -170,7 +170,7 @@ importers:
         version: 0.1.0(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(remix@2.16.8)
       remix-utils:
         specifier: ^8.7.0
-        version: 8.7.0(is-ip@5.0.1)(react-router@6.30.0(react@18.3.1))(react@18.3.1)(zod@4.0.5)
+        version: 8.7.0(is-ip@5.0.1)(react@18.3.1)(zod@4.0.5)
       resend:
         specifier: ^4.6.0
         version: 4.6.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2227,9 +2227,6 @@ packages:
   '@mdx-js/mdx@2.3.0':
     resolution: {integrity: sha512-jLuwRlz8DQfQNiUCJR50Y09CGPq3fLtmtUQfVrj79E0JWu3dvsVcxVIcfhR5h0iXu+/z++zDrYeiJqifRynJkA==}
 
-  '@mjackson/node-fetch-server@0.2.0':
-    resolution: {integrity: sha512-EMlH1e30yzmTpGLQjlFmaDAjyOeZhng1/XCd7DExR8PNAnG/G1tyruZxEoUe11ClnwGhGrtsdnyyUx1frSzjng==}
-
   '@monogrid/gainmap-js@3.1.0':
     resolution: {integrity: sha512-Obb0/gEd/HReTlg8ttaYk+0m62gQJmCblMOjHSMHRrBP2zdfKMHLCRbh/6ex9fSUJMKdjjIEiohwkbGD3wj2Nw==}
     peerDependencies:
@@ -2725,34 +2722,6 @@ packages:
     peerDependencies:
       react: ^18.0 || ^19.0 || ^19.0.0-rc
       react-dom: ^18.0 || ^19.0 || ^19.0.0-rc
-
-  '@react-router/dev@7.6.0':
-    resolution: {integrity: sha512-XSxEslex0ddJPxNNgdU1Eqmc9lsY/lhcLNCcRLAtlrOPyOz3Y8kIPpAf5T/U2AG3HGXFVBa9f8aQ7wXU3wTJSw==}
-    engines: {node: '>=20.0.0'}
-    hasBin: true
-    peerDependencies:
-      '@react-router/serve': ^7.6.0
-      react-router: ^7.6.0
-      typescript: ^5.1.0
-      vite: ^5.1.0 || ^6.0.0
-      wrangler: ^3.28.2 || ^4.0.0
-    peerDependenciesMeta:
-      '@react-router/serve':
-        optional: true
-      typescript:
-        optional: true
-      wrangler:
-        optional: true
-
-  '@react-router/node@7.6.0':
-    resolution: {integrity: sha512-agjDPUzisLdGJ7Q2lx/Z3OfdS2t1k6qv/nTvA45iahGsQJCMDvMqVoIi7iIULKQJwrn4HWjM9jqEp75+WsMOXg==}
-    engines: {node: '>=20.0.0'}
-    peerDependencies:
-      react-router: 7.6.0
-      typescript: ^5.1.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
 
   '@react-stately/flags@3.1.2':
     resolution: {integrity: sha512-2HjFcZx1MyQXoPqcBGALwWWmgFVUk2TuKVIQxCbRq7fPyWXIl6VHcakCLurdtYC2Iks7zizvz0Idv48MQ38DWg==}
@@ -3413,20 +3382,20 @@ packages:
     resolution: {integrity: sha512-jUnpTdpicG8wefamw7eNo2uO+Q3KCbOAiF76xH4gfNHSW6TN2hBfOtmLu7J+ive4c0Al3+NEHz19bIPR0lkwWg==}
     engines: {node: '>= 14'}
 
-  '@shopify/hydrogen-react@2025.5.0':
-    resolution: {integrity: sha512-sGJdv6cr9cQYviaOBIXTFQSgPfiBO3P2jpnXRYGCuz10w/IrANPFpas4FN++yumcgJc1GmE1IndoyCoB7GQcaA==}
+  '@shopify/hydrogen-react@2025.1.3':
+    resolution: {integrity: sha512-h1e0GBx5y0JjFA15Ohf91s9Y4lRsf3HVsK2g1R8kOuHWLk5ldRlrthUysKClmTJRChutYJ73k3xHr9JUhFe6Ng==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0.0
       react-dom: ^18.0.0
       vite: ^5.1.0 || ^6.2.1
 
-  '@shopify/hydrogen@2025.5.0':
-    resolution: {integrity: sha512-Sgy5qBBZNCRahJ8T/SWlPxSRZTWKPq6tTuMus8V3r9tNwPgdEL23StElgs9q8gJJ8RQ5rNYA+i5w2fPTMVZ2OQ==}
+  '@shopify/hydrogen@2025.1.4':
+    resolution: {integrity: sha512-LveJyEweOEbs3lzpKZ7EosfNDpP/SY9U7rh1CKlqzwNTPJHh+dvgYKj+YRWyN1pxgCTbdwkJhAjzV0QhIzBiqQ==}
     peerDependencies:
-      '@react-router/dev': 7.6.0
+      '@remix-run/react': ^2.16.1
+      '@remix-run/server-runtime': ^2.16.1
       react: ^18.2.0
-      react-router: 7.6.0
       vite: ^5.1.0 || ^6.2.1
     peerDependenciesMeta:
       vite:
@@ -4150,9 +4119,6 @@ packages:
 
   b4a@1.6.7:
     resolution: {integrity: sha512-OnAYlL5b7LEkALw87fUVafQw5rVR9RjwGd4KUwNQ6DrrNmaVaUCgLipfVlzrPQ4tWOR9P0IXGNOx50jYCCdSJg==}
-
-  babel-dead-code-elimination@1.0.10:
-    resolution: {integrity: sha512-DV5bdJZTzZ0zn0DC24v3jD7Mnidh6xhKa4GfKCbq3sfW8kaWhDdZjP3i81geA8T33tdYqWKw4D3fVv0CwEgKVA==}
 
   babel-plugin-macros@2.8.0:
     resolution: {integrity: sha512-SEP5kJpfGYqYKpBrj5XU3ahw5p5GOHJ0U5ssOSQ/WBVdwkD2Dzlce95exQTs3jOVWPPKLBN2rlEWkCK7dSmLvg==}
@@ -8961,11 +8927,6 @@ packages:
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
 
-  vite-node@3.0.0-beta.2:
-    resolution: {integrity: sha512-ofTf6cfRdL30Wbl9n/BX81EyIR5s4PReLmSurrxQ+koLaWUNOEo8E0lCM53OJkb8vpa2URM2nSrxZsIFyvY1rg==}
-    engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
-    hasBin: true
-
   vite-node@3.2.4:
     resolution: {integrity: sha512-EbKSKh+bh1E1IFxeO0pg1n4dvoOTt0UDiXMd/qn++r98+jPO1xtJilvXldeuQ8giIB5IkpjCgMleHMNEsGH6pg==}
     engines: {node: ^18.0.0 || ^20.0.0 || >=22.0.0}
@@ -11493,8 +11454,6 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@mjackson/node-fetch-server@0.2.0': {}
-
   '@monogrid/gainmap-js@3.1.0(three@0.172.0)':
     dependencies:
       promise-worker-transferable: 1.0.4
@@ -12140,65 +12099,6 @@ snapshots:
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
       react-promise-suspense: 0.3.4
-
-  '@react-router/dev@7.6.0(@types/node@22.16.3)(jiti@2.4.2)(react-router@6.30.0(react@18.3.1))(typescript@5.8.3)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))(yaml@2.8.0)':
-    dependencies:
-      '@babel/core': 7.28.0
-      '@babel/generator': 7.28.0
-      '@babel/parser': 7.28.0
-      '@babel/plugin-syntax-decorators': 7.27.1(@babel/core@7.28.0)
-      '@babel/plugin-syntax-jsx': 7.27.1(@babel/core@7.28.0)
-      '@babel/preset-typescript': 7.27.1(@babel/core@7.28.0)
-      '@babel/traverse': 7.28.0
-      '@babel/types': 7.28.1
-      '@npmcli/package-json': 4.0.1
-      '@react-router/node': 7.6.0(react-router@6.30.0(react@18.3.1))(typescript@5.8.3)
-      arg: 5.0.2
-      babel-dead-code-elimination: 1.0.10
-      chokidar: 4.0.3
-      dedent: 1.6.0
-      es-module-lexer: 1.7.0
-      exit-hook: 2.2.1
-      fs-extra: 10.1.0
-      jsesc: 3.0.2
-      lodash: 4.17.21
-      pathe: 1.1.2
-      picocolors: 1.1.1
-      prettier: 2.8.8
-      react-refresh: 0.14.2
-      react-router: 6.30.0(react@18.3.1)
-      semver: 7.7.2
-      set-cookie-parser: 2.7.1
-      valibot: 0.41.0(typescript@5.8.3)
-      vite: 7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0)
-      vite-node: 3.0.0-beta.2(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0)
-    optionalDependencies:
-      typescript: 5.8.3
-    transitivePeerDependencies:
-      - '@types/node'
-      - babel-plugin-macros
-      - bluebird
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
-
-  '@react-router/node@7.6.0(react-router@6.30.0(react@18.3.1))(typescript@5.8.3)':
-    dependencies:
-      '@mjackson/node-fetch-server': 0.2.0
-      react-router: 6.30.0(react@18.3.1)
-      source-map-support: 0.5.21
-      stream-slice: 0.1.2
-      undici: 6.21.3
-    optionalDependencies:
-      typescript: 5.8.3
 
   '@react-stately/flags@3.1.2':
     dependencies:
@@ -13178,7 +13078,7 @@ snapshots:
       - encoding
       - supports-color
 
-  '@shopify/hydrogen-react@2025.5.0(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))':
+  '@shopify/hydrogen-react@2025.1.3(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))':
     dependencies:
       '@google/model-viewer': 4.1.0(three@0.172.0)
       '@xstate/fsm': 2.0.0
@@ -13194,14 +13094,14 @@ snapshots:
       - three
       - xstate
 
-  '@shopify/hydrogen@2025.5.0(@react-router/dev@7.6.0(@types/node@22.16.3)(jiti@2.4.2)(react-router@6.30.0(react@18.3.1))(typescript@5.8.3)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))(yaml@2.8.0))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react-router@6.30.0(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))':
+  '@shopify/hydrogen@2025.1.4(@remix-run/react@2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3))(@remix-run/server-runtime@2.16.8(typescript@5.8.3))(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))':
     dependencies:
-      '@react-router/dev': 7.6.0(@types/node@22.16.3)(jiti@2.4.2)(react-router@6.30.0(react@18.3.1))(typescript@5.8.3)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))(yaml@2.8.0)
-      '@shopify/hydrogen-react': 2025.5.0(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))
+      '@remix-run/react': 2.16.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(typescript@5.8.3)
+      '@remix-run/server-runtime': 2.16.8(typescript@5.8.3)
+      '@shopify/hydrogen-react': 2025.1.3(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(three@0.172.0)(vite@7.0.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0))
       content-security-policy-builder: 2.3.0
       isbot: 5.1.28
       react: 18.3.1
-      react-router: 6.30.0(react@18.3.1)
       source-map-support: 0.5.21
       type-fest: 4.41.0
       use-resize-observer: 9.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -14075,15 +13975,6 @@ snapshots:
   aws4@1.13.2: {}
 
   b4a@1.6.7: {}
-
-  babel-dead-code-elimination@1.0.10:
-    dependencies:
-      '@babel/core': 7.28.0
-      '@babel/parser': 7.28.0
-      '@babel/traverse': 7.28.0
-      '@babel/types': 7.28.1
-    transitivePeerDependencies:
-      - supports-color
 
   babel-plugin-macros@2.8.0:
     dependencies:
@@ -18027,13 +17918,12 @@ snapshots:
       just-merge: 3.2.0
       remix: 2.16.8
 
-  remix-utils@8.7.0(is-ip@5.0.1)(react-router@6.30.0(react@18.3.1))(react@18.3.1)(zod@4.0.5):
+  remix-utils@8.7.0(is-ip@5.0.1)(react@18.3.1)(zod@4.0.5):
     dependencies:
       type-fest: 4.41.0
     optionalDependencies:
       is-ip: 5.0.1
       react: 18.3.1
-      react-router: 6.30.0(react@18.3.1)
       zod: 4.0.5
 
   remix@2.16.8: {}
@@ -19429,27 +19319,6 @@ snapshots:
       - sugarss
       - supports-color
       - terser
-
-  vite-node@3.0.0-beta.2(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0):
-    dependencies:
-      cac: 6.7.14
-      debug: 4.4.1(supports-color@8.1.1)
-      es-module-lexer: 1.7.0
-      pathe: 1.1.2
-      vite: 6.3.5(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0)
-    transitivePeerDependencies:
-      - '@types/node'
-      - jiti
-      - less
-      - lightningcss
-      - sass
-      - sass-embedded
-      - stylus
-      - sugarss
-      - supports-color
-      - terser
-      - tsx
-      - yaml
 
   vite-node@3.2.4(@types/node@22.16.3)(jiti@2.4.2)(yaml@2.8.0):
     dependencies:
