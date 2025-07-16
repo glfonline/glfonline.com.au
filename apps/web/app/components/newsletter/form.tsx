@@ -54,6 +54,9 @@ export function NewsletterSignup() {
 			? fetcher.data.formState.meta.errors[0]?.message
 			: undefined;
 
+	// Only show success message if form was successfully submitted and there are no errors
+	const showSuccessMessage = fetcher.data?.type === 'success' && !formError && fetcher.state === 'idle';
+
 	return (
 		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
 			<div className="mx-auto max-w-xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
@@ -123,18 +126,16 @@ export function NewsletterSignup() {
 
 						<form.Field name="gender">
 							{(field) => {
-								const errorMessage = field.state.meta.errors
-									.map((error) => error?.message)
-									.filter(Boolean)
-									.join(', ');
+								const errorMessage = field.state.meta.errors[0]?.message;
 								const errorMessageId = `${field.name}-error`;
 
+								const fieldsetA11yProps = {
+									'aria-describedby': errorMessage ? errorMessageId : undefined,
+									'aria-invalid': errorMessage ? true : undefined,
+								};
+
 								return (
-									<fieldset
-										aria-describedby={errorMessage ? errorMessageId : undefined}
-										aria-invalid={errorMessage ? true : undefined}
-										className="flex flex-col gap-4 sm:col-span-4"
-									>
+									<fieldset {...fieldsetA11yProps} className="flex flex-col gap-4 sm:col-span-4">
 										<legend className="text-gray-700 text-sm">Which list would you like to sign up to?</legend>
 										<div className="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
 											{(
@@ -145,7 +146,6 @@ export function NewsletterSignup() {
 											).map((option) => (
 												<div className="flex items-center gap-3" key={option}>
 													<input
-														aria-describedby={errorMessage ? errorMessageId : undefined}
 														className="h-5 w-5 border-gray-300 text-brand-primary focus:ring-brand-light"
 														id={option}
 														name={field.name}
@@ -210,7 +210,7 @@ export function NewsletterSignup() {
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">
-					{fetcher.data?.type === 'success' && <p>Thank you for subscribing!</p>}
+					{showSuccessMessage && <p>Thank you for subscribing!</p>}
 					<p>* by clicking join, you agree to receive our newsletter as well as top tips to improve your game</p>
 				</div>
 			</div>

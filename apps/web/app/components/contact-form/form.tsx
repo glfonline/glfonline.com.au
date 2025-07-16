@@ -60,6 +60,9 @@ export function ContactForm() {
 			? fetcher.data.formState.meta.errors[0]?.message
 			: undefined;
 
+	// Only show success message if form was successfully submitted and there are no errors
+	const showSuccessMessage = fetcher.data?.type === 'success' && !formError && fetcher.state === 'idle';
+
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
 			<div aria-hidden="true" className="absolute inset-0 flex h-full w-full overflow-hidden">
@@ -227,16 +230,7 @@ export function ContactForm() {
 						{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
 					</div>
 
-					{(() => {
-						if (!fetcher.data) return null;
-						return (
-							<p className="text-center sm:col-span-2">
-								{fetcher.data.type === 'success'
-									? 'Thank you for your message!'
-									: 'There was an error sending your message. Please try again later.'}
-							</p>
-						);
-					})()}
+					{showSuccessMessage && <p className="text-center sm:col-span-2">Thank you for your message!</p>}
 				</fetcher.Form>
 			</div>
 		</article>
