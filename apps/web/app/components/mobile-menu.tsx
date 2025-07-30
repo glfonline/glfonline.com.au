@@ -13,7 +13,7 @@ import {
 	TransitionChild,
 } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import { NavLink, useLoaderData } from '@remix-run/react';
+import { NavLink, useLoaderData } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 import type { loader } from '../../app/root';

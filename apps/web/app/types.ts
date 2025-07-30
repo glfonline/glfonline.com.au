@@ -1,5 +1,3 @@
-import type { Storefront as HydrogenStorefront } from '@shopify/hydrogen';
-import type { CountryCode, CurrencyCode, LanguageCode } from '@shopify/hydrogen/storefront-api-types';
 import type { z } from 'zod';
 
 /**
@@ -23,6 +21,11 @@ export type Maybe<T> = null | undefined | T;
 
 export type StringWithAutocomplete<T> = T | (string & Record<never, never>);
 
+// Standard locale types
+export type LanguageCode = string;
+export type CountryCode = string;
+export type CurrencyCode = string;
+
 export type Locale = {
 	language: LanguageCode;
 	country: CountryCode;
@@ -36,7 +39,11 @@ export type I18nLocale = Locale & {
 	pathPrefix: string;
 };
 
-export type Storefront = HydrogenStorefront<I18nLocale>;
+// Generic storefront type
+export type Storefront<T = any> = {
+	locale: T;
+	// Add other storefront properties as needed
+};
 
 export const CartAction = {
 	ADD_TO_CART: 'ADD_TO_CART',

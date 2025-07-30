@@ -1,4 +1,4 @@
-import { useNavigation } from '@remix-run/react';
+import { useNavigation } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { noop } from '../lib/noop';

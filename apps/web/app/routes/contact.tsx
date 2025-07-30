@@ -1,4 +1,4 @@
-import type { MetaFunction } from '@remix-run/react';
+import type { MetaFunction } from 'react-router-dom';
 import { ContactForm } from '../components/contact-form/form';
 import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';

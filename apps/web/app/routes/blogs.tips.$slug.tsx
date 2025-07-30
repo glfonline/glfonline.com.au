@@ -1,4 +1,4 @@
-import { type LoaderFunctionArgs, redirect } from '@remix-run/node';
+import { type LoaderFunctionArgs, redirect } from 'react-router';
 import { assert, isString } from 'emery';
 import { notFound } from '../lib/errors.server';
 

@@ -1,6 +1,6 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { data as json, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
+import { useLoaderData } from 'react-router-dom';
 import { assert, isString } from 'emery';
 import invariant from 'tiny-invariant';
 import { Hero } from '../components/hero';

@@ -1,7 +1,7 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
+import { Form, useActionData, useLoaderData, useNavigation } from 'react-router-dom';
 import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
 import {
 	createServerValidate,

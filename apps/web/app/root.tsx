@@ -1,5 +1,10 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import * as Sentry from '@sentry/react';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { useEffect } from 'react';
+import type { LinksFunction, LoaderFunctionArgs } from 'react-router';
 import {
 	isRouteErrorResponse,
 	Links,
@@ -10,15 +15,7 @@ import {
 	ScrollRestoration,
 	useLocation,
 	useRouteError,
-} from '@remix-run/react';
-import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { useEffect } from 'react';
-import favicon from '../assets/favicon.svg';
+} from 'react-router-dom';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
 import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
@@ -57,7 +54,7 @@ export const links: LinksFunction = () => {
 		{
 			rel: 'icon',
 			type: 'image/svg+xml',
-			href: favicon,
+			href: '/favicon.svg',
 		},
 	];
 };
@@ -103,7 +100,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	};
 }
 
-const seo: SeoHandleFunction<typeof loader> = ({ pathname, data }) => {
+const seo = ({ pathname, data }: { pathname: string; data: any }) => {
 	if (!data) {
 		return {
 			title: seoConfig.title,
@@ -113,13 +110,10 @@ const seo: SeoHandleFunction<typeof loader> = ({ pathname, data }) => {
 		};
 	}
 
-	// SeoHandleFunction isn't correctly inferring the type for data, so we need use a type assertion
-	const loaderData = data as Awaited<ReturnType<typeof loader>>;
-
 	return {
-		title: loaderData.shop.name,
+		title: data.shop.name,
 		titleTemplate: seoConfig.titleTemplate,
-		description: loaderData.shop.description || seoConfig.description,
+		description: data.shop.description || seoConfig.description,
 		url: `https://www.glfonline.com.au${pathname}`,
 	};
 };
@@ -129,10 +123,15 @@ export const handle = {
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	return getSeoMeta({
-		...seoConfig,
-		title: data?.shop?.name || seoConfig.title,
-	});
+	return [
+		{
+			title: data?.shop?.name || seoConfig.title,
+		},
+		{
+			name: 'description',
+			content: seoConfig.description,
+		},
+	];
 };
 
 const queryClient = new QueryClient();
@@ -166,7 +165,6 @@ function App() {
 					<>
 						<GoogleAnalytics />
 						<MetaAnalytics />
-						<VercelAnalytics />
 					</>
 				)}
 				<LoadingProgress />
@@ -189,7 +187,7 @@ function App() {
 
 export function ErrorBoundary() {
 	const error = useRouteError();
-	captureRemixErrorBoundaryError(error);
+	Sentry.captureException(error);
 
 	const main = isRouteErrorResponse(error) ? (
 		error.status === 404 ? (
@@ -222,4 +220,4 @@ export function ErrorBoundary() {
 	);
 }
 
-export default withSentry(App);
+export default App;

@@ -1,5 +1,5 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { data as json } from '@remix-run/node';
+import type { ActionFunctionArgs } from 'react-router';
+import { data as json } from 'react-router';
 import {
 	createServerValidate,
 	formOptions,
