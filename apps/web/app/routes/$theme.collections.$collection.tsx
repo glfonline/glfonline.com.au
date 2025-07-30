@@ -9,8 +9,8 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
-import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { Link, type Location, useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
 import invariant from 'tiny-invariant';

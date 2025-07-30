@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router-dom';
 import { Fragment } from 'react';
 import { CONTACT_NUMBERS, EMAIL_ADDRESS, footerNavigation, HOURS, STREET_ADDRESS } from '../lib/constants';
 import { ClockIcon } from './vectors/clock-icon';

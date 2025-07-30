@@ -1,6 +1,6 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { data, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { data, type MetaFunction } from 'react-router';
+import { useLoaderData } from 'react-router-dom';
 import { Fragment } from 'react';
 import { z } from 'zod';
 import { getHeadingStyles } from '../components/design-system/heading';

@@ -1,5 +1,5 @@
 import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
-import { useFetchers } from '@remix-run/react';
+import { useFetchers } from 'react-router-dom';
 import { Fragment, useEffect } from 'react';
 import { noop } from '../lib/noop';
 import { NewsletterSignup } from './newsletter/form';

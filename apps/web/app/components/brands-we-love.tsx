@@ -1,4 +1,4 @@
-import { Link } from '@remix-run/react';
+import { Link } from 'react-router-dom';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import type { z } from 'zod';

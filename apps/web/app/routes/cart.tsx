@@ -1,6 +1,6 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction, redirect } from '@remix-run/node';
-import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
+import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction, redirect } from 'react-router';
+import { Form, Link, useFetcher, useLoaderData, useNavigation } from 'react-router-dom';
 import {
 	createServerValidate,
 	formOptions,

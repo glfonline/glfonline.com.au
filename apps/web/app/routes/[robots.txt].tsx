@@ -1,6 +1,15 @@
-import type { LoaderFunctionArgs } from '@remix-run/node';
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
-import { parseGid } from '@shopify/hydrogen';
+import type { LoaderFunctionArgs } from 'react-router';
+import { isRouteErrorResponse, useRouteError } from 'react-router-dom';
+
+const gidRegex = /gid:\/\/shopify\/[^/]+\/(\d+)/;
+
+// Simple GID parser function
+function parseGid(gid: string) {
+	const match = gid.match(gidRegex);
+	return {
+		id: match ? match[1] : gid,
+	};
+}
 
 export function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
