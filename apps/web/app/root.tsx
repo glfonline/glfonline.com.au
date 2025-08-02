@@ -12,7 +12,6 @@ import {
 	useRouteError,
 } from '@remix-run/react';
 import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -30,7 +29,7 @@ import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import { seoConfig } from './seo';
+import { getSeoMeta, seoConfig } from './seo';
 // @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
@@ -103,7 +102,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	};
 }
 
-const seo: SeoHandleFunction<typeof loader> = ({ pathname, data }) => {
+const seo = ({ pathname, data }: { pathname: string; data: Awaited<ReturnType<typeof loader>> | null }) => {
 	if (!data) {
 		return {
 			title: seoConfig.title,
@@ -129,10 +128,13 @@ export const handle = {
 };
 
 export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	return getSeoMeta({
+	const seoMeta = getSeoMeta({
 		...seoConfig,
 		title: data?.shop?.name || seoConfig.title,
 	});
+	return [
+		seoMeta,
+	];
 };
 
 const queryClient = new QueryClient();

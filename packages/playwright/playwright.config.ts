@@ -103,11 +103,13 @@ export default defineConfig({
 	 */
 	webServer: process.env.BASE_URL
 		? undefined
-		: {
-				command: 'pnpm -w dev:web',
-				reuseExistingServer: true,
-				url: baseURL,
-			},
+		: process.env.SKIP_WEB_SERVER
+			? undefined
+			: {
+					command: 'pnpm -w dev:web',
+					reuseExistingServer: true,
+					url: baseURL,
+				},
 
 	/**
 	 * Opt out of parallel tests on CI.
