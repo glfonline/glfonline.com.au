@@ -1,11 +1,33 @@
+import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import type { LoaderFunctionArgs } from '@remix-run/node';
-import { isRouteErrorResponse, useRouteError } from '@remix-run/react';
-import { parseGid } from '@shopify/hydrogen';
+import invariant from 'tiny-invariant';
+import { CACHE_LONG } from '../lib/cache';
 
-export function loader({ request }: LoaderFunctionArgs) {
+const GID_REGEX = /^gid:\/\/shopify\/([^/]+)\/(.+)$/;
+
+function parseGid(gid: string): {
+	id: string;
+	type: string;
+} {
+	const match = gid.match(GID_REGEX);
+	invariant(match, `Invalid GID format: ${gid}`);
+
+	const [, type, id] = match;
+	invariant(type && id, `Invalid GID format: ${gid}`);
+
+	return {
+		type,
+		id,
+	};
+}
+
+export async function loader({ request }: LoaderFunctionArgs) {
 	const url = new URL(request.url);
-	/** @todo get gid from query */
-	const shopId = parseGid('gid://shopify/Shop/10809832').id;
+
+	// Fetch shop data dynamically
+	const { shop } = await shopifyClient(SHOP_QUERY);
+	const shopId = parseGid(shop.id).id;
+
 	const body = robotsTxtData({
 		shopId,
 		url: url.origin,
@@ -13,39 +35,11 @@ export function loader({ request }: LoaderFunctionArgs) {
 
 	return new Response(body, {
 		headers: {
-			// Cache for 24 hours
-			'Cache-Control': `max-age=${60 * 60 * 24}`,
+			'Cache-Control': CACHE_LONG,
 			'Content-Type': 'text/plain',
 		},
 		status: 200,
 	});
-}
-
-export function ErrorBoundary() {
-	const error = useRouteError();
-
-	if (isRouteErrorResponse(error)) {
-		return (
-			<div>
-				<h1>Oops</h1>
-				<p>Status: {error.status}</p>
-				<p>{error.data.message}</p>
-			</div>
-		);
-	}
-
-	let errorMessage = 'Unknown error';
-	if (error instanceof Error) {
-		errorMessage = error.message;
-	}
-
-	return (
-		<div>
-			<h1>Uh oh ...</h1>
-			<p>Something went wrong.</p>
-			<pre>{errorMessage}</pre>
-		</div>
-	);
 }
 
 function robotsTxtData({ url, shopId }: { shopId?: string; url?: string }) {
@@ -100,7 +94,8 @@ Crawl-delay: 1
  * Online Store has as defaults for their robots.txt
  */
 function generalDisallowRules({ shopId, sitemapUrl }: { shopId?: string; sitemapUrl?: string }) {
-	return `Disallow: /admin
+	return `
+Disallow: /admin
 Disallow: /cart
 Disallow: /orders
 Disallow: /checkouts/
@@ -136,5 +131,6 @@ Allow: /search/
 Disallow: /search/?*
 Disallow: /apple-app-site-association
 Disallow: /.well-known/shopify/monorail
-${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}`;
+${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}
+`.trim();
 }

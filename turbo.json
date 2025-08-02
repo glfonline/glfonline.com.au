@@ -16,6 +16,9 @@
 		},
 		"fix:format": {},
 		"fix:lint": {},
+		"test": {},
+		"test:unit": {},
+		"test:browser": {},
 		"test:e2e": {
 			"dependsOn": ["^build"]
 		}
