@@ -14,7 +14,7 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-const AboutSchema = z.object({
+const aboutSchema = z.object({
 	sections: z.array(
 		z.object({
 			_key: z.string(),
@@ -30,7 +30,7 @@ export async function loader() {
 		id: 'about',
 	});
 
-	const { sections } = AboutSchema.parse(res.AboutPage);
+	const { sections } = aboutSchema.parse(res.AboutPage);
 	return data(
 		{
 			sections,

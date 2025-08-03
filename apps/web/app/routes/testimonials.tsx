@@ -13,7 +13,7 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-const TestimonialsSchema = z.object({
+const testimonialsSchema = z.object({
 	heroImage: imageWithAltSchema,
 	testimonials: z
 		.object({
@@ -29,7 +29,7 @@ export async function loader() {
 	const res = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
 		id: 'testimonials',
 	});
-	const { testimonials, heroImage } = TestimonialsSchema.parse(res.TestimonialsPage);
+	const { testimonials, heroImage } = testimonialsSchema.parse(res.TestimonialsPage);
 	return json(
 		{
 			heroImage,

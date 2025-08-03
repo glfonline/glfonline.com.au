@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { imageWithAltSchema } from './image-with-alt-schema';
 
-export const PostSchema = z.object({
+export const postSchema = z.object({
 	_id: z.string(),
 	author: z.object({
 		name: z.string(),

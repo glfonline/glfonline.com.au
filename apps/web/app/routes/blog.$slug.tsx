@@ -7,7 +7,7 @@ import { Hero } from '../components/hero';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { notFound } from '../lib/errors.server';
 import { PortableText } from '../lib/portable-text';
-import { PostSchema } from '../lib/post-schema';
+import { postSchema } from '../lib/post-schema';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
@@ -16,7 +16,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	const { allPost } = await sanityClient(BLOG_POST_QUERY, {
 		slug: params.slug,
 	});
-	const page = PostSchema.parse(allPost[0]);
+	const page = postSchema.parse(allPost[0]);
 	if (!page) notFound();
 	return json(
 		{

@@ -26,7 +26,7 @@ import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collecti
 import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
-const CollectionSchema = z.object({
+const collectionSchema = z.object({
 	collection: z.string().min(1),
 	theme: z.enum([
 		'ladies',
@@ -34,15 +34,13 @@ const CollectionSchema = z.object({
 	]),
 });
 
-const SortSchema = z
-	.object({
-		after: z.string().optional(),
-		[PRODUCT_TYPE]: z.string().optional(),
-		sort: z.string().optional(),
-	})
-	.passthrough();
+const SortSchema = z.looseObject({
+	after: z.string().optional(),
+	[PRODUCT_TYPE]: z.string().optional(),
+	sort: z.string().optional(),
+});
 
-const RecordSchema = z.record(z.string().min(1), z.string());
+const recordSchema = z.record(z.string().min(1), z.string());
 
 const ITEMS_PER_PAGE = 32;
 
@@ -91,7 +89,7 @@ function processCollectionData({
 
 // Parse and validate URL parameters
 function parseRequestParameters(params: unknown, request: Request) {
-	const paramsResult = CollectionSchema.safeParse(params);
+	const paramsResult = collectionSchema.safeParse(params);
 	if (!paramsResult.success) {
 		badRequest('Invalid collection parameters', params);
 	}
@@ -107,7 +105,7 @@ function parseRequestParameters(params: unknown, request: Request) {
 				productType: undefined,
 			};
 
-	const filterOptionsResult = RecordSchema.safeParse(remainingFilterOptions);
+	const filterOptionsResult = recordSchema.safeParse(remainingFilterOptions);
 	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};
 
 	return {

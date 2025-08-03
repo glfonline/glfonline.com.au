@@ -22,7 +22,7 @@ import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 import type { Theme } from '../types';
 
-const HomePageSchema = z.object({
+const homePageSchema = z.object({
 	brandsWeLove,
 	descriptionRaw: z.any(),
 	heading: z.array(z.string()),
@@ -46,7 +46,7 @@ export async function loader() {
 	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, {
 		id: 'home',
 	});
-	return data(HomePageSchema.parse(HomePage), {
+	return data(homePageSchema.parse(HomePage), {
 		headers: {
 			'Cache-Control': CACHE_SHORT,
 		},

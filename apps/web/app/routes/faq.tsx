@@ -11,7 +11,7 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-const FaqSchema = z.object({
+const faqSchema = z.object({
 	faqs: z
 		.object({
 			answerRaw: z.any(),
@@ -25,7 +25,7 @@ export async function loader() {
 	const res = await sanityClient(GET_FAQS_PAGES, {
 		id: 'faqs',
 	});
-	const faqPage = FaqSchema.parse(res.FaqPage);
+	const faqPage = faqSchema.parse(res.FaqPage);
 
 	return json(
 		{
