@@ -462,6 +462,7 @@ function QuantityPicker({
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
+						data-testid="quantity-decrement"
 						disabled={quantity <= 1}
 						name={INTENT}
 						type="submit"
@@ -475,6 +476,7 @@ function QuantityPicker({
 						fetcher.state === 'loading' && 'opacity-50',
 						'-ml-px relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-gray-700 text-sm',
 					)}
+					data-testid="quantity-display"
 				>
 					{quantity}
 				</span>
@@ -489,6 +491,7 @@ function QuantityPicker({
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
+						data-testid="quantity-increment"
 						disabled={quantity + 1 >= quantityAvailable}
 						name={INTENT}
 						type="submit"
@@ -513,6 +516,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 					'-m-2 inline-flex bg-white p-2 text-gray-400',
 					'hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2',
 				)}
+				data-testid="remove-from-cart"
 				name={INTENT}
 				type="submit"
 				value={ACTIONS.REMOVE_ACTION}

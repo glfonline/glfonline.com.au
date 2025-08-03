@@ -378,7 +378,13 @@ export default function ProductPage() {
 													{(isSubmitting) => {
 														const isUnavailable = !product.availableForSale;
 														return (
-															<Button disabled={isUnavailable} isLoading={isSubmitting} type="submit" variant="neutral">
+															<Button
+																data-testid="add-to-cart-button"
+																disabled={isUnavailable}
+																isLoading={isSubmitting}
+																type="submit"
+																variant="neutral"
+															>
 																{isUnavailable
 																	? 'Sold Out'
 																	: ('meta' in field.state && field.state.meta.errors[0]?.message) || buttonText}
