@@ -32,13 +32,10 @@ This project uses **Vitest** for unit tests and **Vitest Browser Mode** for comp
 ### Root Commands (CI/CD Ready)
 
 ```bash
-# Run all tests
-pnpm test
-
-# Run only unit tests
+# Run unit tests
 pnpm test:unit
 
-# Run only browser tests
+# Run browser tests
 pnpm test:browser
 
 # Run E2E tests
@@ -52,7 +49,7 @@ pnpm test:e2e
 pnpm test:all
 
 # Run all tests in watch mode
-pnpm test --watch
+pnpm test:all --watch
 
 # Run tests with UI
 pnpm test:ui
@@ -103,7 +100,7 @@ Vitest requires separate configuration files for different test environments bec
 
 Browser Mode allows testing React components in a real browser environment:
 
-```typescript
+```tsx
 import { render } from 'vitest-browser-react';
 import { Button } from './button';
 
@@ -135,7 +132,7 @@ describe('Button Component', () => {
 
 Forms should be tested using Remix's `fetcher.Form` and TanStack Form SSR patterns:
 
-```typescript
+```tsx
 import { render } from 'vitest-browser-react';
 import { ContactForm } from './form';
 
