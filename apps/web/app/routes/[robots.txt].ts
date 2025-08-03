@@ -25,6 +25,12 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	});
 }
 
+/**
+ * Matches Shopify Global IDs (GIDs) of the format:
+ *   gid://shopify/<type>/<id>
+ * Example: gid://shopify/Product/1234567890
+ * Captures <type> and <id> for further processing.
+ */
 const GID_REGEX = /^gid:\/\/shopify\/([^/]+)\/(.+)$/;
 
 function parseGid(gid: string): {
