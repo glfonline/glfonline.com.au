@@ -1,5 +1,4 @@
-import type { MetaFunction } from '@remix-run/node';
-import { data as json } from '@remix-run/node';
+import { data as json, type MetaFunction } from '@remix-run/node';
 import { ContactForm } from '../components/contact-form/form';
 import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';

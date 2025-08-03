@@ -1,5 +1,4 @@
-import type { ActionFunctionArgs } from '@remix-run/node';
-import { data as json } from '@remix-run/node';
+import { type ActionFunctionArgs, data as json } from '@remix-run/node';
 import {
 	createServerValidate,
 	formOptions,

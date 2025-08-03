@@ -1,5 +1,4 @@
-import type { MetaFunction } from '@remix-run/node';
-import { data as json, type LoaderFunctionArgs } from '@remix-run/node';
+import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
