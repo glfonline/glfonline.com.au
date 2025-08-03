@@ -7,12 +7,12 @@ export const seoConfig = {
 		'Dedicated entirely to womens and mens golfing and clothing needs with personalised service and brands like Nivo and Jamie Sadock, our online golf store has the largest product range and excellent service.',
 } satisfies SeoConfig;
 
-const meta = initSeo(seoConfig);
+const seo = initSeo(seoConfig);
 
 /**
  * Generates SEO meta tags for pages
  */
-export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): ReturnType<typeof meta.getSeoMeta> {
+export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): ReturnType<typeof seo.getSeoMeta> {
 	const mergedConfig: SeoConfig = {};
 
 	for (const input of seoInputs) {
@@ -21,7 +21,7 @@ export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): R
 		}
 	}
 
-	const seoMeta = meta.getSeoMeta(mergedConfig);
+	const seoMeta = seo.getSeoMeta(mergedConfig);
 
 	return [
 		seoMeta,
@@ -44,4 +44,4 @@ export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): R
 	];
 }
 
-export const { getSeo, getSeoLinks } = meta;
+export const { getSeo, getSeoLinks } = seo;
