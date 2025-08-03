@@ -12,6 +12,7 @@ import type { action } from './action';
 import { contactFormSchema } from './schema';
 
 const formOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		first_name: '',
 		last_name: '',
@@ -170,7 +171,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.Field
+					<form.AppField
 						name="token"
 						validators={{
 							onBlur: contactFormSchema.shape.token,
@@ -193,7 +194,7 @@ export function ContactForm() {
 								<input name={field.name} type="hidden" value={field.state.value} />
 							</div>
 						)}
-					</form.Field>
+					</form.AppField>
 
 					<form.Subscribe selector={(state) => state.isSubmitting}>
 						{(isSubmitting) => (

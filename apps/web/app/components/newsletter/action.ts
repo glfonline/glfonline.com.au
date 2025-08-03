@@ -12,6 +12,7 @@ import { noop } from '../../lib/noop';
 import { newsletterSchema } from './schema';
 
 const formOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		first_name: '',
 		last_name: '',

@@ -11,6 +11,7 @@ import type { action } from './action';
 import { newsletterSchema } from './schema';
 
 const formOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		first_name: '',
 		last_name: '',
@@ -110,7 +111,7 @@ export function NewsletterSignup() {
 							)}
 						</form.AppField>
 
-						<form.Field
+						<form.AppField
 							name="gender"
 							validators={{
 								onBlur: newsletterSchema.shape.gender,
@@ -155,9 +156,9 @@ export function NewsletterSignup() {
 									</fieldset>
 								);
 							}}
-						</form.Field>
+						</form.AppField>
 
-						<form.Field
+						<form.AppField
 							name="token"
 							validators={{
 								onBlur: newsletterSchema.shape.token,
@@ -179,7 +180,7 @@ export function NewsletterSignup() {
 									<input name={field.name} type="hidden" value={field.state.value} />
 								</div>
 							)}
-						</form.Field>
+						</form.AppField>
 
 						<form.Subscribe selector={(state) => state.isSubmitting}>
 							{(isSubmitting) => (

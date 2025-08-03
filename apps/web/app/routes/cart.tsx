@@ -73,6 +73,7 @@ const removeScheme = z.object({
 
 // Define form options for each action type
 const checkoutFormOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		checkoutUrl: '',
 	},
@@ -82,6 +83,7 @@ const checkoutFormOpts = formOptions({
 });
 
 const quantityFormOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		quantity: 0,
 		variantId: '',
@@ -92,6 +94,7 @@ const quantityFormOpts = formOptions({
 });
 
 const removeFormOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		variantId: '',
 	},
@@ -176,7 +179,12 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 			case ACTIONS.DECREMENT_ACTION: {
 				const { quantity, variantId } = await quantityServerValidate(formData);
 				const cart = await session.getCart();
-				const newCart = updateCartItem(cart, variantId, quantity);
+				const newCart = updateCartItem(
+					cart,
+					variantId,
+					// We need to coerce quantity to a number as quantityServerValidate doesn't seem to be handling this for us
+					Number(quantity),
+				);
 				await session.setCart(newCart);
 				return data(
 					{
