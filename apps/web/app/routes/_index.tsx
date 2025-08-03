@@ -22,8 +22,6 @@ import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 import type { Theme } from '../types';
 
-export const headers = routeHeaders;
-
 const HomePageSchema = z.object({
 	brandsWeLove,
 	descriptionRaw: z.any(),
@@ -56,11 +54,10 @@ export async function loader() {
 }
 
 export const meta: MetaFunction<typeof loader> = () => {
-	const seoMeta = getSeoMeta();
-	return [
-		seoMeta,
-	];
+	return getSeoMeta();
 };
+
+export const headers = routeHeaders;
 
 export default function Index() {
 	const loaderData = useLoaderData<typeof loader>();

@@ -1,10 +1,12 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import type { MetaFunction } from '@remix-run/node';
+import { data as json, type LoaderFunctionArgs } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
 import { brandsWeLove } from '../lib/brands-we-love';
+import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { notFound } from '../lib/errors.server';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { urlFor } from '../lib/sanity-image';
@@ -43,10 +45,17 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			id: result.data.theme,
 		});
 		const collection = CollectionSchema.parse(ThemePage);
-		return {
-			collection,
-			theme: result.data.theme,
-		};
+		return json(
+			{
+				collection,
+				theme: result.data.theme,
+			},
+			{
+				headers: {
+					'Cache-Control': CACHE_LONG,
+				},
+			},
+		);
 	}
 	notFound();
 }
@@ -60,6 +69,8 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function CollectionsPage() {
 	const { collection, theme } = useLoaderData<typeof loader>();

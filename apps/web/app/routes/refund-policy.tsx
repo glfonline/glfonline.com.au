@@ -7,8 +7,6 @@ import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { notFound } from '../lib/errors.server';
 import { getSeoMeta } from '../seo';
 
-export const headers = routeHeaders;
-
 export async function loader() {
 	const { page } = await shopifyClient(LEGAL_PAGE_QUERY, {
 		handle: 'refund-policy',
@@ -27,15 +25,17 @@ export async function loader() {
 	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.page.title,
+		title: loaderData.page.title,
 	});
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function Page() {
 	const { page } = useLoaderData<typeof loader>();

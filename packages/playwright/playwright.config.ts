@@ -100,14 +100,30 @@ export default defineConfig({
 
 	/**
 	 * Run your local dev server before starting the tests
+	 *
+	 * Logic:
+	 * - If BASE_URL is set: Use external server (e.g., staging/production)
+	 * - If SKIP_WEB_SERVER is set: Don't start server (manual control)
+	 * - Otherwise: Start dev server automatically
 	 */
-	webServer: process.env.BASE_URL
-		? undefined
-		: {
-				command: 'pnpm -w dev:web',
-				reuseExistingServer: true,
-				url: baseURL,
-			},
+	webServer: (() => {
+		// Use external server if BASE_URL is provided
+		if (process.env.BASE_URL) {
+			return;
+		}
+
+		// Skip server startup if SKIP_WEB_SERVER is set
+		if (process.env.SKIP_WEB_SERVER) {
+			return;
+		}
+
+		// Start dev server automatically
+		return {
+			command: 'pnpm -w dev:web',
+			reuseExistingServer: true,
+			url: baseURL,
+		};
+	})(),
 
 	/**
 	 * Opt out of parallel tests on CI.

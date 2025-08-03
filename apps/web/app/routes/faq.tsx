@@ -11,8 +11,6 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-export const headers = routeHeaders;
-
 const FaqSchema = z.object({
 	faqs: z
 		.object({
@@ -42,15 +40,17 @@ export async function loader() {
 	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.title,
+		title: loaderData.title,
 	});
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function FaqPage() {
 	const { faqPage, title } = useLoaderData<typeof loader>();

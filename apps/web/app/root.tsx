@@ -12,7 +12,6 @@ import {
 	useRouteError,
 } from '@remix-run/react';
 import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -30,7 +29,7 @@ import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import { seoConfig } from './seo';
+import { getSeoMeta, type SeoHandleFunction, seoConfig } from './seo';
 // @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
@@ -128,11 +127,8 @@ export const handle = {
 	seo,
 };
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	return getSeoMeta({
-		...seoConfig,
-		title: data?.shop?.name || seoConfig.title,
-	});
+export const meta: MetaFunction<typeof loader> = () => {
+	return getSeoMeta(seoConfig);
 };
 
 const queryClient = new QueryClient();

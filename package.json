@@ -26,7 +26,9 @@
 		"preinstall": "npx only-allow pnpm",
 		"postinstall": "manypkg check && stale-dep -u",
 		"sort:packages": "npx sort-package-json 'package.json' './apps/*/package.json' './packages/*/package.json'",
-		"test:e2e": "turbo run test:e2e"
+		"test:browser": "turbo run test:browser",
+		"test:e2e": "turbo run test:e2e",
+		"test:unit": "turbo run test:unit"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "2.1.2",
