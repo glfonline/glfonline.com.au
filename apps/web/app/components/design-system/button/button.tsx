@@ -6,7 +6,17 @@ import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
 // biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-	{ children, className, isLoading, onClick, size, type = 'button', variant, ...consumerProps },
+	{
+		children,
+		className,
+		disabled = false,
+		isLoading = false,
+		onClick,
+		size,
+		type = 'button',
+		variant,
+		...consumerProps
+	},
 	forwardedRef,
 ) {
 	const internalRef = useRef<HTMLButtonElement>(null);
@@ -14,13 +24,15 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 		(event: React.MouseEvent<HTMLButtonElement>) => {
 			internalRef.current?.focus();
 			if (isLoading) return;
-			onClick?.(event);
+			if (onClick) onClick(event);
 		},
 		[
 			isLoading,
 			onClick,
 		],
 	);
+
+	const isDisabled = Boolean(disabled) || isLoading;
 
 	return (
 		<button
@@ -31,20 +43,19 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 				size,
 				variant,
 			})}
+			disabled={isDisabled || undefined}
 			onClick={handleOnClick}
 			ref={mergeRefs(internalRef, forwardedRef)}
 			type={type}
 		>
 			{children}
 			<span aria-live="assertive" className={clsx(isLoading ? undefined : 'sr-only')}>
-				<span aria-live="polite" role="status">
-					{isLoading && (
-						<>
-							<Spinner />
-							<span className="sr-only">Loading</span>
-						</>
-					)}
-				</span>
+				{isLoading && (
+					<>
+						<Spinner />
+						<span className="sr-only">Loading</span>
+					</>
+				)}
 			</span>
 		</button>
 	);

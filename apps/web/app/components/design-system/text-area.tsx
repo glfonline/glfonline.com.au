@@ -2,7 +2,9 @@ import { clsx } from 'clsx';
 import { forwardRef } from 'react';
 import { useFieldContext } from './field/context';
 
-export const TextArea = forwardRef<HTMLTextAreaElement, React.TextareaHTMLAttributes<HTMLTextAreaElement>>(
+export type TextAreaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
 	// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 	function TextArea({ className, rows = 4, ...consumerProps }, forwardedRef) {
 		const [{ disabled, invalid }, a11yProps] = useFieldContext();

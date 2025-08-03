@@ -1,14 +1,12 @@
 import { Link, useFetcher } from '@remix-run/react';
-import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import { mergeForm, useTransform } from '@tanstack/react-form';
 import { formOptions, initialFormState } from '@tanstack/react-form/remix';
 import Turnstile from 'react-turnstile';
+import { useAppForm } from '../../lib/form-context';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
-import { Checkbox } from '../design-system/checkbox';
-import { Field, FieldMessage, InlineField } from '../design-system/field';
+import { FieldMessage } from '../design-system/field';
 import { Heading } from '../design-system/heading';
-import { TextArea } from '../design-system/text-area';
-import { TextInput } from '../design-system/text-input';
 import { SplitBackground } from '../split-background';
 import type { action } from './action';
 import { contactFormSchema } from './schema';
@@ -25,9 +23,9 @@ const formOpts = formOptions({
 		token: '',
 	},
 	validators: {
-		onBlur: contactFormSchema,
 		onSubmit: contactFormSchema,
 	},
+	validateMode: 'onSubmit',
 });
 
 export function ContactForm() {
@@ -36,13 +34,13 @@ export function ContactForm() {
 		key: 'contact-form',
 	});
 
-	const form = useForm({
+	const form = useAppForm({
 		...formOpts,
 		transform: useTransform(
-			(baseForm) =>
-				fetcher.data && fetcher.data.type === 'error'
-					? mergeForm(baseForm, fetcher.data.formState)
-					: mergeForm(baseForm, initialFormState),
+			(baseForm) => {
+				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : initialFormState;
+				return mergeForm(baseForm, state);
+			},
 			[
 				fetcher.data,
 			],
@@ -79,114 +77,105 @@ export function ContactForm() {
 					name="contact_form"
 					onSubmit={form.handleSubmit}
 				>
-					<form.Field name="first_name">
+					<form.AppField
+						name="first_name"
+						validators={{
+							onBlur: contactFormSchema.shape.first_name,
+						}}
+					>
 						{(field) => (
-							<Field label="First name" message={field.state.meta.errors[0]?.message || undefined}>
-								<TextInput
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									value={field.state.value}
-								/>
-							</Field>
+							<field.FormField label="First name">
+								<field.TextField />
+							</field.FormField>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="last_name">
+					<form.AppField
+						name="last_name"
+						validators={{
+							onBlur: contactFormSchema.shape.last_name,
+						}}
+					>
 						{(field) => (
-							<Field label="Last name" message={field.state.meta.errors[0]?.message || undefined}>
-								<TextInput
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									value={field.state.value}
-								/>
-							</Field>
+							<field.FormField label="Last name">
+								<field.TextField />
+							</field.FormField>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="email">
+					<form.AppField
+						name="email"
+						validators={{
+							onBlur: contactFormSchema.shape.email,
+						}}
+					>
 						{(field) => (
-							<Field className="sm:col-span-2" label="Email" message={field.state.meta.errors[0]?.message || undefined}>
-								<TextInput
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									type="email"
-									value={field.state.value}
-								/>
-							</Field>
+							<field.FormField className="sm:col-span-2" label="Email">
+								<field.TextField type="email" />
+							</field.FormField>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="phone_number">
+					<form.AppField
+						name="phone_number"
+						validators={{
+							onBlur: contactFormSchema.shape.phone_number,
+						}}
+					>
 						{(field) => (
-							<Field
-								className="sm:col-span-2"
-								label="Phone number"
-								message={field.state.meta.errors[0]?.message || undefined}
-							>
-								<TextInput
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									type="tel"
-									value={field.state.value}
-								/>
-							</Field>
+							<field.FormField className="sm:col-span-2" label="Phone number">
+								<field.TextField type="tel" />
+							</field.FormField>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="subject">
+					<form.AppField
+						name="subject"
+						validators={{
+							onBlur: contactFormSchema.shape.subject,
+						}}
+					>
 						{(field) => (
-							<Field
-								className="sm:col-span-2"
-								label="Subject"
-								message={field.state.meta.errors[0]?.message || undefined}
-							>
-								<TextInput
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									value={field.state.value}
-								/>
-							</Field>
+							<field.FormField className="sm:col-span-2" label="Subject">
+								<field.TextField />
+							</field.FormField>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="message">
+					<form.AppField
+						name="message"
+						validators={{
+							onBlur: contactFormSchema.shape.message,
+						}}
+					>
 						{(field) => (
-							<Field
-								className="sm:col-span-2"
-								label="Message"
-								message={field.state.meta.errors[0]?.message || undefined}
-							>
-								<TextArea
-									name={field.name}
-									onBlur={field.handleBlur}
-									onChange={(event) => field.handleChange(event.target.value)}
-									value={field.state.value}
-								/>
-							</Field>
+							<field.FormField className="sm:col-span-2" label="Message">
+								<field.TextArea />
+							</field.FormField>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="agree_to_privacy_policy">
+					<form.AppField
+						name="agree_to_privacy_policy"
+						validators={{
+							onBlur: contactFormSchema.shape.agree_to_privacy_policy,
+						}}
+					>
 						{(field) => (
 							<div className="sm:col-span-2">
-								<InlineField label={<PrivacyPolicyLabel />} message={field.state.meta.errors[0]?.message || undefined}>
-									<Checkbox
-										checked={field.state.value}
-										name={field.name}
-										onBlur={field.handleBlur}
-										onChange={(event) => field.handleChange(event.target.checked)}
-									/>
-								</InlineField>
+								<field.InlineFormField label={<PrivacyPolicyLabel />}>
+									<field.Checkbox />
+								</field.InlineFormField>
 							</div>
 						)}
-					</form.Field>
+					</form.AppField>
 
-					<form.Field name="token">
+					<form.Field
+						name="token"
+						validators={{
+							onBlur: contactFormSchema.shape.token,
+						}}
+					>
 						{(field) => (
 							<div className="flex min-h-[65px] items-center sm:col-span-2">
 								{isMounted && (
@@ -206,16 +195,10 @@ export function ContactForm() {
 						)}
 					</form.Field>
 
-					<form.Subscribe
-						selector={(state) => [
-							state.canSubmit,
-							state.isSubmitting,
-						]}
-					>
-						{([canSubmit, isSubmitting]) => (
+					<form.Subscribe selector={(state) => state.isSubmitting}>
+						{(isSubmitting) => (
 							<Button
 								className="sm:col-span-2"
-								disabled={!canSubmit}
 								isLoading={isSubmitting || fetcher.state === 'loading'}
 								type="submit"
 								variant="neutral"

@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from 'class-variance-authority';
 
 export const getButtonStyles = cva(
-	'inline-flex gap-2 items-center font-bold justify-center uppercase border focus:outline-none focus:ring-2 transition duration-300 whitespace-nowrap',
+	'inline-flex items-center justify-center gap-2 whitespace-nowrap border font-bold uppercase transition duration-300 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
 	{
 		variants: {
 			variant: {
@@ -26,7 +26,7 @@ export const getButtonStyles = cva(
 				regular: 'px-6 h-12 text-base',
 			},
 			isLoading: {
-				true: 'opacity-50 cursor-wait',
+				true: '!cursor-wait',
 				false: '',
 			},
 		},

@@ -371,21 +371,11 @@ export default function ProductPage() {
 													</ButtonLink>
 												)}
 
-												<form.Subscribe
-													selector={(state) => [
-														state.canSubmit,
-														state.isSubmitting,
-													]}
-												>
-													{([canSubmit, isSubmitting]) => {
+												<form.Subscribe selector={(state) => state.isSubmitting}>
+													{(isSubmitting) => {
 														const isUnavailable = !product.availableForSale;
 														return (
-															<Button
-																disabled={isUnavailable || !canSubmit}
-																isLoading={isSubmitting}
-																type="submit"
-																variant="neutral"
-															>
+															<Button disabled={isUnavailable} isLoading={isSubmitting} type="submit" variant="neutral">
 																{isUnavailable
 																	? 'Sold Out'
 																	: ('meta' in field.state && field.state.meta.errors[0]?.message) || buttonText}
