@@ -1,8 +1,10 @@
+/// <reference types="vite/client" />
+
 import { vitePlugin as remix } from '@remix-run/dev';
 import { installGlobals } from '@remix-run/node';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import { vercelPreset } from '@vercel/remix/vite';
-import { defineConfig } from 'vite';
+import { defineConfig, type PluginOption } from 'vite';
 
 declare module '@remix-run/node' {
 	interface Future {
@@ -14,11 +16,8 @@ installGlobals({
 	nativeFetch: true,
 });
 
-export default defineConfig({
-	build: {
-		sourcemap: true,
-	},
-	plugins: [
+export default defineConfig(({ mode }) => {
+	const plugins: Array<PluginOption> = [
 		remix({
 			future: {
 				unstable_optimizeDeps: true,
@@ -35,13 +34,24 @@ export default defineConfig({
 				vercelPreset(),
 			],
 		}),
-		sentryVitePlugin({
-			org: 'glf-online',
-			project: 'glfonline-com-au',
-		}),
-	],
+	];
 
-	server: {
-		port: 3000,
-	},
+	if (mode === 'production') {
+		plugins.push(
+			sentryVitePlugin({
+				org: 'glf-online',
+				project: 'glfonline-com-au',
+			}),
+		);
+	}
+
+	return {
+		build: {
+			sourcemap: true,
+		},
+		plugins,
+		server: {
+			port: 3000,
+		},
+	};
 });

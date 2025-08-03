@@ -20,11 +20,8 @@ jobs:
         with:
           fetch-depth: 2
 
-      - name: 🧪 Setup test environment
-        run: |
-          echo "ENCRYPTION_KEY=test-key-for-ci" >> $GITHUB_ENV
-          echo "RESEND_API_KEY=test-key-for-ci" >> $GITHUB_ENV
-          echo "TURNSTILE_SECRET_KEY=test-key-for-ci" >> $GITHUB_ENV
+      - name: 🧪 Copy test env vars
+        run: cp apps/web/.env.example apps/web/.env
 
       - name: 🦷 Extract pnpm version from package.json
         id: extract_version

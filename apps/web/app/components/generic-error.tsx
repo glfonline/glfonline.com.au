@@ -17,7 +17,7 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 				</div>
 				<div className="flex flex-col gap-6">
 					<p className="text-base text-gray-600 leading-7">We found an error while loading this page.</p>
-					{process.env.NODE_ENV === 'development' && error && (
+					{import.meta.env.DEV && error && (
 						<code className="text-base text-gray-600 leading-7">
 							<span>{error.statusText}</span>
 							{error.data && (

@@ -22,14 +22,12 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-// @ts-expect-error
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import { getSeoMeta, seoConfig } from './seo';
-// @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
 export const links: LinksFunction = () => {
@@ -114,7 +112,7 @@ function App() {
 	const location = useLocation();
 
 	useEffect(() => {
-		if (process.env.NODE_ENV !== 'development') {
+		if (import.meta.env.PROD) {
 			for (const id of gtag.trackingIds) {
 				gtag.pageview(location.pathname, id);
 			}
@@ -132,7 +130,7 @@ function App() {
 				<Links />
 			</head>
 			<body className="relative flex min-h-full flex-col bg-background text-foreground">
-				{process.env.NODE_ENV === 'production' && (
+				{import.meta.env.PROD && (
 					<>
 						<GoogleAnalytics />
 						<MetaAnalytics />

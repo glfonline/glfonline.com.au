@@ -10,30 +10,33 @@ import { StrictMode, startTransition, useEffect } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 import { SENTRY_DSN } from './lib/constants';
 
-Sentry.init({
-	autoInstrumentRemix: true,
-	dsn: SENTRY_DSN,
-	environment: process.env.NODE_ENV,
-	integrations: [
-		Sentry.browserTracingIntegration({
-			useEffect,
-			useLocation,
-			useMatches,
-		}),
+// Only run Sentry in production mode
+if (import.meta.env.PROD) {
+	Sentry.init({
+		autoInstrumentRemix: true,
+		dsn: SENTRY_DSN,
+		environment: import.meta.env.MODE,
+		integrations: [
+			Sentry.browserTracingIntegration({
+				useEffect,
+				useLocation,
+				useMatches,
+			}),
 
-		// Replay is only available in the client.
-		Sentry.replayIntegration(),
-	],
+			// Replay is only available in the client.
+			Sentry.replayIntegration(),
+		],
 
-	// Capture Replay for 10% of all sessions, plus for 100% of sessions with an
-	// error.
-	replaysOnErrorSampleRate: 1.0,
-	replaysSessionSampleRate: 0.1,
+		// Capture Replay for 10% of all sessions, plus for 100% of sessions with an
+		// error.
+		replaysOnErrorSampleRate: 1.0,
+		replaysSessionSampleRate: 0.1,
 
-	// Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-	// We recommend adjusting this value in production.
-	tracesSampleRate: 1.0,
-});
+		// Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+		// We recommend adjusting this value in production.
+		tracesSampleRate: 1.0,
+	});
+}
 
 startTransition(() => {
 	hydrateRoot(
