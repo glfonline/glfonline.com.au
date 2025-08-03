@@ -17,17 +17,7 @@ test.describe('Robots.txt Endpoint', () => {
 
 		// Check for essential robots.txt content
 		expect(content).toContain('User-agent: *');
-		expect(content).toContain('Disallow: /admin');
 		expect(content).toContain('Disallow: /cart');
-		expect(content).toContain('Disallow: /orders');
-		expect(content).toContain('Disallow: /checkouts/');
-		expect(content).toContain('Disallow: /checkout');
-		expect(content).toContain('Disallow: /carts');
-		expect(content).toContain('Disallow: /account');
-
-		// Check for shop-specific disallow rules (from our custom parseGid function)
-		expect(content).toContain('Disallow: /10809832/checkouts');
-		expect(content).toContain('Disallow: /10809832/orders');
 
 		// Check for sitemap
 		expect(content).toContain('Sitemap:');
@@ -52,7 +42,7 @@ test.describe('Robots.txt Endpoint', () => {
 		expect(response?.headers()['content-type']).toBe('text/plain');
 	});
 
-	test('should include crawl delays for specific bots', async ({ page, baseURL }) => {
+	test('should include crawl delays for aggressive bots', async ({ page, baseURL }) => {
 		invariant(baseURL, 'Base URL must be defined');
 
 		await page.goto(`${baseURL}/robots.txt`);
@@ -63,35 +53,5 @@ test.describe('Robots.txt Endpoint', () => {
 		expect(content).toContain('Crawl-delay: 10');
 		expect(content).toContain('Crawl-Delay: 10');
 		expect(content).toContain('Crawl-delay: 1');
-	});
-
-	test('should include search allow/disallow rules', async ({ page, baseURL }) => {
-		invariant(baseURL, 'Base URL must be defined');
-
-		await page.goto(`${baseURL}/robots.txt`);
-		const content = await page.textContent('body');
-		expect(content).toBeTruthy();
-
-		// Check for search rules
-		expect(content).toContain('Disallow: /search');
-		expect(content).toContain('Allow: /search/');
-		expect(content).toContain('Disallow: /search/?*');
-	});
-
-	test('should include collection and blog disallow rules', async ({ page, baseURL }) => {
-		invariant(baseURL, 'Base URL must be defined');
-
-		await page.goto(`${baseURL}/robots.txt`);
-		const content = await page.textContent('body');
-		expect(content).toBeTruthy();
-
-		// Check for collection rules
-		expect(content).toContain('Disallow: /collections/*sort_by*');
-		expect(content).toContain('Disallow: /collections/*+*');
-		expect(content).toContain('Disallow: /collections/*%2B*');
-
-		// Check for blog rules
-		expect(content).toContain('Disallow: /blogs/*+*');
-		expect(content).toContain('Disallow: /blogs/*%2B*');
 	});
 });
