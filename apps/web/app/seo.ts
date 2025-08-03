@@ -1,5 +1,3 @@
-import type { LoaderFunction } from '@remix-run/node';
-import type { Params } from '@remix-run/react';
 import { initSeo, type SeoConfig } from 'remix-seo';
 
 export const seoConfig = {
@@ -12,11 +10,9 @@ export const seoConfig = {
 const meta = initSeo(seoConfig);
 
 /**
- * Enhanced SEO meta function that includes all required meta tags for testing
- * Compatible with Hydrogen's getSeoMeta signature
+ * Generates SEO meta tags for pages
  */
 export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): ReturnType<typeof meta.getSeoMeta> {
-	// Merge all SEO inputs in a single pass (like Hydrogen does)
 	const mergedConfig: SeoConfig = {};
 
 	for (const input of seoInputs) {
@@ -47,25 +43,5 @@ export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): R
 		},
 	];
 }
-
-/**
- * SeoHandleFunction type compatible with Hydrogen's interface
- * Allows routes to provide SEO configuration based on loader data
- *
- * @template Loader - The loader function type
- * @template LoaderData - The data type returned by the loader (inferred automatically)
- */
-export type SeoHandleFunction<
-	Loader extends LoaderFunction | unknown = unknown,
-	LoaderData = Loader extends LoaderFunction ? Awaited<ReturnType<Loader>> : unknown,
-> = (args: {
-	data: LoaderData;
-	id: string;
-	params: Params;
-	pathname: string;
-	search: string;
-	hash: string;
-	key: string;
-}) => Partial<SeoConfig>;
 
 export const { getSeo, getSeoLinks } = meta;

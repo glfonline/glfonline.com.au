@@ -1,10 +1,9 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import {
 	isRouteErrorResponse,
 	Links,
 	Meta,
-	type MetaFunction,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
@@ -29,7 +28,7 @@ import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import { getSeoMeta, type SeoHandleFunction, seoConfig } from './seo';
+import { getSeoMeta, seoConfig } from './seo';
 // @ts-expect-error
 import tailwindCssUrl from './tailwind.css?url';
 
@@ -101,31 +100,6 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		shop,
 	};
 }
-
-const seo: SeoHandleFunction<typeof loader> = ({ pathname, data }) => {
-	if (!data) {
-		return {
-			title: seoConfig.title,
-			titleTemplate: seoConfig.titleTemplate,
-			description: seoConfig.description,
-			url: `https://www.glfonline.com.au${pathname}`,
-		};
-	}
-
-	// SeoHandleFunction isn't correctly inferring the type for data, so we need use a type assertion
-	const loaderData = data as Awaited<ReturnType<typeof loader>>;
-
-	return {
-		title: loaderData.shop.name,
-		titleTemplate: seoConfig.titleTemplate,
-		description: loaderData.shop.description || seoConfig.description,
-		url: `https://www.glfonline.com.au${pathname}`,
-	};
-};
-
-export const handle = {
-	seo,
-};
 
 export const meta: MetaFunction<typeof loader> = () => {
 	return getSeoMeta(seoConfig);
