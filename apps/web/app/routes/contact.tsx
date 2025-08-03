@@ -2,7 +2,7 @@ import { data as json, type MetaFunction } from '@remix-run/node';
 import { ContactForm } from '../components/contact-form/form';
 import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';
-import { CACHE_LONG, routeHeaders } from '../lib/cache';
+import { CACHE_MEDIUM, routeHeaders } from '../lib/cache';
 import { getSeoMeta } from '../seo';
 
 export function loader() {
@@ -10,7 +10,7 @@ export function loader() {
 		{},
 		{
 			headers: {
-				'Cache-Control': CACHE_LONG,
+				'Cache-Control': CACHE_MEDIUM,
 			},
 		},
 	);

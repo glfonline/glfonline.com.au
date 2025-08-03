@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
 import { brandsWeLove } from '../lib/brands-we-love';
-import { CACHE_LONG, routeHeaders } from '../lib/cache';
+import { CACHE_MEDIUM, routeHeaders } from '../lib/cache';
 import { notFound } from '../lib/errors.server';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { urlFor } from '../lib/sanity-image';
@@ -51,7 +51,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 			},
 			{
 				headers: {
-					'Cache-Control': CACHE_LONG,
+					'Cache-Control': CACHE_MEDIUM,
 				},
 			},
 		);

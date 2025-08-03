@@ -25,7 +25,7 @@ export interface AllCacheOptions {
 }
 
 /**
- * Use the `CachingStrategy` to define a custom caching mechanism for your data. Or use one of the pre-defined caching strategies: CacheNone, CacheShort, CacheLong.
+ * Use the `CachingStrategy` to define a custom caching mechanism for your data. Or use one of the pre-defined caching strategies: CacheNone, CacheShort, CacheMedium.
  */
 export type CachingStrategy = AllCacheOptions;
 
@@ -103,12 +103,26 @@ export function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
  *
  * @public
  */
-export function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
+export function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
 		mode: PUBLIC,
 		maxAge: 3600, // 1 hour
 		staleWhileRevalidate: 82_800, // 23 Hours
+		...overrideOptions,
+	};
+}
+
+/**
+ *
+ * @public
+ */
+export function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
+	guardExpirableModeType(overrideOptions);
+	return {
+		mode: PUBLIC,
+		maxAge: 86_400, // 24 hours
+		staleWhileRevalidate: 604_800, // 7 days
 		...overrideOptions,
 	};
 }
@@ -136,5 +150,6 @@ export function CacheCustom(overrideOptions: CachingStrategy): AllCacheOptions {
 }
 
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
+export const CACHE_MEDIUM = generateCacheControlHeader(CacheMedium());
 export const CACHE_LONG = generateCacheControlHeader(CacheLong());
 export const CACHE_NONE = generateCacheControlHeader(CacheNone());
