@@ -1,15 +1,15 @@
 import { BLOG_PAGE_QUERY, BLOG_POSTS_COUNT_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { z } from 'zod';
-import { PostSchema } from './post-schema';
+import { postSchema } from './post-schema';
 
-const PostsSchema = z.array(PostSchema);
+const postsSchema = z.array(postSchema);
 
 export async function getBlogPosts({ limit, offset }: { limit: number; offset: number }) {
 	const { allPost } = await sanityClient(BLOG_PAGE_QUERY, {
 		limit,
 		offset,
 	});
-	return PostsSchema.parse(allPost);
+	return postsSchema.parse(allPost);
 }
 
 export async function getBlogPostCount() {

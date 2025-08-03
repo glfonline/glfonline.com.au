@@ -13,6 +13,7 @@ import { clsx } from 'clsx';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
+import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import { type CartResult, getCartInfo } from '../lib/get-cart-info';
@@ -33,6 +34,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnTyp
 		await session.setCart([]);
 		return data(cartResult, {
 			headers: {
+				'Cache-Control': CACHE_NONE,
 				'Set-Cookie': await session.commitSession(),
 			},
 		});
@@ -41,6 +43,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnTyp
 	// Otherwise return the successful cart
 	return data(cartResult, {
 		headers: {
+			'Cache-Control': CACHE_NONE,
 			'Set-Cookie': await session.commitSession(),
 		},
 	});
@@ -263,6 +266,8 @@ export const meta: MetaFunction = () => {
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function CartPage() {
 	const cartResult = useLoaderData<typeof loader>();

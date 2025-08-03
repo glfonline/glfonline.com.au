@@ -9,7 +9,7 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
@@ -18,6 +18,7 @@ import { z } from 'zod';
 import { Button } from '../components/design-system/button';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
+import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { capitalise } from '../lib/capitalise';
 import { badRequest, notFound, serverError } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
@@ -25,7 +26,7 @@ import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collecti
 import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
-const CollectionSchema = z.object({
+const collectionSchema = z.object({
 	collection: z.string().min(1),
 	theme: z.enum([
 		'ladies',
@@ -33,15 +34,13 @@ const CollectionSchema = z.object({
 	]),
 });
 
-const SortSchema = z
-	.object({
-		after: z.string().optional(),
-		[PRODUCT_TYPE]: z.string().optional(),
-		sort: z.string().optional(),
-	})
-	.passthrough();
+const SortSchema = z.looseObject({
+	after: z.string().optional(),
+	[PRODUCT_TYPE]: z.string().optional(),
+	sort: z.string().optional(),
+});
 
-const RecordSchema = z.record(z.string().min(1), z.string());
+const recordSchema = z.record(z.string().min(1), z.string());
 
 const ITEMS_PER_PAGE = 32;
 
@@ -90,7 +89,7 @@ function processCollectionData({
 
 // Parse and validate URL parameters
 function parseRequestParameters(params: unknown, request: Request) {
-	const paramsResult = CollectionSchema.safeParse(params);
+	const paramsResult = collectionSchema.safeParse(params);
 	if (!paramsResult.success) {
 		badRequest('Invalid collection parameters', params);
 	}
@@ -106,7 +105,7 @@ function parseRequestParameters(params: unknown, request: Request) {
 				productType: undefined,
 			};
 
-	const filterOptionsResult = RecordSchema.safeParse(remainingFilterOptions);
+	const filterOptionsResult = recordSchema.safeParse(remainingFilterOptions);
 	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};
 
 	return {
@@ -153,28 +152,37 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	// Process options data
 	const options = optionsPromise.status === 'fulfilled' ? optionsPromise.value : [];
 
-	return {
-		after,
-		collectionHandle,
-		image: collection.image,
-		options,
-		pageInfo: collection.pageInfo,
-		products: collection.products,
-		theme,
-		title: collection.title,
-	};
+	return json(
+		{
+			after,
+			collectionHandle,
+			image: collection.image,
+			options,
+			pageInfo: collection.pageInfo,
+			products: collection.products,
+			theme,
+			title: collection.title,
+		},
+		{
+			headers: {
+				'Cache-Control': CACHE_SHORT,
+			},
+		},
+	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: `Shop ${data.title}`,
+		title: `Shop ${loaderData.title}`,
 	});
 
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function CollectionPage() {
 	const { after, image, pageInfo, products, theme, title } = useLoaderData<typeof loader>();

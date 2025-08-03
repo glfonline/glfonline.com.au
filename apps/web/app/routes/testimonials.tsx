@@ -13,9 +13,7 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-export const headers = routeHeaders;
-
-const TestimonialsSchema = z.object({
+const testimonialsSchema = z.object({
 	heroImage: imageWithAltSchema,
 	testimonials: z
 		.object({
@@ -31,7 +29,7 @@ export async function loader() {
 	const res = await sanityClient(TESTIMONIALS_PAGE_QUERY, {
 		id: 'testimonials',
 	});
-	const { testimonials, heroImage } = TestimonialsSchema.parse(res.TestimonialsPage);
+	const { testimonials, heroImage } = testimonialsSchema.parse(res.TestimonialsPage);
 	return json(
 		{
 			heroImage,
@@ -46,15 +44,17 @@ export async function loader() {
 	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.title,
+		title: loaderData.title,
 	});
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function TestimonialsPage() {
 	const { heroImage, title } = useLoaderData<typeof loader>();

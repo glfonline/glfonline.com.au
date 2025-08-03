@@ -1,10 +1,10 @@
 import { FEATURED_BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { z } from 'zod';
-import { PostSchema } from './post-schema';
+import { postSchema } from './post-schema';
 
-const PostsSchema = z.array(PostSchema);
+const postsSchema = z.array(postSchema);
 
 export async function getFeaturedBlogPost() {
 	const { allPost } = await sanityClient(FEATURED_BLOG_POST_QUERY);
-	return PostsSchema.parse(allPost).find((post) => post.categories.find((category) => category.title === 'Featured'));
+	return postsSchema.parse(allPost).find((post) => post.categories.find((category) => category.title === 'Featured'));
 }

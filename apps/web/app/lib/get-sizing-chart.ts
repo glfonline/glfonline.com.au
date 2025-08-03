@@ -1,5 +1,6 @@
-type StringWithAutocomplete<T> = T | (string & Record<never, never>);
-type Vendor = StringWithAutocomplete<
+import type { LooseAutocomplete } from '../types';
+
+type Vendor = LooseAutocomplete<
 	| 'Annika'
 	| 'Bermuda Sands'
 	| 'Cutter & Buck'

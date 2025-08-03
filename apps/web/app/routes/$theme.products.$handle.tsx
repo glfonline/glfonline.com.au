@@ -27,8 +27,6 @@ import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { getSeoMeta } from '../seo';
 
-export const headers = routeHeaders;
-
 const productSchema = z.object({
 	handle: z.string().min(1),
 	theme: z.enum([
@@ -221,16 +219,18 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 	}
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		description: data.product.description,
-		title: data.product.title,
+		description: loaderData.product.description,
+		title: loaderData.product.title,
 	});
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();

@@ -1,4 +1,4 @@
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Link, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import invariant from 'tiny-invariant';
@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { ButtonLink } from '../components/design-system/button';
 import { getHeadingStyles } from '../components/design-system/heading';
 import { Hero } from '../components/hero';
+import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { getBlogPostCount, getBlogPosts } from '../lib/get-blog-posts';
 import { getFeaturedBlogPost } from '../lib/get-featured-blog-post';
 import { PortableText, type PortableTextProps } from '../lib/portable-text';
@@ -47,24 +48,33 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		getFeaturedBlogPost(),
 		getBlogPostCount(),
 	]);
-	return {
-		after,
-		count,
-		featuredPost,
-		posts,
-		title: 'Blog',
-	};
+	return json(
+		{
+			after,
+			count,
+			featuredPost,
+			posts,
+			title: 'Blog',
+		},
+		{
+			headers: {
+				'Cache-Control': CACHE_SHORT,
+			},
+		},
+	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.title,
+		title: loaderData.title,
 	});
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function Blog() {
 	const { title } = useLoaderData<typeof loader>();

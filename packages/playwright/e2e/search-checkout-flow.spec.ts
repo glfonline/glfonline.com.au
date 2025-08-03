@@ -7,11 +7,12 @@ test('Search checkout flow', async ({ page, baseURL }) => {
 	invariant(baseURL, 'Base URL must be defined');
 	// Go to home page
 	await page.goto(baseURL);
-	// Click the seach button
+	// Click the search button (use first to avoid ambiguity between mobile/desktop buttons)
 	await page
 		.getByRole('button', {
 			name: 'Search',
 		})
+		.first()
 		.click();
 	// Search for "select height"
 	await page.getByPlaceholder('Search...').fill('select height');

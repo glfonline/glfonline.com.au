@@ -1,23 +1,24 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
-import type { LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
 import { brandsWeLove } from '../lib/brands-we-love';
+import { CACHE_MEDIUM, routeHeaders } from '../lib/cache';
 import { notFound } from '../lib/errors.server';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-const ThemeSchema = z.object({
+const themeSchema = z.object({
 	theme: z.enum([
 		'ladies',
 		'mens',
 	]),
 });
 
-const CollectionSchema = z.object({
+const collectionSchema = z.object({
 	_id: z.string(),
 	brandsWeLove,
 	collectionCards: z.array(
@@ -37,16 +38,23 @@ const CollectionSchema = z.object({
 });
 
 export async function loader({ params }: LoaderFunctionArgs) {
-	const result = ThemeSchema.safeParse(params);
+	const result = themeSchema.safeParse(params);
 	if (result.success) {
 		const { ThemePage } = await sanityClient(GET_THEME_PAGE, {
 			id: result.data.theme,
 		});
-		const collection = CollectionSchema.parse(ThemePage);
-		return {
-			collection,
-			theme: result.data.theme,
-		};
+		const collection = collectionSchema.parse(ThemePage);
+		return json(
+			{
+				collection,
+				theme: result.data.theme,
+			},
+			{
+				headers: {
+					'Cache-Control': CACHE_MEDIUM,
+				},
+			},
+		);
 	}
 	notFound();
 }
@@ -60,6 +68,8 @@ export const meta: MetaFunction<typeof loader> = ({ params }) => {
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function CollectionsPage() {
 	const { collection, theme } = useLoaderData<typeof loader>();

@@ -11,9 +11,7 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-export const headers = routeHeaders;
-
-const FaqSchema = z.object({
+const faqSchema = z.object({
 	faqs: z
 		.object({
 			answerRaw: z.any(),
@@ -27,7 +25,7 @@ export async function loader() {
 	const res = await sanityClient(GET_FAQS_PAGES, {
 		id: 'faqs',
 	});
-	const faqPage = FaqSchema.parse(res.FaqPage);
+	const faqPage = faqSchema.parse(res.FaqPage);
 
 	return json(
 		{
@@ -42,15 +40,17 @@ export async function loader() {
 	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	invariant(data, 'Expected data for meta function');
+export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+	invariant(loaderData, 'Expected data for meta function');
 	const seoMeta = getSeoMeta({
-		title: data.title,
+		title: loaderData.title,
 	});
 	return [
 		seoMeta,
 	];
 };
+
+export const headers = routeHeaders;
 
 export default function FaqPage() {
 	const { faqPage, title } = useLoaderData<typeof loader>();

@@ -1,3 +1,6 @@
 packages:
-  - 'apps/*'
-  - 'packages/*'
+  - apps/*
+  - packages/*
+
+overrides:
+  path-to-regexp@>=4.0.0 <6.3.0: '>=6.3.0'

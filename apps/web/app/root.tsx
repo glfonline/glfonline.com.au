@@ -1,10 +1,9 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { LinksFunction, LoaderFunctionArgs } from '@remix-run/node';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
 import {
 	isRouteErrorResponse,
 	Links,
 	Meta,
-	type MetaFunction,
 	Outlet,
 	Scripts,
 	ScrollRestoration,
@@ -12,7 +11,6 @@ import {
 	useRouteError,
 } from '@remix-run/react';
 import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { getSeoMeta, type SeoHandleFunction } from '@shopify/hydrogen';
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
@@ -24,14 +22,12 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-// @ts-expect-error
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import { seoConfig } from './seo';
-// @ts-expect-error
+import { getSeoMeta, seoConfig } from './seo';
 import tailwindCssUrl from './tailwind.css?url';
 
 export const links: LinksFunction = () => {
@@ -103,36 +99,8 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	};
 }
 
-const seo: SeoHandleFunction<typeof loader> = ({ pathname, data }) => {
-	if (!data) {
-		return {
-			title: seoConfig.title,
-			titleTemplate: seoConfig.titleTemplate,
-			description: seoConfig.description,
-			url: `https://www.glfonline.com.au${pathname}`,
-		};
-	}
-
-	// SeoHandleFunction isn't correctly inferring the type for data, so we need use a type assertion
-	const loaderData = data as Awaited<ReturnType<typeof loader>>;
-
-	return {
-		title: loaderData.shop.name,
-		titleTemplate: seoConfig.titleTemplate,
-		description: loaderData.shop.description || seoConfig.description,
-		url: `https://www.glfonline.com.au${pathname}`,
-	};
-};
-
-export const handle = {
-	seo,
-};
-
-export const meta: MetaFunction<typeof loader> = ({ data }) => {
-	return getSeoMeta({
-		...seoConfig,
-		title: data?.shop?.name || seoConfig.title,
-	});
+export const meta: MetaFunction<typeof loader> = () => {
+	return getSeoMeta(seoConfig);
 };
 
 const queryClient = new QueryClient();
@@ -144,7 +112,7 @@ function App() {
 	const location = useLocation();
 
 	useEffect(() => {
-		if (process.env.NODE_ENV !== 'development') {
+		if (import.meta.env.PROD) {
 			for (const id of gtag.trackingIds) {
 				gtag.pageview(location.pathname, id);
 			}
@@ -162,7 +130,7 @@ function App() {
 				<Links />
 			</head>
 			<body className="relative flex min-h-full flex-col bg-background text-foreground">
-				{process.env.NODE_ENV === 'production' && (
+				{import.meta.env.PROD && (
 					<>
 						<GoogleAnalytics />
 						<MetaAnalytics />

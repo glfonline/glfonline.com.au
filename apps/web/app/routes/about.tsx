@@ -14,9 +14,7 @@ import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
-export const headers = routeHeaders;
-
-const AboutSchema = z.object({
+const aboutSchema = z.object({
 	sections: z.array(
 		z.object({
 			_key: z.string(),
@@ -32,7 +30,7 @@ export async function loader() {
 		id: 'about',
 	});
 
-	const { sections } = AboutSchema.parse(res.AboutPage);
+	const { sections } = aboutSchema.parse(res.AboutPage);
 	return data(
 		{
 			sections,
@@ -46,13 +44,12 @@ export async function loader() {
 }
 
 export const meta: MetaFunction = () => {
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: 'About',
 	});
-	return [
-		seoMeta,
-	];
 };
+
+export const headers = routeHeaders;
 
 export default function AboutPage() {
 	const { sections } = useLoaderData<typeof loader>();
