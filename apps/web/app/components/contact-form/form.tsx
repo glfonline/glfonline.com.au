@@ -26,7 +26,6 @@ const formOpts = formOptions({
 	validators: {
 		onSubmit: contactFormSchema,
 	},
-	validateMode: 'onSubmit',
 });
 
 export function ContactForm() {
