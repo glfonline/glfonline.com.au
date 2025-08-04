@@ -2,6 +2,8 @@ import { clsx } from 'clsx';
 import { forwardRef } from 'react';
 import { useFieldContext } from './field/context';
 
+export type CheckboxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'children'>;
+
 // biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
 	{ className, ...consumerProps },
@@ -25,5 +27,3 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
 		</div>
 	);
 });
-
-type CheckboxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'children'>;

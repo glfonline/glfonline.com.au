@@ -73,6 +73,7 @@ const removeScheme = z.object({
 
 // Define form options for each action type
 const checkoutFormOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		checkoutUrl: '',
 	},
@@ -82,6 +83,7 @@ const checkoutFormOpts = formOptions({
 });
 
 const quantityFormOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		quantity: 0,
 		variantId: '',
@@ -92,6 +94,7 @@ const quantityFormOpts = formOptions({
 });
 
 const removeFormOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		variantId: '',
 	},
@@ -176,7 +179,12 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 			case ACTIONS.DECREMENT_ACTION: {
 				const { quantity, variantId } = await quantityServerValidate(formData);
 				const cart = await session.getCart();
-				const newCart = updateCartItem(cart, variantId, quantity);
+				const newCart = updateCartItem(
+					cart,
+					variantId,
+					// We need to coerce quantity to a number as quantityServerValidate doesn't seem to be handling this for us
+					Number(quantity),
+				);
 				await session.setCart(newCart);
 				return data(
 					{
@@ -454,6 +462,7 @@ function QuantityPicker({
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
+						data-testid="quantity-decrement"
 						disabled={quantity <= 1}
 						name={INTENT}
 						type="submit"
@@ -467,6 +476,7 @@ function QuantityPicker({
 						fetcher.state === 'loading' && 'opacity-50',
 						'-ml-px relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-gray-700 text-sm',
 					)}
+					data-testid="quantity-display"
 				>
 					{quantity}
 				</span>
@@ -481,6 +491,7 @@ function QuantityPicker({
 							'disabled:opacity-50',
 							fetcher.state === 'loading' && 'opacity-50',
 						)}
+						data-testid="quantity-increment"
 						disabled={quantity + 1 >= quantityAvailable}
 						name={INTENT}
 						type="submit"
@@ -505,6 +516,7 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 					'-m-2 inline-flex bg-white p-2 text-gray-400',
 					'hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2',
 				)}
+				data-testid="remove-from-cart"
 				name={INTENT}
 				type="submit"
 				value={ACTIONS.REMOVE_ACTION}

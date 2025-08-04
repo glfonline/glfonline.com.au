@@ -15,6 +15,7 @@ import { requiredEnv } from '../../lib/required-env';
 import { contactFormSchema } from './schema';
 
 const formOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		first_name: '',
 		last_name: '',

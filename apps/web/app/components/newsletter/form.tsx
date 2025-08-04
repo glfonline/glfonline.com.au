@@ -1,16 +1,17 @@
 import { useFetcher } from '@remix-run/react';
-import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import { mergeForm, useTransform } from '@tanstack/react-form';
 import { formOptions, initialFormState } from '@tanstack/react-form/remix';
 import Turnstile from 'react-turnstile';
+import { useAppForm } from '../../lib/form-context';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
-import { Field, FieldMessage } from '../design-system/field';
+import { FieldMessage } from '../design-system/field';
 import { Heading } from '../design-system/heading';
-import { TextInput } from '../design-system/text-input';
 import type { action } from './action';
 import { newsletterSchema } from './schema';
 
 const formOpts = formOptions({
+	canSubmitWhenInvalid: true,
 	defaultValues: {
 		first_name: '',
 		last_name: '',
@@ -19,7 +20,6 @@ const formOpts = formOptions({
 		token: '',
 	},
 	validators: {
-		onBlur: newsletterSchema,
 		onSubmit: newsletterSchema,
 	},
 });
@@ -30,13 +30,13 @@ export function NewsletterSignup() {
 		key: 'newsletter-form',
 	});
 
-	const form = useForm({
+	const form = useAppForm({
 		...formOpts,
 		transform: useTransform(
-			(baseForm) =>
-				fetcher.data && fetcher.data.type === 'error'
-					? mergeForm(baseForm, fetcher.data.formState)
-					: mergeForm(baseForm, initialFormState),
+			(baseForm) => {
+				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : initialFormState;
+				return mergeForm(baseForm, state);
+			},
 			[
 				fetcher.data,
 			],
@@ -72,59 +72,51 @@ export function NewsletterSignup() {
 					onSubmit={form.handleSubmit}
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
-						<form.Field name="first_name">
+						<form.AppField
+							name="first_name"
+							validators={{
+								onBlur: newsletterSchema.shape.first_name,
+							}}
+						>
 							{(field) => (
-								<Field
-									className="sm:col-span-2"
-									label="First name"
-									message={field.state.meta.errors[0]?.message || undefined}
-								>
-									<TextInput
-										name={field.name}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										value={field.state.value}
-									/>
-								</Field>
+								<field.FormField className="sm:col-span-2" label="First name">
+									<field.TextField />
+								</field.FormField>
 							)}
-						</form.Field>
+						</form.AppField>
 
-						<form.Field name="last_name">
+						<form.AppField
+							name="last_name"
+							validators={{
+								onBlur: newsletterSchema.shape.last_name,
+							}}
+						>
 							{(field) => (
-								<Field
-									className="sm:col-span-2"
-									label="Last name"
-									message={field.state.meta.errors[0]?.message || undefined}
-								>
-									<TextInput
-										name={field.name}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										value={field.state.value}
-									/>
-								</Field>
+								<field.FormField className="sm:col-span-2" label="Last name">
+									<field.TextField />
+								</field.FormField>
 							)}
-						</form.Field>
+						</form.AppField>
 
-						<form.Field name="email">
+						<form.AppField
+							name="email"
+							validators={{
+								onBlur: newsletterSchema.shape.email,
+							}}
+						>
 							{(field) => (
-								<Field
-									className="sm:col-span-4"
-									label="Email address"
-									message={field.state.meta.errors[0]?.message || undefined}
-								>
-									<TextInput
-										name={field.name}
-										onBlur={field.handleBlur}
-										onChange={(e) => field.handleChange(e.target.value)}
-										type="email"
-										value={field.state.value}
-									/>
-								</Field>
+								<field.FormField className="sm:col-span-4" label="Email address">
+									<field.TextField type="email" />
+								</field.FormField>
 							)}
-						</form.Field>
+						</form.AppField>
 
-						<form.Field name="gender">
+						<form.AppField
+							name="gender"
+							validators={{
+								onBlur: newsletterSchema.shape.gender,
+							}}
+						>
 							{(field) => {
 								const errorMessage = field.state.meta.errors[0]?.message;
 								const errorMessageId = `${field.name}-error`;
@@ -149,6 +141,7 @@ export function NewsletterSignup() {
 														className="h-5 w-5 border-gray-300 text-brand-primary focus:ring-brand-light"
 														id={option}
 														name={field.name}
+														onBlur={field.handleBlur}
 														onChange={(event) => field.handleChange(event.target.value)}
 														type="radio"
 														value={option}
@@ -163,9 +156,14 @@ export function NewsletterSignup() {
 									</fieldset>
 								);
 							}}
-						</form.Field>
+						</form.AppField>
 
-						<form.Field name="token">
+						<form.AppField
+							name="token"
+							validators={{
+								onBlur: newsletterSchema.shape.token,
+							}}
+						>
 							{(field) => (
 								<div className="flex min-h-[65px] flex-col items-center gap-1 sm:col-span-4">
 									{isMounted && (
@@ -182,18 +180,12 @@ export function NewsletterSignup() {
 									<input name={field.name} type="hidden" value={field.state.value} />
 								</div>
 							)}
-						</form.Field>
+						</form.AppField>
 
-						<form.Subscribe
-							selector={(state) => [
-								state.canSubmit,
-								state.isSubmitting,
-							]}
-						>
-							{([canSubmit, isSubmitting]) => (
+						<form.Subscribe selector={(state) => state.isSubmitting}>
+							{(isSubmitting) => (
 								<Button
 									className="sm:col-span-4"
-									disabled={!canSubmit}
 									isLoading={isSubmitting || fetcher.state === 'loading'}
 									type="submit"
 									variant="neutral"

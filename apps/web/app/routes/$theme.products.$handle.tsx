@@ -2,7 +2,7 @@ import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import { mergeForm, useForm, useTransform } from '@tanstack/react-form';
+import { mergeForm, useTransform } from '@tanstack/react-form';
 import {
 	createServerValidate,
 	formOptions,
@@ -22,6 +22,7 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { notFound } from '../lib/errors.server';
+import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
@@ -41,6 +42,7 @@ const cartSchema = z.object({
 
 const makeFormOpts = (defaultVariantId: string) => {
 	return formOptions({
+		canSubmitWhenInvalid: true,
 		defaultValues: {
 			variantId: defaultVariantId,
 		},
@@ -247,13 +249,14 @@ export default function ProductPage() {
 	});
 
 	// Use the form state from the error case, or initialFormState with the selected variant
-	const form = useForm({
+	const form = useAppForm({
 		...makeFormOpts(variant?.node.id || ''),
 		transform: useTransform(
-			(baseForm) =>
-				actionData?.data && actionData.data.type === 'error'
-					? mergeForm(baseForm, actionData.data.formState)
-					: mergeForm(baseForm, initialFormState),
+			(baseForm) => {
+				const state =
+					actionData?.data && actionData.data.type === 'error' ? actionData.data.formState : initialFormState;
+				return mergeForm(baseForm, state);
+			},
 			[
 				actionData,
 			],
@@ -312,7 +315,7 @@ export default function ProductPage() {
 						</div>
 
 						<Form className="flex flex-col gap-6" method="post" onSubmit={form.handleSubmit} replace>
-							<form.Field name="variantId">
+							<form.AppField name="variantId">
 								{(field) => {
 									const errorMessage = field.state.meta.errors
 										.map((error) => error?.message)
@@ -371,17 +374,13 @@ export default function ProductPage() {
 													</ButtonLink>
 												)}
 
-												<form.Subscribe
-													selector={(state) => [
-														state.canSubmit,
-														state.isSubmitting,
-													]}
-												>
-													{([canSubmit, isSubmitting]) => {
+												<form.Subscribe selector={(state) => state.isSubmitting}>
+													{(isSubmitting) => {
 														const isUnavailable = !product.availableForSale;
 														return (
 															<Button
-																disabled={isUnavailable || !canSubmit}
+																data-testid="add-to-cart-button"
+																disabled={isUnavailable}
 																isLoading={isSubmitting}
 																type="submit"
 																variant="neutral"
@@ -406,7 +405,7 @@ export default function ProductPage() {
 										</>
 									);
 								}}
-							</form.Field>
+							</form.AppField>
 						</Form>
 
 						<div>

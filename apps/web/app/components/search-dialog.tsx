@@ -78,6 +78,7 @@ export function SearchDialog({
 									<ComboboxInput
 										autoFocus
 										className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
+										data-testid="search-input"
 										onChange={(event) => {
 											setQuery(event.target.value);
 										}}
