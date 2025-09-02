@@ -1,6 +1,6 @@
 import { Link } from '@remix-run/react';
 import { Fragment } from 'react';
-import { CONTACT_NUMBERS, EMAIL_ADDRESS, footerNavigation, HOURS, STREET_ADDRESS } from '../lib/constants';
+import { CONTACT_NUMBERS, EMAIL_ADDRESS, footerNavigation, POSTCODE, STREET_ADDRESS, SUBURB } from '../lib/constants';
 import { ClockIcon } from './vectors/clock-icon';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 import { HouseIcon } from './vectors/house-icon';
@@ -78,23 +78,9 @@ export function Footer() {
 
 const descriptionList = [
 	{
-		description: <>{STREET_ADDRESS}, Port Macquarie 2444, NSW, Australia</>,
+		description: `${STREET_ADDRESS}, ${SUBURB} ${POSTCODE}, NSW, Australia`,
 		heading: 'Address',
 		icon: HouseIcon,
-	},
-	{
-		description: (
-			<ul role="list">
-				{Object.entries(HOURS).map(([key, value], index) => (
-					<li key={key}>
-						{key}: {value}
-						{Object.entries(HOURS).length - 1 !== index && ', '}
-					</li>
-				))}
-			</ul>
-		),
-		heading: 'Hours',
-		icon: ClockIcon,
 	},
 	{
 		description: (

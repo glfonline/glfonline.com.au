@@ -18,15 +18,11 @@ export const CONTACT_NUMBERS = [
 		phone: GORDON_PHONE,
 	},
 ];
-export const ADDRESS = 'Shop 2 Royal Bayside, 2 Horton Street';
 export const FACEBOOK_URL = 'https://www.facebook.com/GLFONLINE.COM.AU';
 export const INSTAGRAM_URL = 'https://www.instagram.com/glf.online';
-export const STREET_ADDRESS = 'Shop 2 Royal Bayside, 2 Horton Street';
-export const HOURS = {
-	'Monday to Friday': '09:30 – 16:30',
-	Saturday: '09:30 - 13:00',
-	Sunday: 'Closed',
-};
+export const STREET_ADDRESS = '18 Ericson Place';
+export const SUBURB = 'Port Macquarie';
+export const POSTCODE = '2444';
 
 export type NavItem = {
 	label: string;
