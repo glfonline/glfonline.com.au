@@ -41,8 +41,7 @@
 			"!**/dist",
 			"!**/node_modules",
 			"!**/pnpm-lock.yaml",
-			"!**/apps/web/api",
-			"!**/apps/web/app/styles/tailwind.css"
+			"!**/apps/web/api"
 		]
 	},
 	"formatter": {
@@ -223,40 +222,15 @@
 			},
 			"nursery": {
 				"recommended": true,
-				"noAwaitInLoop": "off",
-				"noBitwiseOperators": "off",
-				"noConstantBinaryExpression": "off",
-				"noDestructuredProps": "off",
 				"noFloatingPromises": "on",
-				"noGlobalDirnameFilename": "on",
-				"noImportantStyles": "on",
 				"noImportCycles": "off", // TODO: enable this
-				"noNoninteractiveElementInteractions": "off",
-				"noProcessGlobal": "off",
-				"noRestrictedElements": "on",
 				"noSecrets": "off",
 				"noShadow": "on",
-				"noTsIgnore": "off",
-				"noUnknownAtRule": "off",
 				"noUnresolvedImports": "off",
-				"noUnwantedPolyfillio": "on",
-				"noUselessBackrefInRegex": "on",
-				"noUselessEscapeInString": "on",
 				"noUselessUndefined": "on",
-				"useConsistentObjectDefinition": "off",
 				"useExhaustiveSwitchCases": "on",
 				"useExplicitType": "off",
-				"useExportsLast": "off",
-				"useForComponent": "off",
-				"useGoogleFontPreconnect": "off",
-				"useIterableCallbackReturn": "on",
-				"useNamedOperation": "off",
-				"useNamingConvention": "off",
-				"useNumericSeparators": "on",
-				"useParseIntRadix": "on",
-				"useSingleJsDocAsterisk": "on",
-				"useSortedClasses": "on",
-				"useSymbolDescription": "on"
+				"useSortedClasses": "on"
 			},
 			"performance": {
 				"recommended": true,
@@ -382,7 +356,18 @@
 			}
 		}
 	},
-	"overrides": [],
+	"overrides": [
+		{
+			// Disable suspicious rules for CSS files to allow Tailwind CSS @tailwind directives
+			// (base, components, utilities) which are flagged as unknown at-rules by noUnknownAtRules
+			"includes": ["**/*.css"],
+			"linter": {
+				"rules": {
+					"suspicious": "off"
+				}
+			}
+		}
+	],
 	"plugins": [],
 	"root": true,
 	"vcs": {
