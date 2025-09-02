@@ -14,7 +14,7 @@
 		"fix": "pnpm biome check --write",
 		"fix:format": "pnpm biome format --write",
 		"fix:lint": "pnpm biome lint --write",
-		"test:e2e": "pnpm dlx playwright install && playwright test"
+		"test:e2e": "pnpm exec playwright install && playwright test"
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
