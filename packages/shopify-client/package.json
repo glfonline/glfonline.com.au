@@ -44,14 +44,14 @@
 		"@graphql-codegen/cli": "^5.0.7",
 		"@graphql-codegen/schema-ast": "^4.1.0",
 		"@ts-gql/eslint-plugin": "^0.9.1",
-		"concurrently": "^9.2.0",
-		"eslint": "^9.32.0",
-		"globals": "^16.3.0",
+		"concurrently": "^9.2.1",
+		"eslint": "^9.35.0",
+		"globals": "^16.4.0",
 		"graphql": "^16.11.0",
 		"react": "^18.3.1",
-		"tsdown": "^0.14.0",
+		"tsdown": "^0.14.2",
 		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.38.0"
+		"typescript-eslint": "^8.44.0"
 	},
 	"ts-gql": {
 		"addTypenames": false,
