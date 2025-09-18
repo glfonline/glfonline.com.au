@@ -64,10 +64,17 @@ export function SearchDialog({
 						leaveTo="opacity-0 scale-95"
 					>
 						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
-							<Combobox
-								onChange={(product: NonNullable<typeof data>['hits'][number]) => {
-									navigate(makeProductHref(product));
-									setSearchOpen(false);
+							<Combobox<Hit<Product>>
+								onChange={(product) => {
+									if (product) {
+										navigate(
+											makeProductHref({
+												handle: product.handle,
+												tags: product.tags,
+											}),
+										);
+										setSearchOpen(false);
+									}
 								}}
 							>
 								<div className="relative">

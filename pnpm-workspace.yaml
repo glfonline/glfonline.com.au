@@ -4,3 +4,7 @@ packages:
 
 overrides:
   path-to-regexp@>=4.0.0 <6.3.0: '>=6.3.0'
+
+# Security: Wait 2 days (2880 minutes) before installing newly released packages
+# This helps protect against compromised packages that are often discovered and removed quickly
+minimumReleaseAge: 2880
