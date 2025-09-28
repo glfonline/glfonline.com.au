@@ -1,4 +1,4 @@
 {
-	"framework": "react-router",
-	"buildCommand": "pnpm run build"
+	"buildCommand": "cd ../.. && pnpm run build:web",
+	"outputDirectory": "apps/web/build/client"
 }
