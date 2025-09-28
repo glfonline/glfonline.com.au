@@ -1,4 +1,4 @@
-import type { ErrorResponse } from '@remix-run/react';
+import type { ErrorResponse } from 'react-router';
 import { ButtonLink } from './design-system/button';
 import { Heading } from './design-system/heading';
 import { SplitBackground } from './split-background';

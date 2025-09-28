@@ -9,10 +9,18 @@ import {
 } from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { Link, type Location, useLoaderData, useLocation, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
+import {
+	data as json,
+	Link,
+	type LoaderFunctionArgs,
+	type Location,
+	type MetaFunction,
+	useLoaderData,
+	useLocation,
+	useNavigate,
+} from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button } from '../components/design-system/button';
@@ -540,8 +548,8 @@ export function Pagination({
 			<div className="min-w-0 flex-1">
 				{hasPrevPage && (
 					<Button
-						onClick={() => {
-							navigate(-1);
+						onClick={async () => {
+							await navigate(-1);
 						}}
 					>
 						Previous
@@ -555,10 +563,10 @@ export function Pagination({
 			<div className="flex min-w-0 flex-1 justify-end">
 				{hasNextPage && endCursor && (
 					<Button
-						onClick={() => {
+						onClick={async () => {
 							const params = new URLSearchParams(location.search);
 							params.set('after', endCursor);
-							navigate(`${location.pathname}?${params.toString()}`);
+							await navigate(`${location.pathname}?${params.toString()}`);
 						}}
 					>
 						Next

@@ -1,6 +1,6 @@
-import { RemixServer } from '@remix-run/react';
 import * as Sentry from '@sentry/remix';
-import { type EntryContext, handleRequest } from '@vercel/remix';
+import { handleRequest } from '@vercel/remix';
+import { type EntryContext, ServerRouter } from 'react-router';
 import { SENTRY_DSN } from './lib/constants';
 
 // Only run Sentry in production mode
@@ -17,9 +17,9 @@ export default function (
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
-	remixContext: EntryContext,
+	reactRouterContext: EntryContext,
 ) {
-	const remixServer = <RemixServer context={remixContext} url={request.url} />;
+	const remixServer = <ServerRouter context={reactRouterContext} url={request.url} />;
 
 	return handleRequest(request, responseStatusCode, responseHeaders, remixServer);
 }

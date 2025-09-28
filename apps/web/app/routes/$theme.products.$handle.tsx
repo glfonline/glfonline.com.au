@@ -1,7 +1,5 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
 import { mergeForm, useTransform } from '@tanstack/react-form';
 import {
 	createServerValidate,
@@ -13,6 +11,16 @@ import {
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import {
+	type ActionFunctionArgs,
+	Form,
+	data as json,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+	useActionData,
+	useLoaderData,
+	useNavigation,
+} from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
