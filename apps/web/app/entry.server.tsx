@@ -1,5 +1,7 @@
+import { PassThrough } from 'node:stream';
+import { createReadableStreamFromReadable } from '@react-router/node';
 import * as Sentry from '@sentry/remix';
-import { handleRequest } from '@vercel/remix';
+import { renderToPipeableStream } from 'react-dom/server';
 import { type EntryContext, ServerRouter } from 'react-router';
 import { SENTRY_DSN } from './lib/constants';
 
@@ -13,13 +15,32 @@ if (import.meta.env.PROD) {
 	});
 }
 
-export default function (
+export default function handleRequest(
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
-	reactRouterContext: EntryContext,
+	routerContext: EntryContext,
 ) {
-	const remixServer = <ServerRouter context={reactRouterContext} url={request.url} />;
+	return new Promise((resolve, reject) => {
+		const { pipe, abort } = renderToPipeableStream(<ServerRouter context={routerContext} url={request.url} />, {
+			onShellReady() {
+				responseHeaders.set('Content-Type', 'text/html');
 
-	return handleRequest(request, responseStatusCode, responseHeaders, remixServer);
+				const body = new PassThrough();
+				const stream = createReadableStreamFromReadable(body);
+
+				resolve(
+					new Response(stream, {
+						headers: responseHeaders,
+						status: responseStatusCode,
+					}),
+				);
+
+				pipe(body);
+			},
+			onShellError(error: unknown) {
+				reject(error);
+			},
+		});
+	});
 }
