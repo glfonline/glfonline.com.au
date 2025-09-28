@@ -1,7 +1,6 @@
 import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
-import { data as json, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
+import { data as json, type MetaFunction, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Hero } from '../components/hero';

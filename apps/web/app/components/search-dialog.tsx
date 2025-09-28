@@ -11,10 +11,10 @@ import {
 } from '@headlessui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { NavLink, useNavigate } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router';
 import { isNonEmptyArray } from '../lib/is-non-empty-array';
 import { makeProductHref } from '../lib/make-product-href';
 import { type Product, useAlgoliaSearch } from '../lib/use-algolia-search';
@@ -65,9 +65,9 @@ export function SearchDialog({
 					>
 						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black ring-opacity-5 transition-all">
 							<Combobox<Hit<Product>>
-								onChange={(product) => {
+								onChange={async (product) => {
 									if (product) {
-										navigate(
+										await navigate(
 											makeProductHref({
 												handle: product.handle,
 												tags: product.tags,

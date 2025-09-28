@@ -1,6 +1,5 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
-import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
+import { data as json, type LoaderFunctionArgs, type MetaFunction, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';

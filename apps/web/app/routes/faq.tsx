@@ -1,6 +1,5 @@
 import { GET_FAQS_PAGES, sanityClient } from '@glfonline/sanity-client';
-import { data as json } from '@remix-run/node';
-import { type MetaFunction, useLoaderData } from '@remix-run/react';
+import { data as json, type MetaFunction, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Heading } from '../components/design-system/heading';

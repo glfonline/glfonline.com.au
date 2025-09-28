@@ -1,5 +1,5 @@
-import { Link } from '@remix-run/react';
 import { Fragment } from 'react';
+import { Link } from 'react-router';
 import { CONTACT_NUMBERS, EMAIL_ADDRESS, footerNavigation, POSTCODE, STREET_ADDRESS, SUBURB } from '../lib/constants';
 import { HorizontalLogo } from './vectors/horizontal-logo';
 import { HouseIcon } from './vectors/house-icon';
