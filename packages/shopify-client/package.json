@@ -27,7 +27,7 @@
 		"clean:outputs": "rm -rf __generated__ .turbo dist .eslintcache",
 		"dev": "concurrently -n \"ts-gql,tsdown\" -c \"bgBlue.bold,bgMagenta.bold\" \"pnpm run dev:ts-gql\" \"pnpm run dev:tsdown\"",
 		"dev:ts-gql": "ts-gql watch",
-		"dev:tsdown": "tsdown --watch",
+		"dev:tsdown": "tsdown --watch src",
 		"fix": "eslint . --fix --cache && biome check --write",
 		"fix:format": "biome format --write",
 		"fix:lint": "eslint . --fix --cache && biome lint --write",

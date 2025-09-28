@@ -16,11 +16,27 @@ export default tseslint.config(
 		files: [
 			'./src/**/*.{js,mjs,cjs,ts}',
 		],
+		languageOptions: {
+			parserOptions: {
+				project: './tsconfig.json',
+				tsconfigRootDir: import.meta.dirname,
+			},
+		},
 		plugins: {
 			'@ts-gql': tsGqlPlugin,
 		},
 		rules: {
 			'@ts-gql/ts-gql': 'error',
+		},
+	},
+	{
+		files: [
+			'./*.{js,mjs,cjs,ts}',
+		],
+		languageOptions: {
+			parserOptions: {
+				tsconfigRootDir: import.meta.dirname,
+			},
 		},
 	},
 );
