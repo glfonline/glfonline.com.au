@@ -36,6 +36,7 @@ describe('sortSizes', () => {
 			'10',
 			'12',
 			'14',
+			'6',
 		];
 
 		expect(sortSizes(sizes)).toEqual(expected);
@@ -78,7 +79,7 @@ describe('sortSizes', () => {
 		expect(sortSizes(undefined as any)).toEqual([]);
 	});
 
-	it('should filter out sizes not in predefined list', () => {
+	it('should include unsorted sizes at the end of the list', () => {
 		const sizes = [
 			'L',
 			'S',
@@ -91,6 +92,7 @@ describe('sortSizes', () => {
 			'M',
 			'L',
 			'XL',
+			'INVALID_SIZE',
 		];
 
 		expect(sortSizes(sizes)).toEqual(expected);
@@ -125,6 +127,46 @@ describe('sortSizes', () => {
 			'US8',
 			'US10',
 			'US12',
+		];
+
+		expect(sortSizes(sizes)).toEqual(expected);
+	});
+
+	it('should handle extra large sizes including XXXXL', () => {
+		const sizes = [
+			'L',
+			'XL',
+			'XXL',
+			'XXXL',
+			'XXXXL',
+		];
+		const expected = [
+			'L',
+			'XL',
+			'XXL',
+			'XXXL',
+			'XXXXL',
+		];
+
+		expect(sortSizes(sizes)).toEqual(expected);
+	});
+
+	it('should handle mixed sorted and unsorted sizes', () => {
+		const sizes = [
+			'L',
+			'CUSTOM_SIZE_1',
+			'S',
+			'CUSTOM_SIZE_2',
+			'M',
+			'XL',
+		];
+		const expected = [
+			'S',
+			'M',
+			'L',
+			'XL',
+			'CUSTOM_SIZE_1',
+			'CUSTOM_SIZE_2',
 		];
 
 		expect(sortSizes(sizes)).toEqual(expected);

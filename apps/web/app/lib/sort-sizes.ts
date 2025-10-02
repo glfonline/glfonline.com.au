@@ -63,6 +63,7 @@ const SORTED_SIZES = [
 	'XL',
 	'XXL',
 	'XXXL',
+	'XXXXL',
 	'2.125"/53mm',
 	'2.75"/69mm',
 	'3.25"/83mm',
@@ -97,7 +98,35 @@ const SORTED_SIZES = [
 	'XXL 63cm',
 ] as const;
 
+// Pre-compute the sorted sizes set for efficiency
+const SORTED_SIZES_SET = new Set(SORTED_SIZES as ReadonlyArray<string>);
+
 export function sortSizes(uniqueProductSizes: Array<string>) {
+	if (!uniqueProductSizes?.length) return [];
+
 	const sizeSet = new Set(uniqueProductSizes);
-	return SORTED_SIZES.filter((size) => sizeSet.has(size));
+	const result: Array<string> = [];
+	const unsortedSizes: Array<string> = [];
+
+	// Single pass: collect sorted sizes in order
+	for (const size of SORTED_SIZES) {
+		if (sizeSet.has(size)) {
+			result.push(size);
+		}
+	}
+
+	// Single pass: collect unsorted sizes
+	for (const size of uniqueProductSizes) {
+		if (!SORTED_SIZES_SET.has(size)) {
+			unsortedSizes.push(size);
+		}
+	}
+
+	// Sort and append unsorted sizes
+	if (unsortedSizes.length > 0) {
+		unsortedSizes.sort();
+		result.push(...unsortedSizes);
+	}
+
+	return result;
 }
