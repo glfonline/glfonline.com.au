@@ -35,7 +35,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
 
       - name: 🛠️ Setup node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version-file: package.json
           cache: pnpm
