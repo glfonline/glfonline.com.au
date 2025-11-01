@@ -45,13 +45,13 @@
 		"@graphql-codegen/schema-ast": "^4.1.0",
 		"@ts-gql/eslint-plugin": "^0.9.1",
 		"concurrently": "^9.2.1",
-		"eslint": "^9.35.0",
+		"eslint": "^9.38.0",
 		"globals": "^16.4.0",
 		"graphql": "^16.11.0",
 		"react": "^18.3.1",
-		"tsdown": "^0.15.0",
-		"typescript": "^5.9.2",
-		"typescript-eslint": "^8.44.0"
+		"tsdown": "^0.15.12",
+		"typescript": "^5.9.3",
+		"typescript-eslint": "^8.46.2"
 	},
 	"ts-gql": {
 		"addTypenames": false,

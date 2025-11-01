@@ -34,15 +34,15 @@
 		"@biomejs/biome": "2.3.2",
 		"@glfonline/tsconfig": "workspace:^",
 		"@manypkg/cli": "^0.25.1",
-		"@playwright/test": "^1.55.0",
-		"stale-dep": "^0.8.3",
-		"turbo": "^2.5.6",
-		"turbo-ignore": "^2.5.6",
-		"typescript": "^5.9.2"
+		"@playwright/test": "^1.56.1",
+		"stale-dep": "^0.8.4",
+		"turbo": "^2.5.8",
+		"turbo-ignore": "^2.5.8",
+		"typescript": "^5.9.3"
 	},
 	"packageManager": "pnpm@10.20.0+sha512.cf9998222162dd85864d0a8102e7892e7ba4ceadebbf5a31f9c2fce48dfce317a9c53b9f6464d1ef9042cba2e02ae02a9f7c143a2b438cd93c91840f0192b9dd",
 	"engines": {
-		"node": ">=20",
+		"node": ">=22",
 		"pnpm": ">=9"
 	},
 	"manypkg": {

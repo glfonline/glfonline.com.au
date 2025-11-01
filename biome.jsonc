@@ -224,7 +224,6 @@
 				"recommended": true,
 				"noFloatingPromises": "on",
 				"noImportCycles": "off", // TODO: enable this
-				"noSecrets": "off",
 				"noShadow": "on",
 				"noUnresolvedImports": "off",
 				"noUselessUndefined": "on",
