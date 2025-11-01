@@ -59,7 +59,6 @@
 		"react-router-dom": "^7.9.5",
 		"react-turnstile": "^1.1.4",
 		"remeda": "^2.32.0",
-		"remix-seo": "^0.1.0",
 		"remix-utils": "^9.0.0",
 		"resend": "^6.3.0",
 		"tailwind-merge": "^2.6.0",

@@ -277,12 +277,9 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 }
 
 export const meta: MetaFunction = () => {
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: 'Cart',
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

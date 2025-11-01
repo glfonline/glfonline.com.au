@@ -229,15 +229,12 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 	}
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	invariant(loaderData, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		description: loaderData.product.description,
 		title: loaderData.product.title,
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

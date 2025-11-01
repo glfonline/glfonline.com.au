@@ -71,14 +71,11 @@ export async function loader({ request }: LoaderFunctionArgs) {
 	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	invariant(loaderData, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: loaderData.title,
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

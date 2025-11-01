@@ -59,13 +59,9 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export const meta: MetaFunction<typeof loader> = ({ params }) => {
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: `Shop ${params.theme === 'ladies' ? 'Ladies' : 'Mens'}`,
 	});
-
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

@@ -17,12 +17,9 @@ export function loader() {
 }
 
 export const meta: MetaFunction = () => {
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: 'Contact Us',
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

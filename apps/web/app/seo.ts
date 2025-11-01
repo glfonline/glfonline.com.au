@@ -1,18 +1,28 @@
-import { initSeo, type SeoConfig } from 'remix-seo';
+export type SeoConfig = {
+	title?: string;
+	titleTemplate?: string;
+	description?: string;
+};
 
-export const seoConfig = {
+export const seoConfig: SeoConfig = {
 	title: 'Ladies and Mens golf clothing and apparel, skorts and clearance items',
 	titleTemplate: '%s | GLF Online',
 	description:
 		'Dedicated entirely to womens and mens golfing and clothing needs with personalised service and brands like Nivo and Jamie Sadock, our online golf store has the largest product range and excellent service.',
-} satisfies SeoConfig;
+};
 
-const seo = initSeo(seoConfig);
+/**
+ * Applies title template to a title string
+ */
+function applyTitleTemplate(title: string, template: string): string {
+	if (!title) return '';
+	return template.replace('%s', title);
+}
 
 /**
  * Generates SEO meta tags for pages
  */
-export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): ReturnType<typeof seo.getSeoMeta> {
+export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>) {
 	const mergedConfig: SeoConfig = {};
 
 	for (const input of seoInputs) {
@@ -21,27 +31,43 @@ export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>): R
 		}
 	}
 
-	const seoMeta = seo.getSeoMeta(mergedConfig);
+	const finalTitle = mergedConfig.title ?? seoConfig.title ?? '';
+	const finalDescription = mergedConfig.description ?? seoConfig.description ?? '';
+	const titleTemplate = mergedConfig.titleTemplate ?? seoConfig.titleTemplate ?? '%s';
 
-	return [
-		seoMeta,
-		{
-			name: 'description',
-			content: mergedConfig.description || seoConfig.description,
-		},
-		{
-			name: 'robots',
-			content: 'index, follow',
-		},
-		{
-			name: 'googlebot',
-			content: 'index, follow',
-		},
-		{
-			property: 'og:title',
-			content: mergedConfig.title || seoConfig.title,
-		},
-	];
+	const metaTags: Array<{ title?: string; name?: string; property?: string; content?: string }> = [];
+
+	// Add title tag if we have a title
+	if (finalTitle) {
+		const formattedTitle = applyTitleTemplate(finalTitle, titleTemplate);
+		metaTags.push({
+			title: formattedTitle,
+		});
+	}
+
+	// Add description
+	metaTags.push({
+		name: 'description',
+		content: finalDescription,
+	});
+
+	// Add robots
+	metaTags.push({
+		name: 'robots',
+		content: 'index, follow',
+	});
+
+	// Add googlebot
+	metaTags.push({
+		name: 'googlebot',
+		content: 'index, follow',
+	});
+
+	// Add og:title
+	metaTags.push({
+		property: 'og:title',
+		content: finalTitle || seoConfig.title || '',
+	});
+
+	return metaTags;
 }
-
-export const { getSeo, getSeoLinks } = seo;
