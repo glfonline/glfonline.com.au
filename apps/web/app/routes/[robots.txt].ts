@@ -1,5 +1,5 @@
-import type { LoaderFunctionArgs } from '@remix-run/node';
 import dedent from 'dedent';
+import type { LoaderFunctionArgs } from 'react-router';
 import { CACHE_LONG } from '../lib/cache';
 
 export function loader({ request }: LoaderFunctionArgs) {

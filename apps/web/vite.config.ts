@@ -1,39 +1,12 @@
 /// <reference types="vite/client" />
 
-import { vitePlugin as remix } from '@remix-run/dev';
-import { installGlobals } from '@remix-run/node';
+import { reactRouter } from '@react-router/dev/vite';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
-import { vercelPreset } from '@vercel/remix/vite';
 import { defineConfig, type PluginOption } from 'vite';
-
-declare module '@remix-run/node' {
-	interface Future {
-		v3_singleFetch: true;
-	}
-}
-
-installGlobals({
-	nativeFetch: true,
-});
 
 export default defineConfig(({ mode }) => {
 	const plugins: Array<PluginOption> = [
-		remix({
-			future: {
-				unstable_optimizeDeps: true,
-				v3_fetcherPersist: true,
-				v3_lazyRouteDiscovery: true,
-				v3_relativeSplatPath: true,
-				v3_singleFetch: true,
-				v3_throwAbortReason: true,
-			},
-			ignoredRouteFiles: [
-				'**/.*',
-			],
-			presets: [
-				vercelPreset(),
-			],
-		}),
+		reactRouter(),
 	];
 
 	if (mode === 'production') {
