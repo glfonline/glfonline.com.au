@@ -1,4 +1,4 @@
-import { data as json, type MetaFunction } from '@remix-run/node';
+import { data as json, type MetaFunction } from 'react-router';
 import { ContactForm } from '../components/contact-form/form';
 import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';
@@ -17,12 +17,9 @@ export function loader() {
 }
 
 export const meta: MetaFunction = () => {
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: 'Contact Us',
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

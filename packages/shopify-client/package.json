@@ -41,8 +41,8 @@
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
-		"@graphql-codegen/cli": "^5.0.7",
-		"@graphql-codegen/schema-ast": "^4.1.0",
+		"@graphql-codegen/cli": "^6.0.1",
+		"@graphql-codegen/schema-ast": "^5.0.0",
 		"@ts-gql/eslint-plugin": "^0.9.1",
 		"concurrently": "^9.2.1",
 		"eslint": "^9.38.0",

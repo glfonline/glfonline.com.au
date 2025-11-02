@@ -1,7 +1,6 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
 import { assert, isString } from 'emery';
+import { data as json, type LoaderFunctionArgs, type MetaFunction, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { Hero } from '../components/hero';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
@@ -30,14 +29,11 @@ export async function loader({ params }: LoaderFunctionArgs) {
 	);
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	invariant(loaderData, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: loaderData.page.title,
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;
