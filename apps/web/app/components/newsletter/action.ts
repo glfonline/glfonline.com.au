@@ -1,4 +1,3 @@
-import { type ActionFunctionArgs, data as json } from '@remix-run/node';
 import {
 	createServerValidate,
 	formOptions,
@@ -6,6 +5,7 @@ import {
 	type ServerFormState,
 	ServerValidateError,
 } from '@tanstack/react-form/remix';
+import { type ActionFunctionArgs, data as json } from 'react-router';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
 import { noop } from '../../lib/noop';

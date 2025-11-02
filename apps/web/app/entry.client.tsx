@@ -1,27 +1,19 @@
-/**
- * By default, Remix will handle hydrating your app on the client for you.
- * You are free to delete this file if you'd like to, but if you ever want it revealed again, you can run `npx remix reveal` ✨
- * @see https://remix.run/file-conventions/entry.client
- */
-
-import { RemixBrowser, useLocation, useMatches } from '@remix-run/react';
-import * as Sentry from '@sentry/remix';
-import { StrictMode, startTransition, useEffect } from 'react';
+import * as Sentry from '@sentry/react-router';
+import { StrictMode, startTransition } from 'react';
 import { hydrateRoot } from 'react-dom/client';
+import { HydratedRouter } from 'react-router/dom';
 import { SENTRY_DSN } from './lib/constants';
 
 // Only run Sentry in production mode
 if (import.meta.env.PROD) {
 	Sentry.init({
-		autoInstrumentRemix: true,
 		dsn: SENTRY_DSN,
 		environment: import.meta.env.MODE,
 		integrations: [
-			Sentry.browserTracingIntegration({
-				useEffect,
-				useLocation,
-				useMatches,
-			}),
+			// Registers and configures the Tracing integration,
+			// which automatically instruments your application to monitor its
+			// performance, including custom React Router routing instrumentation
+			Sentry.reactRouterTracingIntegration(),
 
 			// Replay is only available in the client.
 			Sentry.replayIntegration(),
@@ -42,7 +34,7 @@ startTransition(() => {
 	hydrateRoot(
 		document,
 		<StrictMode>
-			<RemixBrowser />
+			<HydratedRouter />
 		</StrictMode>,
 	);
 });
