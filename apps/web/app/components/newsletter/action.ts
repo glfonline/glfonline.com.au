@@ -5,7 +5,7 @@ import {
 	initialFormState,
 	type ServerFormState,
 	ServerValidateError,
-} from '@tanstack/react-form/remix';
+} from '@tanstack/react-form-remix';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
 import { noop } from '../../lib/noop';

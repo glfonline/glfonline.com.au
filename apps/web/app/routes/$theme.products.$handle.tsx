@@ -2,14 +2,15 @@ import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
 import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
-import { mergeForm, useTransform } from '@tanstack/react-form';
+import { mergeForm } from '@tanstack/react-form';
 import {
 	createServerValidate,
 	formOptions,
 	initialFormState,
 	type ServerFormState,
 	ServerValidateError,
-} from '@tanstack/react-form/remix';
+	useTransform,
+} from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
