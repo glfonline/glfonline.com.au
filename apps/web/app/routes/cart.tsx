@@ -7,7 +7,7 @@ import {
 	initialFormState,
 	type ServerFormState,
 	ServerValidateError,
-} from '@tanstack/react-form/remix';
+} from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { z } from 'zod';

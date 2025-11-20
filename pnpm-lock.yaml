@@ -108,6 +108,9 @@ importers:
       '@tanstack/react-form':
         specifier: ^1.23.8
         version: 1.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-form-remix':
+        specifier: ^1.25.0
+        version: 1.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@tanstack/react-query':
         specifier: ^5.90.5
         version: 5.90.9(react@18.3.1)
@@ -3566,6 +3569,15 @@ packages:
   '@tanstack/query-sync-storage-persister@5.90.11':
     resolution: {integrity: sha512-P1yGv/3cxAIHh6+Nle1tvkFkyvKtcRKKJi/Vw95u15p+V0GBLAw0lSppSkGCw9kEHPLaMmWmdZwUnj5pSmOoTw==}
 
+  '@tanstack/react-form-remix@1.25.0':
+    resolution: {integrity: sha512-Ken5cDrOrEWmRXVIwcnLKfqacumysAN+Fklt3eGGGpts4IZmBtKtidCToy2TX3wU93xUheiOgn/dBfBleraKIw==}
+    peerDependencies:
+      '@tanstack/react-start': ^1.134.9
+      react: ^17.0.0 || ^18.0.0 || ^19.0.0
+    peerDependenciesMeta:
+      '@tanstack/react-start':
+        optional: true
+
   '@tanstack/react-form@1.25.0':
     resolution: {integrity: sha512-SjKpBkjegNVW9WU+qlO8+/+kSbSEwo2zwHnrQz/yOnnJRhtdgubUt50LfeUtdzkMsbbptQ5MSZrXH03kidQjyw==}
     peerDependencies:
@@ -4928,6 +4940,9 @@ packages:
 
   decimal.js@10.6.0:
     resolution: {integrity: sha512-YpgQiITW3JXGntzdUmyUR1V812Hn8T1YVXhCu+wO3OpS4eU9l4YdD3qjyiKdV6mvV29zapkMeD390UVEf2lkUg==}
+
+  decode-formdata@0.9.0:
+    resolution: {integrity: sha512-q5uwOjR3Um5YD+ZWPOF/1sGHVW9A5rCrRwITQChRXlmPkxDFBqCm4jNTIVdGHNH9OnR+V9MoZVgRhsFb+ARbUw==}
 
   decode-named-character-reference@1.2.0:
     resolution: {integrity: sha512-c6fcElNV6ShtZXmsgNgFFV5tVX2PaV4g+MOAkb8eXHvn6sryJBrZa9r0zV6+dtTyoCKxtDy5tyQ5ZwQuidtd+Q==}
@@ -13566,6 +13581,14 @@ snapshots:
       '@tanstack/query-core': 5.90.9
       '@tanstack/query-persist-client-core': 5.91.8
 
+  '@tanstack/react-form-remix@1.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/react-form': 1.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      decode-formdata: 0.9.0
+      react: 18.3.1
+    transitivePeerDependencies:
+      - react-dom
+
   '@tanstack/react-form@1.25.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@tanstack/form-core': 1.25.0
@@ -15148,6 +15171,8 @@ snapshots:
   decamelize@1.2.0: {}
 
   decimal.js@10.6.0: {}
+
+  decode-formdata@0.9.0: {}
 
   decode-named-character-reference@1.2.0:
     dependencies:
