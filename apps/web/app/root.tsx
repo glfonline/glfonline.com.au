@@ -1,9 +1,8 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { captureException } from '@sentry/react-router';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
 import { useEffect } from 'react';
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import {
@@ -104,7 +103,7 @@ export const meta: MetaFunction<typeof loader> = () => {
 };
 
 const queryClient = new QueryClient();
-const persister = createSyncStoragePersister({
+const persister = createAsyncStoragePersister({
 	storage: typeof window !== 'undefined' ? window.localStorage : undefined,
 });
 
@@ -134,7 +133,6 @@ function App() {
 					<>
 						<GoogleAnalytics />
 						<MetaAnalytics />
-						<VercelAnalytics />
 					</>
 				)}
 				<LoadingProgress />

@@ -229,7 +229,10 @@
 				"noUselessUndefined": "on",
 				"useExhaustiveSwitchCases": "on",
 				"useExplicitType": "off",
-				"useSortedClasses": "on"
+				"useSortedClasses": {
+					"fix": "safe",
+					"level": "warn"
+				}
 			},
 			"performance": {
 				"recommended": true,
