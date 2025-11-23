@@ -1,5 +1,11 @@
 import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from '@remix-run/node';
+import { captureException } from '@sentry/react-router';
+import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
+import { QueryClient } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
+import { useEffect } from 'react';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import {
 	isRouteErrorResponse,
 	Links,
@@ -9,13 +15,7 @@ import {
 	ScrollRestoration,
 	useLocation,
 	useRouteError,
-} from '@remix-run/react';
-import { captureRemixErrorBoundaryError, withSentry } from '@sentry/remix';
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
-import { Analytics as VercelAnalytics } from '@vercel/analytics/react';
-import { useEffect } from 'react';
+} from 'react-router';
 import favicon from '../assets/favicon.svg';
 import { GoogleAnalytics, MetaAnalytics } from './components/analytics';
 import { GenericError } from './components/generic-error';
@@ -157,21 +157,36 @@ function App() {
 
 export function ErrorBoundary() {
 	const error = useRouteError();
-	captureRemixErrorBoundaryError(error);
+	const isResponse = isRouteErrorResponse(error);
 
-	const main = isRouteErrorResponse(error) ? (
-		error.status === 404 ? (
-			<NotFound />
-		) : (
-			<GenericError error={error} />
-		)
-	) : (
-		<GenericError
-			error={{
-				statusText: 'Unknown error',
-			}}
-		/>
-	);
+	if (typeof document !== 'undefined') {
+		console.error(error);
+	}
+
+	useEffect(() => {
+		if (isResponse) return;
+
+		captureException(error);
+	}, [
+		error,
+		isResponse,
+	]);
+
+	const main: React.JSX.Element = (() => {
+		if (isResponse) {
+			if (error.status === 404) {
+				return <NotFound />;
+			}
+			return <GenericError error={error} />;
+		}
+		return (
+			<GenericError
+				error={{
+					statusText: 'Unknown error',
+				}}
+			/>
+		);
+	})();
 
 	return (
 		<html className="h-full" lang="en">
@@ -190,4 +205,4 @@ export function ErrorBoundary() {
 	);
 }
 
-export default withSentry(App);
+export default App;

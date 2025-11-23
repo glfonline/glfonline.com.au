@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, data as json } from '@remix-run/node';
+import { captureException } from '@sentry/react-router';
 import {
 	createServerValidate,
 	formOptions,
@@ -6,6 +6,7 @@ import {
 	type ServerFormState,
 	ServerValidateError,
 } from '@tanstack/react-form-remix';
+import { type ActionFunctionArgs, data as json } from 'react-router';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import type { z } from 'zod';
 import { noop } from '../../lib/noop';
@@ -144,7 +145,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<Newslette
 			});
 		}
 
-		// Some other error occurred - let it bubble up to Remix's error boundary
+		// Some other error occurred - let it bubble up to React Router's error boundary
+		// We need to capture here because thrown Responses become ErrorResponse objects
+		// which the error boundary skips (they're expected HTTP responses)
+		captureException(err);
 		throw new Response('Internal Server Error', {
 			status: 500,
 		});

@@ -1,3 +1,5 @@
+import { captureException } from '@sentry/react-router';
+
 export function notFound(errorMessage?: string): never {
 	if (errorMessage) console.error(errorMessage);
 	throw new Response(null, {
@@ -7,6 +9,11 @@ export function notFound(errorMessage?: string): never {
 }
 
 export function serverError(message: string, details?: unknown): never {
+	const error = new Error(message);
+	if (details) {
+		error.cause = details;
+	}
+	captureException(error);
 	console.error(`[500] ${message}`, details);
 	throw new Response(null, {
 		status: 500,

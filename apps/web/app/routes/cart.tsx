@@ -1,6 +1,5 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
-import { type ActionFunctionArgs, data, type LoaderFunctionArgs, type MetaFunction, redirect } from '@remix-run/node';
-import { Form, Link, useFetcher, useLoaderData, useNavigation } from '@remix-run/react';
+import { captureException } from '@sentry/react-router';
 import {
 	createServerValidate,
 	formOptions,
@@ -10,6 +9,18 @@ import {
 } from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
+import {
+	type ActionFunctionArgs,
+	data,
+	Form,
+	Link,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+	redirect,
+	useFetcher,
+	useLoaderData,
+	useNavigation,
+} from 'react-router';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
@@ -259,7 +270,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 			);
 		}
 
-		// Some other error occurred - let it bubble up to Remix's error boundary
+		// Some other error occurred - let it bubble up to React Router's error boundary
+		// We need to capture here because thrown Responses become ErrorResponse objects
+		// which the error boundary skips (they're expected HTTP responses)
+		captureException(err);
 		throw new Response('Internal Server Error', {
 			status: 500,
 		});
@@ -267,12 +281,9 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 }
 
 export const meta: MetaFunction = () => {
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		title: 'Cart',
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

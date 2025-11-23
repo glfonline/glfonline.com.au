@@ -1,9 +1,8 @@
 import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
-import { data, type MetaFunction } from '@remix-run/node';
-import { useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
+import { data, type MetaFunction, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { ContactForm } from '../components/contact-form/form';

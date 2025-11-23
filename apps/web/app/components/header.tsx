@@ -1,10 +1,10 @@
 import { Popover, PopoverButton, PopoverPanel, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
-import { NavLink, useLoaderData } from '@remix-run/react';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId, useState } from 'react';
+import { NavLink, useLoaderData } from 'react-router';
 import { CHANTALE_PHONE, type NavItem, socialLinks } from '../lib/constants';
 import { urlFor } from '../lib/sanity-image';
 import type { loader } from '../root';
