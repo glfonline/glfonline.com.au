@@ -4,7 +4,19 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
-			"env": ["ENCRYPTION_KEY", "NODE_ENV", "RESEND_API_KEY", "TURNSTILE_SECRET_KEY", "SENTRY_AUTH_TOKEN"],
+			"env": [
+				"AKISMET_API_KEY",
+				"ENABLE_EXPERIMENTAL_COREPACK",
+				"ENCRYPTION_KEY",
+				"NODE_ENV",
+				"RESEND_API_KEY",
+				"SENDGRID_API_KEY",
+				"SENTRY_AUTH_TOKEN",
+				"SENTRY_DSN",
+				"SENTRY_ORG",
+				"SENTRY_PROJECT",
+				"TURNSTILE_SECRET_KEY"
+			],
 			"outputs": [".cache/**", "build/**", "public/build/**"]
 		},
 		"check:types": {

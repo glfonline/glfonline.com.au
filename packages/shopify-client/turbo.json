@@ -4,6 +4,17 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["^build"],
+			"env": [
+				"AKISMET_API_KEY",
+				"ENABLE_EXPERIMENTAL_COREPACK",
+				"ENCRYPTION_KEY",
+				"RESEND_API_KEY",
+				"SENDGRID_API_KEY",
+				"SENTRY_DSN",
+				"SENTRY_ORG",
+				"SENTRY_PROJECT",
+				"TURNSTILE_SECRET_KEY"
+			],
 			"outputs": ["__generated__/**", "dist/**"]
 		},
 		"generate": {
