@@ -3,6 +3,7 @@
 .env
 .eslintcache
 .next
+.react-router/
 .turbo
 *.log
 dist

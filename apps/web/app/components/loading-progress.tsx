@@ -1,6 +1,6 @@
-import { useNavigation } from '@remix-run/react';
 import { clsx } from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { useNavigation } from 'react-router';
 import { noop } from '../lib/noop';
 
 export function LoadingProgress() {

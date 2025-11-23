@@ -1,7 +1,6 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
-import { type ActionFunctionArgs, data as json, type LoaderFunctionArgs, type MetaFunction } from '@remix-run/node';
-import { Form, useActionData, useLoaderData, useNavigation } from '@remix-run/react';
+import { captureException } from '@sentry/react-router';
 import { mergeForm } from '@tanstack/react-form';
 import {
 	createServerValidate,
@@ -14,6 +13,16 @@ import {
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useState } from 'react';
+import {
+	type ActionFunctionArgs,
+	Form,
+	data as json,
+	type LoaderFunctionArgs,
+	type MetaFunction,
+	useActionData,
+	useLoaderData,
+	useNavigation,
+} from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
@@ -215,22 +224,22 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 			);
 		}
 
-		// Some other error occurred - let it bubble up to Remix's error boundary
+		// Some other error occurred - let it bubble up to React Router's error boundary
+		// We need to capture here because thrown Responses become ErrorResponse objects
+		// which the error boundary skips (they're expected HTTP responses)
+		captureException(err);
 		throw new Response('Internal Server Error', {
 			status: 500,
 		});
 	}
 }
 
-export const meta: MetaFunction<typeof loader> = ({ data: loaderData }) => {
+export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	invariant(loaderData, 'Expected data for meta function');
-	const seoMeta = getSeoMeta({
+	return getSeoMeta({
 		description: loaderData.product.description,
 		title: loaderData.product.title,
 	});
-	return [
-		seoMeta,
-	];
 };
 
 export const headers = routeHeaders;

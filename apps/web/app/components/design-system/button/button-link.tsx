@@ -1,5 +1,5 @@
-import { Link } from '@remix-run/react';
 import { forwardRef } from 'react';
+import { Link } from 'react-router';
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
 // biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
