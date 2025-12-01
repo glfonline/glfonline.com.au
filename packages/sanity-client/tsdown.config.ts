@@ -6,6 +6,7 @@ export default defineConfig((options) => ({
 	entry: [
 		'src/index.ts',
 	],
+	exports: true,
 	format: [
 		'esm',
 	],
