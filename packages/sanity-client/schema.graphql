@@ -604,17 +604,20 @@ type File {
 	_key: String
 	_type: String
 	asset: SanityFileAsset
+	media: GlobalDocumentReference
 }
 
 input FileFilter {
 	_key: StringFilter
 	_type: StringFilter
 	asset: SanityFileAssetFilter
+	media: GlobalDocumentReferenceFilter
 }
 
 input FileSorting {
 	_key: SortOrder
 	_type: SortOrder
+	media: GlobalDocumentReferenceSorting
 }
 
 input FloatFilter {
@@ -781,6 +784,7 @@ type Image {
 	asset: SanityImageAsset
 	crop: SanityImageCrop
 	hotspot: SanityImageHotspot
+	media: GlobalDocumentReference
 }
 
 input ImageFilter {
@@ -789,6 +793,7 @@ input ImageFilter {
 	asset: SanityImageAssetFilter
 	crop: SanityImageCropFilter
 	hotspot: SanityImageHotspotFilter
+	media: GlobalDocumentReferenceFilter
 }
 
 input ImageSorting {
@@ -796,6 +801,7 @@ input ImageSorting {
 	_type: SortOrder
 	crop: SanityImageCropSorting
 	hotspot: SanityImageHotspotSorting
+	media: GlobalDocumentReferenceSorting
 }
 
 type ImageWithAlt {
@@ -805,6 +811,7 @@ type ImageWithAlt {
 	asset: SanityImageAsset
 	crop: SanityImageCrop
 	hotspot: SanityImageHotspot
+	media: GlobalDocumentReference
 }
 
 input ImageWithAltFilter {
@@ -814,6 +821,7 @@ input ImageWithAltFilter {
 	asset: SanityImageAssetFilter
 	crop: SanityImageCropFilter
 	hotspot: SanityImageHotspotFilter
+	media: GlobalDocumentReferenceFilter
 }
 
 input ImageWithAltSorting {
@@ -822,6 +830,7 @@ input ImageWithAltSorting {
 	alt: SortOrder
 	crop: SanityImageCropSorting
 	hotspot: SanityImageHotspotSorting
+	media: GlobalDocumentReferenceSorting
 }
 
 input IntFilter {

@@ -8634,6 +8634,11 @@ Possible error codes that can be returned by `MetafieldDeleteUserError`.
 """
 enum MetafieldDeleteErrorCode {
 	"""
+	The current app is not authorized to perform this action.
+	"""
+	APP_NOT_AUTHORIZED
+
+	"""
 	The owner ID is invalid.
 	"""
 	INVALID_OWNER
@@ -8774,6 +8779,11 @@ type MetafieldsSetUserError implements DisplayableError {
 Possible error codes that can be returned by `MetafieldsSetUserError`.
 """
 enum MetafieldsSetUserErrorCode {
+	"""
+	The current app is not authorized to perform this action.
+	"""
+	APP_NOT_AUTHORIZED
+
 	"""
 	The input value is blank.
 	"""
