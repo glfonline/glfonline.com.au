@@ -1,25 +1,22 @@
 import { clsx } from 'clsx';
-import { forwardRef, useId, useMemo } from 'react';
+import { useId, useMemo } from 'react';
 import { mergeIds } from '../../../lib/merge-ids';
 import { CheckCircleIcon } from '../../vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';
 import { FieldContext, type FieldContextType } from './context';
 
-// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
-export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
-	{
-		children,
-		className,
-		description,
-		disabled = false,
-		id: idProp,
-		label,
-		message,
-		tone = 'critical',
-		...consumerProps
-	},
-	forwardedRef,
-) {
+export function Field({
+	children,
+	className,
+	description,
+	disabled = false,
+	id: idProp,
+	label,
+	message,
+	ref,
+	tone = 'critical',
+	...consumerProps
+}: FieldProps) {
 	const { descriptionId, inputId, messageId } = useFieldIds(idProp);
 	const invalid = Boolean(message && tone === 'critical');
 	const fieldContext: FieldContextType = useMemo(
@@ -46,7 +43,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 	);
 	return (
 		<FieldContext value={fieldContext}>
-			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={forwardedRef}>
+			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={ref}>
 				<label htmlFor={inputId}>
 					<span className={clsx('text-sm', disabled ? 'text-gray-400' : 'text-gray-700')}>{label} </span>
 				</label>
@@ -60,7 +57,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 			</div>
 		</FieldContext>
 	);
-});
+}
 
 export function useFieldIds(idProp?: string) {
 	const id = useId();
@@ -102,7 +99,7 @@ export function FieldMessage({ message, id, tone }: FieldMessageProps) {
 	);
 }
 
-type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type NativeDivProps = React.ComponentPropsWithRef<'div'>;
 export type FieldProps = NativeDivProps & {
 	/**
 	 * Indicates that the field is perceivable but disabled, so it is not editable
