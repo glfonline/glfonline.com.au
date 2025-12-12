@@ -1,23 +1,21 @@
 import { clsx } from 'clsx';
-import { forwardRef, useMemo } from 'react';
+import { useMemo } from 'react';
 import { mergeIds } from '../../../lib/merge-ids';
-import { FieldContextProvider, type FieldContextType } from './context';
+import { FieldContext, type FieldContextType } from './context';
 import { FieldMessage, type FieldProps, useFieldIds } from './field';
 
-export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function Field(
-	{
-		children,
-		className,
-		description,
-		disabled = false,
-		id: idProp,
-		label,
-		message,
-		tone = 'critical',
-		...consumerProps
-	},
-	forwardedRef,
-) {
+export function InlineField({
+	children,
+	className,
+	description,
+	disabled = false,
+	id: idProp,
+	label,
+	message,
+	ref,
+	tone = 'critical',
+	...consumerProps
+}: InlineFieldProps) {
 	const { descriptionId, inputId, messageId } = useFieldIds(idProp);
 	const invalid = Boolean(message && tone === 'critical');
 	const fieldContext: FieldContextType = useMemo(
@@ -43,8 +41,8 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function
 		],
 	);
 	return (
-		<FieldContextProvider value={fieldContext}>
-			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={forwardedRef}>
+		<FieldContext value={fieldContext}>
+			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={ref}>
 				<div className="relative flex items-start gap-3">
 					{children}
 					<div className="text-sm">
@@ -55,9 +53,9 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function
 				</div>
 				{message && <FieldMessage id={messageId} message={message} tone={tone} />}
 			</div>
-		</FieldContextProvider>
+		</FieldContext>
 	);
-});
+}
 
 export type InlineFieldProps = Omit<FieldProps, 'label'> & {
 	label: React.ReactNode;

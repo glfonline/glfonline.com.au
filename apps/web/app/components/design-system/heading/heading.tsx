@@ -1,12 +1,16 @@
 import { assert, isDefined } from 'emery';
-import { forwardRef } from 'react';
 import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';
 
-// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
-export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Heading(
-	{ children, className, color, headingElement, size, weight, ...consumerProps },
-	forwardedRef,
-) {
+export function Heading({
+	children,
+	className,
+	color,
+	headingElement,
+	ref,
+	size,
+	weight,
+	...consumerProps
+}: HeadingProps) {
 	assert(isDefined(size), 'Heading level must be defined');
 	const HeadingElement = headingElement || headingLevelMap[size];
 	return (
@@ -18,12 +22,12 @@ export const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(function Hea
 				size,
 				weight,
 			})}
-			ref={forwardedRef}
+			ref={ref}
 		>
 			{children}
 		</HeadingElement>
 	);
-});
+}
 
 const headingLevelMap = {
 	'1': 'h1',
@@ -37,7 +41,7 @@ const headingLevelMap = {
 type HeadingLevel = keyof typeof headingLevelMap;
 type HeadingElement = (typeof headingLevelMap)[HeadingLevel];
 
-type NativeHeadingProps = React.HTMLAttributes<HTMLHeadingElement>;
+type NativeHeadingProps = React.ComponentPropsWithRef<'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'>;
 export type HeadingProps = NativeHeadingProps &
 	HeadingVariantProps & {
 		headingElement?: HeadingElement;

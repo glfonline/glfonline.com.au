@@ -1,12 +1,7 @@
-import { forwardRef } from 'react';
 import { Link } from 'react-router';
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
-// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
-export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(function ButtonLink(
-	{ className, children, href, size, variant, ...consumerProps },
-	forwardedRef,
-) {
+export function ButtonLink({ className, children, href, ref, size, variant, ...consumerProps }: ButtonLinkProps) {
 	const shouldUseLink = href.startsWith('/');
 	if (shouldUseLink) {
 		return (
@@ -18,7 +13,7 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 					variant,
 				})}
 				prefetch="intent"
-				ref={forwardedRef}
+				ref={ref}
 				to={href}
 			>
 				{children}
@@ -34,14 +29,14 @@ export const ButtonLink = forwardRef<HTMLAnchorElement, ButtonLinkProps>(functio
 				variant,
 			})}
 			href={href}
-			ref={forwardedRef}
+			ref={ref}
 		>
 			{children}
 		</a>
 	);
-});
+}
 
-type NativeAnchorProps = React.AnchorHTMLAttributes<HTMLAnchorElement>;
+type NativeAnchorProps = React.ComponentPropsWithRef<'a'>;
 export type ButtonLinkProps = Omit<NativeAnchorProps, 'href'> &
 	Omit<ButtonVariantProps, 'isLoading'> & {
 		/** URL to be used for the link. */
