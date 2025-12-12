@@ -1,6 +1,5 @@
 export {
 	FieldContext,
-	FieldContextProvider,
 	type FieldContextType,
 	type FieldState,
 	type InputPropsDerivedFromField,

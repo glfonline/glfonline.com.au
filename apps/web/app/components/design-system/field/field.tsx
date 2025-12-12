@@ -3,7 +3,7 @@ import { forwardRef, useId, useMemo } from 'react';
 import { mergeIds } from '../../../lib/merge-ids';
 import { CheckCircleIcon } from '../../vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';
-import { FieldContextProvider, type FieldContextType } from './context';
+import { FieldContext, type FieldContextType } from './context';
 
 // biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
 export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
@@ -45,7 +45,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 		],
 	);
 	return (
-		<FieldContextProvider value={fieldContext}>
+		<FieldContext value={fieldContext}>
 			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={forwardedRef}>
 				<label htmlFor={inputId}>
 					<span className={clsx('text-sm', disabled ? 'text-gray-400' : 'text-gray-700')}>{label} </span>
@@ -58,7 +58,7 @@ export const Field = forwardRef<HTMLDivElement, FieldProps>(function Field(
 				{children}
 				{message && <FieldMessage id={messageId} message={message} tone={tone} />}
 			</div>
-		</FieldContextProvider>
+		</FieldContext>
 	);
 });
 

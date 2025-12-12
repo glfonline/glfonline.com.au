@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { forwardRef, useMemo } from 'react';
 import { mergeIds } from '../../../lib/merge-ids';
-import { FieldContextProvider, type FieldContextType } from './context';
+import { FieldContext, type FieldContextType } from './context';
 import { FieldMessage, type FieldProps, useFieldIds } from './field';
 
 export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function Field(
@@ -43,7 +43,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function
 		],
 	);
 	return (
-		<FieldContextProvider value={fieldContext}>
+		<FieldContext value={fieldContext}>
 			<div {...consumerProps} className={clsx('flex flex-col gap-1', className)} ref={forwardedRef}>
 				<div className="relative flex items-start gap-3">
 					{children}
@@ -55,7 +55,7 @@ export const InlineField = forwardRef<HTMLDivElement, InlineFieldProps>(function
 				</div>
 				{message && <FieldMessage id={messageId} message={message} tone={tone} />}
 			</div>
-		</FieldContextProvider>
+		</FieldContext>
 	);
 });
 
