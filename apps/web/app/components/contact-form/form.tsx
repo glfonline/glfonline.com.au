@@ -1,8 +1,11 @@
-import { mergeForm } from '@tanstack/react-form';
-import { formOptions, initialFormState, useTransform } from '@tanstack/react-form-remix';
+import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
+import { formOptions, useTransform } from '@tanstack/react-form-remix';
+import { useRef } from 'react';
 import { Link, useFetcher } from 'react-router';
 import Turnstile from 'react-turnstile';
+import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
+import { getFirstFormErrorMessage } from '../../lib/get-first-form-error-message';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -25,21 +28,27 @@ const formOpts = formOptions({
 	},
 	validators: {
 		onSubmit: contactFormSchema,
+		onDynamic: contactFormSchema,
 	},
 });
 
 export function ContactForm() {
 	const { isMounted } = useClientOnlyMount();
+	const formRef = useRef<HTMLFormElement>(null);
 	const fetcher = useFetcher<typeof action>({
 		key: 'contact-form',
 	});
 
 	const form = useAppForm({
 		...formOpts,
+		validationLogic: revalidateLogic({
+			mode: 'submit',
+			modeAfterSubmission: 'blur',
+		}),
 		transform: useTransform(
 			(baseForm) => {
-				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : initialFormState;
-				return mergeForm(baseForm, state);
+				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : undefined;
+				return mergeForm(baseForm, state ?? {});
 			},
 			[
 				fetcher.data,
@@ -51,15 +60,16 @@ export function ContactForm() {
 				method: 'post',
 			});
 		},
+		onSubmitInvalid: () => {
+			focusFirstInvalidField(formRef.current);
+		},
 	});
 
-	const formError =
-		fetcher.data && fetcher.data.type === 'error' && 'meta' in fetcher.data.formState
-			? fetcher.data.formState.meta.errors[0]?.message
-			: undefined;
+	const formErrors = useStore(form.store, (formState) => formState.errors);
+	const formErrorMessage = getFirstFormErrorMessage(formErrors);
 
 	// Only show success message if form was successfully submitted and there are no errors
-	const showSuccessMessage = fetcher.data?.type === 'success' && !formError && fetcher.state === 'idle';
+	const showSuccessMessage = fetcher.data?.type === 'success' && !formErrorMessage && fetcher.state === 'idle';
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
@@ -75,14 +85,14 @@ export function ContactForm() {
 					className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 					method="post"
 					name="contact_form"
-					onSubmit={form.handleSubmit}
+					onSubmit={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						form.handleSubmit();
+					}}
+					ref={formRef}
 				>
-					<form.AppField
-						name="first_name"
-						validators={{
-							onBlur: contactFormSchema.shape.first_name,
-						}}
-					>
+					<form.AppField name="first_name">
 						{(field) => (
 							<field.FormField label="First name">
 								<field.TextField />
@@ -90,12 +100,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="last_name"
-						validators={{
-							onBlur: contactFormSchema.shape.last_name,
-						}}
-					>
+					<form.AppField name="last_name">
 						{(field) => (
 							<field.FormField label="Last name">
 								<field.TextField />
@@ -103,12 +108,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="email"
-						validators={{
-							onBlur: contactFormSchema.shape.email,
-						}}
-					>
+					<form.AppField name="email">
 						{(field) => (
 							<field.FormField className="sm:col-span-2" label="Email">
 								<field.TextField type="email" />
@@ -116,12 +116,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="phone_number"
-						validators={{
-							onBlur: contactFormSchema.shape.phone_number,
-						}}
-					>
+					<form.AppField name="phone_number">
 						{(field) => (
 							<field.FormField className="sm:col-span-2" label="Phone number">
 								<field.TextField type="tel" />
@@ -129,12 +124,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="subject"
-						validators={{
-							onBlur: contactFormSchema.shape.subject,
-						}}
-					>
+					<form.AppField name="subject">
 						{(field) => (
 							<field.FormField className="sm:col-span-2" label="Subject">
 								<field.TextField />
@@ -142,12 +132,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="message"
-						validators={{
-							onBlur: contactFormSchema.shape.message,
-						}}
-					>
+					<form.AppField name="message">
 						{(field) => (
 							<field.FormField className="sm:col-span-2" label="Message">
 								<field.TextArea />
@@ -155,12 +140,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="agree_to_privacy_policy"
-						validators={{
-							onBlur: contactFormSchema.shape.agree_to_privacy_policy,
-						}}
-					>
+					<form.AppField name="agree_to_privacy_policy">
 						{(field) => (
 							<div className="sm:col-span-2">
 								<field.InlineFormField label={<PrivacyPolicyLabel />}>
@@ -170,12 +150,7 @@ export function ContactForm() {
 						)}
 					</form.AppField>
 
-					<form.AppField
-						name="token"
-						validators={{
-							onBlur: contactFormSchema.shape.token,
-						}}
-					>
+					<form.AppField name="token">
 						{(field) => (
 							<div className="flex min-h-[65px] items-center sm:col-span-2">
 								{isMounted && (
@@ -208,9 +183,9 @@ export function ContactForm() {
 						)}
 					</form.Subscribe>
 
-					{/* Live region for server errors */}
-					<div aria-live="polite" className={formError ? undefined : 'sr-only'} role="alert">
-						{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
+					{/* Live region for form errors */}
+					<div aria-live="polite" className={formErrorMessage ? undefined : 'sr-only'} role="alert">
+						{formErrorMessage && <FieldMessage id="form-error" message={formErrorMessage} tone="critical" />}
 					</div>
 
 					{showSuccessMessage && <p className="text-center sm:col-span-2">Thank you for your message!</p>}

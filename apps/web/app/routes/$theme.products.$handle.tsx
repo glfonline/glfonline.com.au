@@ -1,7 +1,7 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { captureException } from '@sentry/react-router';
-import { mergeForm } from '@tanstack/react-form';
+import { mergeForm, revalidateLogic } from '@tanstack/react-form';
 import {
 	createServerValidate,
 	formOptions,
@@ -12,7 +12,7 @@ import {
 } from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
 	type ActionFunctionArgs,
 	Form,
@@ -22,6 +22,7 @@ import {
 	useActionData,
 	useLoaderData,
 	useNavigation,
+	useSubmit,
 } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -32,6 +33,7 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { notFound } from '../lib/errors.server';
+import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
@@ -57,8 +59,8 @@ const makeFormOpts = (defaultVariantId: string) => {
 			variantId: defaultVariantId,
 		},
 		validators: {
-			onBlur: cartSchema,
 			onSubmit: cartSchema,
+			onDynamic: cartSchema,
 		},
 	});
 };
@@ -247,6 +249,7 @@ export const headers = routeHeaders;
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 	const actionData = useActionData<ProductActionResult>();
+	const submit = useSubmit();
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
@@ -258,9 +261,15 @@ export default function ProductPage() {
 		return Number.parseFloat(node.price.amount) < Number.parseFloat(node.compareAtPrice.amount);
 	});
 
+	const formRef = useRef<HTMLFormElement>(null);
+
 	// Use the form state from the error case, or initialFormState with the selected variant
 	const form = useAppForm({
 		...makeFormOpts(variant?.node.id || ''),
+		validationLogic: revalidateLogic({
+			mode: 'submit',
+			modeAfterSubmission: 'blur',
+		}),
 		transform: useTransform(
 			(baseForm) => {
 				const state =
@@ -271,6 +280,15 @@ export default function ProductPage() {
 				actionData,
 			],
 		),
+		onSubmit: async ({ value }) => {
+			await submit(value, {
+				method: 'post',
+				replace: true,
+			});
+		},
+		onSubmitInvalid: () => {
+			focusFirstInvalidField(formRef.current);
+		},
 	});
 
 	const navigation = useNavigation();
@@ -324,7 +342,17 @@ export default function ProductPage() {
 							)}
 						</div>
 
-						<Form className="flex flex-col gap-6" method="post" onSubmit={form.handleSubmit} replace>
+						<Form
+							className="flex flex-col gap-6"
+							method="post"
+							onSubmit={(event) => {
+								event.preventDefault();
+								event.stopPropagation();
+								form.handleSubmit();
+							}}
+							ref={formRef}
+							replace
+						>
 							<form.AppField name="variantId">
 								{(field) => {
 									const errorMessage = field.state.meta.errors

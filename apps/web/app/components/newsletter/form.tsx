@@ -1,8 +1,11 @@
-import { mergeForm } from '@tanstack/react-form';
-import { formOptions, initialFormState, useTransform } from '@tanstack/react-form-remix';
+import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
+import { formOptions, useTransform } from '@tanstack/react-form-remix';
+import { useRef } from 'react';
 import { useFetcher } from 'react-router';
 import Turnstile from 'react-turnstile';
+import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
+import { getFirstFormErrorMessage } from '../../lib/get-first-form-error-message';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -21,21 +24,27 @@ const formOpts = formOptions({
 	},
 	validators: {
 		onSubmit: newsletterSchema,
+		onDynamic: newsletterSchema,
 	},
 });
 
 export function NewsletterSignup() {
 	const { isMounted } = useClientOnlyMount();
+	const formRef = useRef<HTMLFormElement>(null);
 	const fetcher = useFetcher<typeof action>({
 		key: 'newsletter-form',
 	});
 
 	const form = useAppForm({
 		...formOpts,
+		validationLogic: revalidateLogic({
+			mode: 'submit',
+			modeAfterSubmission: 'blur',
+		}),
 		transform: useTransform(
 			(baseForm) => {
-				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : initialFormState;
-				return mergeForm(baseForm, state);
+				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : undefined;
+				return mergeForm(baseForm, state ?? {});
 			},
 			[
 				fetcher.data,
@@ -47,15 +56,16 @@ export function NewsletterSignup() {
 				method: 'post',
 			});
 		},
+		onSubmitInvalid: () => {
+			focusFirstInvalidField(formRef.current);
+		},
 	});
 
-	const formError =
-		fetcher.data && fetcher.data.type === 'error' && 'meta' in fetcher.data.formState
-			? fetcher.data.formState.meta.errors[0]?.message
-			: undefined;
+	const formErrors = useStore(form.store, (formState) => formState.errors);
+	const formErrorMessage = getFirstFormErrorMessage(formErrors);
 
 	// Only show success message if form was successfully submitted and there are no errors
-	const showSuccessMessage = fetcher.data?.type === 'success' && !formError && fetcher.state === 'idle';
+	const showSuccessMessage = fetcher.data?.type === 'success' && !formErrorMessage && fetcher.state === 'idle';
 
 	return (
 		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
@@ -69,15 +79,15 @@ export function NewsletterSignup() {
 					className="w-full py-8 sm:flex"
 					method="post"
 					name="newsletter_signup_form"
-					onSubmit={form.handleSubmit}
+					onSubmit={(event) => {
+						event.preventDefault();
+						event.stopPropagation();
+						form.handleSubmit();
+					}}
+					ref={formRef}
 				>
 					<div className="grid w-full gap-6 sm:grid-cols-4">
-						<form.AppField
-							name="first_name"
-							validators={{
-								onBlur: newsletterSchema.shape.first_name,
-							}}
-						>
+						<form.AppField name="first_name">
 							{(field) => (
 								<field.FormField className="sm:col-span-2" label="First name">
 									<field.TextField />
@@ -85,12 +95,7 @@ export function NewsletterSignup() {
 							)}
 						</form.AppField>
 
-						<form.AppField
-							name="last_name"
-							validators={{
-								onBlur: newsletterSchema.shape.last_name,
-							}}
-						>
+						<form.AppField name="last_name">
 							{(field) => (
 								<field.FormField className="sm:col-span-2" label="Last name">
 									<field.TextField />
@@ -98,12 +103,7 @@ export function NewsletterSignup() {
 							)}
 						</form.AppField>
 
-						<form.AppField
-							name="email"
-							validators={{
-								onBlur: newsletterSchema.shape.email,
-							}}
-						>
+						<form.AppField name="email">
 							{(field) => (
 								<field.FormField className="sm:col-span-4" label="Email address">
 									<field.TextField type="email" />
@@ -111,12 +111,7 @@ export function NewsletterSignup() {
 							)}
 						</form.AppField>
 
-						<form.AppField
-							name="gender"
-							validators={{
-								onBlur: newsletterSchema.shape.gender,
-							}}
-						>
+						<form.AppField name="gender">
 							{(field) => {
 								const errorMessage = field.state.meta.errors[0]?.message;
 								const errorMessageId = `${field.name}-error`;
@@ -158,12 +153,7 @@ export function NewsletterSignup() {
 							}}
 						</form.AppField>
 
-						<form.AppField
-							name="token"
-							validators={{
-								onBlur: newsletterSchema.shape.token,
-							}}
-						>
+						<form.AppField name="token">
 							{(field) => (
 								<div className="flex min-h-[65px] flex-col items-center gap-1 sm:col-span-4">
 									{isMounted && (
@@ -195,9 +185,9 @@ export function NewsletterSignup() {
 							)}
 						</form.Subscribe>
 
-						{/* Live region for server errors */}
-						<div aria-live="polite" className={formError ? 'sm:col-span-4' : 'sr-only'} role="alert">
-							{formError && <FieldMessage id="form-error" message={formError} tone="critical" />}
+						{/* Live region for form errors */}
+						<div aria-live="polite" className={formErrorMessage ? 'sm:col-span-4' : 'sr-only'} role="alert">
+							{formErrorMessage && <FieldMessage id="form-error" message={formErrorMessage} tone="critical" />}
 						</div>
 					</div>
 				</fetcher.Form>
