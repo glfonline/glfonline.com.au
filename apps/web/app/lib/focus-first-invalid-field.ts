@@ -12,15 +12,20 @@ const focusableSelector = [
 /**
  * Focus the first focusable element that is marked invalid within a form.
  */
-export function focusFirstInvalidField(formEl: HTMLElement | null) {
+export function focusFirstInvalidField(formEl: ParentNode | null) {
 	if (!formEl) return;
 
-	const invalidEl = formEl.querySelector<HTMLElement>('[aria-invalid="true"]');
+	const invalidEl = formEl.querySelector<Element>('[aria-invalid="true"]');
 	if (!invalidEl) return;
 
-	const focusTarget = invalidEl.matches(focusableSelector)
-		? invalidEl
-		: invalidEl.querySelector<HTMLElement>(focusableSelector);
+	const focusTarget = invalidEl.matches(focusableSelector) ? invalidEl : invalidEl.querySelector(focusableSelector);
+	if (hasFocusMethod(focusTarget)) focusTarget.focus();
+}
 
-	focusTarget?.focus();
+type FocusableElement = Element & {
+	focus: () => void;
+};
+
+function hasFocusMethod(el: Element | null): el is FocusableElement {
+	return !!el && 'focus' in el && typeof el.focus === 'function';
 }

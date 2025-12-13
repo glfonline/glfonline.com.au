@@ -5,6 +5,7 @@ import { Link, useFetcher } from 'react-router';
 import Turnstile from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
+import { getFirstFormErrorMessage } from '../../lib/get-first-form-error-message';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -65,8 +66,7 @@ export function ContactForm() {
 	});
 
 	const formErrors = useStore(form.store, (formState) => formState.errors);
-	const formError = Array.isArray(formErrors[0]) ? formErrors[0][0] : formErrors[0];
-	const formErrorMessage = typeof formError === 'string' ? formError : formError?.message;
+	const formErrorMessage = getFirstFormErrorMessage(formErrors);
 
 	// Only show success message if form was successfully submitted and there are no errors
 	const showSuccessMessage = fetcher.data?.type === 'success' && !formErrorMessage && fetcher.state === 'idle';
