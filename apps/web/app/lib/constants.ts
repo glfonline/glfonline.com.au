@@ -31,7 +31,7 @@ export type NavItem = {
 
 export const socialLinks: Array<
 	NavItem & {
-		icon: (props: React.SVGProps<SVGSVGElement>) => JSX.Element;
+		icon: (props: React.SVGProps<SVGSVGElement>) => React.JSX.Element;
 	}
 > = [
 	{

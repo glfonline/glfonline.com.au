@@ -1,14 +1,10 @@
 import { clsx } from 'clsx';
-import { forwardRef } from 'react';
 import { useFieldContext } from './field/context';
 
-export type CheckboxProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'children'>;
+type NativeInputProps = React.ComponentPropsWithRef<'input'>;
+export type CheckboxProps = Omit<NativeInputProps, 'children' | 'type'>;
 
-// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
-export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Checkbox(
-	{ className, ...consumerProps },
-	forwardedRef,
-) {
+export function Checkbox({ className, ref, ...consumerProps }: CheckboxProps) {
 	const [{ disabled, invalid }, a11yProps] = useFieldContext();
 	return (
 		<div className="flex h-5 items-center">
@@ -21,9 +17,9 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(function Che
 					className,
 				)}
 				disabled={disabled}
-				ref={forwardedRef}
+				ref={ref}
 				type="checkbox"
 			/>
 		</div>
 	);
-});
+}

@@ -1,6 +1,6 @@
 import type { Maybe } from '../types';
 
-export function isNonEmptyArray<T>(value: Maybe<Array<T>>): value is [
+export function isPopulatedArray<T>(value: Maybe<Array<T>>): value is [
 	T,
 	...Array<T>,
 ] {

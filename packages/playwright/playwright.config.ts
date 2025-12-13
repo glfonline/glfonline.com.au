@@ -46,7 +46,7 @@ export default defineConfig({
 			},
 		},
 		{
-			name: 'Desktop Firefox',
+			name: 'Desktop Safari',
 			use: {
 				...devices['Desktop Safari'],
 			},
@@ -120,7 +120,7 @@ export default defineConfig({
 		// Start dev server automatically
 		return {
 			command: 'pnpm -w dev:web',
-			reuseExistingServer: true,
+			reuseExistingServer: !process.env.CI,
 			url: baseURL,
 		};
 	})(),

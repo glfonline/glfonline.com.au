@@ -1,24 +1,21 @@
 import { clsx } from 'clsx';
-import { forwardRef, useCallback, useRef } from 'react';
+import { useCallback, useRef } from 'react';
 import { mergeRefs } from '../../../lib/merge-refs';
 import { Spinner } from '../spinner';
 import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
 
-// biome-ignore lint/nursery/noShadow: It's OK to do this for forwardRef
-export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-	{
-		children,
-		className,
-		disabled = false,
-		isLoading = false,
-		onClick,
-		size,
-		type = 'button',
-		variant,
-		...consumerProps
-	},
-	forwardedRef,
-) {
+export function Button({
+	children,
+	className,
+	disabled = false,
+	isLoading = false,
+	onClick,
+	ref,
+	size,
+	type = 'button',
+	variant,
+	...consumerProps
+}: ButtonProps) {
 	const internalRef = useRef<HTMLButtonElement>(null);
 	const handleOnClick = useCallback(
 		(event: React.MouseEvent<HTMLButtonElement>) => {
@@ -45,7 +42,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 			})}
 			disabled={isDisabled || undefined}
 			onClick={handleOnClick}
-			ref={mergeRefs(internalRef, forwardedRef)}
+			ref={mergeRefs(internalRef, ref)}
 			type={type}
 		>
 			{children}
@@ -59,7 +56,6 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
 			</span>
 		</button>
 	);
-});
+}
 
-type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
-export type ButtonProps = NativeButtonProps & ButtonVariantProps;
+export type ButtonProps = React.ComponentPropsWithRef<'button'> & ButtonVariantProps;

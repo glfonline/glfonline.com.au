@@ -17,7 +17,6 @@ export type FieldContextType = [
 ];
 
 export const FieldContext = createContext<FieldContextType | null>(null);
-export const FieldContextProvider = FieldContext.Provider;
 
 export const FIELD_CONTEXT_ERROR_MESSAGE = 'Input components must be inside a `Field`.';
 
