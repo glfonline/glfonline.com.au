@@ -32,7 +32,7 @@
 		"@portabletext/react": "^5.0.0",
 		"@react-router/node": "^7.9.6",
 		"@sanity/asset-utils": "^2.3.0",
-		"@sanity/image-url": "^1.2.0",
+		"@sanity/image-url": "^2.0.0",
 		"@sentry/react-router": "^10.26.0",
 		"@tanstack/query-async-storage-persister": "^5.90.12",
 		"@tanstack/query-core": "^5.90.10",

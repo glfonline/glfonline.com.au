@@ -1,7 +1,7 @@
 import { PortableText as PortableTextBase } from '@portabletext/react';
 import { getImageDimensions, type SanityAsset } from '@sanity/asset-utils';
 import { Image } from '@unpic/react';
-import { config, urlFor } from './sanity-image';
+import { urlFor } from './sanity-image';
 
 type PortableTextBaseProps = React.ComponentProps<typeof PortableTextBase>;
 export type PortableTextProps = Pick<PortableTextBaseProps, 'value'>;
@@ -9,7 +9,6 @@ export type PortableTextProps = Pick<PortableTextBaseProps, 'value'>;
 export function PortableText({ value = [] }: PortableTextProps) {
 	return (
 		<PortableTextBase
-			{...config}
 			components={{
 				types: {
 					image: ImageComponent,
