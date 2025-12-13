@@ -22,6 +22,7 @@ import {
 	useActionData,
 	useLoaderData,
 	useNavigation,
+	useSubmit,
 } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
@@ -248,6 +249,7 @@ export const headers = routeHeaders;
 export default function ProductPage() {
 	const { theme, product } = useLoaderData<typeof loader>();
 	const actionData = useActionData<ProductActionResult>();
+	const submit = useSubmit();
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
@@ -278,6 +280,12 @@ export default function ProductPage() {
 				actionData,
 			],
 		),
+		onSubmit: async ({ value }) => {
+			await submit(value, {
+				method: 'post',
+				replace: true,
+			});
+		},
 		onSubmitInvalid: () => {
 			focusFirstInvalidField(formRef.current);
 		},
