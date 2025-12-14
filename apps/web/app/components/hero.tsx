@@ -8,6 +8,7 @@ export function Hero({
 	image?: {
 		url: string;
 		alt?: string;
+		aspectRatio?: number;
 	};
 	title?: string;
 }) {
@@ -16,6 +17,7 @@ export function Hero({
 			{image && (
 				<Image
 					alt={image.alt ?? ''}
+					aspectRatio={image.aspectRatio}
 					breakpoints={[
 						640,
 						768,

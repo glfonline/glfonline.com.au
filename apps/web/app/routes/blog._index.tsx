@@ -136,8 +136,6 @@ function PostList() {
 								hotspot: post.mainImage.hotspot,
 							})
 								.auto('format')
-								.height(256)
-								.width(256)
 								.dpr(2)
 								.url()}
 							key={postIndex}
@@ -210,6 +208,7 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 				<div className="relative flex h-48 sm:h-auto sm:w-64">
 					<Image
 						alt=""
+						aspectRatio={1}
 						breakpoints={[
 							512,
 						]}
@@ -262,8 +261,6 @@ function Sidebar() {
 						hotspot: featuredPost.mainImage.hotspot,
 					})
 						.auto('format')
-						.height(256)
-						.width(256)
 						.dpr(2)
 						.url()}
 					publishDate={featuredPost.publishedAt}
