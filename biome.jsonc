@@ -32,6 +32,7 @@
 		"includes": [
 			"**",
 			"!**/__generated__",
+			"!**/src/graphql-env.d.ts",
 			"!**/.cache",
 			"!**/.env",
 			"!**/.sanity",

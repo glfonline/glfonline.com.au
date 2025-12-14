@@ -2,7 +2,14 @@
 	"extends": "@glfonline/tsconfig/dom",
 	"include": ["src"],
 	"compilerOptions": {
-		"verbatimModuleSyntax": false
+		"verbatimModuleSyntax": false,
+		"plugins": [
+			{
+				"name": "gql.tada/ts-plugin",
+				"schema": "./schema.graphql",
+				"tadaOutputLocation": "./src/graphql-env.d.ts"
+			}
+		]
 	},
 	"exclude": ["build", "dist", "node_modules"]
 }

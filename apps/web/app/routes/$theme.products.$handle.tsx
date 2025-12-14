@@ -258,7 +258,7 @@ export default function ProductPage() {
 		if (!node.compareAtPrice) return false;
 
 		// Check if the variant is on sale by comparing prices
-		return Number.parseFloat(node.price.amount) < Number.parseFloat(node.compareAtPrice.amount);
+		return Number(node.price.amount) < Number(node.compareAtPrice.amount);
 	});
 
 	const formRef = useRef<HTMLFormElement>(null);
