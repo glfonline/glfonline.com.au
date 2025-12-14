@@ -338,8 +338,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 	const { theme } = useLoaderData<typeof loader>();
 
 	const isOnSale = node.variants.edges.some(
-		({ node: { compareAtPrice, price } }) =>
-			compareAtPrice && Number.parseFloat(price.amount) < Number.parseFloat(compareAtPrice.amount),
+		({ node: { compareAtPrice, price } }) => compareAtPrice && Number(price.amount) < Number(compareAtPrice.amount),
 	);
 
 	return (

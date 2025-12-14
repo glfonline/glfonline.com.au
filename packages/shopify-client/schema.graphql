@@ -8385,6 +8385,9 @@ type MediaPresentation implements Node {
 	A globally-unique ID.
 	"""
 	id: ID!
+		@deprecated(
+			reason: "MediaPresentation IDs are being deprecated. Access the data directly via the asJson field on the Media type."
+		)
 }
 
 """
@@ -8866,7 +8869,7 @@ type Metaobject implements Node & OnlineStorePublishable {
 	seo: MetaobjectSEO
 
 	"""
-	The type of the metaobject. Defines the namespace of its associated metafields.
+	The type of the metaobject.
 	"""
 	type: String!
 
@@ -14047,7 +14050,7 @@ type SitemapResourceMetaobject implements SitemapResourceInterface {
 	onlineStoreUrlHandle: String
 
 	"""
-	The type of the metaobject. Defines the namespace of its associated metafields.
+	The type of the metaobject.
 	"""
 	type: String!
 

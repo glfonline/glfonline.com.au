@@ -1,19 +1,27 @@
-import { gql } from '@ts-gql/tag/no-transform';
+import type { ResultOf, VariablesOf } from 'gql.tada';
+import { graphql } from './gql';
 
-export type { FragmentData, OperationData } from '@ts-gql/tag';
+export type OperationData<TDoc> = ResultOf<TDoc>;
+
+type LegacyTypes<TDoc> = {
+	___type: {
+		result: ResultOf<TDoc>;
+		variables: VariablesOf<TDoc>;
+	};
+};
 
 /*******************************************************************************
  * Fragments
  ******************************************************************************/
 
-export const MONEY_FRAGMENT = gql`
+export const MONEY_FRAGMENT = graphql(`
 	fragment MONEY_FRAGMENT on MoneyV2 {
 		currencyCode
 		amount
 	}
-` as import('../__generated__/ts-gql/MONEY_FRAGMENT').type;
+`);
 
-export const IMAGE_FRAGMENT = gql`
+export const IMAGE_FRAGMENT = graphql(`
 	fragment IMAGE_FRAGMENT on Image {
 		id
 		altText
@@ -21,9 +29,9 @@ export const IMAGE_FRAGMENT = gql`
 		url
 		width
 	}
-` as import('../__generated__/ts-gql/IMAGE_FRAGMENT').type;
+`);
 
-export const PRODUCT_PRICE_RANGE_FRAGMENT = gql`
+export const PRODUCT_PRICE_RANGE_FRAGMENT = graphql(`
 	fragment PRODUCT_PRICE_RANGE_FRAGMENT on ProductPriceRange {
 		maxVariantPrice {
 			amount
@@ -34,9 +42,9 @@ export const PRODUCT_PRICE_RANGE_FRAGMENT = gql`
 			currencyCode
 		}
 	}
-` as import('../__generated__/ts-gql/PRODUCT_PRICE_RANGE_FRAGMENT').type;
+`);
 
-export const PRODUCT_CONNECTION_FRAGMENT = gql`
+export const PRODUCT_CONNECTION_FRAGMENT = graphql(`
 	fragment PRODUCT_CONNECTION_FRAGMENT on ProductConnection {
 		pageInfo {
 			endCursor
@@ -82,9 +90,9 @@ export const PRODUCT_CONNECTION_FRAGMENT = gql`
 			}
 		}
 	}
-` as import('../__generated__/ts-gql/PRODUCT_CONNECTION_FRAGMENT').type;
+`);
 
-export const PRODUCT_VARIANT_FRAGMENT = gql`
+export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 	fragment PRODUCT_VARIANT_FRAGMENT on ProductVariant {
 		id
 		availableForSale
@@ -110,13 +118,13 @@ export const PRODUCT_VARIANT_FRAGMENT = gql`
 		sku
 		title
 	}
-` as import('../__generated__/ts-gql/PRODUCT_VARIANT_FRAGMENT').type;
+`);
 
 /*******************************************************************************
  * Queries
  ******************************************************************************/
 
-export const LEGAL_PAGE_QUERY = gql`
+export const LEGAL_PAGE_QUERY = graphql(`
 	query LEGAL_PAGE_QUERY($handle: String) {
 		page(handle: $handle) {
 			id
@@ -125,9 +133,10 @@ export const LEGAL_PAGE_QUERY = gql`
 			title
 		}
 	}
-` as import('../__generated__/ts-gql/LEGAL_PAGE_QUERY').type;
+`);
 
-export const COLLECTION_QUERY = gql`
+export const COLLECTION_QUERY = graphql(
+	`
 	query COLLECTION_QUERY(
 		$after: String
 		$before: String
@@ -194,11 +203,14 @@ export const COLLECTION_QUERY = gql`
 			title
 		}
 	}
-	${IMAGE_FRAGMENT}
-	${PRODUCT_PRICE_RANGE_FRAGMENT}
-` as import('../__generated__/ts-gql/COLLECTION_QUERY').type;
+	`,
+	[
+		IMAGE_FRAGMENT,
+		PRODUCT_PRICE_RANGE_FRAGMENT,
+	],
+);
 
-export const COLLECTION_OPTIONS_QUERY = gql`
+export const COLLECTION_OPTIONS_QUERY = graphql(`
 	query COLLECTION_OPTIONS_QUERY($after: String, $filters: [ProductFilter!], $first: Int = 250, $handle: String) {
 		collection(handle: $handle) {
 			id
@@ -221,9 +233,10 @@ export const COLLECTION_OPTIONS_QUERY = gql`
 			}
 		}
 	}
-` as import('../__generated__/ts-gql/COLLECTION_OPTIONS_QUERY').type;
+`);
 
-export const ALL_PRODUCTS_QUERY = gql`
+const ALL_PRODUCTS_QUERY_DOC = graphql(
+	`
 	query ALL_PRODUCTS_QUERY(
 		$first: Int = 20
 		$query: String = ""
@@ -235,10 +248,18 @@ export const ALL_PRODUCTS_QUERY = gql`
 			...PRODUCT_CONNECTION_FRAGMENT
 		}
 	}
-	${PRODUCT_CONNECTION_FRAGMENT}
-` as import('../__generated__/ts-gql/ALL_PRODUCTS_QUERY').type;
+	`,
+	[
+		PRODUCT_CONNECTION_FRAGMENT,
+	],
+);
 
-export const SINGLE_PRODUCT_QUERY = gql`
+// Backwards-compatible helper for one legacy callsite in apps/web.
+export const ALL_PRODUCTS_QUERY = ALL_PRODUCTS_QUERY_DOC as typeof ALL_PRODUCTS_QUERY_DOC &
+	LegacyTypes<typeof ALL_PRODUCTS_QUERY_DOC>;
+
+export const SINGLE_PRODUCT_QUERY = graphql(
+	`
 	query SINGLE_PRODUCT_QUERY($handle: String!) {
 		product(handle: $handle) {
 			id
@@ -284,11 +305,14 @@ export const SINGLE_PRODUCT_QUERY = gql`
 			vendor
 		}
 	}
-	${IMAGE_FRAGMENT}
-	${PRODUCT_VARIANT_FRAGMENT}
-` as import('../__generated__/ts-gql/SINGLE_PRODUCT_QUERY').type;
+	`,
+	[
+		IMAGE_FRAGMENT,
+		PRODUCT_VARIANT_FRAGMENT,
+	],
+);
 
-export const SHOP_QUERY = gql`
+export const SHOP_QUERY = graphql(`
 	query SHOP_QUERY {
 		shop {
 			id
@@ -296,9 +320,10 @@ export const SHOP_QUERY = gql`
 			description
 		}
 	}
-` as import('../__generated__/ts-gql/SHOP_QUERY').type;
+`);
 
-export const CART_QUERY = gql`
+export const CART_QUERY = graphql(
+	`
 	query CART_QUERY($cartId: ID!, $country: CountryCode, $language: LanguageCode)
 	@inContext(country: $country, language: $language) {
 		cart(id: $cartId) {
@@ -394,15 +419,19 @@ export const CART_QUERY = gql`
 		}
 	}
 
-	${IMAGE_FRAGMENT}
-	${MONEY_FRAGMENT}
-` as import('../__generated__/ts-gql/CART_QUERY').type;
+	`,
+	[
+		IMAGE_FRAGMENT,
+		MONEY_FRAGMENT,
+	],
+);
 
 /*******************************************************************************
  * Mutations
  ******************************************************************************/
 
-export const CREATE_CART_MUTATION = gql`
+export const CREATE_CART_MUTATION = graphql(
+	`
 	mutation CREATE_CART_MUTATION($input: CartInput!) {
 		cartCreate(input: $input) {
 			cart {
@@ -469,6 +498,9 @@ export const CREATE_CART_MUTATION = gql`
 			}
 		}
 	}
-	${IMAGE_FRAGMENT}
-	${MONEY_FRAGMENT}
-` as import('../__generated__/ts-gql/CREATE_CART_MUTATION').type;
+	`,
+	[
+		IMAGE_FRAGMENT,
+		MONEY_FRAGMENT,
+	],
+);

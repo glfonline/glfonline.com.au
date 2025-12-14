@@ -15,10 +15,10 @@
 				"SENTRY_PROJECT",
 				"TURNSTILE_SECRET_KEY"
 			],
-			"outputs": ["__generated__/**", "dist/**"]
+			"outputs": ["dist/**"]
 		},
 		"generate": {
-			"outputs": ["schema.graphql"]
+			"outputs": ["schema.graphql", "src/graphql-env.d.ts"]
 		}
 	}
 }
