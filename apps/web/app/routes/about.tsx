@@ -60,14 +60,13 @@ export default function AboutPage() {
 						<Hero
 							image={{
 								alt: aboutImage.asset.altText ?? '',
+								aspectRatio: 1280 / 385,
 								url: urlFor({
 									_ref: aboutImage.asset._id,
 									crop: aboutImage.crop,
 									hotspot: aboutImage.hotspot,
 								})
 									.auto('format')
-									.width(1280)
-									.height(385)
 									.dpr(2)
 									.url(),
 							}}

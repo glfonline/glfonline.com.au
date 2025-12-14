@@ -21,16 +21,19 @@ export function PortableText({ value = [] }: PortableTextProps) {
 
 function ImageComponent({ value }: { value: SanityAsset }) {
 	const { width, height } = getImageDimensions(value);
+	const maxWidth = 580;
+	const renderedWidth = Math.min(width, maxWidth);
+	const renderedHeight = Math.round((renderedWidth * height) / width);
+
 	return (
 		<Image
 			alt={(value as any).alt ?? ''}
-			aspectRatio={width / height}
 			className="mx-auto block"
-			height={height}
+			height={renderedHeight}
 			layout="constrained"
 			priority={false}
-			src={urlFor(value).width(580).fit('max').auto('format').url()}
-			width={width}
+			src={urlFor(value).width(renderedWidth).fit('max').auto('format').url()}
+			width={renderedWidth}
 		/>
 	);
 }

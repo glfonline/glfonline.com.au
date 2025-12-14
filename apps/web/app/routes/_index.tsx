@@ -104,6 +104,7 @@ function Hero() {
 			<div className="flex-1">
 				<Image
 					alt={heroImage.asset.altText ?? ''}
+					aspectRatio={960 / 785}
 					breakpoints={[
 						640,
 						768,
@@ -119,8 +120,6 @@ function Hero() {
 						hotspot: heroImage.hotspot,
 					})
 						.auto('format')
-						.width(960)
-						.height(785)
 						.dpr(2)
 						.url()}
 				/>
@@ -147,8 +146,6 @@ function CollectionPromo() {
 							hotspot: card.image.hotspot,
 						})
 							.auto('format')
-							.width(632)
-							.height(632)
 							.dpr(2)
 							.url(),
 					}}
@@ -180,6 +177,7 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 		<div className="relative aspect-square">
 			<Image
 				alt={image.alt || ''}
+				aspectRatio={1}
 				breakpoints={[
 					1264,
 					1080,

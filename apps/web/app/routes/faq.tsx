@@ -56,14 +56,13 @@ export default function FaqPage() {
 			<Hero
 				image={{
 					alt: faqPage.heroImage.asset.altText ?? '',
+					aspectRatio: 1280 / 385,
 					url: urlFor({
 						_ref: faqPage.heroImage.asset._id,
 						crop: faqPage.heroImage.crop,
 						hotspot: faqPage.heroImage.hotspot,
 					})
 						.auto('format')
-						.width(1280)
-						.height(385)
 						.dpr(2)
 						.url(),
 				}}

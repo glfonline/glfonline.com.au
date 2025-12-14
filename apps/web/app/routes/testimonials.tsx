@@ -60,14 +60,13 @@ export default function TestimonialsPage() {
 				<Hero
 					image={{
 						alt: heroImage.asset.altText ?? '',
+						aspectRatio: 1280 / 385,
 						url: urlFor({
 							_ref: heroImage.asset._id,
 							crop: heroImage.crop,
 							hotspot: heroImage.hotspot,
 						})
 							.auto('format')
-							.width(1280)
-							.height(385)
 							.dpr(2)
 							.url(),
 					}}
@@ -90,6 +89,7 @@ function Testimonials() {
 					<li className="relative flex w-full flex-col-reverse md:col-span-2 md:grid md:grid-cols-12" key={_key}>
 						<Image
 							alt={testimonialImage.asset.altText ?? ''}
+							aspectRatio={767 / 452}
 							breakpoints={[
 								640,
 								750,
@@ -110,8 +110,6 @@ function Testimonials() {
 								hotspot: testimonialImage.hotspot,
 							})
 								.auto('format')
-								.width(767)
-								.height(452)
 								.dpr(2)
 								.url()}
 						/>

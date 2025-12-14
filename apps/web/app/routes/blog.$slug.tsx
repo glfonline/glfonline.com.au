@@ -46,14 +46,13 @@ export default function Page() {
 				<Hero
 					image={{
 						alt: page.mainImage.asset.altText ?? '',
+						aspectRatio: 1280 / 385,
 						url: urlFor({
 							_ref: page.mainImage.asset._id,
 							crop: page.mainImage.crop,
 							hotspot: page.mainImage.hotspot,
 						})
 							.auto('format')
-							.width(1280)
-							.height(385)
 							.dpr(2)
 							.url(),
 					}}
