@@ -57,6 +57,7 @@ export function ContactForm() {
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {
 				action: '/api/contact',
+				encType: 'application/json',
 				method: 'post',
 			});
 		},
@@ -85,6 +86,7 @@ export function ContactForm() {
 					className="grid grid-cols-1 gap-y-6 sm:grid-cols-2 sm:gap-x-8"
 					method="post"
 					name="contact_form"
+					noValidate
 					onSubmit={(event) => {
 						event.preventDefault();
 						event.stopPropagation();

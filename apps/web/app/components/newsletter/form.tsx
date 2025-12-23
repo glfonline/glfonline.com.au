@@ -53,6 +53,7 @@ export function NewsletterSignup() {
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {
 				action: '/api/newsletter',
+				encType: 'application/json',
 				method: 'post',
 			});
 		},
@@ -79,6 +80,7 @@ export function NewsletterSignup() {
 					className="w-full py-8 sm:flex"
 					method="post"
 					name="newsletter_signup_form"
+					noValidate
 					onSubmit={(event) => {
 						event.preventDefault();
 						event.stopPropagation();

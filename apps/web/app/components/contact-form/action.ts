@@ -1,56 +1,20 @@
 import { captureException } from '@sentry/react-router';
-import {
-	createServerValidate,
-	formOptions,
-	initialFormState,
-	type ServerFormState,
-	ServerValidateError,
-} from '@tanstack/react-form-remix';
+import type { ServerFormState } from '@tanstack/react-form-remix';
 import dedent from 'dedent';
-import { type ActionFunctionArgs, data as json } from 'react-router';
+import type { ActionFunctionArgs } from 'react-router';
+import { data as json } from 'react-router';
 import { getClientIPAddress } from 'remix-utils/get-client-ip-address';
 import { Resend } from 'resend';
-import type { z } from 'zod';
 import { EMAIL_ADDRESS } from '../../lib/constants';
+import { type ErrorFormState as BaseErrorFormState, createErrorResponse } from '../../lib/handle-zod-error';
 import { requiredEnv } from '../../lib/required-env';
+import { createZodErrorResponse, validateJson } from '../../lib/validate-json';
+import type { ContactFormSchema } from './schema';
 import { contactFormSchema } from './schema';
 
-const formOpts = formOptions({
-	canSubmitWhenInvalid: true,
-	defaultValues: {
-		first_name: '',
-		last_name: '',
-		email: '',
-		phone_number: '',
-		subject: '',
-		message: '',
-		agree_to_privacy_policy: false,
-		token: '',
-	},
-	validators: {
-		onBlur: contactFormSchema,
-		onSubmit: contactFormSchema,
-	},
-});
+interface BaseFormState extends ServerFormState<ContactFormSchema, undefined> {}
 
-const serverValidate = createServerValidate({
-	...formOpts,
-	onServerValidate: ({ value }) => {
-		if (!value.agree_to_privacy_policy) {
-			return 'You must agree to the Privacy Policy';
-		}
-	},
-});
-
-interface BaseFormState extends ServerFormState<z.infer<typeof contactFormSchema>, undefined> {}
-
-interface ErrorFormState extends BaseFormState {
-	meta: {
-		errors: Array<{
-			message: string;
-		}>;
-	};
-}
+interface ErrorFormState extends BaseFormState, BaseErrorFormState<ContactFormSchema> {}
 
 type ContactFormState = BaseFormState | ErrorFormState;
 
@@ -68,9 +32,17 @@ export type ContactActionResult = ReturnType<
 
 export async function action({ request }: ActionFunctionArgs): Promise<ContactActionResult> {
 	try {
-		const formData = await request.formData();
-		// Use TanStack Form server validation
-		const { first_name, email, last_name, message, phone_number, subject, token } = await serverValidate(formData);
+		const body = await request.json().catch((parseError) => {
+			if (parseError instanceof SyntaxError) {
+				throw new Error('Invalid request format');
+			}
+			throw parseError;
+		});
+		const validationResult = await validateJson(contactFormSchema, body);
+		if (!validationResult.success) {
+			return createZodErrorResponse<ContactFormSchema>(validationResult.error);
+		}
+		const { first_name, email, last_name, message, phone_number, subject, token } = validationResult.data;
 
 		/** Attempt to parse users IP address from request object */
 		const clientIpAddress = getClientIPAddress(request);
@@ -120,9 +92,10 @@ export async function action({ request }: ActionFunctionArgs): Promise<ContactAc
 			html: htmlContent,
 		});
 
-		console.log({
-			resendResponse,
-		});
+		if (!resendResponse.data) {
+			console.error('Failed to send email via Resend:', resendResponse.error);
+			throw resendResponse.error;
+		}
 
 		return json({
 			type: 'success',
@@ -130,29 +103,9 @@ export async function action({ request }: ActionFunctionArgs): Promise<ContactAc
 	} catch (err) {
 		console.error(err);
 
-		if (err instanceof ServerValidateError) {
-			return json({
-				type: 'error',
-				formState: err.formState,
-			});
-		}
-
-		// For other errors, create a form state with the error message
+		// For errors, create a form state with the error message
 		if (err instanceof Error) {
-			const errorFormState: ErrorFormState = {
-				...initialFormState,
-				meta: {
-					errors: [
-						{
-							message: err.message,
-						},
-					],
-				},
-			};
-			return json({
-				type: 'error',
-				formState: errorFormState,
-			});
+			return createErrorResponse<ContactFormSchema>(err.message);
 		}
 
 		// Some other error occurred - let it bubble up to React Router's error boundary
