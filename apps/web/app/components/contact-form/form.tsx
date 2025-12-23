@@ -5,7 +5,7 @@ import { Link, useFetcher } from 'react-router';
 import Turnstile from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
-import { getFirstFormErrorMessage } from '../../lib/get-first-form-error-message';
+import { getErrorMessage, getFormErrors } from '../../lib/form-utils';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -47,8 +47,8 @@ export function ContactForm() {
 		}),
 		transform: useTransform(
 			(baseForm) => {
-				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : undefined;
-				return mergeForm(baseForm, state ?? {});
+				const formState = fetcher.data?.type === 'error' ? fetcher.data.formState : undefined;
+				return mergeForm(baseForm, formState ?? {});
 			},
 			[
 				fetcher.data,
@@ -66,11 +66,10 @@ export function ContactForm() {
 		},
 	});
 
-	const formErrors = useStore(form.store, (formState) => formState.errors);
-	const formErrorMessage = getFirstFormErrorMessage(formErrors);
+	const formErrors = useStore(form.store, getFormErrors);
 
 	// Only show success message if form was successfully submitted and there are no errors
-	const showSuccessMessage = fetcher.data?.type === 'success' && !formErrorMessage && fetcher.state === 'idle';
+	const showSuccessMessage = fetcher.data?.type === 'success' && formErrors.length === 0 && fetcher.state === 'idle';
 
 	return (
 		<article className="relative mx-auto w-full max-w-7xl overflow-hidden bg-white sm:py-12">
@@ -186,9 +185,13 @@ export function ContactForm() {
 					</form.Subscribe>
 
 					{/* Live region for form errors */}
-					<div aria-live="polite" className={formErrorMessage ? undefined : 'sr-only'} role="alert">
-						{formErrorMessage && <FieldMessage id="form-error" message={formErrorMessage} tone="critical" />}
-					</div>
+					{formErrors.length > 0 && (
+						<div aria-live="polite" className="sm:col-span-2" role="alert">
+							{formErrors.map((error, index) => (
+								<FieldMessage id={`form-error-${index}`} key={index} message={getErrorMessage(error)} tone="critical" />
+							))}
+						</div>
+					)}
 
 					{showSuccessMessage && <p className="text-center sm:col-span-2">Thank you for your message!</p>}
 				</fetcher.Form>
