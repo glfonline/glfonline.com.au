@@ -11,10 +11,7 @@ export type InputPropsDerivedFromField = {
 	id: string;
 };
 
-export type FieldContextType = [
-	FieldState,
-	InputPropsDerivedFromField,
-];
+export type FieldContextType = [FieldState, InputPropsDerivedFromField];
 
 export const FieldContext = createContext<FieldContextType | null>(null);
 

@@ -1,5 +1,6 @@
 import { assert, isDefined } from 'emery';
-import { getHeadingStyles, type HeadingVariantProps } from './get-heading-styles';
+import type { HeadingVariantProps } from './get-heading-styles';
+import { getHeadingStyles } from './get-heading-styles';
 
 export function Heading({
 	children,

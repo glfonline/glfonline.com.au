@@ -19,10 +19,7 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 				})
 				.catch(noop);
 		}
-	}, [
-		fetcher,
-		onClose,
-	]);
+	}, [fetcher, onClose]);
 
 	return (
 		<Transition appear show={isOpen}>

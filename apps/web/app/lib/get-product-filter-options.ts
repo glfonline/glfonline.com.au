@@ -54,9 +54,7 @@ export async function getProductFilterOptions({
 	}
 	const options: Array<Option> = [];
 	for (const [key, value] of optionsMap) {
-		let optionValues = [
-			...value,
-		].sort();
+		let optionValues = [...value].sort();
 		if (key === 'Size') {
 			optionValues = sortSizes(optionValues);
 		}

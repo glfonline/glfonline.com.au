@@ -18,9 +18,7 @@ if (import.meta.env.PROD) {
 			/\/favicon.ico/,
 			/\/site\.webmanifest/,
 		],
-		integrations: [
-			Sentry.httpIntegration(),
-		],
+		integrations: [Sentry.httpIntegration()],
 		tracesSampler() {
 			return import.meta.env.MODE === 'production' ? 1 : 0;
 		},

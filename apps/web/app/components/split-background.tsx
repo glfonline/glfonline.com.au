@@ -5,11 +5,11 @@ export function SplitBackground() {
 			<div className="bg-brand-primary" data-theme="mens" />
 			<div className="absolute inset-0">
 				<div
-					className="after:-skew-x-12 flex-1 bg-brand-primary after:absolute after:left-0 after:h-full after:w-1/2 after:transform after:bg-brand-primary"
+					className="flex-1 bg-brand-primary after:absolute after:left-0 after:h-full after:w-1/2 after:-skew-x-12 after:transform after:bg-brand-primary"
 					data-theme="ladies"
 				/>
 				<div
-					className="after:-skew-x-12 flex-1 bg-brand-primary after:absolute after:right-0 after:h-full after:w-1/2 after:transform after:bg-brand-primary"
+					className="flex-1 bg-brand-primary after:absolute after:right-0 after:h-full after:w-1/2 after:-skew-x-12 after:transform after:bg-brand-primary"
 					data-theme="mens"
 				/>
 			</div>

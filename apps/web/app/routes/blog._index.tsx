@@ -1,13 +1,6 @@
 import { Image } from '@unpic/react';
-import {
-	data as json,
-	Link,
-	type LoaderFunctionArgs,
-	type MetaFunction,
-	useLoaderData,
-	useLocation,
-	useNavigate,
-} from 'react-router';
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { data as json, Link, useLoaderData, useLocation, useNavigate } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { ButtonLink } from '../components/design-system/button';
@@ -16,7 +9,8 @@ import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { getBlogPostCount, getBlogPosts } from '../lib/get-blog-posts';
 import { getFeaturedBlogPost } from '../lib/get-featured-blog-post';
-import { PortableText, type PortableTextProps } from '../lib/portable-text';
+import type { PortableTextProps } from '../lib/portable-text';
+import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 import type { Theme } from '../types';
@@ -97,7 +91,7 @@ export default function Blog() {
 						<PostList />
 					</article>
 				</div>
-				<div className="lg:-mr-6 hidden lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
+				<div className="hidden lg:-mr-6 lg:block lg:flex-none lg:overflow-y-auto lg:py-16 lg:pr-6">
 					<Sidebar />
 				</div>
 			</div>
@@ -209,9 +203,7 @@ function Post({ imgSrc, href, heading, excerpt, author, publishDate }: PostProps
 					<Image
 						alt=""
 						aspectRatio={1}
-						breakpoints={[
-							512,
-						]}
+						breakpoints={[512]}
 						className="h-full w-full object-cover sm:absolute sm:inset-0"
 						layout="fullWidth"
 						priority={false}

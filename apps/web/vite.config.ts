@@ -1,7 +1,8 @@
 /// <reference types="vite/client" />
 
 import { reactRouter } from '@react-router/dev/vite';
-import { type SentryReactRouterBuildOptions, sentryReactRouter } from '@sentry/react-router';
+import type { SentryReactRouterBuildOptions } from '@sentry/react-router';
+import { sentryReactRouter } from '@sentry/react-router';
 import { defineConfig } from 'vite';
 
 const sentryConfig: SentryReactRouterBuildOptions = {
@@ -19,18 +20,13 @@ const sentryConfig: SentryReactRouterBuildOptions = {
 			},
 		},
 		sourcemaps: {
-			filesToDeleteAfterUpload: [
-				'./build/**/*.map',
-				'.server-build/**/*.map',
-			],
+			filesToDeleteAfterUpload: ['./build/**/*.map', '.server-build/**/*.map'],
 		},
 	},
 };
 
 export default defineConfig(async (config) => {
-	const plugins = [
-		reactRouter(),
-	];
+	const plugins = [reactRouter()];
 
 	if (config.mode === 'production' && process.env.SENTRY_AUTH_TOKEN) {
 		const sentryPlugin = await sentryReactRouter(sentryConfig, config);

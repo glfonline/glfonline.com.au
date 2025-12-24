@@ -46,9 +46,7 @@ export function LoadingProgress() {
 		return () => {
 			isMounted = false;
 		};
-	}, [
-		isActive,
-	]);
+	}, [isActive]);
 
 	return (
 		<div

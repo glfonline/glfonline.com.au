@@ -1,9 +1,14 @@
 import { createFormHook, createFormHookContexts } from '@tanstack/react-form';
-import { Checkbox, type CheckboxProps } from '../components/design-system/checkbox';
-import { Field, type FieldProps } from '../components/design-system/field';
-import { InlineField, type InlineFieldProps } from '../components/design-system/field/inline-field';
-import { TextArea, type TextAreaProps } from '../components/design-system/text-area';
-import { TextInput, type TextInputProps } from '../components/design-system/text-input';
+import type { CheckboxProps } from '../components/design-system/checkbox';
+import { Checkbox } from '../components/design-system/checkbox';
+import type { FieldProps } from '../components/design-system/field';
+import { Field } from '../components/design-system/field';
+import type { InlineFieldProps } from '../components/design-system/field/inline-field';
+import { InlineField } from '../components/design-system/field/inline-field';
+import type { TextAreaProps } from '../components/design-system/text-area';
+import { TextArea } from '../components/design-system/text-area';
+import type { TextInputProps } from '../components/design-system/text-input';
+import { TextInput } from '../components/design-system/text-input';
 
 export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts();
 

@@ -1,5 +1,6 @@
 import { GET_THEME_PAGE, sanityClient } from '@glfonline/sanity-client';
-import { data as json, type LoaderFunctionArgs, type MetaFunction, useLoaderData } from 'react-router';
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { data as json, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { CollectionCard } from '../components/collection-card';
@@ -11,10 +12,7 @@ import { urlFor } from '../lib/sanity-image';
 import { getSeoMeta } from '../seo';
 
 const themeSchema = z.object({
-	theme: z.enum([
-		'ladies',
-		'mens',
-	]),
+	theme: z.enum(['ladies', 'mens']),
 });
 
 const collectionSchema = z.object({
@@ -26,11 +24,7 @@ const collectionSchema = z.object({
 			href: z.string(),
 			image: imageWithAltSchema,
 			label: z.string(),
-			span: z.enum([
-				'2',
-				'3',
-				'5',
-			]),
+			span: z.enum(['2', '3', '5']),
 		}),
 	),
 	theme: z.string(),

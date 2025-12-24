@@ -50,9 +50,7 @@ export function ContactForm() {
 				const formState = fetcher.data?.type === 'error' ? fetcher.data.formState : undefined;
 				return mergeForm(baseForm, formState ?? {});
 			},
-			[
-				fetcher.data,
-			],
+			[fetcher.data],
 		),
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {

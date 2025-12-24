@@ -24,11 +24,7 @@ export function getErrorMessage(error: unknown): string {
 		}
 		// Try to extract any useful string property
 		const errorObj = error as Record<string, unknown>;
-		for (const key of [
-			'error',
-			'msg',
-			'text',
-		]) {
+		for (const key of ['error', 'msg', 'text']) {
 			if (key in errorObj && typeof errorObj[key] === 'string') {
 				return errorObj[key] as string;
 			}

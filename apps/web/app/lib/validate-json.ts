@@ -1,4 +1,5 @@
-import { initialFormState, type ServerFormState } from '@tanstack/react-form-remix';
+import type { ServerFormState } from '@tanstack/react-form-remix';
+import { initialFormState } from '@tanstack/react-form-remix';
 import { data as json } from 'react-router';
 import type { ZodError, ZodType } from 'zod';
 

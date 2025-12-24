@@ -3,7 +3,8 @@ import { useId, useMemo } from 'react';
 import { mergeIds } from '../../../lib/merge-ids';
 import { CheckCircleIcon } from '../../vectors/check-circle-icon';
 import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';
-import { FieldContext, type FieldContextType } from './context';
+import type { FieldContextType } from './context';
+import { FieldContext } from './context';
 
 export function Field({
 	children,
@@ -31,15 +32,7 @@ export function Field({
 				id: inputId,
 			},
 		],
-		[
-			description,
-			descriptionId,
-			disabled,
-			inputId,
-			invalid,
-			message,
-			messageId,
-		],
+		[description, descriptionId, disabled, inputId, invalid, message, messageId],
 	);
 	return (
 		<FieldContext value={fieldContext}>

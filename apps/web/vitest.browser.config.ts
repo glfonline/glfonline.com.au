@@ -3,14 +3,10 @@ import { playwright } from '@vitest/browser-playwright';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
-	plugins: [
-		react(),
-	],
+	plugins: [react()],
 	test: {
 		globals: false,
-		include: [
-			'app/**/*.browser.test.tsx',
-		],
+		include: ['app/**/*.browser.test.tsx'],
 		browser: {
 			enabled: true,
 			provider: playwright(),

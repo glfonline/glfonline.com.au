@@ -2,7 +2,8 @@ import { clsx } from 'clsx';
 import { useCallback, useRef } from 'react';
 import { mergeRefs } from '../../../lib/merge-refs';
 import { Spinner } from '../spinner';
-import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
+import type { ButtonVariantProps } from './get-button-styles';
+import { getButtonStyles } from './get-button-styles';
 
 export function Button({
 	children,
@@ -23,10 +24,7 @@ export function Button({
 			if (isLoading) return;
 			if (onClick) onClick(event);
 		},
-		[
-			isLoading,
-			onClick,
-		],
+		[isLoading, onClick],
 	);
 
 	const isDisabled = Boolean(disabled) || isLoading;

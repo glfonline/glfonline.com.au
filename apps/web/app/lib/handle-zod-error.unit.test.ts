@@ -22,11 +22,7 @@ describe('createErrorResponse', () => {
 	});
 
 	it('should handle different error messages', () => {
-		const messages = [
-			'Network error',
-			'Server error',
-			'Validation failed',
-		];
+		const messages = ['Network error', 'Server error', 'Validation failed'];
 
 		for (const message of messages) {
 			const response = createErrorResponse<Record<string, never>>(message);

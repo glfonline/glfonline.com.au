@@ -69,11 +69,7 @@ describe('validateJson', () => {
 		});
 
 		const validData = {
-			items: [
-				'a',
-				'b',
-				'c',
-			],
+			items: ['a', 'b', 'c'],
 		};
 
 		const result = await validateJson(arraySchema, validData);

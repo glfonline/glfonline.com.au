@@ -2,28 +2,19 @@ import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { captureException } from '@sentry/react-router';
 import { mergeForm, revalidateLogic } from '@tanstack/react-form';
+import type { ServerFormState } from '@tanstack/react-form-remix';
 import {
 	createServerValidate,
 	formOptions,
 	initialFormState,
-	type ServerFormState,
 	ServerValidateError,
 	useTransform,
 } from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
-import {
-	type ActionFunctionArgs,
-	Form,
-	data as json,
-	type LoaderFunctionArgs,
-	type MetaFunction,
-	useActionData,
-	useLoaderData,
-	useNavigation,
-	useSubmit,
-} from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { Form, data as json, useActionData, useLoaderData, useNavigation, useSubmit } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
@@ -42,10 +33,7 @@ import { getSeoMeta } from '../seo';
 
 const productSchema = z.object({
 	handle: z.string().min(1),
-	theme: z.enum([
-		'ladies',
-		'mens',
-	]),
+	theme: z.enum(['ladies', 'mens']),
 });
 
 const cartSchema = z.object({
@@ -123,10 +111,7 @@ export async function loader({ params }: LoaderFunctionArgs) {
 }
 
 export async function action({ request }: ActionFunctionArgs): Promise<ProductActionResult> {
-	const [formData, session] = await Promise.all([
-		request.formData(),
-		getSession(request),
-	]);
+	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 
 	try {
 		// Get the default variant ID from the form data or use empty string
@@ -163,13 +148,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 		// Only update the session if Shopify accepts the cart
 		if (cartResult.type === 'success') {
 			// Update the real cart now that we know it's valid
-			const updatedCart = addToCart(
-				[
-					...currentCart,
-				],
-				variantId,
-				1,
-			);
+			const updatedCart = addToCart([...currentCart], variantId, 1);
 			await session.setCart(updatedCart);
 			// Return success with session cookie
 			return json(
@@ -276,9 +255,7 @@ export default function ProductPage() {
 					actionData?.data && actionData.data.type === 'error' ? actionData.data.formState : initialFormState;
 				return mergeForm(baseForm, state);
 			},
-			[
-				actionData,
-			],
+			[actionData],
 		),
 		onSubmit: async ({ value }) => {
 			await submit(value, {
@@ -493,9 +470,7 @@ function ImageGallery({
 										<span className="absolute inset-0 overflow-hidden">
 											<Image
 												alt={node.altText || ''}
-												breakpoints={[
-													276,
-												]}
+												breakpoints={[276]}
 												className="h-full w-full object-cover object-center"
 												height={192}
 												layout="constrained"
@@ -525,12 +500,7 @@ function ImageGallery({
 						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
 							<Image
 								alt={node.altText || ''}
-								breakpoints={[
-									640,
-									768,
-									1024,
-									1280,
-								]}
+								breakpoints={[640, 768, 1024, 1280]}
 								className="h-full w-full object-contain object-center sm:rounded-lg"
 								height={624}
 								layout="constrained"

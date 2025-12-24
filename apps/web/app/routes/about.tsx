@@ -1,6 +1,7 @@
 import { ABOUT_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { Fragment } from 'react';
-import { data, type MetaFunction, useLoaderData } from 'react-router';
+import type { MetaFunction } from 'react-router';
+import { data, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { getHeadingStyles } from '../components/design-system/heading';
 import { Divider } from '../components/divider';

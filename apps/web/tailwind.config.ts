@@ -143,9 +143,7 @@ function withOpacity(variableName: string): any {
 }
 
 export default {
-	content: [
-		'./app/**/*.{js,ts,jsx,tsx}',
-	],
+	content: ['./app/**/*.{js,ts,jsx,tsx}'],
 	theme: {
 		extend: {
 			colors: {
@@ -245,10 +243,7 @@ export default {
 				sm: 'calc(var(--radius) - 4px)',
 			},
 			fontFamily: {
-				sans: [
-					'Century Gothic',
-					...defaultTheme.fontFamily.sans,
-				],
+				sans: ['Century Gothic', ...defaultTheme.fontFamily.sans],
 			},
 			ringColor: {
 				brand: {
@@ -275,10 +270,5 @@ export default {
 			},
 		},
 	},
-	plugins: [
-		animatePlugin,
-		formsPlugin,
-		glfPlugin,
-		typographyPlugin,
-	],
+	plugins: [animatePlugin, formsPlugin, glfPlugin, typographyPlugin],
 } satisfies Config;

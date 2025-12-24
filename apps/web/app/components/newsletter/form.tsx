@@ -46,9 +46,7 @@ export function NewsletterSignup() {
 				const formState = fetcher.data?.type === 'error' ? fetcher.data.formState : undefined;
 				return mergeForm(baseForm, formState ?? {});
 			},
-			[
-				fetcher.data,
-			],
+			[fetcher.data],
 		),
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {
@@ -130,12 +128,7 @@ export function NewsletterSignup() {
 									<fieldset {...fieldsetA11yProps} className="flex flex-col gap-4 sm:col-span-4">
 										<legend className="text-gray-700 text-sm">Which list would you like to sign up to?</legend>
 										<div className="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-											{(
-												[
-													'Ladies',
-													'Mens',
-												] as const
-											).map((option) => (
+											{(['Ladies', 'Mens'] as const).map((option) => (
 												<div className="flex items-center gap-3" key={option}>
 													<input
 														className="h-5 w-5 border-gray-300 text-brand-primary focus:ring-brand-light"

@@ -18,12 +18,7 @@ export function Hero({
 				<Image
 					alt={image.alt ?? ''}
 					aspectRatio={image.aspectRatio}
-					breakpoints={[
-						640,
-						768,
-						1024,
-						1280,
-					]}
+					breakpoints={[640, 768, 1024, 1280]}
 					className="absolute inset-0 h-full w-full object-cover"
 					layout="fullWidth"
 					priority

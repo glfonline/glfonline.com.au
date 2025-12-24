@@ -11,16 +11,8 @@ import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
-import {
-	data as json,
-	Link,
-	type LoaderFunctionArgs,
-	type Location,
-	type MetaFunction,
-	useLoaderData,
-	useLocation,
-	useNavigate,
-} from 'react-router';
+import type { LoaderFunctionArgs, Location, MetaFunction } from 'react-router';
+import { data as json, Link, useLoaderData, useLocation, useNavigate } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button } from '../components/design-system/button';
@@ -30,16 +22,14 @@ import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { capitalise } from '../lib/capitalise';
 import { badRequest, notFound, serverError } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
-import { getProductsFromCollectionByTag, type SortBy } from '../lib/get-collection-products';
+import type { SortBy } from '../lib/get-collection-products';
+import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { getSeoMeta } from '../seo';
 
 const collectionSchema = z.object({
 	collection: z.string().min(1),
-	theme: z.enum([
-		'ladies',
-		'mens',
-	]),
+	theme: z.enum(['ladies', 'mens']),
 });
 
 const SortSchema = z.looseObject({
@@ -346,10 +336,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 			<div className="aspect-[3/4] group-hover:opacity-75 sm:aspect-auto sm:h-96">
 				{node.featuredImage?.url ? (
 					<Image
-						breakpoints={[
-							320,
-							640,
-						]}
+						breakpoints={[320, 640]}
 						className="h-full w-full"
 						layout="fullWidth"
 						objectFit="contain"
@@ -431,12 +418,7 @@ function DisplayOptions() {
 				</div>
 			)}
 			{options.map((option) => {
-				if (
-					![
-						'Size',
-						PRODUCT_TYPE,
-					].includes(option.name)
-				) {
+				if (!['Size', PRODUCT_TYPE].includes(option.name)) {
 					return null;
 				}
 				if (option.name === PRODUCT_TYPE && option.values.length <= 1) {

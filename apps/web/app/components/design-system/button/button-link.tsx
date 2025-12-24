@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
-import { type ButtonVariantProps, getButtonStyles } from './get-button-styles';
+import type { ButtonVariantProps } from './get-button-styles';
+import { getButtonStyles } from './get-button-styles';
 
 export function ButtonLink({ className, children, href, ref, size, variant, ...consumerProps }: ButtonLinkProps) {
 	const shouldUseLink = href.startsWith('/');

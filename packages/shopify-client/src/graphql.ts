@@ -204,10 +204,7 @@ export const COLLECTION_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_FRAGMENT,
-		PRODUCT_PRICE_RANGE_FRAGMENT,
-	],
+	[IMAGE_FRAGMENT, PRODUCT_PRICE_RANGE_FRAGMENT],
 );
 
 export const COLLECTION_OPTIONS_QUERY = graphql(`
@@ -249,9 +246,7 @@ const ALL_PRODUCTS_QUERY_DOC = graphql(
 		}
 	}
 	`,
-	[
-		PRODUCT_CONNECTION_FRAGMENT,
-	],
+	[PRODUCT_CONNECTION_FRAGMENT],
 );
 
 // Backwards-compatible helper for one legacy callsite in apps/web.
@@ -306,10 +301,7 @@ export const SINGLE_PRODUCT_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_FRAGMENT,
-		PRODUCT_VARIANT_FRAGMENT,
-	],
+	[IMAGE_FRAGMENT, PRODUCT_VARIANT_FRAGMENT],
 );
 
 export const SHOP_QUERY = graphql(`
@@ -420,10 +412,7 @@ export const CART_QUERY = graphql(
 	}
 
 	`,
-	[
-		IMAGE_FRAGMENT,
-		MONEY_FRAGMENT,
-	],
+	[IMAGE_FRAGMENT, MONEY_FRAGMENT],
 );
 
 /*******************************************************************************
@@ -499,8 +488,5 @@ export const CREATE_CART_MUTATION = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_FRAGMENT,
-		MONEY_FRAGMENT,
-	],
+	[IMAGE_FRAGMENT, MONEY_FRAGMENT],
 );

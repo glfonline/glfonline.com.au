@@ -68,10 +68,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		// Clear the cart if we get an error
 		if (cartResult.type === 'error') {
 			session.setCart([]);
-			const [{ shop: shopData }, navigationData] = await Promise.all([
-				shopifyClient(SHOP_QUERY),
-				getMainNavigation(),
-			]);
+			const [{ shop: shopData }, navigationData] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
 			return {
 				cartCount: 0,
 				mainNavigation: navigationData,
@@ -80,10 +77,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
 		}
 	}
 
-	const [{ shop }, mainNavigation] = await Promise.all([
-		shopifyClient(SHOP_QUERY),
-		getMainNavigation(),
-	]);
+	const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
 
 	// Calculate total quantity by summing all item quantities
 	let cartCount = 0;
@@ -116,9 +110,7 @@ function App() {
 				gtag.pageview(location.pathname, id);
 			}
 		}
-	}, [
-		location.pathname,
-	]);
+	}, [location.pathname]);
 
 	return (
 		<html className="h-full" lang="en">
@@ -165,10 +157,7 @@ export function ErrorBoundary() {
 		if (isResponse) return;
 
 		captureException(error);
-	}, [
-		error,
-		isResponse,
-	]);
+	}, [error, isResponse]);
 
 	const main: React.JSX.Element = (() => {
 		if (isResponse) {

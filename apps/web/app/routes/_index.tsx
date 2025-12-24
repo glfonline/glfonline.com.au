@@ -2,7 +2,8 @@ import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
-import { data, type MetaFunction, useLoaderData } from 'react-router';
+import type { MetaFunction } from 'react-router';
+import { data, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { BrandsWeLove } from '../components/brands-we-love';
 import { ContactForm } from '../components/contact-form/form';
@@ -33,10 +34,7 @@ const homePageSchema = z.object({
 			href: z.string(),
 			image: imageWithAltSchema,
 			label: z.string(),
-			theme: z.enum([
-				'ladies',
-				'mens',
-			]),
+			theme: z.enum(['ladies', 'mens']),
 		}),
 	),
 });
@@ -105,12 +103,7 @@ function Hero() {
 				<Image
 					alt={heroImage.asset.altText ?? ''}
 					aspectRatio={960 / 785}
-					breakpoints={[
-						640,
-						768,
-						1024,
-						1280,
-					]}
+					breakpoints={[640, 768, 1024, 1280]}
 					className="h-full w-full object-cover"
 					layout="fullWidth"
 					priority
@@ -178,15 +171,7 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 			<Image
 				alt={image.alt || ''}
 				aspectRatio={1}
-				breakpoints={[
-					1264,
-					1080,
-					960,
-					828,
-					750,
-					640,
-					632,
-				]}
+				breakpoints={[1264, 1080, 960, 828, 750, 640, 632]}
 				className={clsx(
 					'absolute inset-0 h-full w-full object-cover',
 					objectPositionMap[image.objectPosition ?? 'top'],

@@ -1,6 +1,7 @@
 import { sanityClient, TESTIMONIALS_PAGE_QUERY } from '@glfonline/sanity-client';
 import { Image } from '@unpic/react';
-import { data as json, type MetaFunction, useLoaderData } from 'react-router';
+import type { MetaFunction } from 'react-router';
+import { data as json, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Hero } from '../components/hero';
@@ -90,16 +91,7 @@ function Testimonials() {
 						<Image
 							alt={testimonialImage.asset.altText ?? ''}
 							aspectRatio={767 / 452}
-							breakpoints={[
-								640,
-								750,
-								767,
-								828,
-								960,
-								1080,
-								1280,
-								1534,
-							]}
+							breakpoints={[640, 750, 767, 828, 960, 1080, 1280, 1534]}
 							className="h-full max-h-80 w-full object-cover md:absolute md:inset-0 md:col-span-6 md:col-start-1 md:max-h-fit"
 							layout="fullWidth"
 							priority={false}

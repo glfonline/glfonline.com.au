@@ -17,7 +17,8 @@ import { clsx } from 'clsx';
 import { Fragment, useEffect, useId } from 'react';
 import { NavLink, useLoaderData } from 'react-router';
 import type { loader } from '../../app/root';
-import { type NavItem, socialLinks } from '../lib/constants';
+import type { NavItem } from '../lib/constants';
+import { socialLinks } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
 type MobileMenuProps = {
@@ -36,10 +37,7 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 				document.removeEventListener('click', onClose);
 			};
 		}
-	}, [
-		open,
-		setOpen,
-	]);
+	}, [open, setOpen]);
 
 	const { mainNavigation } = useLoaderData<typeof loader>();
 

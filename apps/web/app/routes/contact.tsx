@@ -1,4 +1,5 @@
-import { data as json, type MetaFunction } from 'react-router';
+import type { MetaFunction } from 'react-router';
+import { data as json } from 'react-router';
 import { ContactForm } from '../components/contact-form/form';
 import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';

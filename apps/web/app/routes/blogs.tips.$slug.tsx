@@ -1,5 +1,6 @@
 import { assert, isString } from 'emery';
-import { type LoaderFunctionArgs, redirect } from 'react-router';
+import type { LoaderFunctionArgs } from 'react-router';
+import { redirect } from 'react-router';
 import { notFound } from '../lib/errors.server';
 
 export function loader({ params }: LoaderFunctionArgs) {

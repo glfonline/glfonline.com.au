@@ -15,15 +15,7 @@ type Vendor = LooseAutocomplete<
 	| 'Sporte Leisure'
 >;
 
-const noSizingChart = [
-	'Accessories',
-	'Cart Bags',
-	'Gift Vouchers',
-	'Gloves',
-	'Headwear',
-	'Shoes & Socks',
-	'Wedges',
-];
+const noSizingChart = ['Accessories', 'Cart Bags', 'Gift Vouchers', 'Gloves', 'Headwear', 'Shoes & Socks', 'Wedges'];
 
 export function getSizingChart({
 	productType,

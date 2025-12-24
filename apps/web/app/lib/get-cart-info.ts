@@ -1,4 +1,5 @@
-import { CREATE_CART_MUTATION, type OperationData, shopifyClient } from '@glfonline/shopify-client';
+import type { OperationData } from '@glfonline/shopify-client';
+import { CREATE_CART_MUTATION, shopifyClient } from '@glfonline/shopify-client';
 import type { CartItem } from './cart';
 
 type CartMutationData = OperationData<typeof CREATE_CART_MUTATION>;

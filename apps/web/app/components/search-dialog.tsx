@@ -17,7 +17,8 @@ import { Fragment, useState } from 'react';
 import { NavLink, useNavigate } from 'react-router';
 import { isPopulatedArray } from '../lib/is-populated-array';
 import { makeProductHref } from '../lib/make-product-href';
-import { type Product, useAlgoliaSearch } from '../lib/use-algolia-search';
+import type { Product } from '../lib/use-algolia-search';
+import { useAlgoliaSearch } from '../lib/use-algolia-search';
 import { Spinner } from './design-system/spinner';
 
 export function SearchDialog({

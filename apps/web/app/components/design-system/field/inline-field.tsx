@@ -1,8 +1,10 @@
 import { clsx } from 'clsx';
 import { useMemo } from 'react';
 import { mergeIds } from '../../../lib/merge-ids';
-import { FieldContext, type FieldContextType } from './context';
-import { FieldMessage, type FieldProps, useFieldIds } from './field';
+import type { FieldContextType } from './context';
+import { FieldContext } from './context';
+import type { FieldProps } from './field';
+import { FieldMessage, useFieldIds } from './field';
 
 export function InlineField({
 	children,
@@ -30,15 +32,7 @@ export function InlineField({
 				id: inputId,
 			},
 		],
-		[
-			description,
-			descriptionId,
-			disabled,
-			inputId,
-			invalid,
-			message,
-			messageId,
-		],
+		[description, descriptionId, disabled, inputId, invalid, message, messageId],
 	);
 	return (
 		<FieldContext value={fieldContext}>

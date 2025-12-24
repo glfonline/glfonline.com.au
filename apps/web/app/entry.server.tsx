@@ -3,7 +3,8 @@ import { PassThrough } from 'node:stream';
 import { createReadableStreamFromReadable } from '@react-router/node';
 import * as Sentry from '@sentry/react-router';
 import { renderToPipeableStream } from 'react-dom/server';
-import { type ActionFunctionArgs, type EntryContext, type LoaderFunctionArgs, ServerRouter } from 'react-router';
+import type { ActionFunctionArgs, EntryContext, LoaderFunctionArgs } from 'react-router';
+import { ServerRouter } from 'react-router';
 
 export default function handleRequest(
 	request: Request,

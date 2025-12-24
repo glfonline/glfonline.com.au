@@ -1,6 +1,7 @@
 import { BLOG_POST_QUERY, sanityClient } from '@glfonline/sanity-client';
 import { assert, isString } from 'emery';
-import { data as json, type LoaderFunctionArgs, type MetaFunction, useLoaderData } from 'react-router';
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { data as json, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { Hero } from '../components/hero';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';

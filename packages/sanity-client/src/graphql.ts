@@ -53,9 +53,7 @@ export const BLOG_POST_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const BLOG_POSTS_COUNT_QUERY = graphql(`
@@ -89,9 +87,7 @@ export const BLOG_PAGE_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const FEATURED_BLOG_POST_QUERY = graphql(
@@ -118,9 +114,7 @@ export const FEATURED_BLOG_POST_QUERY = graphql(
 	}
 
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const MAIN_NAVIGATION_QUERY = graphql(
@@ -156,9 +150,7 @@ export const MAIN_NAVIGATION_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const HOME_PAGE_QUERY = graphql(
@@ -192,9 +184,7 @@ export const HOME_PAGE_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const ABOUT_PAGE_QUERY = graphql(
@@ -212,9 +202,7 @@ export const ABOUT_PAGE_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const TESTIMONIALS_PAGE_QUERY = graphql(
@@ -235,9 +223,7 @@ export const TESTIMONIALS_PAGE_QUERY = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const GET_THEME_PAGE = graphql(
@@ -267,9 +253,7 @@ export const GET_THEME_PAGE = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );
 
 export const GET_FAQS_PAGES = graphql(
@@ -287,7 +271,5 @@ export const GET_FAQS_PAGES = graphql(
 		}
 	}
 	`,
-	[
-		IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT,
-	],
+	[IMAGE_WITH_ALT_FRAGMENT_IMAGE_WITH_ALT],
 );

@@ -1,33 +1,19 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { captureException } from '@sentry/react-router';
-import {
-	createServerValidate,
-	formOptions,
-	initialFormState,
-	type ServerFormState,
-	ServerValidateError,
-} from '@tanstack/react-form-remix';
+import type { ServerFormState } from '@tanstack/react-form-remix';
+import { createServerValidate, formOptions, initialFormState, ServerValidateError } from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import {
-	type ActionFunctionArgs,
-	data,
-	Form,
-	Link,
-	type LoaderFunctionArgs,
-	type MetaFunction,
-	redirect,
-	useFetcher,
-	useLoaderData,
-	useNavigation,
-} from 'react-router';
+import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
+import { data, Form, Link, redirect, useFetcher, useLoaderData, useNavigation } from 'react-router';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
-import { type CartResult, getCartInfo } from '../lib/get-cart-info';
+import type { CartResult } from '../lib/get-cart-info';
+import { getCartInfo } from '../lib/get-cart-info';
 import { getSeoMeta } from '../seo';
 
 export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartResult>>> {
@@ -36,12 +22,7 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnTyp
 	const cartResult = await getCartInfo(cart);
 
 	// Clear cart if there was an error fetching cart info
-	if (
-		[
-			'error',
-			'empty',
-		].includes(cartResult.type)
-	) {
+	if (['error', 'empty'].includes(cartResult.type)) {
 		await session.setCart([]);
 		return data(cartResult, {
 			headers: {
@@ -173,10 +154,7 @@ export type CartActionResult = ReturnType<
 >;
 
 export async function action({ request }: ActionFunctionArgs): Promise<CartActionResult | ReturnType<typeof redirect>> {
-	const [formData, session] = await Promise.all([
-		request.formData(),
-		getSession(request),
-	]);
+	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const intent = formData.get(INTENT);
 
 	try {
@@ -293,14 +271,7 @@ export default function CartPage() {
 	const navigation = useNavigation();
 
 	// Handle null case or empty cart
-	if (
-		[
-			'empty',
-			'error',
-		].includes(cartResult.type) ||
-		!cartResult.cart ||
-		cartResult.cart.lines.edges.length === 0
-	) {
+	if (['empty', 'error'].includes(cartResult.type) || !cartResult.cart || cartResult.cart.lines.edges.length === 0) {
 		return (
 			<div className="bg-white">
 				<div className="mx-auto max-w-2xl px-4 pt-16 pb-24 text-center sm:px-6 lg:max-w-7xl lg:px-8">
@@ -485,7 +456,7 @@ function QuantityPicker({
 				<span
 					className={clsx(
 						fetcher.state === 'loading' && 'opacity-50',
-						'-ml-px relative inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-gray-700 text-sm',
+						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-gray-700 text-sm',
 					)}
 					data-testid="quantity-display"
 				>
@@ -496,7 +467,7 @@ function QuantityPicker({
 					<input name="quantity" type="hidden" value={quantity + 1} />
 					<button
 						className={clsx(
-							'-ml-px relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-gray-700 text-sm',
+							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-gray-700 text-sm',
 							'hover:bg-gray-50',
 							'focus:z-10 focus:border-brand-primary focus:outline-none focus:ring-1 focus:ring-brand-primary',
 							'disabled:opacity-50',
