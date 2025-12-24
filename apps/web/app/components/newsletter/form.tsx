@@ -5,7 +5,7 @@ import { useFetcher } from 'react-router';
 import Turnstile from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
-import { getFirstFormErrorMessage } from '../../lib/get-first-form-error-message';
+import { getErrorMessage, getFormErrors } from '../../lib/form-utils';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -43,8 +43,8 @@ export function NewsletterSignup() {
 		}),
 		transform: useTransform(
 			(baseForm) => {
-				const state = fetcher.data && fetcher.data.type === 'error' ? fetcher.data.formState : undefined;
-				return mergeForm(baseForm, state ?? {});
+				const formState = fetcher.data?.type === 'error' ? fetcher.data.formState : undefined;
+				return mergeForm(baseForm, formState ?? {});
 			},
 			[
 				fetcher.data,
@@ -53,6 +53,7 @@ export function NewsletterSignup() {
 		onSubmit: ({ value }) => {
 			fetcher.submit(value, {
 				action: '/api/newsletter',
+				encType: 'application/json',
 				method: 'post',
 			});
 		},
@@ -61,11 +62,10 @@ export function NewsletterSignup() {
 		},
 	});
 
-	const formErrors = useStore(form.store, (formState) => formState.errors);
-	const formErrorMessage = getFirstFormErrorMessage(formErrors);
+	const formErrors = useStore(form.store, getFormErrors);
 
 	// Only show success message if form was successfully submitted and there are no errors
-	const showSuccessMessage = fetcher.data?.type === 'success' && !formErrorMessage && fetcher.state === 'idle';
+	const showSuccessMessage = fetcher.data?.type === 'success' && formErrors.length === 0 && fetcher.state === 'idle';
 
 	return (
 		<article className="mx-auto w-full max-w-7xl bg-gray-100" id="signup">
@@ -79,6 +79,7 @@ export function NewsletterSignup() {
 					className="w-full py-8 sm:flex"
 					method="post"
 					name="newsletter_signup_form"
+					noValidate
 					onSubmit={(event) => {
 						event.preventDefault();
 						event.stopPropagation();
@@ -186,9 +187,18 @@ export function NewsletterSignup() {
 						</form.Subscribe>
 
 						{/* Live region for form errors */}
-						<div aria-live="polite" className={formErrorMessage ? 'sm:col-span-4' : 'sr-only'} role="alert">
-							{formErrorMessage && <FieldMessage id="form-error" message={formErrorMessage} tone="critical" />}
-						</div>
+						{formErrors.length > 0 && (
+							<div aria-live="polite" className="sm:col-span-4" role="alert">
+								{formErrors.map((error, index) => (
+									<FieldMessage
+										id={`form-error-${index}`}
+										key={index}
+										message={getErrorMessage(error)}
+										tone="critical"
+									/>
+								))}
+							</div>
+						)}
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">

@@ -1,0 +1,61 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`createErrorResponse > should create form state with error message 1`] = `
+{
+  "formState": {
+    "errorMap": {
+      "onServer": undefined,
+    },
+    "errors": [],
+    "meta": {
+      "errors": [
+        {
+          "message": "Test error message",
+        },
+      ],
+    },
+    "values": undefined,
+  },
+  "type": "error",
+}
+`;
+
+exports[`createErrorResponse > should work with different form data types 1`] = `
+{
+  "formState": {
+    "errorMap": {
+      "onServer": undefined,
+    },
+    "errors": [],
+    "meta": {
+      "errors": [
+        {
+          "message": "Error",
+        },
+      ],
+    },
+    "values": undefined,
+  },
+  "type": "error",
+}
+`;
+
+exports[`createErrorResponse > should work with different form data types 2`] = `
+{
+  "formState": {
+    "errorMap": {
+      "onServer": undefined,
+    },
+    "errors": [],
+    "meta": {
+      "errors": [
+        {
+          "message": "Error",
+        },
+      ],
+    },
+    "values": undefined,
+  },
+  "type": "error",
+}
+`;

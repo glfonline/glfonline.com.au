@@ -1,0 +1,114 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`buildFormStateFromZodError > should handle errors with no field errors 1`] = `
+{
+  "errorMap": {
+    "onServer": {},
+  },
+  "errors": [],
+  "meta": {
+    "errors": [
+      {
+        "message": "Only form error",
+      },
+    ],
+  },
+  "values": undefined,
+}
+`;
+
+exports[`buildFormStateFromZodError > should handle nested field paths with dot notation 1`] = `
+{
+  "errorMap": {
+    "onServer": {
+      "user.name": "Name is required",
+    },
+  },
+  "errors": [],
+  "meta": {
+    "errors": undefined,
+  },
+  "values": undefined,
+}
+`;
+
+exports[`buildFormStateFromZodError > should include form-level errors in meta.errors 1`] = `
+{
+  "errorMap": {
+    "onServer": {},
+  },
+  "errors": [],
+  "meta": {
+    "errors": [
+      {
+        "message": "Form-level error",
+      },
+    ],
+  },
+  "values": undefined,
+}
+`;
+
+exports[`buildFormStateFromZodError > should include initialFormState properties 1`] = `
+{
+  "errorMap": {
+    "onServer": {
+      "name": "Name is required",
+    },
+  },
+  "errors": [],
+  "meta": {
+    "errors": undefined,
+  },
+  "values": undefined,
+}
+`;
+
+exports[`buildFormStateFromZodError > should map field errors to errorMap.onServer 1`] = `
+{
+  "errorMap": {
+    "onServer": {
+      "email": "Invalid email",
+      "name": "Name is required",
+    },
+  },
+  "errors": [],
+  "meta": {
+    "errors": undefined,
+  },
+  "values": undefined,
+}
+`;
+
+exports[`buildFormStateFromZodError > should use first error message when field has multiple errors 1`] = `
+{
+  "errorMap": {
+    "onServer": {
+      "email": "Invalid email",
+    },
+  },
+  "errors": [],
+  "meta": {
+    "errors": undefined,
+  },
+  "values": undefined,
+}
+`;
+
+exports[`createZodErrorResponse > should return a Response object with error form state 1`] = `
+{
+  "formState": {
+    "errorMap": {
+      "onServer": {
+        "name": "Name is required",
+      },
+    },
+    "errors": [],
+    "meta": {
+      "errors": undefined,
+    },
+    "values": undefined,
+  },
+  "type": "error",
+}
+`;

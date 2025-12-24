@@ -7,3 +7,5 @@ export const newsletterSchema = z.object({
 	last_name: z.string().min(1, 'Last name is required'),
 	token: z.string(),
 });
+
+export type NewsletterSchema = z.infer<typeof newsletterSchema>;
