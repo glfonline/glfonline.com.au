@@ -5,7 +5,7 @@ import { useFetcher } from 'react-router';
 import Turnstile from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
-import { getErrorMessage, getFormErrors } from '../../lib/form-utils';
+import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -63,6 +63,10 @@ export function NewsletterSignup() {
 	});
 
 	const formErrors = useStore(form.store, getFormErrors);
+	const hasFieldsWithErrors = useStore(form.store, hasFieldErrors);
+
+	// Only show form-level errors if there are no field-level errors
+	const showFormErrors = formErrors.length > 0 && !hasFieldsWithErrors;
 
 	// Only show success message if form was successfully submitted and there are no errors
 	const showSuccessMessage = fetcher.data?.type === 'success' && formErrors.length === 0 && fetcher.state === 'idle';
@@ -187,7 +191,8 @@ export function NewsletterSignup() {
 						</form.Subscribe>
 
 						{/* Live region for form errors */}
-						{formErrors.length > 0 && (
+						{/* Live region for form errors - only show if no field errors */}
+						{showFormErrors && (
 							<div aria-live="polite" className="sm:col-span-4" role="alert">
 								{formErrors.map((error, index) => (
 									<FieldMessage
