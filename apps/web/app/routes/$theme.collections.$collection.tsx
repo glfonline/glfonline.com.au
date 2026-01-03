@@ -12,10 +12,10 @@ import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Image } from '@unpic/react';
 import { Fragment, useId, useState } from 'react';
 import type { LoaderFunctionArgs, Location, MetaFunction } from 'react-router';
-import { data as json, Link, useLoaderData, useLocation, useNavigate } from 'react-router';
+import { data as json, Link, useLoaderData, useLocation } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
-import { Button } from '../components/design-system/button';
+import { ButtonLink } from '../components/design-system/button';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
@@ -25,6 +25,7 @@ import { formatMoney } from '../lib/format-money';
 import type { SortBy } from '../lib/get-collection-products';
 import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
+import { buildNextCursorUrl, buildPrevUrl } from '../lib/pagination-urls';
 import { getSeoMeta } from '../seo';
 
 const collectionSchema = z.object({
@@ -327,9 +328,11 @@ type ProductNode = NonNullable<
 function ProductCard({ node }: { node: ProductNode }) {
 	const { theme } = useLoaderData<typeof loader>();
 
-	const isOnSale = node.variants.edges.some(
-		({ node: { compareAtPrice, price } }) => compareAtPrice && Number(price.amount) < Number(compareAtPrice.amount),
-	);
+	const isOnSale = node.variants.edges.some((edge) => {
+		const variantNode = edge.node;
+		if (!variantNode.compareAtPrice) return false;
+		return Number(variantNode.price.amount) < Number(variantNode.compareAtPrice.amount);
+	});
 
 	return (
 		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
@@ -515,7 +518,9 @@ export function Pagination({
 	search?: string;
 }) {
 	const location = useLocation();
-	const navigate = useNavigate();
+
+	const prevUrl = hasPrevPage ? buildPrevUrl(location) : undefined;
+	const nextUrl = hasNextPage ? buildNextCursorUrl({ location, cursor: endCursor }) : undefined;
 
 	return (
 		<nav
@@ -523,14 +528,10 @@ export function Pagination({
 			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
 			<div className="min-w-0 flex-1">
-				{hasPrevPage && (
-					<Button
-						onClick={async () => {
-							await navigate(-1);
-						}}
-					>
+				{prevUrl && (
+					<ButtonLink href={prevUrl}>
 						Previous
-					</Button>
+					</ButtonLink>
 				)}
 			</div>
 			<p className="mx-auto flex-1 text-center">
@@ -538,16 +539,10 @@ export function Pagination({
 				{search ? ` for "${search}"` : ''}
 			</p>
 			<div className="flex min-w-0 flex-1 justify-end">
-				{hasNextPage && endCursor && (
-					<Button
-						onClick={async () => {
-							const params = new URLSearchParams(location.search);
-							params.set('after', endCursor);
-							await navigate(`${location.pathname}?${params.toString()}`);
-						}}
-					>
+				{nextUrl && (
+					<ButtonLink href={nextUrl}>
 						Next
-					</Button>
+					</ButtonLink>
 				)}
 			</div>
 		</nav>

@@ -2,6 +2,9 @@ import { Link } from 'react-router';
 import type { ButtonVariantProps } from './get-button-styles';
 import { getButtonStyles } from './get-button-styles';
 
+type LinkProps = React.ComponentPropsWithRef<typeof Link>;
+type NativeAnchorProps = React.ComponentPropsWithRef<'a'>;
+
 export function ButtonLink({ className, children, href, ref, size, variant, ...consumerProps }: ButtonLinkProps) {
 	const shouldUseLink = href.startsWith('/');
 	if (shouldUseLink) {
@@ -37,8 +40,7 @@ export function ButtonLink({ className, children, href, ref, size, variant, ...c
 	);
 }
 
-type NativeAnchorProps = React.ComponentPropsWithRef<'a'>;
-export type ButtonLinkProps = Omit<NativeAnchorProps, 'href'> &
+export type ButtonLinkProps = (Omit<LinkProps, 'to' | 'href'> | Omit<NativeAnchorProps, 'href'>) &
 	Omit<ButtonVariantProps, 'isLoading'> & {
 		/** URL to be used for the link. */
 		href: string;
