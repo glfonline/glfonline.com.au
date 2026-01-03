@@ -527,24 +527,12 @@ export function Pagination({
 			aria-label="Pagination"
 			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
-			<div className="min-w-0 flex-1">
-				{prevUrl && (
-					<ButtonLink href={prevUrl}>
-						Previous
-					</ButtonLink>
-				)}
-			</div>
+			<div className="min-w-0 flex-1">{prevUrl && <ButtonLink href={prevUrl}>Previous</ButtonLink>}</div>
 			<p className="mx-auto flex-1 text-center">
 				Showing {results} results
 				{search ? ` for "${search}"` : ''}
 			</p>
-			<div className="flex min-w-0 flex-1 justify-end">
-				{nextUrl && (
-					<ButtonLink href={nextUrl}>
-						Next
-					</ButtonLink>
-				)}
-			</div>
+			<div className="flex min-w-0 flex-1 justify-end">{nextUrl && <ButtonLink href={nextUrl}>Next</ButtonLink>}</div>
 		</nav>
 	);
 }
