@@ -1,6 +1,6 @@
 import { Image } from '@unpic/react';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { data as json, Link, useLoaderData, useLocation, useNavigate } from 'react-router';
+import { data as json, Link, useLoaderData, useLocation } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { ButtonLink } from '../components/design-system/button';
@@ -9,6 +9,7 @@ import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { getBlogPostCount, getBlogPosts } from '../lib/get-blog-posts';
 import { getFeaturedBlogPost } from '../lib/get-featured-blog-post';
+import { buildNextOffsetUrl, buildPrevOffsetUrl } from '../lib/pagination-urls';
 import type { PortableTextProps } from '../lib/portable-text';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
@@ -137,7 +138,7 @@ function PostList() {
 						/>
 					))}
 				</ul>
-				<Pagination hasNextPage={after + POSTS_LIMIT <= count} hasPrevPage={after > POSTS_LIMIT} />
+				<Pagination hasNextPage={after + POSTS_LIMIT <= count} hasPrevPage={after > 0} />
 			</section>
 		</div>
 	);
@@ -146,42 +147,18 @@ function PostList() {
 export function Pagination({ hasNextPage, hasPrevPage }: { hasNextPage: boolean; hasPrevPage: boolean }) {
 	const { after } = useLoaderData<typeof loader>();
 	const location = useLocation();
-	const navigate = useNavigate();
+
+	const prevUrl = hasPrevPage ? buildPrevOffsetUrl({ location, currentOffset: after, limit: POSTS_LIMIT }) : undefined;
+	const nextUrl = hasNextPage ? buildNextOffsetUrl({ location, currentOffset: after, limit: POSTS_LIMIT }) : undefined;
 
 	return (
 		<nav
 			aria-label="Pagination"
 			className="mx-auto mt-6 flex max-w-7xl items-center justify-between font-medium text-gray-700 text-sm"
 		>
-			<div className="min-w-0 flex-1">
-				{hasPrevPage && (
-					<button
-						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
-						onClick={async () => {
-							await navigate(-1);
-						}}
-						type="button"
-					>
-						Previous
-					</button>
-				)}
-			</div>
+			<div className="min-w-0 flex-1">{prevUrl && <ButtonLink href={prevUrl}>Previous</ButtonLink>}</div>
 			<p className="mx-auto flex-1 text-center">{/*  */}</p>
-			<div className="flex min-w-0 flex-1 justify-end">
-				{hasNextPage && (
-					<button
-						className="inline-flex h-10 items-center rounded-md border border-gray-300 bg-white px-4 hover:bg-gray-100 focus:border-pink-600 focus:outline-none focus:ring-2 focus:ring-pink-600 focus:ring-opacity-25 focus:ring-offset-1 focus:ring-offset-pink-600"
-						onClick={async () => {
-							const params = new URLSearchParams(location.search);
-							params.set('after', (after + POSTS_LIMIT).toString());
-							await navigate(`${location.pathname}?${params.toString()}`);
-						}}
-						type="button"
-					>
-						Next
-					</button>
-				)}
-			</div>
+			<div className="flex min-w-0 flex-1 justify-end">{nextUrl && <ButtonLink href={nextUrl}>Next</ButtonLink>}</div>
 		</nav>
 	);
 }
