@@ -10,10 +10,8 @@
 		"./react-app": "./react-app.json"
 	},
 	"scripts": {
-		"check": "pnpm biome check",
 		"check:format": "pnpm biome format",
 		"check:lint": "pnpm biome lint",
-		"fix": "pnpm biome check --write",
 		"fix:format": "pnpm biome format --write",
 		"fix:lint": "pnpm biome lint --write"
 	}

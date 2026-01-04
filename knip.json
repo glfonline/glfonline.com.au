@@ -1,0 +1,45 @@
+{
+	"$schema": "https://unpkg.com/knip@5/schema.json",
+	"ignoreBinaries": ["biome", "only-allow", "sort-package-json", "remix-serve", "tsc"],
+	"ignoreDependencies": [
+		"@tanstack/query-core",
+		"@tanstack/react-query-devtools",
+		"@vercel/node",
+		"react-router-dom",
+		"turbo-ignore"
+	],
+	"ignoreExportsUsedInFile": {
+		"interface": true,
+		"type": true
+	},
+	"workspaces": {
+		"apps/cms": {
+			"entry": ["sanity.config.ts", "sanity.cli.ts", "desk/**/*.ts", "schemas/**/*.ts"],
+			"project": ["**/*.ts", "!dist/**", "!.sanity/**"],
+			"ignoreDependencies": ["@sanity/vision"]
+		},
+		"apps/web": {
+			"entry": [
+				"app/routes/**/*.{ts,tsx}",
+				"app/components/**/*.{ts,tsx}",
+				"app/lib/**/*.ts",
+				"app/lib/**/*.tsx",
+				"vitest.*.config.ts"
+			],
+			"project": [
+				"app/**/*.{ts,tsx}",
+				"vitest.*.config.ts",
+				"!**/*.test.{ts,tsx}",
+				"!**/*.spec.{ts,tsx}",
+				"!build/**",
+				"!.cache/**",
+				"!.turbo/**"
+			],
+			"ignoreDependencies": ["@types/dedent", "@vitest/coverage-v8"]
+		},
+		"packages/tsconfig": {
+			"ignore": ["react-app.json"],
+			"ignoreDependencies": ["react"]
+		}
+	}
+}

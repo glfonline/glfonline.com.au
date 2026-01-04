@@ -35,7 +35,7 @@ export type NoStoreStrategy = {
 
 const PUBLIC = 'public';
 const PRIVATE = 'private';
-export const NO_STORE = 'no-store';
+const NO_STORE = 'no-store';
 
 const optionMapping: {
 	[key: string]: string;
@@ -46,7 +46,7 @@ const optionMapping: {
 	staleIfError: 'stale-if-error',
 };
 
-export function generateCacheControlHeader(cacheOptions: CachingStrategy): string {
+function generateCacheControlHeader(cacheOptions: CachingStrategy): string {
 	const cacheControl: Array<string> = [];
 	for (const key of Object.keys(cacheOptions)) {
 		if (key === 'mode') {
@@ -69,7 +69,7 @@ export function routeHeaders({ loaderHeaders }: { loaderHeaders: Headers }) {
 		: {};
 }
 
-export function CacheNone(): NoStoreStrategy {
+function CacheNone(): NoStoreStrategy {
 	return {
 		mode: NO_STORE,
 	};
@@ -81,7 +81,7 @@ function guardExpirableModeType(overrideOptions?: CachingStrategy) {
 	}
 }
 
-export function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
+function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
 		mode: PUBLIC,
@@ -91,7 +91,7 @@ export function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
 	};
 }
 
-export function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions {
+function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
 		mode: PUBLIC,
@@ -101,7 +101,7 @@ export function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions 
 	};
 }
 
-export function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
+function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
 		mode: PUBLIC,
@@ -111,7 +111,7 @@ export function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 	};
 }
 
-export function CacheDefault(overrideOptions?: CachingStrategy): AllCacheOptions {
+function CacheDefault(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
 		mode: PUBLIC,
@@ -121,7 +121,7 @@ export function CacheDefault(overrideOptions?: CachingStrategy): AllCacheOptions
 	};
 }
 
-export function CacheCustom(overrideOptions: CachingStrategy): AllCacheOptions {
+function CacheCustom(overrideOptions: CachingStrategy): AllCacheOptions {
 	return overrideOptions as AllCacheOptions;
 }
 

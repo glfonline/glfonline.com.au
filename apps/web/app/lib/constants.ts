@@ -4,9 +4,9 @@ import { InstagramIcon } from '../components/vectors/instagram-icon';
 export const SENTRY_DSN =
 	'https://a2413a79501942ae9580c3a12c4addb2:a20584dc5ae345e6b8c9b627642ffd94@o4504862915297280.ingest.sentry.io/4504862916476928';
 export const CHANTALE_PHONE = '0431 248 847';
-export const GORDON_PHONE = '0401 726 598';
+const GORDON_PHONE = '0401 726 598';
 export const WEB_ADDRESS = 'https://www.glfonline.com.au';
-export const PUBLIC_STORE_DOMAIN = 'golfladiesfirst.myshopify.com';
+const PUBLIC_STORE_DOMAIN = 'golfladiesfirst.myshopify.com';
 export const EMAIL_ADDRESS = 'info@glfonline.com.au';
 export const CONTACT_NUMBERS = [
 	{
@@ -18,8 +18,8 @@ export const CONTACT_NUMBERS = [
 		phone: GORDON_PHONE,
 	},
 ];
-export const FACEBOOK_URL = 'https://www.facebook.com/GLFONLINE.COM.AU';
-export const INSTAGRAM_URL = 'https://www.instagram.com/glf.online';
+const FACEBOOK_URL = 'https://www.facebook.com/GLFONLINE.COM.AU';
+const INSTAGRAM_URL = 'https://www.instagram.com/glf.online';
 export const STREET_ADDRESS = '18 Ericson Place';
 export const SUBURB = 'Port Macquarie';
 export const POSTCODE = '2444';

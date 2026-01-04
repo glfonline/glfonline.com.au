@@ -15,10 +15,8 @@ test('Search, add to cart, modify quantities, checkout flow', async ({ page, bas
 		.first()
 		.click();
 
-	// Wait for the search dialog to be visible and the input to be ready
-	await page.waitForSelector('[data-testid="search-input"]', {
-		state: 'visible',
-	});
+	// Wait for the search input to be visible and ready (Headless UI transitions may keep dialog hidden)
+	await page.getByTestId('search-input').waitFor({ state: 'visible' });
 
 	// Search for "select height"
 	await page.getByTestId('search-input').fill('select height');

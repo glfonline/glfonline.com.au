@@ -56,7 +56,7 @@ test.describe('SEO Meta Tags', () => {
 
 	test('should have correct meta tags on privacy policy page', async ({ page, baseURL }) => {
 		invariant(baseURL, 'Base URL must be defined');
-		await page.goto(`${baseURL}/privacy-policy`);
+		await page.goto(`${baseURL}/privacy-policy`, { waitUntil: 'networkidle' });
 		await expect(page.locator('meta[name="viewport"]')).toBeAttached();
 		await expect(page.locator('meta[charset="utf-8"]')).toBeAttached();
 		const title = await page.locator('title').textContent();

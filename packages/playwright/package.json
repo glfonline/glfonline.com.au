@@ -5,23 +5,24 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"check": "pnpm biome check && pnpm run check:types",
+		"check:deps": "pnpm --dir ../.. exec knip --workspace packages/playwright --no-exit-code --dependencies",
+		"check:exports": "pnpm --dir ../.. exec knip --workspace packages/playwright --no-exit-code --exports",
 		"check:format": "pnpm biome format",
 		"check:lint": "pnpm biome lint",
 		"check:types": "tsc --noEmit",
 		"clean": "pnpm clean:outputs && rm -rf node_modules",
 		"clean:outputs": "rm -rf .turbo && rm -rf playwright-report && rm -rf test-results",
-		"fix": "pnpm biome check --write",
+		"fix:deps": "pnpm --dir ../.. exec knip --workspace packages/playwright --fix --fix-type dependencies --no-exit-code",
+		"fix:exports": "pnpm --dir ../.. exec knip --workspace packages/playwright --fix --fix-type exports --no-exit-code",
 		"fix:format": "pnpm biome format --write",
 		"fix:lint": "pnpm biome lint --write",
 		"test:e2e": "pnpm exec playwright install && playwright test"
 	},
 	"devDependencies": {
-		"@glfonline/tsconfig": "workspace:^",
-		"@glfonline/web": "workspace:^",
 		"@playwright/test": "^1.57.0",
 		"@types/node": "^24.10.3",
 		"dotenv": "^17.2.3",
+		"knip": "^5.78.0",
 		"tiny-invariant": "^1.3.3"
 	}
 }
