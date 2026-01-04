@@ -4,6 +4,14 @@ import { getButtonStyles } from './get-button-styles';
 
 type LinkProps = React.ComponentPropsWithRef<typeof Link>;
 type NativeAnchorProps = React.ComponentPropsWithRef<'a'>;
+type CommonButtonProps = Omit<ButtonVariantProps, 'isLoading'>;
+type CommonLinkProps = Omit<LinkProps, 'to' | 'href'>;
+type CommonAnchorProps = Omit<NativeAnchorProps, 'href'>;
+
+export interface ButtonLinkProps extends CommonButtonProps, CommonLinkProps, CommonAnchorProps {
+	/** URL to be used for the link. */
+	href: string;
+}
 
 export function ButtonLink({ className, children, href, ref, size, variant, ...consumerProps }: ButtonLinkProps) {
 	const shouldUseLink = href.startsWith('/');
@@ -39,9 +47,3 @@ export function ButtonLink({ className, children, href, ref, size, variant, ...c
 		</a>
 	);
 }
-
-export type ButtonLinkProps = (Omit<LinkProps, 'to' | 'href'> | Omit<NativeAnchorProps, 'href'>) &
-	Omit<ButtonVariantProps, 'isLoading'> & {
-		/** URL to be used for the link. */
-		href: string;
-	};
