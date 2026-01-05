@@ -42,24 +42,24 @@
 			"persistent": true
 		},
 		"fix": {
-			"cache": false,
-			"dependsOn": ["^fix", "fix:deps", "fix:exports", "fix:lint", "fix:format"]
+			"dependsOn": ["^fix", "fix:deps", "fix:exports", "fix:lint", "fix:format"],
+			"outputs": []
 		},
 		"fix:format": {
-			"cache": false,
-			"dependsOn": ["^fix:format", "fix:lint"]
+			"dependsOn": ["^fix:format", "fix:lint"],
+			"outputs": []
 		},
 		"fix:deps": {
-			"cache": false,
-			"dependsOn": ["^fix:deps"]
+			"dependsOn": ["^fix:deps"],
+			"outputs": []
 		},
 		"fix:exports": {
-			"cache": false,
-			"dependsOn": ["^fix:exports", "fix:deps"]
+			"dependsOn": ["^fix:exports", "fix:deps"],
+			"outputs": []
 		},
 		"fix:lint": {
-			"cache": false,
-			"dependsOn": ["^fix:lint", "fix:exports"]
+			"dependsOn": ["^fix:lint", "fix:exports"],
+			"outputs": []
 		},
 		"test:browser": {
 			"dependsOn": ["^test:browser"],
