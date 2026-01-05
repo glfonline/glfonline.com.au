@@ -10,7 +10,7 @@ import { TextArea } from '../components/design-system/text-area';
 import type { TextInputProps } from '../components/design-system/text-input';
 import { TextInput } from '../components/design-system/text-input';
 
-export const { fieldContext, formContext, useFieldContext, useFormContext } = createFormHookContexts();
+const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
 type FormFieldProps<T> = Omit<T, 'checked' | 'name' | 'onBlur' | 'onChange' | 'value'>;
 

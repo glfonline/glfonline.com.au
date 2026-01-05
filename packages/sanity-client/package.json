@@ -17,7 +17,8 @@
 	"scripts": {
 		"build": "pnpm run build:tsdown",
 		"build:tsdown": "tsdown",
-		"check": "biome check && pnpm run check:types",
+		"check:deps": "pnpm --dir ../.. exec knip --workspace packages/sanity-client --no-exit-code --dependencies",
+		"check:exports": "pnpm --dir ../.. exec knip --workspace packages/sanity-client --no-exit-code --exports",
 		"check:format": "biome format",
 		"check:lint": "biome lint",
 		"check:types": "tsc --noEmit",
@@ -25,13 +26,13 @@
 		"clean:outputs": "rm -rf .turbo dist .eslintcache",
 		"dev": "pnpm run dev:tsdown",
 		"dev:tsdown": "tsdown --watch src",
-		"fix": "biome check --write",
+		"fix:deps": "pnpm --dir ../.. exec knip --workspace packages/sanity-client --fix --fix-type dependencies --no-exit-code",
+		"fix:exports": "pnpm --dir ../.. exec knip --workspace packages/sanity-client --fix --fix-type exports --no-exit-code",
 		"fix:format": "biome format --write",
 		"fix:lint": "biome lint --write",
 		"generate": "graphql-codegen --config codegen.json && pnpm exec gql-tada generate output --tsconfig ./tsconfig.json && node -e \"const fs=require('node:fs');const p='src/graphql-env.d.ts';let s=fs.readFileSync(p,'utf8');s=s.replace(/^\\/\\* eslint-disable \\*\\/\\n?/,'').replace(/^\\/\\* prettier-ignore \\*\\/\\n?/,'');fs.writeFileSync(p,s);\" && pnpm run fix:format"
 	},
 	"dependencies": {
-		"@graphql-typed-document-node/core": "^3.2.0",
 		"gql.tada": "^1.8.13",
 		"graphql": "^16.12.0"
 	},
@@ -39,7 +40,7 @@
 		"@glfonline/tsconfig": "workspace:^",
 		"@graphql-codegen/cli": "^6.1.0",
 		"@graphql-codegen/schema-ast": "^5.0.0",
-		"react": "^19.2.3",
+		"knip": "^5.78.0",
 		"tsdown": "^0.18.0",
 		"typescript": "^5.9.3"
 	}

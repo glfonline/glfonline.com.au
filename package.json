@@ -7,7 +7,9 @@
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
-		"check": "turbo run check:format check:lint check:types",
+		"check": "turbo run check",
+		"check:deps": "turbo run check:deps",
+		"check:exports": "turbo run check:exports",
 		"check:format": "turbo run check:format",
 		"check:lint": "turbo run check:lint",
 		"check:types": "turbo run check:types",
@@ -18,7 +20,9 @@
 		"dev:cms": "stale-dep && turbo run dev --filter=@glfonline/cms...",
 		"dev:packages": "stale-dep && turbo run dev --filter=./packages/*",
 		"dev:web": "stale-dep && turbo run dev --filter=@glfonline/web...",
-		"fix": "turbo run fix:format fix:lint",
+		"fix": "turbo run fix",
+		"fix:deps": "turbo run fix:deps",
+		"fix:exports": "turbo run fix:exports",
 		"fix:format": "turbo run fix:format",
 		"fix:lint": "turbo run fix:lint",
 		"fresh": "pnpm run clean && pnpm install",
@@ -35,6 +39,7 @@
 		"@glfonline/tsconfig": "workspace:^",
 		"@manypkg/cli": "^0.25.1",
 		"@playwright/test": "^1.57.0",
+		"knip": "^5.78.0",
 		"stale-dep": "^0.8.4",
 		"turbo": "^2.7.1",
 		"turbo-ignore": "^2.6.3",
@@ -48,5 +53,15 @@
 	"manypkg": {
 		"defaultBranch": "main",
 		"workspaceProtocol": "require"
+	},
+	"pnpm": {
+		"overrides": {
+			"esbuild@<0.25.0": ">=0.25.0",
+			"path-to-regexp@>=4.0.0 <6.3.0": ">=6.3.0",
+			"undici@<5.29.0": ">=5.29.0",
+			"undici@>=4.5.0 <5.28.5": ">=5.28.5",
+			"vite": "^7.2.7",
+			"jiti": "^2.6.1"
+		}
 	}
 }

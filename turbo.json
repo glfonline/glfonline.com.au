@@ -7,19 +7,71 @@
 			"dependsOn": ["^build"],
 			"outputs": ["dist/**"]
 		},
-		"check:format": {},
-		"check:lint": {},
-		"check:types": {},
+		"check": {
+			"dependsOn": ["^check", "check:format", "check:lint", "check:deps", "check:exports", "check:types"],
+			"outputs": []
+		},
+		"check:deps": {
+			"dependsOn": ["^check:deps"],
+			"outputs": []
+		},
+		"check:exports": {
+			"dependsOn": ["^check:exports", "check:deps"],
+			"outputs": []
+		},
+		"check:format": {
+			"dependsOn": ["^check:format"],
+			"outputs": []
+		},
+		"check:lint": {
+			"dependsOn": ["^check:lint", "check:format"],
+			"outputs": []
+		},
+		"check:types": {
+			"dependsOn": ["^build", "^check:types", "check:exports"],
+			"outputs": []
+		},
+		"clean:outputs": {
+			"cache": false,
+			"dependsOn": ["^clean:outputs"],
+			"outputs": []
+		},
 		"dev": {
 			"cache": false,
+			"outputs": [],
 			"persistent": true
 		},
-		"fix:format": {},
-		"fix:lint": {},
-		"test:unit": {},
-		"test:browser": {},
+		"fix": {
+			"dependsOn": ["^fix", "fix:deps", "fix:exports", "fix:lint", "fix:format"],
+			"outputs": []
+		},
+		"fix:format": {
+			"dependsOn": ["^fix:format", "fix:lint"],
+			"outputs": []
+		},
+		"fix:deps": {
+			"dependsOn": ["^fix:deps"],
+			"outputs": []
+		},
+		"fix:exports": {
+			"dependsOn": ["^fix:exports", "fix:deps"],
+			"outputs": []
+		},
+		"fix:lint": {
+			"dependsOn": ["^fix:lint", "fix:exports"],
+			"outputs": []
+		},
+		"test:browser": {
+			"dependsOn": ["^test:browser"],
+			"outputs": []
+		},
 		"test:e2e": {
-			"dependsOn": ["^build"]
+			"dependsOn": ["^build"],
+			"outputs": []
+		},
+		"test:unit": {
+			"dependsOn": ["^test:unit"],
+			"outputs": []
 		}
 	}
 }

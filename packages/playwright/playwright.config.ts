@@ -72,8 +72,9 @@ export default defineConfig({
 	/**
 	 * Reporter to use.
 	 * @see https://playwright.dev/docs/test-reporters
+	 * Use list for console output (non-blocking) and html for report file generation
 	 */
-	reporter: 'html',
+	reporter: [['list'], ['html', { open: 'never' }]],
 
 	/**
 	 * Retry on CI only.
@@ -127,6 +128,9 @@ export default defineConfig({
 
 	/**
 	 * Opt out of parallel tests on CI.
+	 *
+	 * Explicitly set the number of workers Playwright should use.
+	 * 3 for macos-latest on public GitHub repos.
 	 */
-	workers: process.env.CI ? 1 : undefined,
+	workers: process.env.CI ? 3 : undefined,
 });

@@ -6,9 +6,13 @@
 			"dependsOn": ["^build"],
 			"env": [
 				"AKISMET_API_KEY",
+				"COMMIT_SHA",
+				"DEV",
 				"ENABLE_EXPERIMENTAL_COREPACK",
 				"ENCRYPTION_KEY",
+				"MODE",
 				"NODE_ENV",
+				"PROD",
 				"RESEND_API_KEY",
 				"SENDGRID_API_KEY",
 				"SENTRY_AUTH_TOKEN",
@@ -18,6 +22,9 @@
 				"TURNSTILE_SECRET_KEY"
 			],
 			"outputs": [".cache/**", "build/**", "public/build/**"]
+		},
+		"check:lint": {
+			"env": ["DEV", "MODE", "PROD"]
 		},
 		"check:types": {
 			"dependsOn": ["^build"]

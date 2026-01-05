@@ -5,8 +5,14 @@
 		"build": {
 			"env": ["BASE_URL", "CI", "PORT"]
 		},
+		"check:lint": {
+			"env": ["BASE_URL", "CI", "PORT", "SKIP_WEB_SERVER"]
+		},
 		"check:types": {
 			"dependsOn": []
+		},
+		"test:e2e": {
+			"env": ["BASE_URL", "CI", "PORT", "SKIP_WEB_SERVER"]
 		}
 	}
 }

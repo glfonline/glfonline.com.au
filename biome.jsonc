@@ -101,6 +101,7 @@
 				"noFloatingPromises": "on",
 				"noImportCycles": "off", // TODO: enable this
 				"noShadow": "on",
+				"noUndeclaredEnvVars": "error",
 				"noUnresolvedImports": "off",
 				"noUselessUndefined": "on",
 				"useExhaustiveSwitchCases": "on",

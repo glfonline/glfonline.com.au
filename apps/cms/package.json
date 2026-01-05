@@ -5,7 +5,8 @@
 	"type": "module",
 	"scripts": {
 		"build": "sanity build",
-		"check": "pnpm biome check && pnpm run check:types",
+		"check:deps": "pnpm --dir ../.. exec knip --workspace apps/cms --no-exit-code --dependencies",
+		"check:exports": "pnpm --dir ../.. exec knip --workspace apps/cms --no-exit-code --exports",
 		"check:format": "pnpm biome format",
 		"check:lint": "pnpm biome lint",
 		"check:types": "tsc --noEmit",
@@ -15,7 +16,8 @@
 		"deploy:graphql": "sanity graphql deploy",
 		"deploy:studio": "sanity deploy",
 		"dev": "sanity dev",
-		"fix": "pnpm biome check --write",
+		"fix:deps": "pnpm --dir ../.. exec knip --workspace apps/cms --fix --fix-type dependencies --no-exit-code",
+		"fix:exports": "pnpm --dir ../.. exec knip --workspace apps/cms --fix --fix-type exports --no-exit-code",
 		"fix:format": "pnpm biome format --write",
 		"fix:lint": "pnpm biome lint --write",
 		"start": "sanity start"
@@ -29,6 +31,7 @@
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
+		"knip": "^5.78.0",
 		"typescript": "^5.9.3"
 	}
 }
