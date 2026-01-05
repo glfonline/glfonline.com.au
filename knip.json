@@ -22,8 +22,7 @@
 			"entry": [
 				"app/routes/**/*.{ts,tsx}",
 				"app/components/**/*.{ts,tsx}",
-				"app/lib/**/*.ts",
-				"app/lib/**/*.tsx",
+				"app/lib/**/*.{ts,tsx}",
 				"vitest.*.config.ts"
 			],
 			"project": [
