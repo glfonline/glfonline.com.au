@@ -33,15 +33,15 @@
 		"generate": "graphql-codegen --config codegen.json && pnpm exec gql-tada generate output --tsconfig ./tsconfig.json && node -e \"const fs=require('node:fs');const p='src/graphql-env.d.ts';let s=fs.readFileSync(p,'utf8');s=s.replace(/^\\/\\* eslint-disable \\*\\/\\n?/,'').replace(/^\\/\\* prettier-ignore \\*\\/\\n?/,'');fs.writeFileSync(p,s);\" && pnpm run fix:format"
 	},
 	"dependencies": {
-		"gql.tada": "^1.8.13",
+		"gql.tada": "^1.9.0",
 		"graphql": "^16.12.0"
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
 		"@graphql-codegen/cli": "^6.1.0",
 		"@graphql-codegen/schema-ast": "^5.0.0",
-		"knip": "^5.78.0",
-		"tsdown": "^0.18.0",
+		"knip": "^5.80.1",
+		"tsdown": "^0.18.4",
 		"typescript": "^5.9.3"
 	}
 }
