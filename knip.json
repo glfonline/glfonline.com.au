@@ -34,7 +34,14 @@
 				"!.cache/**",
 				"!.turbo/**"
 			],
-			"ignoreDependencies": ["@types/dedent", "@vitest/coverage-v8"]
+			"ignoreDependencies": [
+				"@types/dedent",
+				"@vitest/coverage-v8",
+				"@tailwindcss/forms",
+				"@tailwindcss/typography",
+				"tailwindcss",
+				"tailwindcss-animate"
+			]
 		},
 		"packages/tsconfig": {
 			"ignore": ["react-app.json"],

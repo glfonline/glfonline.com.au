@@ -1,3 +1,190 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/typography';
+@plugin 'tailwindcss-animate';
+
+@layer base {
+	:root {
+		--color-gray-50: #fbfbfb;
+		--color-gray-100: #f7f7f7;
+		--color-gray-200: #ebebeb;
+		--color-gray-300: #dcdcdc;
+		--color-gray-400: #b2b2b2;
+		--color-gray-500: #808080;
+		--color-gray-600: #636363;
+		--color-gray-700: #515151;
+		--color-gray-800: #3f3f3f;
+		--color-gray-900: #2e2e2e;
+		--color-pink-50: #fff4fa;
+		--color-pink-100: #ffe0f1;
+		--color-pink-200: #fcc7e5;
+		--color-pink-300: #faa5d3;
+		--color-pink-400: #f76aaf;
+		--color-pink-500: #f2308e;
+		--color-pink-600: #e2006d;
+		--color-pink-700: #c20c5b;
+		--color-pink-800: #99154b;
+		--color-pink-900: #751a3d;
+		--color-blue-50: #ebf4ff;
+		--color-blue-100: #e2eeff;
+		--color-blue-200: #c5dbff;
+		--color-blue-300: #a4c4fe;
+		--color-blue-400: #749ffc;
+		--color-blue-500: #3f76f8;
+		--color-blue-600: #2157eb;
+		--color-blue-700: #1640bd;
+		--color-blue-800: #122775;
+		--color-blue-900: #0c153c;
+		--color-brand-50: var(--color-gray-50); /* #fbfbfb */
+		--color-brand-100: var(--color-gray-100); /* #f7f7f7 */
+		--color-brand-200: var(--color-gray-200); /* #ebebeb */
+		--color-brand-300: var(--color-gray-300); /* #dcdcdc */
+		--color-brand-400: var(--color-gray-400); /* #b2b2b2 */
+		--color-brand-500: var(--color-gray-500); /* #808080 */
+		--color-brand-600: var(--color-gray-600); /* #636363 */
+		--color-brand-700: var(--color-gray-700); /* #515151 */
+		--color-brand-800: var(--color-gray-800); /* #3f3f3f */
+		--color-brand-900: var(--color-gray-900); /* #2e2e2e */
+		--color-brand-primary: var(--color-gray-900); /* #2e2e2e */
+		--color-brand-primary-light: var(--color-gray-800); /* #3f3f3f */
+		--color-brand-focus-ring: var(--color-gray-900); /* #2e2e2e */
+		--color-brand: var(--color-gray-900); /* #2e2e2e - for ring utilities */
+
+		--radius: 0.5rem;
+	}
+
+	[data-theme='ladies'] {
+		--color-brand-50: var(--color-pink-50); /* #fff4fa */
+		--color-brand-100: var(--color-pink-100); /* #ffe0f1 */
+		--color-brand-200: var(--color-pink-200); /* #fcc7e5 */
+		--color-brand-300: var(--color-pink-300); /* #faa5d3 */
+		--color-brand-400: var(--color-pink-400); /* #f76aaf */
+		--color-brand-500: var(--color-pink-500); /* #f2308e */
+		--color-brand-600: var(--color-pink-600); /* #e2006d */
+		--color-brand-700: var(--color-pink-700); /* #c20c5b */
+		--color-brand-800: var(--color-pink-800); /* #99154b */
+		--color-brand-900: var(--color-pink-900); /* #751a3d */
+		--color-brand-primary: var(--color-pink-600); /* #e2006d */
+		--color-brand-primary-light: var(--color-pink-500); /* #f2308e */
+		--color-brand-focus-ring: var(--color-pink-400); /* #f76aaf */
+		--color-brand: var(--color-pink-400); /* #f76aaf - for ring utilities */
+	}
+
+	[data-theme='mens'] {
+		--color-brand-50: var(--color-blue-50); /* #ebf4ff */
+		--color-brand-100: var(--color-blue-100); /* #e2eeff */
+		--color-brand-200: var(--color-blue-200); /* #c5dbff */
+		--color-brand-300: var(--color-blue-300); /* #a4c4fe */
+		--color-brand-400: var(--color-blue-400); /* #749ffc */
+		--color-brand-500: var(--color-blue-500); /* #3f76f8 */
+		--color-brand-600: var(--color-blue-600); /* #2157eb */
+		--color-brand-700: var(--color-blue-700); /* #1640bd */
+		--color-brand-800: var(--color-blue-800); /* #122775 */
+		--color-brand-900: var(--color-blue-900); /* #0c153c */
+		--color-brand-primary: var(--color-blue-900); /* #0c153c */
+		--color-brand-primary-light: var(--color-blue-800); /* #122775 */
+		--color-brand-focus-ring: var(--color-blue-600); /* #2157eb */
+		--color-brand: var(--color-blue-600); /* #2157eb - for ring utilities */
+	}
+
+	/* Default border color - restore v3 behavior */
+	*,
+	::after,
+	::before,
+	::backdrop,
+	::file-selector-button {
+		border-color: var(--color-gray-200, currentColor);
+	}
+}
+
+@theme {
+	/* Colors with opacity support using RGB variables */
+	--color-black: #2c2c2c;
+	--color-true-black: #000;
+
+	/* Font family */
+	--font-sans:
+		'Century Gothic', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
+		'Noto Color Emoji';
+
+	/* Border radius */
+	--radius-lg: var(--radius);
+	--radius-md: calc(var(--radius) - 2px);
+	--radius-sm: calc(var(--radius) - 4px);
+
+	/* Ring width - customize default to match v3 behavior (3px instead of 1px) */
+	--default-ring-width: 3px;
+
+	/* Animations */
+	--animate-accordion-down: accordion-down 0.2s ease-out;
+	--animate-accordion-up: accordion-up 0.2s ease-out;
+	/* Colors with opacity support using space-separated RGB values */
+	--color-gray-50: var(--color-gray-50);
+	--color-gray-100: var(--color-gray-100);
+	--color-gray-200: var(--color-gray-200);
+	--color-gray-300: var(--color-gray-300);
+	--color-gray-400: var(--color-gray-400);
+	--color-gray-500: var(--color-gray-500);
+	--color-gray-600: var(--color-gray-600);
+	--color-gray-700: var(--color-gray-700);
+	--color-gray-800: var(--color-gray-800);
+	--color-gray-900: var(--color-gray-900);
+
+	--color-pink-50: var(--color-pink-50);
+	--color-pink-100: var(--color-pink-100);
+	--color-pink-200: var(--color-pink-200);
+	--color-pink-300: var(--color-pink-300);
+	--color-pink-400: var(--color-pink-400);
+	--color-pink-500: var(--color-pink-500);
+	--color-pink-600: var(--color-pink-600);
+	--color-pink-700: var(--color-pink-700);
+	--color-pink-800: var(--color-pink-800);
+	--color-pink-900: var(--color-pink-900);
+
+	--color-blue-50: var(--color-blue-50);
+	--color-blue-100: var(--color-blue-100);
+	--color-blue-200: var(--color-blue-200);
+	--color-blue-300: var(--color-blue-300);
+	--color-blue-400: var(--color-blue-400);
+	--color-blue-500: var(--color-blue-500);
+	--color-blue-600: var(--color-blue-600);
+	--color-blue-700: var(--color-blue-700);
+	--color-blue-800: var(--color-blue-800);
+	--color-blue-900: var(--color-blue-900);
+
+	/* Brand colors reference the base colors and will be overridden by theme selectors */
+	--color-brand-50: var(--color-brand-50);
+	--color-brand-100: var(--color-brand-100);
+	--color-brand-200: var(--color-brand-200);
+	--color-brand-300: var(--color-brand-300);
+	--color-brand-400: var(--color-brand-400);
+	--color-brand-500: var(--color-brand-500);
+	--color-brand-600: var(--color-brand-600);
+	--color-brand-700: var(--color-brand-700);
+	--color-brand-800: var(--color-brand-800);
+	--color-brand-900: var(--color-brand-900);
+	--color-brand-primary: var(--color-brand-primary);
+	--color-brand-primary-light: var(--color-brand-primary-light);
+	--color-brand-focus-ring: var(--color-brand-focus-ring);
+
+	/* Brand color for ring utilities - allows ring-brand/50 to work */
+	--color-brand: var(--color-brand-focus-ring);
+}
+
+@keyframes accordion-down {
+	from {
+		height: 0;
+	}
+	to {
+		height: var(--radix-accordion-content-height);
+	}
+}
+
+@keyframes accordion-up {
+	from {
+		height: var(--radix-accordion-content-height);
+	}
+	to {
+		height: 0;
+	}
+}

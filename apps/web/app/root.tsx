@@ -120,7 +120,7 @@ function App() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex min-h-full flex-col bg-background text-foreground">
+			<body className="relative flex min-h-full flex-col bg-white text-gray-900">
 				{import.meta.env.PROD && (
 					<>
 						<GoogleAnalytics />
@@ -184,7 +184,7 @@ export function ErrorBoundary() {
 				<Meta />
 				<Links />
 			</head>
-			<body className="relative flex h-full flex-col bg-background text-foreground">
+			<body className="relative flex h-full flex-col bg-white text-gray-900">
 				{main}
 				<Scripts />
 			</body>
