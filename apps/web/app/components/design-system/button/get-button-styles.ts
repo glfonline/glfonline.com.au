@@ -2,7 +2,7 @@ import type { VariantProps } from 'class-variance-authority';
 import { cva } from 'class-variance-authority';
 
 export const getButtonStyles = cva(
-	'inline-flex items-center justify-center gap-2 whitespace-nowrap border font-bold uppercase transition duration-300 focus:outline-none focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
+	'inline-flex items-center justify-center gap-2 whitespace-nowrap border font-bold uppercase transition duration-300 focus:outline-hidden focus:ring-2 disabled:cursor-not-allowed disabled:opacity-50',
 	{
 		variants: {
 			variant: {
@@ -14,7 +14,7 @@ export const getButtonStyles = cva(
 				brand: [
 					'border-transparent bg-brand-primary text-white',
 					'hover:bg-white hover:text-black',
-					'focus:ring-brand focus:ring-opacity-75',
+					'focus:ring-brand/75',
 				],
 				neutral: [
 					'bg-gray-900 text-white border-transparent',
@@ -27,7 +27,7 @@ export const getButtonStyles = cva(
 				regular: 'px-6 h-12 text-base',
 			},
 			isLoading: {
-				true: '!cursor-wait',
+				true: 'cursor-wait!',
 				false: '',
 			},
 		},

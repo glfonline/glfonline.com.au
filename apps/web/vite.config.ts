@@ -3,6 +3,7 @@
 import { reactRouter } from '@react-router/dev/vite';
 import type { SentryReactRouterBuildOptions } from '@sentry/react-router';
 import { sentryReactRouter } from '@sentry/react-router';
+import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 const sentryConfig: SentryReactRouterBuildOptions = {
@@ -26,7 +27,7 @@ const sentryConfig: SentryReactRouterBuildOptions = {
 };
 
 export default defineConfig(async (config) => {
-	const plugins = [reactRouter()];
+	const plugins = [reactRouter(), tailwindcss()];
 
 	if (config.mode === 'production' && process.env.SENTRY_AUTH_TOKEN) {
 		const sentryPlugin = await sentryReactRouter(sentryConfig, config);

@@ -182,13 +182,13 @@ function CollectionCard({ cta, heading, image, theme }: CollectionCardProps) {
 				src={image.src}
 			/>
 			<div
-				className="relative flex h-full flex-col items-center justify-end gap-4 bg-gradient-to-t from-true-black/50 via-transparent p-8"
+				className="relative flex h-full flex-col items-center justify-end gap-4 bg-linear-to-t from-true-black/50 via-transparent p-8"
 				data-theme={theme}
 			>
 				<Heading color="light" id={id} size="2">
 					{heading}
 				</Heading>
-				<p className="mx-auto flex w-full max-w-[10rem] flex-col items-stretch text-center">
+				<p className="mx-auto flex w-full max-w-40 flex-col items-stretch text-center">
 					<ButtonLink
 						aria-describedby={id}
 						className="before:absolute before:inset-0"
