@@ -158,7 +158,7 @@ export function ContactForm() {
 							<div className="flex min-h-[65px] items-center sm:col-span-2">
 								{isMounted && (
 									<Turnstile
-										className="[&>*]:!w-full"
+										className="*:w-full!"
 										onVerify={field.handleChange}
 										sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 										size="normal"

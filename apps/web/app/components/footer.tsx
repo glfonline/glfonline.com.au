@@ -8,13 +8,13 @@ import { PhoneIcon } from './vectors/phone-icon';
 
 export function Footer() {
 	return (
-		<footer className="flex-shrink-0 bg-white">
+		<footer className="shrink-0 bg-white">
 			<div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
 				<div className="mx-auto grid items-start py-12 md:grid-cols-5 md:justify-between">
 					<div className="flex flex-col md:col-span-3 md:flex-row">
 						<Link
 							aria-current="page"
-							className="-m-4 my-auto flex rounded-lg p-4 focus:bg-gray-50 focus:shadow-outline-primary focus:outline-none focus:ring-2 focus:ring-brand focus:ring-offset-2"
+							className="-m-4 my-auto flex rounded-lg p-4 focus:bg-gray-50 focus:shadow-outline-primary focus:outline-hidden focus:ring-2 focus:ring-brand focus:ring-offset-2"
 							prefetch="intent"
 							to="/"
 						>
@@ -31,7 +31,7 @@ export function Footer() {
 											{col.map((c) => (
 												<li className="mt-3 first:mt-0" key={c.href}>
 													<Link
-														className="font-bold text-gray-700 transition duration-150 ease-in-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
+														className="font-bold text-gray-700 transition duration-150 ease-in-out hover:text-primary focus:text-primary focus:underline focus:outline-hidden"
 														prefetch="intent"
 														to={c.href}
 													>
@@ -50,7 +50,7 @@ export function Footer() {
 							<div className="mt-3 first:mt-0" key={heading}>
 								<dt className="sr-only">{heading}</dt>
 								<dd className="group flex gap-3">
-									<Icon className="h-6 w-6 flex-shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
+									<Icon className="h-6 w-6 shrink-0 text-gray-400 transition duration-150 ease-in-out group-hover:text-primary" />
 									{description}
 								</dd>
 							</div>
@@ -62,7 +62,7 @@ export function Footer() {
 						<p className="text-center text-base text-gray-700 leading-6">
 							Website by{' '}
 							<a
-								className="font-bold transition duration-150 ease-out hover:text-primary focus:text-primary focus:underline focus:outline-none"
+								className="font-bold transition duration-150 ease-out hover:text-primary focus:text-primary focus:underline focus:outline-hidden"
 								href="https://www.lukebennett.com.au/"
 							>
 								Luke Bennett
@@ -87,7 +87,7 @@ const descriptionList = [
 				{CONTACT_NUMBERS.map(({ name, phone }, index) => (
 					<Fragment key={name}>
 						<a
-							className="inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
+							className="inline-block text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-hidden"
 							href={`tel:${phone}`}
 						>
 							{name}: {phone}
@@ -104,7 +104,7 @@ const descriptionList = [
 		description: (
 			<>
 				<a
-					className="text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-none"
+					className="text-gray-600 transition duration-150 ease-in-out hover:text-gray-700 hover:underline focus:text-primary focus:underline focus:outline-hidden"
 					href={`mailto:${EMAIL_ADDRESS}`}
 				>
 					{EMAIL_ADDRESS}
