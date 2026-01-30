@@ -5,3 +5,11 @@ packages:
 # Security: Wait 2 days (2880 minutes) before installing newly released packages
 # This helps protect against compromised packages that are often discovered and removed quickly
 minimumReleaseAge: 2880
+
+overrides:
+  esbuild@<0.25.0: ">=0.25.0"
+  jiti: ^2.6.1
+  path-to-regexp@>=4.0.0: ">=6.3.0"
+  undici@<5.29.0: ">=5.29.0"
+  vite: ^7.3.1
+  vitest: ^4.0.18
