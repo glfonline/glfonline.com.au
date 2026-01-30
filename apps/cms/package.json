@@ -23,15 +23,15 @@
 		"start": "sanity start"
 	},
 	"dependencies": {
-		"@sanity/vision": "^5.2.0",
-		"react": "^19.2.3",
-		"react-dom": "^19.2.3",
-		"sanity": "^5.2.0",
-		"styled-components": "^6.2.0"
+		"@sanity/vision": "^5.7.0",
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
+		"sanity": "^5.7.0",
+		"styled-components": "^6.3.8"
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
-		"knip": "^5.80.1",
+		"knip": "^5.82.1",
 		"typescript": "^5.9.3"
 	}
 }
