@@ -41,7 +41,7 @@
 		"@graphql-codegen/cli": "^6.1.1",
 		"@graphql-codegen/schema-ast": "^5.0.0",
 		"knip": "^5.82.1",
-		"tsdown": "^0.18.4",
+		"tsdown": "^0.20.0",
 		"typescript": "^5.9.3"
 	}
 }
