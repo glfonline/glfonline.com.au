@@ -53,7 +53,7 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 					leaveFrom="opacity-100"
 					leaveTo="opacity-0"
 				>
-					<div className="fixed inset-0 bg-black bg-opacity-25" />
+					<div className="fixed inset-0 bg-black/25" />
 				</TransitionChild>
 
 				<div className="fixed inset-0 z-40 flex">
@@ -123,12 +123,12 @@ export function MobileMenu({ open, setOpen }: MobileMenuProps) {
 							</div>
 
 							{/* Social Links */}
-							<div className="mt-auto flex flex-shrink-0 justify-between border-gray-200 border-t p-4">
+							<div className="mt-auto flex shrink-0 justify-between border-gray-200 border-t p-4">
 								<div className="text-gray-500">&copy; GLF Online {new Date().getFullYear()}</div>
 								<div className="flex gap-4">
 									{socialLinks.map((link) => (
 										<a
-											className="text-gray-400 transition duration-150 ease-in-out hover:text-gray-500 focus:text-primary focus:outline-none"
+											className="text-gray-400 transition duration-150 ease-in-out hover:text-gray-500 focus:text-primary focus:outline-hidden"
 											href={link.href}
 											key={link.href}
 										>

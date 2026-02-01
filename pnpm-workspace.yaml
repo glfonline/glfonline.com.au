@@ -7,9 +7,18 @@ packages:
 minimumReleaseAge: 2880
 
 overrides:
-  esbuild@<0.25.0: ">=0.25.0"
-  jiti: ^2.6.1
-  path-to-regexp@>=4.0.0: ">=6.3.0"
-  undici@<5.29.0: ">=5.29.0"
+  # Remove deprecated node-domexception - Node.js 18+ has native DOMException
+  node-domexception: '-'
+  # Fix path-to-regexp ReDoS vulnerability (backtracking regex)
+  path-to-regexp@>=4.0.0 <6.3.0: '>=8.3.0'
+  # Fix undici decompression chain DoS vulnerability
+  undici: '>=7.19.2'
   vite: ^7.3.1
   vitest: ^4.0.18
+
+# Suppress warnings for deprecated packages we can't fix (upstream issues)
+allowedDeprecatedVersions:
+  # whatwg-encoding is deprecated but @exodus/bytes isn't API-compatible
+  # jsdom 27.4.0+ uses @exodus/bytes directly, but jsdom 26.1.0 (from sanity) still needs whatwg-encoding
+  # Upstream fix: upgrade jsdom or wait for sanity to upgrade jsdom
+  whatwg-encoding: '*'

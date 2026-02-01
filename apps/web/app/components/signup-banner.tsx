@@ -37,7 +37,7 @@ export function SignupBanner() {
 				</div>
 				<div className="flex flex-1 justify-end">
 					<button
-						className="-m-3 p-3 focus-visible:outline-offset-[-4px]"
+						className="-m-3 p-3 focus-visible:-outline-offset-4"
 						onClick={() => {
 							setShowBanner(false);
 						}}
