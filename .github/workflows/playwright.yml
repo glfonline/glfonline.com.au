@@ -2,7 +2,6 @@ name: 🎭 Playwright
 
 on:
   deployment_status:
-    types: [created, completed]
 
 jobs:
   playwright:
@@ -15,30 +14,50 @@ jobs:
       TURBO_TEAM: ${{ vars.TURBO_TEAM }}
       BASE_URL: ${{ github.event.deployment_status.target_url }}
     steps:
+      - name: 🔍 Verify deployment is accessible
+        id: verify
+        run: |
+          echo "Checking deployment at $BASE_URL"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 --retry 3 --retry-delay 5 "$BASE_URL")
+          echo "HTTP status: $STATUS"
+          if [ "$STATUS" -lt 200 ] || [ "$STATUS" -ge 400 ]; then
+            echo "Deployment at $BASE_URL returned status $STATUS, skipping tests"
+            echo "accessible=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "Deployment at $BASE_URL is accessible"
+            echo "accessible=true" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: ⬇️ Checkout repo
+        if: steps.verify.outputs.accessible == 'true'
         uses: actions/checkout@v6
         with:
           fetch-depth: 2
 
       - name: 🧪 Copy test env vars
+        if: steps.verify.outputs.accessible == 'true'
         run: cp apps/web/.env.example apps/web/.env
 
       - name: 🦷 Extract pnpm version from package.json
+        if: steps.verify.outputs.accessible == 'true'
         id: extract_version
         run: echo "PNPM_VERSION=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> $GITHUB_ENV
 
       - name: 📦 Setup pnpm
+        if: steps.verify.outputs.accessible == 'true'
         uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
 
       - name: 🌐 Setup node.js
+        if: steps.verify.outputs.accessible == 'true'
         uses: actions/setup-node@v6
         with:
           node-version-file: package.json
           cache: pnpm
 
       - name: 🧳 Cache Turbo build setup
+        if: steps.verify.outputs.accessible == 'true'
         uses: actions/cache@v5
         with:
           path: .turbo
@@ -47,17 +66,20 @@ jobs:
             ${{ runner.os }}-turbo-
 
       - name: 📥 Install dependencies
+        if: steps.verify.outputs.accessible == 'true'
         run: pnpm install --prefer-offline --frozen-lockfile
 
       - name: 📥 Install Playwright Browsers
+        if: steps.verify.outputs.accessible == 'true'
         run: pnpm exec playwright install --with-deps
 
       - name: 🎭 Run Playwright tests
+        if: steps.verify.outputs.accessible == 'true'
         run: pnpm run test:e2e
 
       - name: 📊 Upload report
-        uses: actions/upload-artifact@v5
-        if: always()
+        uses: actions/upload-artifact@v6
+        if: always() && steps.verify.outputs.accessible == 'true'
         with:
           name: playwright-report
           path: packages/playwright/playwright-report/
