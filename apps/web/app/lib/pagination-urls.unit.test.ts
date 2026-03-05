@@ -9,6 +9,7 @@ function createMockLocation(pathname: string, search: string): Location {
 		pathname,
 		search,
 		state: null,
+		unstable_mask: undefined,
 	};
 }
 

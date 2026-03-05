@@ -32,14 +32,14 @@
 	},
 	"dependencies": {
 		"gql.tada": "^1.9.0",
-		"graphql": "^16.12.0"
+		"graphql": "^16.13.0"
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
-		"@graphql-codegen/cli": "^6.1.1",
+		"@graphql-codegen/cli": "^6.1.2",
 		"@graphql-codegen/schema-ast": "^5.0.0",
-		"knip": "^5.82.1",
-		"tsdown": "^0.20.1",
+		"knip": "^5.85.0",
+		"tsdown": "^0.20.3",
 		"typescript": "^5.9.3"
 	}
 }

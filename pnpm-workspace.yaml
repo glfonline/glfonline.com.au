@@ -12,7 +12,7 @@ overrides:
   # Fix path-to-regexp ReDoS vulnerability (backtracking regex)
   path-to-regexp@>=4.0.0 <6.3.0: '>=8.3.0'
   # Fix undici decompression chain DoS vulnerability
-  undici: '>=7.19.2'
+  undici: '>=7.22.0'
   vite: ^7.3.1
   vitest: ^4.0.18
 
