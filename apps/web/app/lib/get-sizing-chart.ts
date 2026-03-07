@@ -127,8 +127,8 @@ export function getSizingChart({
 	tags,
 	vendor,
 }: ShopifySizingChart): LinkProps | undefined {
-	const reference = sizeChartUrl?.reference;
 	const shopifyHref = (() => {
+		const reference = sizeChartUrl?.reference;
 		if (reference?.__typename === 'GenericFile') {
 			return reference.url;
 		}
@@ -137,12 +137,15 @@ export function getSizingChart({
 		}
 		return sizeChartUrl?.value;
 	})();
+
 	const legacySizeChart = getLegacySizingChart({
 		productType,
 		tags,
 		vendor,
 	});
 
+	// An explicit Shopify metafield should override the legacy vendor map,
+	// including product types that historically did not render sizing charts.
 	if (shopifyHref) {
 		return {
 			href: shopifyHref,

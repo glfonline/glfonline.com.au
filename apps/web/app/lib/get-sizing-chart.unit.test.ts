@@ -74,6 +74,24 @@ describe('getSizingChart', () => {
 		});
 	});
 
+	it('returns Shopify sizing chart for excluded product types when metafields are present', () => {
+		const sizeChart = getSizingChart(
+			createProduct({
+				productType: 'Accessories',
+				sizeChartLabel: { value: 'See accessory fit guide' },
+				sizeChartUrl: {
+					value: 'https://cdn.shopify.com/files/accessories-fit-guide.pdf',
+					reference: null,
+				},
+			}),
+		);
+
+		expect(sizeChart).toEqual({
+			href: 'https://cdn.shopify.com/files/accessories-fit-guide.pdf',
+			label: 'See accessory fit guide',
+		});
+	});
+
 	it('falls back to the legacy vendor sizing chart when Shopify metafields are empty', () => {
 		const sizeChart = getSizingChart(
 			createProduct({
