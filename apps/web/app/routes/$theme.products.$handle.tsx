@@ -385,7 +385,7 @@ export default function ProductPage() {
 											<div className="flex flex-col gap-4">
 												{sizingChart && (
 													<ButtonLink href={sizingChart.href} rel="noreferrer noopener" target="_blank">
-														{`See ${sizingChart.useSizing ? 'USA ' : ''}sizing chart`}
+														{sizingChart.label}
 													</ButtonLink>
 												)}
 

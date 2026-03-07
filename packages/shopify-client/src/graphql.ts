@@ -283,6 +283,23 @@ export const SINGLE_PRODUCT_QUERY = graphql(
 				}
 			}
 			productType
+			sizeChartLabel: metafield(namespace: "custom", key: "size_chart_label") {
+				value
+			}
+			sizeChartUrl: metafield(namespace: "custom", key: "size_chart_url") {
+				value
+				reference {
+					__typename
+					... on GenericFile {
+						url
+					}
+					... on MediaImage {
+						image {
+							url
+						}
+					}
+				}
+			}
 			tags
 			title
 			updatedAt
