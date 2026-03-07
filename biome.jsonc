@@ -84,26 +84,25 @@
 			},
 			"complexity": {
 				"recommended": true,
-				"useLiteralKeys": "off",
-				"noExcessiveCognitiveComplexity": "off"
+				"noExcessiveCognitiveComplexity": "off",
+				"noUselessUndefined": "on",
+				"useLiteralKeys": "off"
 			},
 			"correctness": {
 				"recommended": true,
 				"noNodejsModules": "off",
 				"noUndeclaredDependencies": "off",
-				"useImportExtensions": "off",
+				"noUnresolvedImports": "off",
 				"noUnusedImports": "off",
+				"noUnusedLabels": "off",
 				"noUnusedVariables": "off",
-				"noUnusedLabels": "off"
+				"useImportExtensions": "off"
 			},
 			"nursery": {
 				"recommended": true,
 				"noFloatingPromises": "on",
-				"noImportCycles": "off", // TODO: enable this
 				"noShadow": "on",
 				"noUndeclaredEnvVars": "error",
-				"noUnresolvedImports": "off",
-				"noUselessUndefined": "on",
 				"useExhaustiveSwitchCases": "on",
 				"useExplicitType": "off",
 				"useSortedClasses": {
@@ -147,7 +146,8 @@
 				"recommended": true,
 				"noArrayIndexKey": "off",
 				"noConsole": "off",
-				"noExplicitAny": "off"
+				"noExplicitAny": "off",
+				"noImportCycles": "on"
 			}
 		}
 	},
