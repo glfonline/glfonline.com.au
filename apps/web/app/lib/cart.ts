@@ -76,5 +76,11 @@ export function updateCartItem(cart: Array<CartItem>, variantId: string, quantit
 }
 
 export function removeCartItem(cart: Array<CartItem>, variantId: string) {
-	return cart.filter((item) => item.variantId !== variantId);
+	const result: Array<CartItem> = [];
+	for (const item of cart) {
+		if (item.variantId !== variantId) {
+			result.push(item);
+		}
+	}
+	return result;
 }

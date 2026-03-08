@@ -23,12 +23,14 @@ import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
-import { getSession } from '../lib/cart';
+import { addToCart, getSession } from '../lib/cart';
+import type { CartItem } from '../lib/cart';
 import { notFound } from '../lib/errors.server';
 import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
+import type { CartLineNode } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { getSeoMeta } from '../seo';
 
@@ -106,6 +108,25 @@ function getAddToCartErrorMessage(formState: unknown): string | undefined {
 	return parsed.success ? parsed.data?.meta?.errors?.[0]?.message : undefined;
 }
 
+function getQuantityInCartByVariantId(cart: Array<CartItem>) {
+	const quantityInCartByVariantId: Record<string, number> = {};
+	for (const item of cart) {
+		quantityInCartByVariantId[item.variantId] = (quantityInCartByVariantId[item.variantId] ?? 0) + item.quantity;
+	}
+	return quantityInCartByVariantId;
+}
+
+function getSessionCartItems(lines: ReadonlyArray<{ node: CartLineNode }>): Array<CartItem> {
+	const items: Array<CartItem> = [];
+	for (const edge of lines) {
+		items.push({
+			variantId: edge.node.merchandise.id,
+			quantity: edge.node.quantity,
+		});
+	}
+	return items;
+}
+
 export type ProductActionResult = ReturnType<
 	typeof json<
 		| {
@@ -127,14 +148,10 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 		]);
 		if (!product) notFound();
 		const cart = await session.getCart();
-		const quantityInCartByVariantId: Record<string, number> = {};
-		for (const item of cart) {
-			quantityInCartByVariantId[item.variantId] = (quantityInCartByVariantId[item.variantId] ?? 0) + item.quantity;
-		}
 		return json(
 			{
 				product,
-				quantityInCartByVariantId,
+				quantityInCartByVariantId: getQuantityInCartByVariantId(cart),
 				theme: result.data.theme,
 			},
 			{
@@ -160,35 +177,14 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 
 		// Get current cart
 		const currentCart = await session.getCart();
-
-		// First check if this variant is already in the cart
-		const existingItem = currentCart.find((item) => item.variantId === variantId);
-
-		// Create a temporary cart to validate with Shopify
-		// Instead of directly modifying the cart, make a temporary copy with the new item
-		const tempCart = currentCart.map((item) => ({
-			...item,
-			quantity: item.variantId === variantId ? item.quantity + 1 : item.quantity,
-		}));
-
-		// If the item isn't in the cart yet, add it
-		if (!existingItem) {
-			tempCart.push({
-				quantity: 1,
-				variantId,
-			});
-		}
+		const tempCart = addToCart(currentCart, variantId, 1);
 
 		// Validate the potential new cart with Shopify first
 		const cartResult = await getCartInfo(tempCart);
 
 		// Only update the session if Shopify accepts the cart. Use Shopify's cart lines as source of truth so we never store more than inventory (Shopify may cap quantities).
 		if (cartResult.type === 'success' && cartResult.cart) {
-			const updatedCart = cartResult.cart.lines.edges.map((edge) => ({
-				variantId: edge.node.merchandise.id,
-				quantity: edge.node.quantity,
-			}));
-			await session.setCart(updatedCart);
+			await session.setCart(getSessionCartItems(cartResult.cart.lines.edges));
 			return data(
 				{ type: 'success' },
 				{
@@ -267,10 +263,8 @@ export default function ProductPage() {
 	// Prefer fetcher.data when add-to-cart was submitted via fetcher; fall back to actionData for full-page submissions
 	const actionResult = fetcher.data ?? actionData;
 	const parsedAction = productActionResultSchema.safeParse(actionResult);
-	const addToCartErrorMessage =
-		parsedAction.success && parsedAction.data.type === 'error'
-			? getAddToCartErrorMessage(parsedAction.data.formState)
-			: undefined;
+	const errorFormState = parsedAction.success && parsedAction.data.type === 'error' ? parsedAction.data.formState : undefined;
+	const addToCartErrorMessage = errorFormState == null ? undefined : getAddToCartErrorMessage(errorFormState);
 
 	// Use the form state from the error case, or initialFormState with the selected variant
 	const form = useAppForm({
@@ -282,13 +276,12 @@ export default function ProductPage() {
 		transform: useTransform(
 			(baseForm) => {
 				// Only merge server state on error; success/undefined would overwrite values with initialFormState.values (undefined)
-				const parsed = productActionResultSchema.safeParse(actionResult);
-				if (parsed.success && parsed.data.type === 'error') {
-					return mergeForm(baseForm, parsed.data.formState);
+				if (errorFormState) {
+					return mergeForm(baseForm, errorFormState);
 				}
 				return baseForm;
 			},
-			[actionResult],
+			[errorFormState],
 		),
 		onSubmit: async ({ value }) => {
 			fetcher.submit(value, {
@@ -306,6 +299,7 @@ export default function ProductPage() {
 	const sizingChart = getSizingChart(product);
 
 	const hasNoVariants = product.variants.edges.some(({ node }) => node.title === 'Default Title');
+	const isProductUnavailable = !product.availableForSale;
 
 	return (
 		<div className="bg-white" data-theme={theme}>
@@ -368,6 +362,15 @@ export default function ProductPage() {
 										.map((error) => error?.message)
 										.filter(Boolean)
 										.join(', ');
+									const quantityAvailable = variant?.node.quantityAvailable ?? 0;
+									const quantityInCart = variant?.node.id ? (quantityInCartByVariantId[variant.node.id] ?? 0) : 0;
+									const atStockLimit = quantityAvailable > 0 && quantityInCart >= quantityAvailable;
+									const fieldError = 'meta' in field.state ? field.state.meta.errors[0]?.message : undefined;
+									const buttonLabel = isProductUnavailable
+										? 'Sold Out'
+										: atStockLimit
+											? 'Maximum in cart'
+											: fieldError || addToCartErrorMessage || buttonText;
 									return (
 										<>
 											<fieldset
@@ -426,30 +429,15 @@ export default function ProductPage() {
 													<FieldMessage id="add-to-cart-error" message={addToCartErrorMessage} tone="critical" />
 												)}
 
-												{(() => {
-													const isUnavailable = !product.availableForSale;
-													const quantityAvailable = variant?.node.quantityAvailable ?? 0;
-													const quantityInCart = variant?.node.id
-														? (quantityInCartByVariantId[variant.node.id] ?? 0)
-														: 0;
-													const atStockLimit = quantityAvailable > 0 && quantityInCart >= quantityAvailable;
-													const fieldError = 'meta' in field.state && field.state.meta.errors[0]?.message;
-													return (
-														<Button
-															data-testid="add-to-cart-button"
-															disabled={isUnavailable || atStockLimit || isAddToCartPending}
-															isLoading={isAddToCartPending}
-															type="submit"
-															variant="neutral"
-														>
-															{isUnavailable
-																? 'Sold Out'
-																: atStockLimit
-																	? 'Maximum in cart'
-																	: fieldError || addToCartErrorMessage || buttonText}
-														</Button>
-													);
-												})()}
+												<Button
+													data-testid="add-to-cart-button"
+													disabled={isProductUnavailable || atStockLimit || isAddToCartPending}
+													isLoading={isAddToCartPending}
+													type="submit"
+													variant="neutral"
+												>
+													{buttonLabel}
+												</Button>
 
 												{/* Display field validation errors */}
 												{'meta' in field.state && field.state.meta.errors[0]?.message && (

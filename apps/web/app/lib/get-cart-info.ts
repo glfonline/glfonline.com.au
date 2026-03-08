@@ -18,25 +18,41 @@ export type LineDisplay = {
 	showWasNow: boolean;
 };
 
-export function getLineDisplay(node: CartLineNode): LineDisplay {
+type CartLineDiscountAllocation = NonNullable<CartLineNode['discountAllocations']>[number];
+type AutomaticDiscountAllocation = Extract<CartLineDiscountAllocation, { title: string }>;
+type CodeDiscountAllocation = Extract<CartLineDiscountAllocation, { code: string }>;
+type DiscountedAmountAllocation = Extract<CartLineDiscountAllocation, { discountedAmount: unknown }>;
+
+type LineDisplayAllocation = Pick<CartLineDiscountAllocation, '__typename'> &
+	Partial<Pick<AutomaticDiscountAllocation, 'title'>> &
+	Partial<Pick<CodeDiscountAllocation, 'code'>> &
+	Partial<Pick<DiscountedAmountAllocation, 'discountedAmount'>>;
+
+export type LineDisplayInput = Pick<CartLineNode, 'cost' | 'quantity'> & {
+	discountAllocations?: Array<LineDisplayAllocation> | null;
+};
+
+export function getLineDisplay(node: LineDisplayInput): LineDisplay {
 	const pricePerUnit = Number(node.cost.totalAmount.amount) / node.quantity;
 	const compareAtRaw = node.cost.compareAtAmountPerQuantity?.amount;
 	const compareAt = compareAtRaw != null ? Number(compareAtRaw) : null;
 	const hasCompareAt = compareAt != null;
 	const hasAllocations = (node.discountAllocations?.length ?? 0) > 0;
 	const showWasNow = hasCompareAt || hasAllocations;
-	const discountLabels = (node.discountAllocations ?? []).flatMap((allocation) => {
-		const label = (() => {
-			if ('title' in allocation) return allocation.title;
-			if ('code' in allocation) return allocation.code;
-			return null;
-		})();
+	const discountLabels: Array<{ amount: number | null; label: string }> = [];
+	for (const allocation of node.discountAllocations ?? []) {
+		let label: string | null = null;
+		if ('title' in allocation) label = allocation.title ?? null;
+		else if ('code' in allocation) label = allocation.code ?? null;
+
+		if (label == null) continue;
+
 		const amount =
 			'discountedAmount' in allocation && allocation.discountedAmount != null
 				? Number(allocation.discountedAmount.amount)
 				: null;
-		return label != null ? [{ label, amount }] : [];
-	});
+		discountLabels.push({ amount, label });
+	}
 	return { compareAt, discountLabels, pricePerUnit, showWasNow };
 }
 
@@ -81,13 +97,13 @@ export async function getCartInfo(items: Array<CartItem>): Promise<CartResult> {
 
 		// Reject when Shopify returns errors (e.g. quantity exceeds inventory)
 		if (userErrors.length > 0) {
-			const message =
-				userErrors
-					.flatMap((err) => {
-						if (!err) return [];
-						return [err.message];
-					})
-					.join(' ') || 'Unable to add item to cart.';
+			const messages: Array<string> = [];
+			for (const userError of userErrors) {
+				if (userError) {
+					messages.push(userError.message);
+				}
+			}
+			const message = messages.join(' ') || 'Unable to add item to cart.';
 			return { error: message, type: 'error' };
 		}
 
