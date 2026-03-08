@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from 'react';
+
+const emptySubscribe = () => () => {};
 
 export function useClientOnlyMount() {
-	const [isMounted, setIsMounted] = useState(false);
-
-	useEffect(() => {
-		setIsMounted(true);
-	}, []);
-
 	return {
-		isMounted,
+		isMounted: useSyncExternalStore(
+			emptySubscribe,
+			() => true,
+			() => false,
+		),
 	};
 }
