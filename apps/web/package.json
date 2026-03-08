@@ -31,6 +31,7 @@
 		"@glfonline/shopify-client": "workspace:^",
 		"@headlessui/react": "^2.2.9",
 		"@heroicons/react": "^2.2.0",
+		"@paypal/react-paypal-js": "^9.0.1",
 		"@portabletext/react": "^6.0.3",
 		"@react-router/node": "^7.13.1",
 		"@sanity/asset-utils": "^2.3.0",

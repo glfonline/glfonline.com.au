@@ -27,7 +27,6 @@ jobs:
         uses: actions/checkout@v6
 
       - name: 🔍 Extract pnpm version from package.json
-        id: extract_version
         run: echo "PNPM_VERSION=$(jq -r '.packageManager' package.json | cut -d'@' -f2)" >> $GITHUB_ENV
 
       - name: 📦 Setup pnpm

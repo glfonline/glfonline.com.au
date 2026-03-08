@@ -14,20 +14,23 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { Form, data as json, useActionData, useLoaderData, useNavigation, useSubmit } from 'react-router';
+import { data, Form, data as json, useActionData, useFetcher, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { FieldMessage } from '../components/design-system/field';
 import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
+import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
+import type { CartItem } from '../lib/cart';
 import { notFound } from '../lib/errors.server';
 import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getCartInfo } from '../lib/get-cart-info';
+import type { CartLineNode } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { getSeoMeta } from '../seo';
 
@@ -76,6 +79,54 @@ interface ErrorFormState extends BaseFormState {
 
 type ProductFormState = BaseFormState | ErrorFormState;
 
+const productActionResultSchema = z.discriminatedUnion('type', [
+	z.object({
+		type: z.literal('success'),
+	}),
+	z.object({
+		type: z.literal('error'),
+		formState: z.custom<ProductFormState>((val) => typeof val === 'object' && val !== null),
+	}),
+]);
+
+const errorFormStateMessageSchema = z
+	.object({
+		meta: z
+			.object({
+				errors: z.array(
+					z.object({
+						message: z.string(),
+					}),
+				),
+			})
+			.optional(),
+	})
+	.optional();
+
+function getAddToCartErrorMessage(formState: unknown): string | undefined {
+	const parsed = errorFormStateMessageSchema.safeParse(formState);
+	return parsed.success ? parsed.data?.meta?.errors?.[0]?.message : undefined;
+}
+
+function getQuantityInCartByVariantId(cart: Array<CartItem>) {
+	const quantityInCartByVariantId: Record<string, number> = {};
+	for (const item of cart) {
+		quantityInCartByVariantId[item.variantId] = (quantityInCartByVariantId[item.variantId] ?? 0) + item.quantity;
+	}
+	return quantityInCartByVariantId;
+}
+
+function getSessionCartItems(lines: ReadonlyArray<{ node: CartLineNode }>): Array<CartItem> {
+	const items: Array<CartItem> = [];
+	for (const edge of lines) {
+		items.push({
+			variantId: edge.node.merchandise.id,
+			quantity: edge.node.quantity,
+		});
+	}
+	return items;
+}
+
 export type ProductActionResult = ReturnType<
 	typeof json<
 		| {
@@ -88,16 +139,19 @@ export type ProductActionResult = ReturnType<
 	>
 >;
 
-export async function loader({ params }: LoaderFunctionArgs) {
+export async function loader({ params, request }: LoaderFunctionArgs) {
 	const result = productSchema.safeParse(params);
 	if (result.success) {
-		const { product } = await shopifyClient(SINGLE_PRODUCT_QUERY, {
-			handle: result.data.handle,
-		});
+		const [session, { product }] = await Promise.all([
+			getSession(request),
+			shopifyClient(SINGLE_PRODUCT_QUERY, { handle: result.data.handle }),
+		]);
 		if (!product) notFound();
+		const cart = await session.getCart();
 		return json(
 			{
 				product,
+				quantityInCartByVariantId: getQuantityInCartByVariantId(cart),
 				theme: result.data.theme,
 			},
 			{
@@ -123,38 +177,16 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 
 		// Get current cart
 		const currentCart = await session.getCart();
-
-		// First check if this variant is already in the cart
-		const existingItem = currentCart.find((item) => item.variantId === variantId);
-
-		// Create a temporary cart to validate with Shopify
-		// Instead of directly modifying the cart, make a temporary copy with the new item
-		const tempCart = currentCart.map((item) => ({
-			...item,
-			quantity: item.variantId === variantId ? item.quantity + 1 : item.quantity,
-		}));
-
-		// If the item isn't in the cart yet, add it
-		if (!existingItem) {
-			tempCart.push({
-				quantity: 1,
-				variantId,
-			});
-		}
+		const tempCart = addToCart(currentCart, variantId, 1);
 
 		// Validate the potential new cart with Shopify first
 		const cartResult = await getCartInfo(tempCart);
 
-		// Only update the session if Shopify accepts the cart
-		if (cartResult.type === 'success') {
-			// Update the real cart now that we know it's valid
-			const updatedCart = addToCart([...currentCart], variantId, 1);
-			await session.setCart(updatedCart);
-			// Return success with session cookie
-			return json(
-				{
-					type: 'success',
-				},
+		// Only update the session if Shopify accepts the cart. Use Shopify's cart lines as source of truth so we never store more than inventory (Shopify may cap quantities).
+		if (cartResult.type === 'success' && cartResult.cart) {
+			await session.setCart(getSessionCartItems(cartResult.cart.lines.edges));
+			return data(
+				{ type: 'success' },
 				{
 					headers: {
 						'Set-Cookie': await session.commitSession(),
@@ -163,20 +195,17 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 			);
 		}
 
-		// If Shopify rejects the cart, create a form state with error
-		throw new Error('Unable to add item to cart. The item might be out of stock or unavailable.');
+		// Shopify rejected the cart (e.g. quantity exceeds inventory); surface its message
+		const message: string = (() => {
+			if (cartResult.type === 'error') return cartResult.error;
+			return 'Unable to add item to cart. The item might be out of stock or unavailable.';
+		})();
+		throw new Error(message);
 	} catch (err) {
 		if (err instanceof ServerValidateError) {
 			return json(
-				{
-					type: 'error',
-					formState: err.formState,
-				},
-				{
-					headers: {
-						'Set-Cookie': await session.commitSession(),
-					},
-				},
+				{ type: 'error', formState: err.formState },
+				{ headers: { 'Set-Cookie': await session.commitSession() } },
 			);
 		}
 
@@ -185,23 +214,12 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 			const errorFormState: ErrorFormState = {
 				...initialFormState,
 				meta: {
-					errors: [
-						{
-							message: err.message,
-						},
-					],
+					errors: [{ message: err.message }],
 				},
 			};
 			return json(
-				{
-					type: 'error',
-					formState: errorFormState,
-				},
-				{
-					headers: {
-						'Set-Cookie': await session.commitSession(),
-					},
-				},
+				{ type: 'error', formState: errorFormState },
+				{ headers: { 'Set-Cookie': await session.commitSession() } },
 			);
 		}
 
@@ -226,9 +244,9 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 export const headers = routeHeaders;
 
 export default function ProductPage() {
-	const { theme, product } = useLoaderData<typeof loader>();
+	const { product, quantityInCartByVariantId, theme } = useLoaderData<typeof loader>();
 	const actionData = useActionData<ProductActionResult>();
-	const submit = useSubmit();
+	const fetcher = useFetcher<ProductActionResult>();
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
@@ -242,6 +260,13 @@ export default function ProductPage() {
 
 	const formRef = useRef<HTMLFormElement>(null);
 
+	// Prefer fetcher.data when add-to-cart was submitted via fetcher; fall back to actionData for full-page submissions
+	const actionResult = fetcher.data ?? actionData;
+	const parsedAction = productActionResultSchema.safeParse(actionResult);
+	const errorFormState =
+		parsedAction.success && parsedAction.data.type === 'error' ? parsedAction.data.formState : undefined;
+	const addToCartErrorMessage = errorFormState == null ? undefined : getAddToCartErrorMessage(errorFormState);
+
 	// Use the form state from the error case, or initialFormState with the selected variant
 	const form = useAppForm({
 		...makeFormOpts(variant?.node.id || ''),
@@ -251,16 +276,17 @@ export default function ProductPage() {
 		}),
 		transform: useTransform(
 			(baseForm) => {
-				const state =
-					actionData?.data && actionData.data.type === 'error' ? actionData.data.formState : initialFormState;
-				return mergeForm(baseForm, state);
+				// Only merge server state on error; success/undefined would overwrite values with initialFormState.values (undefined)
+				if (errorFormState) {
+					return mergeForm(baseForm, errorFormState);
+				}
+				return baseForm;
 			},
-			[actionData],
+			[errorFormState],
 		),
 		onSubmit: async ({ value }) => {
-			await submit(value, {
+			fetcher.submit(value, {
 				method: 'post',
-				replace: true,
 			});
 		},
 		onSubmitInvalid: () => {
@@ -268,14 +294,13 @@ export default function ProductPage() {
 		},
 	});
 
-	const navigation = useNavigation();
-
-	let buttonText = 'Add to cart';
-	if (navigation.state === 'submitting') buttonText = 'Adding...';
+	const isAddToCartPending = fetcher.state !== 'idle';
+	const buttonText = isAddToCartPending ? 'Adding...' : 'Add to cart';
 
 	const sizingChart = getSizingChart(product);
 
 	const hasNoVariants = product.variants.edges.some(({ node }) => node.title === 'Default Title');
+	const isProductUnavailable = !product.availableForSale;
 
 	return (
 		<div className="bg-white" data-theme={theme}>
@@ -302,20 +327,23 @@ export default function ProductPage() {
 							</Heading>
 							<h2 className="sr-only">Product information</h2>
 							{variant?.node.price && (
-								<p
-									className={getHeadingStyles({
-										size: '2',
-									})}
-								>
-									{isOnSale && variant.node.compareAtPrice?.amount && (
-										<del>
-											<span className="sr-only">was </span>
-											{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
-										</del>
-									)}
-									{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price.amount, 'AUD')}{' '}
-									<small className="font-normal">{'AUD'}</small>
-								</p>
+								<>
+									<p
+										className={getHeadingStyles({
+											size: '2',
+										})}
+									>
+										{isOnSale && variant.node.compareAtPrice?.amount && (
+											<del>
+												<span className="sr-only">was </span>
+												{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
+											</del>
+										)}
+										{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price.amount, 'AUD')}{' '}
+										<small className="font-normal">{'AUD'}</small>
+									</p>
+									<PayPalMessages amount={Number(variant.node.price.amount)} placement="product" />
+								</>
 							)}
 						</div>
 
@@ -328,7 +356,6 @@ export default function ProductPage() {
 								form.handleSubmit();
 							}}
 							ref={formRef}
-							replace
 						>
 							<form.AppField name="variantId">
 								{(field) => {
@@ -336,6 +363,15 @@ export default function ProductPage() {
 										.map((error) => error?.message)
 										.filter(Boolean)
 										.join(', ');
+									const quantityAvailable = variant?.node.quantityAvailable ?? 0;
+									const quantityInCart = variant?.node.id ? (quantityInCartByVariantId[variant.node.id] ?? 0) : 0;
+									const atStockLimit = quantityAvailable > 0 && quantityInCart >= quantityAvailable;
+									const fieldError = 'meta' in field.state ? field.state.meta.errors[0]?.message : undefined;
+									const buttonLabel = isProductUnavailable
+										? 'Sold Out'
+										: atStockLimit
+											? 'Maximum in cart'
+											: fieldError || addToCartErrorMessage || buttonText;
 									return (
 										<>
 											<fieldset
@@ -389,26 +425,22 @@ export default function ProductPage() {
 													</ButtonLink>
 												)}
 
-												<form.Subscribe selector={(state) => state.isSubmitting}>
-													{(isSubmitting) => {
-														const isUnavailable = !product.availableForSale;
-														return (
-															<Button
-																data-testid="add-to-cart-button"
-																disabled={isUnavailable}
-																isLoading={isSubmitting}
-																type="submit"
-																variant="neutral"
-															>
-																{isUnavailable
-																	? 'Sold Out'
-																	: ('meta' in field.state && field.state.meta.errors[0]?.message) || buttonText}
-															</Button>
-														);
-													}}
-												</form.Subscribe>
+												{/* Form-level add-to-cart errors (e.g. out of stock from Shopify) */}
+												{addToCartErrorMessage && (
+													<FieldMessage id="add-to-cart-error" message={addToCartErrorMessage} tone="critical" />
+												)}
 
-												{/* Display validation errors */}
+												<Button
+													data-testid="add-to-cart-button"
+													disabled={isProductUnavailable || atStockLimit || isAddToCartPending}
+													isLoading={isAddToCartPending}
+													type="submit"
+													variant="neutral"
+												>
+													{buttonLabel}
+												</Button>
+
+												{/* Display field validation errors */}
 												{'meta' in field.state && field.state.meta.errors[0]?.message && (
 													<FieldMessage
 														id={`${field.name}-error`}
