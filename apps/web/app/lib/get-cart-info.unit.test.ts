@@ -1,4 +1,10 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+vi.mock('@glfonline/shopify-client', () => ({
+	CREATE_CART_MUTATION: {},
+	shopifyClient: vi.fn(),
+}));
+
 import type { LineDisplayInput } from './get-cart-info';
 import { getLineDisplay } from './get-cart-info';
 
