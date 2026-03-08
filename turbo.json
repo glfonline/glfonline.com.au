@@ -45,10 +45,6 @@
 			"dependsOn": ["^fix", "fix:deps", "fix:exports", "fix:lint", "fix:format"],
 			"outputs": []
 		},
-		"fix:format": {
-			"dependsOn": ["^fix:format", "fix:lint"],
-			"outputs": []
-		},
 		"fix:deps": {
 			"dependsOn": ["^fix:deps"],
 			"outputs": []
@@ -57,12 +53,15 @@
 			"dependsOn": ["^fix:exports", "fix:deps"],
 			"outputs": []
 		},
+		"fix:format": {
+			"dependsOn": ["^fix:format", "fix:lint"],
+			"outputs": []
+		},
 		"fix:lint": {
 			"dependsOn": ["^fix:lint", "fix:exports"],
 			"outputs": []
 		},
 		"test:browser": {
-			"dependsOn": ["^test:browser"],
 			"outputs": []
 		},
 		"test:e2e": {
@@ -70,7 +69,6 @@
 			"outputs": []
 		},
 		"test:unit": {
-			"dependsOn": ["^test:unit"],
 			"outputs": []
 		}
 	}

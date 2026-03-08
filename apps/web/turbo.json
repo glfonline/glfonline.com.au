@@ -3,7 +3,7 @@
 	"extends": ["//"],
 	"tasks": {
 		"build": {
-			"dependsOn": ["^build"],
+			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"],
 			"env": [
 				"AKISMET_API_KEY",
 				"COMMIT_SHA",
@@ -27,7 +27,16 @@
 			"env": ["DEV", "MODE", "PROD"]
 		},
 		"check:types": {
-			"dependsOn": ["^build"]
+			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"]
+		},
+		"test:browser": {
+			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"]
+		},
+		"test:e2e": {
+			"extends": false
+		},
+		"test:unit": {
+			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"]
 		}
 	}
 }

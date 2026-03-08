@@ -3,7 +3,7 @@
 	"extends": ["//"],
 	"tasks": {
 		"build": {
-			"dependsOn": ["^build"],
+			"dependsOn": [],
 			"env": [
 				"AKISMET_API_KEY",
 				"ENABLE_EXPERIMENTAL_COREPACK",
@@ -17,8 +17,20 @@
 			],
 			"outputs": ["dist/**"]
 		},
+		"check:types": {
+			"dependsOn": ["check:exports"]
+		},
 		"generate": {
 			"outputs": ["schema.graphql", "src/graphql-env.d.ts"]
+		},
+		"test:browser": {
+			"extends": false
+		},
+		"test:e2e": {
+			"extends": false
+		},
+		"test:unit": {
+			"extends": false
 		}
 	}
 }
