@@ -11,13 +11,12 @@ describe('addToCart', () => {
 
 	it('does not mutate input array or items', () => {
 		const cart: Array<CartItem> = [{ variantId: 'gid://shopify/ProductVariant/1', quantity: 1 }];
-		const snapshot = JSON.stringify(cart);
+		const initialCart = [{ variantId: 'gid://shopify/ProductVariant/1', quantity: 1 }];
 		const result = addToCart(cart, 'gid://shopify/ProductVariant/1', 1);
-		expect(JSON.stringify(cart)).toBe(snapshot);
+		expect(cart).toEqual(initialCart);
 		expect(result).not.toBe(cart);
 		expect(result[0]).not.toBe(cart[0]);
 		expect(result).toEqual([{ variantId: 'gid://shopify/ProductVariant/1', quantity: 2 }]);
-		expect(cart).toEqual([{ variantId: 'gid://shopify/ProductVariant/1', quantity: 1 }]);
 	});
 
 	it('increases quantity when adding same variant again', () => {
@@ -47,13 +46,12 @@ describe('updateCartItem', () => {
 
 	it('does not mutate input array or items', () => {
 		const cart: Array<CartItem> = [{ variantId: 'gid://shopify/ProductVariant/1', quantity: 2 }];
-		const snapshot = JSON.stringify(cart);
+		const initialCart = [{ variantId: 'gid://shopify/ProductVariant/1', quantity: 2 }];
 		const result = updateCartItem(cart, 'gid://shopify/ProductVariant/1', 5);
-		expect(JSON.stringify(cart)).toBe(snapshot);
+		expect(cart).toEqual(initialCart);
 		expect(result).not.toBe(cart);
 		expect(result[0]).not.toBe(cart[0]);
 		expect(result).toEqual([{ variantId: 'gid://shopify/ProductVariant/1', quantity: 5 }]);
-		expect(cart).toEqual([{ variantId: 'gid://shopify/ProductVariant/1', quantity: 2 }]);
 	});
 
 	it('adds new line when variant not present', () => {
