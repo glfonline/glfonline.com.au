@@ -32,15 +32,17 @@ export function PayPalMessages({ amount, placement }: PayPalMessagesProps) {
 	const { isMounted } = useClientOnlyMount();
 
 	return (
-		<div className="min-h-5" data-testid="paypal-messages">
-			{isMounted && (
-				<ReactPayPalMessages
-					amount={amount}
-					forceReRender={[amount, placement]}
-					placement={placement}
-					style={paypalMessageStyle}
-				/>
-			)}
-		</div>
+		<PayPalProvider>
+			<div className="min-h-5" data-testid="paypal-messages">
+				{isMounted && (
+					<ReactPayPalMessages
+						amount={amount}
+						forceReRender={[amount, placement]}
+						placement={placement}
+						style={paypalMessageStyle}
+					/>
+				)}
+			</div>
+		</PayPalProvider>
 	);
 }

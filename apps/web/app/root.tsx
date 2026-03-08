@@ -21,7 +21,6 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
-import { PayPalProvider } from './components/paypal';
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
 import { getCartInfo } from './lib/get-cart-info';
@@ -135,11 +134,9 @@ function App() {
 						persister,
 					}}
 				>
-					<PayPalProvider>
-						<MainLayout>
-							<Outlet key={location.pathname} />
-						</MainLayout>
-					</PayPalProvider>
+					<MainLayout>
+						<Outlet key={location.pathname} />
+					</MainLayout>
 				</PersistQueryClientProvider>
 				<ScrollRestoration />
 				<Scripts />

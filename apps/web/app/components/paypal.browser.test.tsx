@@ -10,15 +10,11 @@ vi.mock('@paypal/react-paypal-js', () => ({
 	),
 }));
 
-import { PayPalMessages, PayPalProvider } from './paypal';
+import { PayPalMessages } from './paypal';
 
 describe('PayPalMessages', () => {
 	it('renders message markup without loading the real PayPal SDK', async () => {
-		const screen = await render(
-			<PayPalProvider>
-				<PayPalMessages amount={129.95} placement="product" />
-			</PayPalProvider>,
-		);
+		const screen = await render(<PayPalMessages amount={129.95} placement="product" />);
 
 		await expect.element(screen.getByTestId('paypal-script-provider')).toBeInTheDocument();
 		await expect.element(screen.getByTestId('paypal-messages')).toBeInTheDocument();
