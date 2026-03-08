@@ -14,13 +14,14 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { Form, data as json, useActionData, useLoaderData, useNavigation, useSubmit } from 'react-router';
+import { Form, data as json, redirect, useActionData, useLoaderData, useNavigation, useSubmit } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { FieldMessage } from '../components/design-system/field';
 import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
+import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { addToCart, getSession } from '../lib/cart';
 import { notFound } from '../lib/errors.server';
@@ -302,20 +303,23 @@ export default function ProductPage() {
 							</Heading>
 							<h2 className="sr-only">Product information</h2>
 							{variant?.node.price && (
-								<p
-									className={getHeadingStyles({
-										size: '2',
-									})}
-								>
-									{isOnSale && variant.node.compareAtPrice?.amount && (
-										<del>
-											<span className="sr-only">was </span>
-											{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
-										</del>
-									)}
-									{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price.amount, 'AUD')}{' '}
-									<small className="font-normal">{'AUD'}</small>
-								</p>
+								<>
+									<p
+										className={getHeadingStyles({
+											size: '2',
+										})}
+									>
+										{isOnSale && variant.node.compareAtPrice?.amount && (
+											<del>
+												<span className="sr-only">was </span>
+												{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
+											</del>
+										)}
+										{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price.amount, 'AUD')}{' '}
+										<small className="font-normal">{'AUD'}</small>
+									</p>
+									<PayPalMessages amount={Number(variant.node.price.amount)} placement="product" />
+								</>
 							)}
 						</div>
 

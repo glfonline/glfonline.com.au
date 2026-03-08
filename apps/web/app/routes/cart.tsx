@@ -9,6 +9,7 @@ import { data, Form, Link, redirect, useFetcher, useLoaderData, useNavigation } 
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
+import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
@@ -394,6 +395,7 @@ export default function CartPage() {
 								<dd className="text-gray-900 text-sm">{formatMoney(cart.cost.subtotalAmount.amount || 0, 'AUD')}</dd>
 							</div>
 						</dl>
+						<PayPalMessages amount={Number(cart.cost.subtotalAmount.amount || 0)} placement="cart" />
 
 						<p className="text-gray-600 text-sm">Taxes and shipping are calculated at checkout</p>
 
