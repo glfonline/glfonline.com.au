@@ -1,5 +1,5 @@
-import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
-import { Fragment, useEffect } from 'react';
+import { useEffect } from 'react';
+import { Dialog, Modal, ModalOverlay } from 'react-aria-components';
 import { useFetchers } from 'react-router';
 import { noop } from '../lib/noop';
 import { NewsletterSignup } from './newsletter/form';
@@ -22,36 +22,18 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 	}, [fetcher, onClose]);
 
 	return (
-		<Transition appear show={isOpen}>
-			<Dialog as="div" className="relative z-30" onClose={onClose}>
-				<TransitionChild
-					as={Fragment}
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
-				>
-					<div className="fixed inset-0 bg-gray-500/25 transition-opacity" />
-				</TransitionChild>
-
-				<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-					<TransitionChild
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0 scale-95"
-						enterTo="opacity-100 scale-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100 scale-100"
-						leaveTo="opacity-0 scale-95"
-					>
-						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all">
-							<NewsletterSignup />
-						</DialogPanel>
-					</TransitionChild>
-				</div>
-			</Dialog>
-		</Transition>
+		<ModalOverlay
+			className="data-entering:fade-in data-exiting:fade-out fixed inset-0 z-30 bg-gray-500/25 duration-300 ease-out data-entering:animate-in data-exiting:animate-out"
+			isOpen={isOpen}
+			onOpenChange={(open) => {
+				if (!open) onClose();
+			}}
+		>
+			<Modal className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+				<Dialog className="data-entering:fade-in data-entering:zoom-in-95 data-exiting:fade-out data-exiting:zoom-out-95 mx-auto max-w-xl overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 duration-300 ease-out data-entering:animate-in data-exiting:animate-out">
+					<NewsletterSignup />
+				</Dialog>
+			</Modal>
+		</ModalOverlay>
 	);
 }

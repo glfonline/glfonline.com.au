@@ -15,17 +15,19 @@ test('Search, add to cart, modify quantities, checkout flow', async ({ page, bas
 		.first()
 		.click();
 
-	// Wait for the search input to be visible and ready (Headless UI transitions may keep dialog hidden)
-	await page.getByTestId('search-input').waitFor({ state: 'visible' });
+	// Wait for the search input to be visible and ready.
+	const searchInput = page.getByTestId('search-input');
+	await searchInput.waitFor({ state: 'visible' });
+	await expect(searchInput).toBeFocused();
 
 	// Search for "select height"
-	await page.getByTestId('search-input').fill('select height');
-	// Click on the result called "Select Height Step Tees"
-	await page
-		.getByRole('link', {
-			name: 'Select Height Step Tees',
-		})
-		.click();
+	await searchInput.fill('select height');
+	await page.getByRole('link', { name: 'Select Height Step Tees' }).waitFor({ state: 'visible' });
+	await page.getByRole('link', { name: 'Select Height Step Tees' }).click();
+
+	// The dialog should be gone after navigating to the product page.
+	await expect(searchInput).toBeHidden();
+
 	// Click on the "Add to cart" button
 	await page
 		.getByRole('button', {

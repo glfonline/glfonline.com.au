@@ -1,16 +1,8 @@
-import {
-	Dialog,
-	DialogPanel,
-	Disclosure,
-	DisclosureButton,
-	DisclosurePanel,
-	Transition,
-	TransitionChild,
-} from '@headlessui/react';
 import { MinusIcon, PlusIcon } from '@heroicons/react/20/solid';
 import { XMarkIcon } from '@heroicons/react/24/outline';
 import { Image } from '@unpic/react';
-import { Fragment, useId, useState } from 'react';
+import { useId, useState } from 'react';
+import { Button, Dialog, Disclosure, DisclosurePanel, Modal, ModalOverlay } from 'react-aria-components';
 import type { LoaderFunctionArgs, Location, MetaFunction } from 'react-router';
 import { data as json, Link, useLoaderData, useLocation } from 'react-router';
 import invariant from 'tiny-invariant';
@@ -274,50 +266,33 @@ function MobileFilters({
 }) {
 	const { theme } = useLoaderData<typeof loader>();
 	return (
-		<Transition as={Fragment} show={mobileFiltersOpen}>
-			<Dialog as="div" className="relative z-40 lg:hidden" data-theme={theme} onClose={setMobileFiltersOpen}>
-				<TransitionChild
-					as={Fragment}
-					enter="transition-opacity ease-linear duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="transition-opacity ease-linear duration-300"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
+		<ModalOverlay
+			className="data-entering:fade-in data-exiting:fade-out fixed inset-0 z-40 bg-black/25 duration-300 ease-linear data-entering:animate-in data-exiting:animate-out lg:hidden"
+			isOpen={mobileFiltersOpen}
+			onOpenChange={setMobileFiltersOpen}
+		>
+			<Modal className="fixed inset-0 z-40 flex">
+				<Dialog
+					className="data-entering:slide-in-from-right-full data-exiting:slide-out-to-right-full relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl duration-300 ease-in-out data-entering:animate-in data-exiting:animate-out"
+					data-theme={theme}
 				>
-					<div className="fixed inset-0 bg-black/25" />
-				</TransitionChild>
-
-				<div className="fixed inset-0 z-40 flex">
-					<TransitionChild
-						as={Fragment}
-						enter="transition ease-in-out duration-300 transform"
-						enterFrom="translate-x-full"
-						enterTo="translate-x-0"
-						leave="transition ease-in-out duration-300 transform"
-						leaveFrom="translate-x-0"
-						leaveTo="translate-x-full"
-					>
-						<DialogPanel className="relative ml-auto flex h-full w-full max-w-xs flex-col overflow-y-auto bg-white px-4 py-4 pb-6 shadow-xl">
-							<div className="flex items-center justify-between">
-								<h2 className="font-medium text-gray-900 text-lg">Filters</h2>
-								<button
-									className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
-									onClick={() => {
-										setMobileFiltersOpen(false);
-									}}
-									type="button"
-								>
-									<span className="sr-only">Close menu</span>
-									<XMarkIcon aria-hidden="true" className="h-6 w-6" />
-								</button>
-							</div>
-							<DisplayOptions />
-						</DialogPanel>
-					</TransitionChild>
-				</div>
-			</Dialog>
-		</Transition>
+					<div className="flex items-center justify-between">
+						<h2 className="font-medium text-gray-900 text-lg">Filters</h2>
+						<button
+							className="-mr-2 flex h-10 w-10 items-center justify-center p-2 text-gray-400 hover:text-gray-500"
+							onClick={() => {
+								setMobileFiltersOpen(false);
+							}}
+							type="button"
+						>
+							<span className="sr-only">Close menu</span>
+							<XMarkIcon aria-hidden="true" className="h-6 w-6" />
+						</button>
+					</div>
+					<DisplayOptions />
+				</Dialog>
+			</Modal>
+		</ModalOverlay>
 	);
 }
 
@@ -429,20 +404,20 @@ function DisplayOptions() {
 				}
 
 				return (
-					<Disclosure as="div" className="py-2" key={option.name}>
-						{({ open }) => (
+					<Disclosure className="group py-2" key={option.name}>
+						{({ isExpanded }) => (
 							<>
 								<h2>
-									<DisclosureButton className="flex w-full items-center justify-between gap-6 px-4 py-2">
+									<Button className="flex w-full items-center justify-between gap-6 px-4 py-2" slot="trigger">
 										<span className="-ml-4 font-bold">{option.name === PRODUCT_TYPE ? 'Type' : option.name}</span>
 										<span className="-mr-4 inline-flex items-center">
-											{open ? (
+											{isExpanded ? (
 												<MinusIcon aria-hidden="true" className="h-5 w-5" />
 											) : (
 												<PlusIcon aria-hidden="true" className="h-5 w-5" />
 											)}
 										</span>
-									</DisclosureButton>
+									</Button>
 								</h2>
 								<DisclosurePanel className="flex flex-col">
 									{option.values.map((value) => (
@@ -466,20 +441,20 @@ function DisplayOptions() {
 				);
 			})}
 
-			<Disclosure as="div" className="py-2">
-				{({ open }) => (
+			<Disclosure className="group py-2">
+				{({ isExpanded }) => (
 					<>
 						<h2>
-							<DisclosureButton className="flex w-full items-center justify-between gap-6 px-4 py-2">
+							<Button className="flex w-full items-center justify-between gap-6 px-4 py-2" slot="trigger">
 								<span className="-ml-4 font-bold">Sort</span>
 								<span className="-mr-4 inline-flex items-center">
-									{open ? (
+									{isExpanded ? (
 										<MinusIcon aria-hidden="true" className="h-5 w-5" />
 									) : (
 										<PlusIcon aria-hidden="true" className="h-5 w-5" />
 									)}
 								</span>
-							</DisclosureButton>
+							</Button>
 						</h2>
 						<DisclosurePanel className="flex flex-col">
 							{sortOptions.map((option) => (
@@ -538,42 +513,15 @@ export function Pagination({
 }
 
 const sortOptions = [
-	{
-		label: 'Default',
-		value: 'collection-default',
-	},
-	{
-		label: 'Newest',
-		value: 'latest-desc',
-	},
-	{
-		label: 'Price: Low to High',
-		value: 'price-asc',
-	},
-	{
-		label: 'Price: High to Low',
-		value: 'price-desc',
-	},
-	{
-		label: 'Relevance',
-		value: 'relevance',
-	},
-	{
-		label: 'Title: A-Z',
-		value: 'title-asc',
-	},
-	{
-		label: 'Title: Z-A',
-		value: 'title-desc',
-	},
-	{
-		label: 'Trending',
-		value: 'trending-desc',
-	},
-] satisfies Array<{
-	label: string;
-	value: SortBy;
-}>;
+	{ label: 'Default', value: 'collection-default' },
+	{ label: 'Newest', value: 'latest-desc' },
+	{ label: 'Price: Low to High', value: 'price-asc' },
+	{ label: 'Price: High to Low', value: 'price-desc' },
+	{ label: 'Relevance', value: 'relevance' },
+	{ label: 'Title: A-Z', value: 'title-asc' },
+	{ label: 'Title: Z-A', value: 'title-desc' },
+	{ label: 'Trending', value: 'trending-desc' },
+] satisfies Array<{ label: string; value: SortBy }>;
 
 const imageMap = {
 	ladies: 'https://cdn.shopify.com/s/files/1/1080/9832/files/hero-default-ladies.jpg?v=1614314620&width=1200',

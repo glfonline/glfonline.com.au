@@ -1,5 +1,4 @@
 import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { captureException } from '@sentry/react-router';
 import { mergeForm, revalidateLogic } from '@tanstack/react-form';
 import type { ServerFormState } from '@tanstack/react-form-remix';
@@ -12,6 +11,7 @@ import {
 } from '@tanstack/react-form-remix';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
+import { Tab, TabList, TabPanel, TabPanels, Tabs } from 'react-aria-components';
 import { useRef, useState } from 'react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { Form, data as json, useActionData, useLoaderData, useNavigation, useSubmit } from 'react-router';
@@ -455,16 +455,17 @@ function ImageGallery({
 	isOnSale: boolean;
 }) {
 	return (
-		<TabGroup as="div" className="flex flex-col-reverse gap-6">
+		<Tabs className="flex flex-col-reverse gap-6">
 			{/* Image selector */}
 			<div className="mx-auto w-full max-w-2xl lg:max-w-none">
 				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
-					{images.map(({ node }) => (
+					{images.map(({ node }, index) => (
 						<Tab
-							className="relative flex h-24 cursor-pointer items-center justify-center bg-white font-medium text-gray-900 text-sm uppercase hover:bg-gray-50 focus:outline-hidden focus:ring focus:ring-brand/50 focus:ring-offset-4"
-							key={node.id}
+							className="relative flex h-24 cursor-pointer items-center justify-center bg-white font-medium text-gray-900 text-sm uppercase hover:bg-gray-50 focus:outline-hidden focus-visible:ring focus-visible:ring-brand/50 focus-visible:ring-offset-4 data-[selected]:ring-brand-primary"
+							id={node.id ?? `image-${index}`}
+							key={node.id ?? index}
 						>
-							{({ selected }) => {
+							{({ isSelected }) => {
 								return (
 									<>
 										<span className="absolute inset-0 overflow-hidden">
@@ -482,7 +483,7 @@ function ImageGallery({
 										<span
 											aria-hidden="true"
 											className={clsx(
-												selected ? 'ring-brand-primary' : 'ring-transparent',
+												isSelected ? 'ring-brand-primary' : 'ring-transparent',
 												'pointer-events-none absolute inset-0 ring-1',
 											)}
 										/>
@@ -495,9 +496,9 @@ function ImageGallery({
 			</div>
 
 			<TabPanels className="relative aspect-square w-full bg-gray-200">
-				{images.map(({ node }) => {
+				{images.map(({ node }, index) => {
 					return (
-						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
+						<TabPanel className="absolute inset-0 overflow-hidden" id={node.id ?? `image-${index}`} key={node.id ?? index}>
 							<Image
 								alt={node.altText || ''}
 								breakpoints={[640, 768, 1024, 1280]}
@@ -513,6 +514,6 @@ function ImageGallery({
 					);
 				})}
 			</TabPanels>
-		</TabGroup>
+		</Tabs>
 	);
 }

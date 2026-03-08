@@ -1,20 +1,11 @@
 import type { Hit } from '@algolia/client-search';
-import {
-	Combobox,
-	ComboboxInput,
-	ComboboxOption,
-	ComboboxOptions,
-	Dialog,
-	DialogPanel,
-	Transition,
-	TransitionChild,
-} from '@headlessui/react';
 import { MagnifyingGlassIcon } from '@heroicons/react/20/solid';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { Fragment, useState } from 'react';
-import { NavLink, useNavigate } from 'react-router';
+import { useEffect, useState } from 'react';
+import { Dialog, Input } from 'react-aria-components';
+import { NavLink } from 'react-router';
 import { isPopulatedArray } from '../lib/is-populated-array';
 import { makeProductHref } from '../lib/make-product-href';
 import type { Product } from '../lib/use-algolia-search';
@@ -28,85 +19,85 @@ export function SearchDialog({
 	isSearchOpen: boolean;
 	setSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
-	const navigate = useNavigate();
 	const [query, setQuery] = useState('');
 	const { data, isLoading, isPlaceholderData } = useAlgoliaSearch(query);
 
+	useEffect(() => {
+		if (!isSearchOpen) return;
+
+		const onKeyDown = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setSearchOpen(false);
+			}
+		};
+
+		document.addEventListener('keydown', onKeyDown);
+
+		return () => {
+			document.removeEventListener('keydown', onKeyDown);
+		};
+	}, [isSearchOpen, setSearchOpen]);
+
+	useEffect(() => {
+		if (isSearchOpen) return;
+
+		const timeoutId = window.setTimeout(() => {
+			setQuery('');
+		}, 200);
+
+		return () => {
+			window.clearTimeout(timeoutId);
+		};
+	}, [isSearchOpen]);
+
+	if (!isSearchOpen) {
+		return null;
+	}
+
 	return (
-		<Transition
-			afterLeave={() => {
-				setQuery('');
+		<div
+			className="fade-in fixed inset-0 z-30 animate-in bg-gray-500/25 duration-300 ease-out"
+			onClick={() => {
+				setSearchOpen(false);
 			}}
-			appear
-			as={Fragment}
-			show={isSearchOpen}
 		>
-			<Dialog as="div" className="relative z-30" onClose={setSearchOpen}>
-				<TransitionChild
-					as={Fragment}
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
+			<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+				<Dialog
+					className="fade-in zoom-in-95 mx-auto max-w-xl animate-in overflow-visible rounded-xl bg-white shadow-2xl ring-1 ring-black/5 duration-300 ease-out"
+					onClick={(event) => {
+						event.stopPropagation();
+					}}
 				>
-					<div className="fixed inset-0 bg-gray-500/25 transition-opacity" />
-				</TransitionChild>
+					<div className="relative border-gray-100 border-b">
+						<MagnifyingGlassIcon
+							aria-hidden="true"
+							className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
+						/>
+						<Input
+							aria-label="Search products"
+							autoFocus
+							className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-gray-800 placeholder-gray-400 focus:outline-hidden sm:text-sm"
+							data-testid="search-input"
+							onChange={(event) => {
+								setQuery(event.currentTarget.value);
+							}}
+							placeholder="Search..."
+							value={query}
+						/>
+					</div>
 
-				<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-					<TransitionChild
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0 scale-95"
-						enterTo="opacity-100 scale-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100 scale-100"
-						leaveTo="opacity-0 scale-95"
-					>
-						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all">
-							<Combobox<Hit<Product>>
-								onChange={async (product) => {
-									if (product) {
-										await navigate(
-											makeProductHref({
-												handle: product.handle,
-												tags: product.tags,
-											}),
-										);
-										setSearchOpen(false);
-									}
-								}}
-							>
-								<div className="relative">
-									<MagnifyingGlassIcon
-										aria-hidden="true"
-										className="pointer-events-none absolute top-3.5 left-4 h-5 w-5 text-gray-400"
-									/>
-									<ComboboxInput
-										autoFocus
-										className="h-12 w-full border-0 bg-transparent pr-4 pl-11 text-gray-800 placeholder-gray-400 focus:ring-0 sm:text-sm"
-										data-testid="search-input"
-										onChange={(event) => {
-											setQuery(event.target.value);
-										}}
-										placeholder="Search..."
-									/>
-								</div>
-
-								<SearchResults
-									data={data}
-									isLoading={isLoading}
-									isPreviousData={isPlaceholderData}
-									query={query}
-									setSearchOpen={setSearchOpen}
-								/>
-							</Combobox>
-						</DialogPanel>
-					</TransitionChild>
-				</div>
-			</Dialog>
-		</Transition>
+					<SearchResults
+						data={data}
+						isLoading={isLoading}
+						isPreviousData={isPlaceholderData}
+						onSelect={() => {
+							setSearchOpen(false);
+						}}
+						query={query}
+					/>
+				</Dialog>
+			</div>
+		</div>
 	);
 }
 
@@ -114,16 +105,16 @@ function SearchResults({
 	data,
 	isLoading,
 	isPreviousData,
+	onSelect,
 	query,
-	setSearchOpen,
 }: {
 	data?: {
 		hits: Array<Hit<Product>>;
 	};
 	isLoading: boolean;
 	isPreviousData: boolean;
+	onSelect: () => void;
 	query: string;
-	setSearchOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
 	if (isLoading) {
 		return (
@@ -134,61 +125,48 @@ function SearchResults({
 	}
 	if (isPopulatedArray(data?.hits)) {
 		return (
-			<ComboboxOptions
+			<div
 				className="max-h-96 scroll-py-3 overflow-y-auto p-3"
-				static
 				style={{
 					opacity: isPreviousData ? 0.5 : 1,
 				}}
 			>
-				{data.hits.map((product) => (
-					<ComboboxOption
-						className={({ focus }) => clsx('flex cursor-default select-none rounded-xl p-3', focus && 'bg-gray-100')}
-						key={product.objectID}
-						value={product}
-					>
-						{({ focus }) => {
-							const imageWidth = 44;
-							return (
-								<NavLink
-									className="flex flex-auto items-center gap-3"
-									onClick={() => {
-										setSearchOpen(false);
-									}}
-									prefetch="intent"
-									to={makeProductHref({
-										handle: product.handle,
-										tags: product.tags,
-									})}
-								>
-									{product.image ? (
-										<Image
-											alt=""
-											className="aspect-square w-11 bg-white object-contain"
-											height={imageWidth}
-											layout="constrained"
-											priority={false}
-											src={product.image}
-											width={imageWidth}
-										/>
-									) : (
-										<span aria-hidden="true" className="aspect-square w-11 bg-gray-200" />
-									)}
-									<span
-										className={clsx(
-											'font-medium text-sm [&>em]:bg-black [&>em]:text-white [&>em]:not-italic',
-											focus ? 'text-gray-900' : 'text-gray-700',
-										)}
-										dangerouslySetInnerHTML={{
-											__html: product._highlightResult.title.value,
-										}}
-									/>
-								</NavLink>
-							);
-						}}
-					</ComboboxOption>
-				))}
-			</ComboboxOptions>
+				{data.hits.map((product) => {
+					const imageWidth = 44;
+					return (
+						<NavLink
+							className="flex items-center gap-3 rounded-xl p-3 hover:bg-gray-100 focus:bg-gray-100 focus:outline-hidden"
+							key={product.objectID}
+							onClick={onSelect}
+							prefetch="intent"
+							to={makeProductHref({
+								handle: product.handle,
+								tags: product.tags,
+							})}
+						>
+							{product.image ? (
+								<Image
+									alt=""
+									className="aspect-square w-11 bg-white object-contain"
+									height={imageWidth}
+									layout="constrained"
+									priority={false}
+									src={product.image}
+									width={imageWidth}
+								/>
+							) : (
+								<span aria-hidden="true" className="aspect-square w-11 bg-gray-200" />
+							)}
+							<span
+								className="font-medium text-gray-700 text-sm [&>em]:bg-black [&>em]:text-white [&>em]:not-italic"
+								dangerouslySetInnerHTML={{
+									__html: product._highlightResult.title.value,
+								}}
+							/>
+						</NavLink>
+					);
+				})}
+			</div>
 		);
 	}
 
