@@ -33,7 +33,15 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnTyp
 		});
 	}
 
-	// Otherwise return the successful cart
+	// Sync session to Shopify's cart so session never holds more than inventory; checkout URL then matches.
+	if (cartResult.type === 'success' && cartResult.cart) {
+		const shopifyCart = cartResult.cart.lines.edges.map((edge) => ({
+			variantId: edge.node.merchandise.id,
+			quantity: edge.node.quantity,
+		}));
+		session.setCart(shopifyCart);
+	}
+
 	return data(cartResult, {
 		headers: {
 			'Cache-Control': CACHE_NONE,

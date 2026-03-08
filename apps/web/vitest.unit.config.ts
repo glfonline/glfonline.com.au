@@ -7,5 +7,6 @@ export default defineConfig({
 		globals: false,
 		include: ['app/**/*.unit.test.ts'],
 		environment: 'node',
+		setupFiles: ['app/lib/test-setup.unit.ts'],
 	},
 });

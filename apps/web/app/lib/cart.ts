@@ -42,39 +42,37 @@ export async function getSession(input: Request | string | null | undefined) {
 }
 
 export function addToCart(cart: Array<CartItem>, variantId: string, quantity: number) {
-	let added = false;
+	const result: Array<CartItem> = [];
+	let isAdded = false;
 	for (const item of cart) {
 		if (item.variantId === variantId) {
-			item.quantity += quantity;
-			added = true;
-			break;
+			result.push({ ...item, quantity: item.quantity + quantity });
+			isAdded = true;
+		} else {
+			result.push({ ...item });
 		}
 	}
-	if (!added) {
-		cart.push({
-			quantity,
-			variantId,
-		});
+	if (!isAdded) {
+		result.push({ quantity, variantId });
 	}
-	return cart;
+	return result;
 }
 
 export function updateCartItem(cart: Array<CartItem>, variantId: string, quantity: number) {
-	let updated = false;
+	const result: Array<CartItem> = [];
+	let isUpdated = false;
 	for (const item of cart) {
 		if (item.variantId === variantId) {
-			item.quantity = quantity;
-			updated = true;
-			break;
+			result.push({ ...item, quantity });
+			isUpdated = true;
+		} else {
+			result.push({ ...item });
 		}
 	}
-	if (!updated) {
-		cart.push({
-			quantity,
-			variantId,
-		});
+	if (!isUpdated) {
+		result.push({ quantity, variantId });
 	}
-	return cart;
+	return result;
 }
 
 export function removeCartItem(cart: Array<CartItem>, variantId: string) {

@@ -41,10 +41,25 @@ export async function getCartInfo(items: Array<CartItem>): Promise<CartResult> {
 			},
 		});
 
+		const payload = json.cartCreate;
+		const userErrors = payload?.userErrors || [];
+
+		// Reject when Shopify returns errors (e.g. quantity exceeds inventory)
+		if (userErrors.length > 0) {
+			const message =
+				userErrors
+					.flatMap((err) => {
+						if (!err) return [];
+						return [err.message];
+					})
+					.join(' ') || 'Unable to add item to cart.';
+			return { error: message, type: 'error' };
+		}
+
 		// Check if we have a valid cart with checkout URL
-		if (json.cartCreate?.cart?.checkoutUrl)
+		if (payload?.cart?.checkoutUrl)
 			return {
-				cart: json.cartCreate.cart,
+				cart: payload.cart,
 				type: 'success',
 			};
 

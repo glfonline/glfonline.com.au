@@ -100,6 +100,7 @@ export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 			amount
 		}
 		currentlyNotInStock
+		quantityAvailable
 		image {
 			id
 			altText

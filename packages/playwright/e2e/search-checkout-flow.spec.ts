@@ -2,85 +2,66 @@ import { expect, test } from '@playwright/test';
 import invariant from 'tiny-invariant';
 
 const CHECKOUT_URL_REGEX = /^https:\/\/golfladiesfirst\.myshopify\.com\/checkouts\//;
+const CART_LINK_REGEX = /items in cart, view bag/;
+const ONE_ITEM_CART_LINK_REGEX = /1\s*items in cart, view bag/;
 
-test('Search, add to cart, modify quantities, checkout flow', async ({ page, baseURL }) => {
-	invariant(baseURL, 'Base URL must be defined');
-	// Go to home page
-	await page.goto(baseURL);
-	// Click the search button (use first to avoid ambiguity between mobile/desktop buttons)
-	await page
-		.getByRole('button', {
-			name: 'Search',
-		})
-		.first()
-		.click();
+test.describe('Search and checkout flow', () => {
+	test.beforeEach(async ({ page, baseURL }) => {
+		invariant(baseURL, 'Base URL must be defined');
+		await page.goto(baseURL);
+	});
 
-	// Wait for the search input to be visible and ready (Headless UI transitions may keep dialog hidden)
-	await page.getByTestId('search-input').waitFor({ state: 'visible' });
+	test('Add to cart 3 times shows 1 line with quantity 3 on cart page', async ({ page }) => {
+		await page.getByRole('button', { name: 'Search' }).first().click();
+		await expect(page.getByTestId('search-input')).toBeVisible();
+		await page.getByTestId('search-input').fill('select height');
+		await page.getByRole('link', { name: 'Select Height Step Tees' }).click();
 
-	// Search for "select height"
-	await page.getByTestId('search-input').fill('select height');
-	// Click on the result called "Select Height Step Tees"
-	await page
-		.getByRole('link', {
-			name: 'Select Height Step Tees',
-		})
-		.click();
-	// Click on the "Add to cart" button
-	await page
-		.getByRole('button', {
-			name: 'Add to cart',
-		})
-		.click();
-	// Click on the "View cart" button
-	await page
-		.getByRole('link', {
-			name: '1 items in cart, view bag',
-		})
-		.click();
+		const cartLink = page.getByRole('link', { name: CART_LINK_REGEX });
+		const addToCartButton = page.getByRole('button', { name: 'Add to cart' });
 
-	// Test cart increment/decrement functionality
-	// Wait for cart page to load and get initial quantity
-	await page.waitForSelector('[data-testid="quantity-increment"]');
+		await addToCartButton.click();
+		await expect(addToCartButton).toBeVisible();
+		await expect(cartLink).toContainText('1');
 
-	// Find the quantity span using the test ID
-	const quantitySpan = page.getByTestId('quantity-display').first();
-	const initialQuantity = await quantitySpan.textContent();
-	console.log('Initial quantity:', initialQuantity);
+		await addToCartButton.click();
+		await expect(addToCartButton).toBeVisible();
+		await expect(cartLink).toContainText('2');
 
-	// Test increment - use the test ID for the increment button
-	const incrementButton = page.getByTestId('quantity-increment').first();
-	await incrementButton.click();
+		await addToCartButton.click();
+		await expect(addToCartButton).toBeVisible();
+		await expect(cartLink).toContainText('3');
 
-	// Wait for the quantity to update after increment
-	await expect(quantitySpan).toHaveText(String(Number(initialQuantity || '0') + 1));
+		await cartLink.click();
+		await expect(page.getByTestId('quantity-display').first()).toBeVisible();
+		await expect(page.getByTestId('quantity-display').first()).toHaveText('3');
+	});
 
-	// Verify quantity increased
-	const quantityAfterIncrement = await quantitySpan.textContent();
-	console.log('Quantity after increment:', quantityAfterIncrement);
-	expect(Number(quantityAfterIncrement || '0')).toBe(Number(initialQuantity || '0') + 1);
+	test('Search, add to cart, modify quantities, checkout flow', async ({ page }) => {
+		await page.getByRole('button', { name: 'Search' }).first().click();
+		await expect(page.getByTestId('search-input')).toBeVisible();
 
-	// Test decrement - use the test ID for the decrement button
-	const decrementButton = page.getByTestId('quantity-decrement').first();
-	await decrementButton.click();
+		await page.getByTestId('search-input').fill('select height');
+		await page.getByRole('link', { name: 'Select Height Step Tees' }).click();
+		await page.getByRole('button', { name: 'Add to cart' }).click();
+		await page.getByRole('link', { name: ONE_ITEM_CART_LINK_REGEX }).click();
 
-	// Wait for the quantity to update after decrement
-	await expect(quantitySpan).toHaveText(initialQuantity || '1');
+		const quantityDisplay = page.getByTestId('quantity-display').first();
+		await expect(page.getByTestId('quantity-increment')).toBeVisible();
 
-	// Verify quantity decreased back to original
-	const quantityAfterDecrement = await quantitySpan.textContent();
-	console.log('Quantity after decrement:', quantityAfterDecrement);
-	expect(Number(quantityAfterDecrement || '0')).toBe(Number(initialQuantity || '0'));
+		const initialQuantity = await quantityDisplay.textContent();
+		expect(initialQuantity).toBeTruthy();
+		const initialNum = Number(initialQuantity);
 
-	// Test that cart doesn't get cleared (quantity should still be visible)
-	await expect(quantitySpan).toBeVisible();
+		await page.getByTestId('quantity-increment').first().click();
+		await expect(quantityDisplay).toHaveText(String(initialNum + 1));
 
-	// Click on the "Checkout" button
-	await page
-		.getByRole('button', {
-			name: 'Checkout',
-		})
-		.click();
-	// Check that we are on the checkout page
-	await expect(page).toHaveURL(CHECKOUT_URL_REGEX);
+		await page.getByTestId('quantity-decrement').first().click();
+		await expect(quantityDisplay).toHaveText(initialQuantity ?? '');
+
+		await expect(quantityDisplay).toBeVisible();
+
+		await page.getByRole('button', { name: 'Checkout' }).click();
+		await expect(page).toHaveURL(CHECKOUT_URL_REGEX);
+	});
 });
