@@ -263,7 +263,8 @@ export default function ProductPage() {
 	// Prefer fetcher.data when add-to-cart was submitted via fetcher; fall back to actionData for full-page submissions
 	const actionResult = fetcher.data ?? actionData;
 	const parsedAction = productActionResultSchema.safeParse(actionResult);
-	const errorFormState = parsedAction.success && parsedAction.data.type === 'error' ? parsedAction.data.formState : undefined;
+	const errorFormState =
+		parsedAction.success && parsedAction.data.type === 'error' ? parsedAction.data.formState : undefined;
 	const addToCartErrorMessage = errorFormState == null ? undefined : getAddToCartErrorMessage(errorFormState);
 
 	// Use the form state from the error case, or initialFormState with the selected variant
