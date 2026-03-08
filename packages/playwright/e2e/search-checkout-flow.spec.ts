@@ -3,7 +3,7 @@ import invariant from 'tiny-invariant';
 
 const CHECKOUT_URL_REGEX = /^https:\/\/golfladiesfirst\.myshopify\.com\/checkouts\//;
 const CART_LINK_REGEX = /items in cart, view bag/;
-const ONE_ITEM_CART_LINK_REGEX = /1\s*items in cart, view bag/;
+const ONE_ITEM_CART_LINK_REGEX = /^1\s*items in cart, view bag$/;
 
 test.describe('Search and checkout flow', () => {
 	test.beforeEach(async ({ page, baseURL }) => {

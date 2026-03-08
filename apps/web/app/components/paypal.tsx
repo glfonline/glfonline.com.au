@@ -1,5 +1,6 @@
 import type { PayPalMessagesComponentProps, ScriptProviderProps } from '@paypal/react-paypal-js';
 import { PayPalScriptProvider, PayPalMessages as ReactPayPalMessages } from '@paypal/react-paypal-js';
+import type { PropsWithChildren } from 'react';
 
 export const PAYPAL_CLIENT_ID = 'AdV6eEVa0CTuoJdFOnwezcVOuyWp3vHZrm62Wzq89AwDaU30WvR0EjTZhQxJhml5wB_lktJLG9-P58pa';
 
@@ -20,17 +21,19 @@ const paypalMessageStyle = {
 
 type PayPalMessagesProps = Pick<PayPalMessagesComponentProps, 'amount' | 'placement'>;
 
+export function PayPalProvider({ children }: PropsWithChildren) {
+	return <PayPalScriptProvider options={paypalScriptOptions}>{children}</PayPalScriptProvider>;
+}
+
 export function PayPalMessages({ amount, placement }: PayPalMessagesProps) {
 	return (
-		<PayPalScriptProvider options={paypalScriptOptions}>
-			<div className="min-h-5" data-testid="paypal-messages">
-				<ReactPayPalMessages
-					amount={amount}
-					forceReRender={[amount, placement]}
-					placement={placement}
-					style={paypalMessageStyle}
-				/>
-			</div>
-		</PayPalScriptProvider>
+		<div className="min-h-5" data-testid="paypal-messages">
+			<ReactPayPalMessages
+				amount={amount}
+				forceReRender={[amount, placement]}
+				placement={placement}
+				style={paypalMessageStyle}
+			/>
+		</div>
 	);
 }
