@@ -460,6 +460,20 @@ export const CREATE_CART_MUTATION = graphql(
 									...MONEY_FRAGMENT
 								}
 							}
+							discountAllocations {
+								... on CartAutomaticDiscountAllocation {
+									title
+									discountedAmount {
+										...MONEY_FRAGMENT
+									}
+								}
+								... on CartCodeDiscountAllocation {
+									code
+									discountedAmount {
+										...MONEY_FRAGMENT
+									}
+								}
+							}
 							merchandise {
 								... on ProductVariant {
 									id
