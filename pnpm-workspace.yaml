@@ -9,6 +9,10 @@ minimumReleaseAge: 2880
 overrides:
   # Remove deprecated node-domexception - Node.js 18+ has native DOMException
   node-domexception: '-'
+  # Fix minimatch ReDoS vulnerabilities in the Vercel build chain
+  minimatch: '>=10.2.4'
+  # Fix ajv ReDoS vulnerability in Vercel static config
+  ajv: '>=8.18.0'
   # Fix path-to-regexp ReDoS vulnerability (backtracking regex)
   path-to-regexp@>=4.0.0 <6.3.0: '>=8.3.0'
   # Fix undici decompression chain DoS vulnerability
@@ -18,6 +22,8 @@ overrides:
 
 # Suppress warnings for deprecated packages we can't fix (upstream issues)
 allowedDeprecatedVersions:
+  # sanity@5.13.0 still pulls glob@10.5.0 via archiver/rimraf; track upstream instead of forcing a major transitive override
+  glob: '*'
   # whatwg-encoding is deprecated but @exodus/bytes isn't API-compatible
   # jsdom 27.4.0+ uses @exodus/bytes directly, but jsdom 26.1.0 (from sanity) still needs whatwg-encoding
   # Upstream fix: upgrade jsdom or wait for sanity to upgrade jsdom
