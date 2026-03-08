@@ -1,13 +1,19 @@
-import { useEffect, useState } from 'react';
+import type { PropsWithChildren } from 'react';
+import { useSyncExternalStore } from 'react';
+
+const emptySubscribe = () => () => {};
 
 export function useClientOnlyMount() {
-	const [isMounted, setIsMounted] = useState(false);
-
-	useEffect(() => {
-		setIsMounted(true);
-	}, []);
-
 	return {
-		isMounted,
+		isMounted: useSyncExternalStore(
+			emptySubscribe,
+			() => true,
+			() => false,
+		),
 	};
+}
+
+export function ClientOnly({ children }: PropsWithChildren) {
+	const { isMounted } = useClientOnlyMount();
+	return isMounted ? children : null;
 }

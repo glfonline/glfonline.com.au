@@ -5,17 +5,20 @@
 		"build": {
 			"extends": false
 		},
-		"check:lint": {
-			"env": ["BASE_URL", "CI", "PORT", "SKIP_WEB_SERVER"]
+		"check:deps": {
+			"extends": false
+		},
+		"check:exports": {
+			"extends": false
 		},
 		"check:types": {
-			"dependsOn": []
+			"extends": false
 		},
 		"test:browser": {
 			"extends": false
 		},
 		"test:e2e": {
-			"env": ["BASE_URL", "CI", "PORT", "SKIP_WEB_SERVER"]
+			"extends": false
 		},
 		"test:unit": {
 			"extends": false

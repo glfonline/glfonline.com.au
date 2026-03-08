@@ -5,6 +5,12 @@ import type { CartItem } from './cart';
 type CartMutationData = OperationData<typeof CREATE_CART_MUTATION>;
 type Cart = NonNullable<CartMutationData['cartCreate']>['cart'];
 
+export type CartLineNode = Extract<Cart, { lines: unknown }>['lines'] extends {
+	edges: ReadonlyArray<{ node: infer N }>;
+}
+	? N
+	: never;
+
 export type CartEmpty = {
 	type: 'empty';
 	cart?: never;
@@ -41,10 +47,25 @@ export async function getCartInfo(items: Array<CartItem>): Promise<CartResult> {
 			},
 		});
 
+		const payload = json.cartCreate;
+		const userErrors = payload?.userErrors || [];
+
+		// Reject when Shopify returns errors (e.g. quantity exceeds inventory)
+		if (userErrors.length > 0) {
+			const messages: Array<string> = [];
+			for (const userError of userErrors) {
+				if (userError) {
+					messages.push(userError.message);
+				}
+			}
+			const message = messages.join(' ') || 'Unable to add item to cart.';
+			return { error: message, type: 'error' };
+		}
+
 		// Check if we have a valid cart with checkout URL
-		if (json.cartCreate?.cart?.checkoutUrl)
+		if (payload?.cart?.checkoutUrl)
 			return {
-				cart: json.cartCreate.cart,
+				cart: payload.cart,
 				type: 'success',
 			};
 

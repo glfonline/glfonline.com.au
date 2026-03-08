@@ -9,14 +9,19 @@ import { data, Form, Link, redirect, useFetcher, useLoaderData, useNavigation } 
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
+import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
 import type { CartResult } from '../lib/get-cart-info';
 import { getCartInfo } from '../lib/get-cart-info';
+import type { LineDisplay } from '../lib/line-display';
+import { getLineDisplay } from '../lib/line-display';
 import { getSeoMeta } from '../seo';
 
-export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartResult>>> {
+type CartLoaderData = CartResult & { linesDisplay?: Array<LineDisplay> };
+
+export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartLoaderData>>> {
 	const session = await getSession(request);
 	const cart = await session.getCart();
 	const cartResult = await getCartInfo(cart);
@@ -32,13 +37,29 @@ export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnTyp
 		});
 	}
 
-	// Otherwise return the successful cart
-	return data(cartResult, {
-		headers: {
-			'Cache-Control': CACHE_NONE,
-			'Set-Cookie': await session.commitSession(),
+	// Sync session to Shopify's cart so session never holds more than inventory; checkout URL then matches.
+	if (cartResult.type === 'success' && cartResult.cart) {
+		const shopifyCart = cartResult.cart.lines.edges.map((edge) => ({
+			variantId: edge.node.merchandise.id,
+			quantity: edge.node.quantity,
+		}));
+		session.setCart(shopifyCart);
+	}
+
+	const linesDisplay =
+		cartResult.type === 'success' && cartResult.cart
+			? cartResult.cart.lines.edges.map((edge) => getLineDisplay(edge.node))
+			: undefined;
+
+	return data(
+		{ ...cartResult, linesDisplay },
+		{
+			headers: {
+				'Cache-Control': CACHE_NONE,
+				'Set-Cookie': await session.commitSession(),
+			},
 		},
-	});
+	);
 }
 
 const INTENT = 'intent';
@@ -291,8 +312,8 @@ export default function CartPage() {
 		);
 	}
 
-	// Now we know cartResult exists and has a cart property
-	const { cart } = cartResult;
+	// Now we know cartResult exists and has a cart property; linesDisplay is set when type is success
+	const { cart, linesDisplay } = cartResult;
 
 	return (
 		<div className="bg-white">
@@ -306,9 +327,9 @@ export default function CartPage() {
 							Items in your shopping cart
 						</h2>
 
-						{Array.isArray(cart.lines.edges) ? (
+						{Array.isArray(cart.lines.edges) && linesDisplay ? (
 							<ul className="divide-y divide-gray-200 border-gray-200 border-t border-b" role="list">
-								{cart.lines.edges.map(({ node }) => {
+								{cart.lines.edges.map(({ node }, index) => {
 									const theme = node.merchandise.product.tags.includes('ladies') ? 'ladies' : 'mens';
 									return (
 										<li className="flex py-6 sm:py-10" data-theme={theme} key={node.id}>
@@ -347,9 +368,7 @@ export default function CartPage() {
 																<p className="text-gray-500">{node.merchandise.title}</p>
 															</div>
 														)}
-														<p className="mt-1 text-gray-900 text-sm">
-															{formatMoney(node.cost.amountPerQuantity.amount, 'AUD')}
-														</p>
+														<LineItemPrice display={linesDisplay[index]} />
 													</div>
 
 													<div className="mt-4 sm:mt-0 sm:pr-9">
@@ -394,6 +413,7 @@ export default function CartPage() {
 								<dd className="text-gray-900 text-sm">{formatMoney(cart.cost.subtotalAmount.amount || 0, 'AUD')}</dd>
 							</div>
 						</dl>
+						<PayPalMessages amount={Number(cart.cost.subtotalAmount.amount || 0)} placement="cart" />
 
 						<p className="text-gray-600 text-sm">Taxes and shipping are calculated at checkout</p>
 
@@ -414,6 +434,30 @@ export default function CartPage() {
 					</Form>
 				</div>
 			</div>
+		</div>
+	);
+}
+
+function LineItemPrice({ display }: { display: LineDisplay | undefined }) {
+	if (display == null) return null;
+	return (
+		<div className="mt-1 flex flex-col gap-0.5 text-gray-900 text-sm">
+			{display.showWasNow && display.compareAt != null && (
+				<del className="text-gray-500">
+					<span className="sr-only">Was </span>
+					{formatMoney(display.compareAt, 'AUD')}
+				</del>
+			)}
+			<span>
+				{display.showWasNow && display.compareAt != null && <span className="sr-only">Now </span>}
+				{formatMoney(display.pricePerUnit, 'AUD')}
+			</span>
+			{display.discountLabels.map(({ label, amount }, index) => (
+				<span className="text-gray-600 text-xs" key={index}>
+					{label}
+					{amount != null && ` (-${formatMoney(amount, 'AUD')})`}
+				</span>
+			))}
 		</div>
 	);
 }

@@ -3,7 +3,7 @@
 	"private": true,
 	"type": "module",
 	"scripts": {
-		"build": "stale-dep && pnpm dlx pnpm@10 install && turbo run build",
+		"build": "stale-dep && turbo run build",
 		"build:cms": "stale-dep && turbo run build --filter=@glfonline/cms...",
 		"build:packages": "stale-dep && turbo run build --filter=./packages/*",
 		"build:web": "stale-dep && turbo run build --filter=@glfonline/web...",
@@ -30,6 +30,7 @@
 		"preinstall": "pnpm dlx only-allow pnpm",
 		"postinstall": "manypkg check && stale-dep -u",
 		"sort:packages": "pnpm dlx sort-package-json 'package.json' './apps/*/package.json' './packages/*/package.json'",
+		"test": "turbo run test:browser test:e2e test:unit",
 		"test:browser": "turbo run test:browser",
 		"test:e2e": "turbo run test:e2e",
 		"test:unit": "turbo run test:unit"

@@ -3,8 +3,20 @@
 	"extends": ["//"],
 	"tasks": {
 		"build": {
-			"dependsOn": ["^build"],
+			"dependsOn": [],
 			"outputs": [".sanity/**", "dist/**"]
+		},
+		"check:types": {
+			"dependsOn": []
+		},
+		"test:browser": {
+			"extends": false
+		},
+		"test:e2e": {
+			"extends": false
+		},
+		"test:unit": {
+			"extends": false
 		}
 	}
 }

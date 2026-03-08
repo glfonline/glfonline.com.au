@@ -110,6 +110,7 @@ export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 		price {
 			amount
 		}
+		quantityAvailable
 		requiresShipping
 		selectedOptions {
 			name
@@ -457,6 +458,20 @@ export const CREATE_CART_MUTATION = graphql(
 								}
 								totalAmount {
 									...MONEY_FRAGMENT
+								}
+							}
+							discountAllocations {
+								... on CartAutomaticDiscountAllocation {
+									title
+									discountedAmount {
+										...MONEY_FRAGMENT
+									}
+								}
+								... on CartCodeDiscountAllocation {
+									code
+									discountedAmount {
+										...MONEY_FRAGMENT
+									}
 								}
 							}
 							merchandise {
