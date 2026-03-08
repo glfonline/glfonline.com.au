@@ -1,26 +1,19 @@
-import { describe, expect, it, vi } from 'vitest';
-
-vi.mock('@glfonline/shopify-client', () => ({
-	CREATE_CART_MUTATION: {},
-	shopifyClient: vi.fn(),
-}));
-
-import type { LineDisplayInput } from './get-cart-info';
-import { getLineDisplay } from './get-cart-info';
+import { describe, expect, it } from 'vitest';
+import type { LineDisplayInput } from './line-display';
+import { getLineDisplay } from './line-display';
 
 describe('getLineDisplay', () => {
 	it('builds the UI pricing payload from compare-at and discount allocations', () => {
 		const line = {
 			quantity: 2,
 			cost: {
-				amountPerQuantity: { amount: 60, currencyCode: 'AUD' },
-				compareAtAmountPerQuantity: { amount: 80, currencyCode: 'AUD' },
-				totalAmount: { amount: 120, currencyCode: 'AUD' },
+				compareAtAmountPerQuantity: { amount: 80 },
+				totalAmount: { amount: 120 },
 			},
 			discountAllocations: [
-				{ title: 'VIP', discountedAmount: { amount: 15, currencyCode: 'AUD' } },
-				{ code: 'WELCOME10', discountedAmount: { amount: 5, currencyCode: 'AUD' } },
-				{ discountedAmount: { amount: 3, currencyCode: 'AUD' } },
+				{ title: 'VIP', discountedAmount: { amount: 15 } },
+				{ code: 'WELCOME10', discountedAmount: { amount: 5 } },
+				{ discountedAmount: { amount: 3 } },
 			],
 		} satisfies LineDisplayInput;
 
@@ -39,11 +32,10 @@ describe('getLineDisplay', () => {
 		const line = {
 			quantity: 1,
 			cost: {
-				amountPerQuantity: { amount: 45, currencyCode: 'AUD' },
 				compareAtAmountPerQuantity: null,
-				totalAmount: { amount: 45, currencyCode: 'AUD' },
+				totalAmount: { amount: 45 },
 			},
-			discountAllocations: [{ discountedAmount: { amount: 5, currencyCode: 'AUD' } }],
+			discountAllocations: [{ discountedAmount: { amount: 5 } }],
 		} satisfies LineDisplayInput;
 
 		expect(getLineDisplay(line)).toEqual({

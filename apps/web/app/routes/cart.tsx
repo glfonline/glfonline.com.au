@@ -13,8 +13,10 @@ import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
 import { formatMoney } from '../lib/format-money';
-import type { CartResult, LineDisplay } from '../lib/get-cart-info';
-import { getCartInfo, getLineDisplay } from '../lib/get-cart-info';
+import type { CartResult } from '../lib/get-cart-info';
+import { getCartInfo } from '../lib/get-cart-info';
+import type { LineDisplay } from '../lib/line-display';
+import { getLineDisplay } from '../lib/line-display';
 import { getSeoMeta } from '../seo';
 
 type CartLoaderData = CartResult & { linesDisplay?: Array<LineDisplay> };

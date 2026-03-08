@@ -11,51 +11,6 @@ export type CartLineNode = Extract<Cart, { lines: unknown }>['lines'] extends {
 	? N
 	: never;
 
-export type LineDisplay = {
-	compareAt: number | null;
-	discountLabels: Array<{ amount: number | null; label: string }>;
-	pricePerUnit: number;
-	showWasNow: boolean;
-};
-
-type CartLineDiscountAllocation = NonNullable<CartLineNode['discountAllocations']>[number];
-type AutomaticDiscountAllocation = Extract<CartLineDiscountAllocation, { title: string }>;
-type CodeDiscountAllocation = Extract<CartLineDiscountAllocation, { code: string }>;
-type DiscountedAmountAllocation = Extract<CartLineDiscountAllocation, { discountedAmount: unknown }>;
-
-type LineDisplayAllocation = Pick<CartLineDiscountAllocation, '__typename'> &
-	Partial<Pick<AutomaticDiscountAllocation, 'title'>> &
-	Partial<Pick<CodeDiscountAllocation, 'code'>> &
-	Partial<Pick<DiscountedAmountAllocation, 'discountedAmount'>>;
-
-export type LineDisplayInput = Pick<CartLineNode, 'cost' | 'quantity'> & {
-	discountAllocations?: Array<LineDisplayAllocation> | null;
-};
-
-export function getLineDisplay(node: LineDisplayInput): LineDisplay {
-	const pricePerUnit = Number(node.cost.totalAmount.amount) / node.quantity;
-	const compareAtRaw = node.cost.compareAtAmountPerQuantity?.amount;
-	const compareAt = compareAtRaw != null ? Number(compareAtRaw) : null;
-	const hasCompareAt = compareAt != null;
-	const hasAllocations = (node.discountAllocations?.length ?? 0) > 0;
-	const showWasNow = hasCompareAt || hasAllocations;
-	const discountLabels: Array<{ amount: number | null; label: string }> = [];
-	for (const allocation of node.discountAllocations ?? []) {
-		let label: string | null = null;
-		if ('title' in allocation) label = allocation.title ?? null;
-		else if ('code' in allocation) label = allocation.code ?? null;
-
-		if (label == null) continue;
-
-		const amount =
-			'discountedAmount' in allocation && allocation.discountedAmount != null
-				? Number(allocation.discountedAmount.amount)
-				: null;
-		discountLabels.push({ amount, label });
-	}
-	return { compareAt, discountLabels, pricePerUnit, showWasNow };
-}
-
 export type CartEmpty = {
 	type: 'empty';
 	cart?: never;
