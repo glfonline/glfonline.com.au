@@ -1,48 +1,42 @@
-import type { PayPalMessagesComponentProps, ScriptProviderProps } from '@paypal/react-paypal-js';
-import { PayPalScriptProvider, PayPalMessages as ReactPayPalMessages } from '@paypal/react-paypal-js';
-import type { PropsWithChildren } from 'react';
-import { ClientOnly, useClientOnlyMount } from '../lib/use-client-only-mount';
-
-export const PAYPAL_CLIENT_ID = 'AdV6eEVa0CTuoJdFOnwezcVOuyWp3vHZrm62Wzq89AwDaU30WvR0EjTZhQxJhml5wB_lktJLG9-P58pa';
-
-export const paypalScriptOptions = {
-	clientId: PAYPAL_CLIENT_ID,
-	components: 'messages',
-	currency: 'AUD',
-	locale: 'en_AU',
-} as const satisfies ScriptProviderProps['options'];
-
-type PayPalMessageStyle = NonNullable<PayPalMessagesComponentProps['style']>;
-
-const paypalMessageStyle = {
-	layout: 'text',
-	logo: { type: 'inline' },
-	text: { color: 'black' },
-} as const satisfies PayPalMessageStyle;
+import type { PayPalMessagesComponentProps } from '@paypal/react-paypal-js';
+import type { ComponentType, PropsWithChildren } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
+import { useClientOnlyMount } from '../lib/use-client-only-mount';
 
 type PayPalMessagesProps = Pick<PayPalMessagesComponentProps, 'amount' | 'placement'>;
+type ClientPayPalMessagesComponent = ComponentType<PayPalMessagesProps>;
 
-export function PayPalProvider({ children }: PropsWithChildren) {
+const PayPalMessagesContext = createContext<ClientPayPalMessagesComponent | null>(null);
+
+export function PayPalMessagesProvider({ children }: PropsWithChildren) {
 	const { isMounted } = useClientOnlyMount();
-	if (!isMounted) return children;
-	return <PayPalScriptProvider options={paypalScriptOptions}>{children}</PayPalScriptProvider>;
+	const [component, setComponent] = useState<ClientPayPalMessagesComponent | null>(null);
+
+	useEffect(() => {
+		if (!isMounted) return;
+		if (component != null) return;
+
+		let cancelled = false;
+		void import('./paypal.client').then((module) => {
+			if (!cancelled) {
+				setComponent(() => module.ClientPayPalMessages);
+			}
+		});
+
+		return () => {
+			cancelled = true;
+		};
+	}, [component, isMounted]);
+
+	return <PayPalMessagesContext.Provider value={component}>{children}</PayPalMessagesContext.Provider>;
 }
 
 export function PayPalMessages({ amount, placement }: PayPalMessagesProps) {
-	const { isMounted } = useClientOnlyMount();
+	const PayPalMessagesComponent = useContext(PayPalMessagesContext);
 
 	return (
-		<PayPalProvider>
-			<div className="min-h-5" data-testid="paypal-messages">
-				<ClientOnly>
-					<ReactPayPalMessages
-						amount={amount}
-						forceReRender={[amount, placement]}
-						placement={placement}
-						style={paypalMessageStyle}
-					/>
-				</ClientOnly>
-			</div>
-		</PayPalProvider>
+		<div className="min-h-5" data-testid="paypal-messages">
+			{PayPalMessagesComponent && <PayPalMessagesComponent amount={amount} placement={placement} />}
+		</div>
 	);
 }
