@@ -32,7 +32,7 @@
 	},
 	"dependencies": {
 		"gql.tada": "^1.9.0",
-		"graphql": "^16.13.0"
+		"graphql": "^16.13.1"
 	},
 	"devDependencies": {
 		"@glfonline/tsconfig": "workspace:^",
