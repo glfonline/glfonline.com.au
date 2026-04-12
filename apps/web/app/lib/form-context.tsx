@@ -12,69 +12,91 @@ import { TextInput } from '../components/design-system/text-input';
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
-type FormFieldProps<T> = Omit<T, 'checked' | 'name' | 'onBlur' | 'onChange' | 'value'>;
+type TextFieldProps = Omit<TextInputProps, 'checked' | 'name' | 'onBlur' | 'onChange' | 'value'> & {
+	label: string;
+};
 
-function FormTextField(props: FormFieldProps<TextInputProps>) {
-	const field = useFieldContext<string>();
+type TextAreaFieldProps = Omit<TextAreaProps, 'checked' | 'name' | 'onBlur' | 'onChange' | 'value'> & {
+	label: string;
+};
 
-	return (
-		<TextInput
-			{...props}
-			name={field.name}
-			onBlur={field.handleBlur}
-			onChange={(event) => field.handleChange(event.target.value)}
-			value={field.state.value}
-		/>
-	);
-}
+type CheckboxFieldProps = Omit<CheckboxProps, 'checked' | 'name' | 'onBlur' | 'onChange' | 'value'> & {
+	label: React.ReactNode;
+};
 
-function FormTextArea(props: FormFieldProps<TextAreaProps>) {
-	const field = useFieldContext<string>();
-
-	return (
-		<TextArea
-			{...props}
-			name={field.name}
-			onBlur={field.handleBlur}
-			onChange={(event) => field.handleChange(event.target.value)}
-			value={field.state.value}
-		/>
-	);
-}
-
-function FormCheckbox(props: FormFieldProps<CheckboxProps>) {
-	const field = useFieldContext<boolean>();
-
-	return (
-		<Checkbox
-			{...props}
-			checked={field.state.value}
-			name={field.name}
-			onBlur={field.handleBlur}
-			onChange={(event) => field.handleChange(event.target.checked)}
-		/>
-	);
-}
-
-function FormField(props: FieldProps) {
+function FormFieldWrapper(props: FieldProps) {
 	const field = useFieldContext<string>();
 	const errorMessage = props.message || field.state.meta.errors[0]?.message;
 
 	return <Field {...props} message={errorMessage} />;
 }
 
-function InlineFormField(props: InlineFieldProps) {
+function InlineFormFieldWrapper(props: InlineFieldProps) {
 	const field = useFieldContext<string>();
 	const errorMessage = props.message || field.state.meta.errors[0]?.message;
 
 	return <InlineField {...props} message={errorMessage} />;
 }
 
+function FormTextField(props: TextFieldProps) {
+	const field = useFieldContext<string>();
+	const errorMessage = field.state.meta.errors[0]?.message;
+	const { label, ...inputProps } = props;
+
+	return (
+		<Field label={label} message={errorMessage}>
+			<TextInput
+				{...inputProps}
+				name={field.name}
+				onBlur={field.handleBlur}
+				onChange={(event) => field.handleChange(event.target.value)}
+				value={field.state.value}
+			/>
+		</Field>
+	);
+}
+
+function FormTextArea(props: TextAreaFieldProps) {
+	const field = useFieldContext<string>();
+	const errorMessage = field.state.meta.errors[0]?.message;
+	const { label, ...inputProps } = props;
+
+	return (
+		<Field label={label} message={errorMessage}>
+			<TextArea
+				{...inputProps}
+				name={field.name}
+				onBlur={field.handleBlur}
+				onChange={(event) => field.handleChange(event.target.value)}
+				value={field.state.value}
+			/>
+		</Field>
+	);
+}
+
+function FormCheckbox(props: CheckboxFieldProps) {
+	const field = useFieldContext<boolean>();
+	const errorMessage = field.state.meta.errors[0]?.message;
+	const { label, ...inputProps } = props;
+
+	return (
+		<InlineField label={label} message={errorMessage}>
+			<Checkbox
+				{...inputProps}
+				checked={field.state.value}
+				name={field.name}
+				onBlur={field.handleBlur}
+				onChange={(event) => field.handleChange(event.target.checked)}
+			/>
+		</InlineField>
+	);
+}
+
 export const { useAppForm } = createFormHook({
 	fieldComponents: {
 		Checkbox: FormCheckbox,
-		FormField: FormField,
-		InlineFormField: InlineFormField,
+		FormField: FormFieldWrapper,
+		InlineFormField: InlineFormFieldWrapper,
 		TextArea: FormTextArea,
 		TextField: FormTextField,
 	},
