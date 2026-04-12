@@ -2,7 +2,7 @@ import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
 import { useRef } from 'react';
 import { useFetcher } from 'react-router';
-import Turnstile from 'react-turnstile';
+import { Turnstile } from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
 import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
@@ -92,25 +92,25 @@ export function NewsletterSignup() {
 					<div className="grid w-full gap-6 sm:grid-cols-4">
 						<form.AppField name="first_name">
 							{(field) => (
-								<field.FormField className="sm:col-span-2" label="First name">
-									<field.TextField />
-								</field.FormField>
+								<div className="sm:col-span-2">
+									<field.TextField label="First name" />
+								</div>
 							)}
 						</form.AppField>
 
 						<form.AppField name="last_name">
 							{(field) => (
-								<field.FormField className="sm:col-span-2" label="Last name">
-									<field.TextField />
-								</field.FormField>
+								<div className="sm:col-span-2">
+									<field.TextField label="Last name" />
+								</div>
 							)}
 						</form.AppField>
 
 						<form.AppField name="email">
 							{(field) => (
-								<field.FormField className="sm:col-span-4" label="Email address">
-									<field.TextField type="email" />
-								</field.FormField>
+								<div className="sm:col-span-4">
+									<field.TextField label="Email address" type="email" />
+								</div>
 							)}
 						</form.AppField>
 
@@ -153,15 +153,14 @@ export function NewsletterSignup() {
 
 						<form.AppField name="token">
 							{(field) => (
-								<div className="flex min-h-[65px] flex-col items-center gap-1 sm:col-span-4">
+								<div className="flex min-h-[65px] items-center sm:col-span-4">
 									{isMounted && (
 										<Turnstile
+											className="*:w-full!"
 											onVerify={field.handleChange}
 											sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 											size="normal"
-											style={{
-												width: '100%',
-											}}
+											style={{ width: '100%' }}
 											theme="light"
 										/>
 									)}
@@ -183,8 +182,6 @@ export function NewsletterSignup() {
 							)}
 						</form.Subscribe>
 
-						{/* Live region for form errors */}
-						{/* Live region for form errors - only show if no field errors */}
 						{showFormErrors && (
 							<div aria-live="polite" className="sm:col-span-4" role="alert">
 								{formErrors.map((error, index) => (

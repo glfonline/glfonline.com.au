@@ -169,7 +169,7 @@ export function ErrorBoundary() {
 		return (
 			<GenericError
 				error={{
-					statusText: 'Unknown error',
+					statusText: error instanceof Error ? error.message : 'Unknown error',
 				}}
 			/>
 		);

@@ -2,7 +2,7 @@ import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
 import { useRef } from 'react';
 import { Link, useFetcher } from 'react-router';
-import Turnstile from 'react-turnstile';
+import { Turnstile } from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
 import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
@@ -95,60 +95,46 @@ export function ContactForm() {
 					}}
 					ref={formRef}
 				>
-					<form.AppField name="first_name">
-						{(field) => (
-							<field.FormField label="First name">
-								<field.TextField />
-							</field.FormField>
-						)}
-					</form.AppField>
+					<form.AppField name="first_name">{(field) => <field.TextField label="First name" />}</form.AppField>
 
-					<form.AppField name="last_name">
-						{(field) => (
-							<field.FormField label="Last name">
-								<field.TextField />
-							</field.FormField>
-						)}
-					</form.AppField>
+					<form.AppField name="last_name">{(field) => <field.TextField label="Last name" />}</form.AppField>
 
 					<form.AppField name="email">
 						{(field) => (
-							<field.FormField className="sm:col-span-2" label="Email">
-								<field.TextField type="email" />
-							</field.FormField>
+							<div className="sm:col-span-2">
+								<field.TextField label="Email" type="email" />
+							</div>
 						)}
 					</form.AppField>
 
 					<form.AppField name="phone_number">
 						{(field) => (
-							<field.FormField className="sm:col-span-2" label="Phone number">
-								<field.TextField type="tel" />
-							</field.FormField>
+							<div className="sm:col-span-2">
+								<field.TextField label="Phone number" type="tel" />
+							</div>
 						)}
 					</form.AppField>
 
 					<form.AppField name="subject">
 						{(field) => (
-							<field.FormField className="sm:col-span-2" label="Subject">
-								<field.TextField />
-							</field.FormField>
+							<div className="sm:col-span-2">
+								<field.TextField label="Subject" />
+							</div>
 						)}
 					</form.AppField>
 
 					<form.AppField name="message">
 						{(field) => (
-							<field.FormField className="sm:col-span-2" label="Message">
-								<field.TextArea />
-							</field.FormField>
+							<div className="sm:col-span-2">
+								<field.TextArea label="Message" />
+							</div>
 						)}
 					</form.AppField>
 
 					<form.AppField name="agree_to_privacy_policy">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.InlineFormField label={<PrivacyPolicyLabel />}>
-									<field.Checkbox />
-								</field.InlineFormField>
+								<field.Checkbox label={<PrivacyPolicyLabel />} />
 							</div>
 						)}
 					</form.AppField>
@@ -162,9 +148,7 @@ export function ContactForm() {
 										onVerify={field.handleChange}
 										sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
 										size="normal"
-										style={{
-											width: '100%',
-										}}
+										style={{ width: '100%' }}
 										theme="light"
 									/>
 								)}
@@ -186,7 +170,6 @@ export function ContactForm() {
 						)}
 					</form.Subscribe>
 
-					{/* Live region for form errors - only show if no field errors */}
 					{showFormErrors && (
 						<div aria-live="polite" className="sm:col-span-2" role="alert">
 							{formErrors.map((error, index) => (
