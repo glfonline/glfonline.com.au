@@ -23,14 +23,14 @@ import { getHeadingStyles, Heading } from '../components/design-system/heading';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
-import { addToCart, getSession } from '../lib/cart';
 import type { CartItem } from '../lib/cart';
+import { addToCart, getSession } from '../lib/cart';
 import { notFound } from '../lib/errors.server';
 import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
-import { getCartInfo } from '../lib/get-cart-info';
 import type { CartLineNode } from '../lib/get-cart-info';
+import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { getSeoMeta } from '../seo';
 
