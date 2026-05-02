@@ -8,6 +8,9 @@ minimumReleaseAgeExclude:
   - vite
   - rolldown
 trustPolicy: no-downgrade
+trustPolicyExclude:
+  # Sanity 5.22.0 pulls this via @sanity/sdk@2.9.0; keep no-downgrade enabled elsewhere.
+  - reselect@5.1.1
 
 overrides:
   # Remove deprecated node-domexception - Node.js 18+ has native DOMException
