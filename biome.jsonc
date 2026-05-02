@@ -147,6 +147,7 @@
 				"noArrayIndexKey": "off",
 				"noConsole": "off",
 				"noExplicitAny": "off",
+				"noFocusedTests": "off",
 				"noImportCycles": "on"
 			}
 		}
@@ -168,6 +169,11 @@
 			"linter": {
 				"domains": {
 					"test": "recommended"
+				},
+				"rules": {
+					"suspicious": {
+						"noFocusedTests": "on"
+					}
 				}
 			}
 		}
