@@ -2,6 +2,19 @@ packages:
   - apps/*
   - packages/*
 
+allowBuilds:
+  '@sentry/cli': true
+  esbuild: true
+
+# Suppress warnings for deprecated packages we can't fix (upstream issues)
+allowedDeprecatedVersions:
+  # sanity@5.13.0 still pulls glob@10.5.0 via archiver/rimraf; track upstream instead of forcing a major transitive override
+  glob: '*'
+  # whatwg-encoding is deprecated but @exodus/bytes isn't API-compatible
+  # jsdom 27.4.0+ uses @exodus/bytes directly, but jsdom 26.1.0 (from sanity) still needs whatwg-encoding
+  # Upstream fix: upgrade jsdom or wait for sanity to upgrade jsdom
+  whatwg-encoding: '*'
+
 minimumReleaseAge: 7200 # 5 days, in minutes
 # Temporarily exclude vite for security patches
 minimumReleaseAgeExclude:
@@ -39,12 +52,3 @@ overrides:
   smol-toml: '>=1.6.1'
   # Pin groq to stable release - @sanity/sdk@2.9.0 pulls 3.88.1-typegen-experimental.0 which lacks provenance
   groq: '3.88.1'
-
-# Suppress warnings for deprecated packages we can't fix (upstream issues)
-allowedDeprecatedVersions:
-  # sanity@5.13.0 still pulls glob@10.5.0 via archiver/rimraf; track upstream instead of forcing a major transitive override
-  glob: '*'
-  # whatwg-encoding is deprecated but @exodus/bytes isn't API-compatible
-  # jsdom 27.4.0+ uses @exodus/bytes directly, but jsdom 26.1.0 (from sanity) still needs whatwg-encoding
-  # Upstream fix: upgrade jsdom or wait for sanity to upgrade jsdom
-  whatwg-encoding: '*'

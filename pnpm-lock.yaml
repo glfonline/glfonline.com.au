@@ -36,53 +36,50 @@ importers:
         specifier: ^1.59.1
         version: 1.59.1
       knip:
-        specifier: ^6.3.0
+        specifier: ^6.7.0
         version: 6.7.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
-      stale-dep:
-        specifier: ^0.8.5
-        version: 0.8.6
       turbo:
-        specifier: ^2.9.4
+        specifier: ^2.9.6
         version: 2.9.6
       turbo-ignore:
-        specifier: ^2.9.4
+        specifier: ^2.9.6
         version: 2.9.6
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
 
   apps/cms:
     dependencies:
       '@sanity/vision':
-        specifier: ^5.19.0
+        specifier: ^5.22.0
         version: 5.22.0(@babel/runtime@7.29.2)(@codemirror/lint@6.9.5)(@codemirror/theme-one-dark@6.1.3)(@emotion/is-prop-valid@1.4.0)(codemirror@6.0.2)(react-dom@19.2.5(react@19.2.5))(react-is@19.2.5)(react@19.2.5)(sanity@5.22.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.10.6)(@sanity/cli-core@1.3.1(@noble/hashes@2.2.0)(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(yaml@2.8.3))(@types/node@24.12.2)(@types/react@19.2.14)(esbuild@0.27.0)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(ts-toolbelt@6.15.5)(typescript@6.0.3))(styled-components@6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))
       react:
-        specifier: ^19.2.4
+        specifier: ^19.2.5
         version: 19.2.5
       react-dom:
-        specifier: ^19.2.4
+        specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
       sanity:
-        specifier: ^5.19.0
+        specifier: ^5.22.0
         version: 5.22.0(@emotion/is-prop-valid@1.4.0)(@noble/hashes@2.2.0)(@oclif/core@4.10.6)(@sanity/cli-core@1.3.1(@noble/hashes@2.2.0)(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(yaml@2.8.3))(@types/node@24.12.2)(@types/react@19.2.14)(esbuild@0.27.0)(jiti@2.6.1)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)(styled-components@6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(ts-toolbelt@6.15.5)(typescript@6.0.3)
       styled-components:
-        specifier: ^6.3.12
+        specifier: ^6.4.1
         version: 6.4.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
     devDependencies:
       '@glfonline/tsconfig':
         specifier: workspace:^
         version: link:../../packages/tsconfig
       knip:
-        specifier: ^6.3.0
+        specifier: ^6.7.0
         version: 6.7.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
 
   apps/web:
     dependencies:
       '@algolia/client-search':
-        specifier: ^5.50.1
+        specifier: ^5.51.0
         version: 5.51.0
       '@glfonline/sanity-client':
         specifier: workspace:^
@@ -91,19 +88,19 @@ importers:
         specifier: workspace:^
         version: link:../../packages/shopify-client
       '@headlessui/react':
-        specifier: ^2.2.9
+        specifier: ^2.2.10
         version: 2.2.10(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@heroicons/react':
         specifier: ^2.2.0
         version: 2.2.0(react@19.2.5)
       '@paypal/react-paypal-js':
-        specifier: ^9.1.0
+        specifier: ^9.2.0
         version: 9.2.0(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@portabletext/react':
         specifier: ^6.0.3
         version: 6.0.3(react@19.2.5)
       '@react-router/node':
-        specifier: ^7.14.0
+        specifier: ^7.14.2
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3)
       '@sanity/asset-utils':
         specifier: ^2.3.0
@@ -112,40 +109,40 @@ importers:
         specifier: ^2.1.1
         version: 2.1.1
       '@sentry/react-router':
-        specifier: ^10.47.0
+        specifier: ^10.50.0
         version: 10.50.0(@react-router/node@7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3))(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       '@tanstack/query-async-storage-persister':
-        specifier: ^5.96.2
+        specifier: ^5.100.5
         version: 5.100.5
       '@tanstack/query-core':
-        specifier: ^5.96.2
+        specifier: ^5.100.5
         version: 5.100.5
       '@tanstack/react-form':
-        specifier: ^1.28.6
+        specifier: ^1.29.1
         version: 1.29.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@tanstack/react-form-remix':
-        specifier: ^1.28.6
+        specifier: ^1.29.1
         version: 1.29.1(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@tanstack/react-query':
-        specifier: ^5.96.2
+        specifier: ^5.100.5
         version: 5.100.5(react@19.2.5)
       '@tanstack/react-query-devtools':
-        specifier: ^5.96.2
+        specifier: ^5.100.5
         version: 5.100.5(@tanstack/react-query@5.100.5(react@19.2.5))(react@19.2.5)
       '@tanstack/react-query-persist-client':
-        specifier: ^5.96.2
+        specifier: ^5.100.5
         version: 5.100.5(@tanstack/react-query@5.100.5(react@19.2.5))(react@19.2.5)
       '@unpic/react':
         specifier: ^1.0.2
         version: 1.0.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       '@vercel/node':
-        specifier: ^5.7.0
+        specifier: ^5.7.13
         version: 5.7.13
       '@vercel/react-router':
         specifier: ^1.2.6
         version: 1.2.6(@react-router/dev@7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3))(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3))(@react-router/node@7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3))(isbot@5.1.39)(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       algoliasearch:
-        specifier: ^5.50.1
+        specifier: ^5.51.0
         version: 5.51.0
       class-variance-authority:
         specifier: ^0.7.1
@@ -163,34 +160,34 @@ importers:
         specifier: ^5.0.1
         version: 5.0.1
       isbot:
-        specifier: ^5.1.37
+        specifier: ^5.1.39
         version: 5.1.39
       react:
-        specifier: ^19.2.4
+        specifier: ^19.2.5
         version: 19.2.5
       react-dom:
-        specifier: ^19.2.4
+        specifier: ^19.2.5
         version: 19.2.5(react@19.2.5)
       react-intersection-observer:
         specifier: ^10.0.3
         version: 10.0.3(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-router:
-        specifier: ^7.14.0
+        specifier: ^7.14.2
         version: 7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-router-dom:
-        specifier: ^7.14.0
+        specifier: ^7.14.2
         version: 7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       react-turnstile:
         specifier: ^1.1.5
         version: 1.1.5(react-dom@19.2.5(react@19.2.5))(react@19.2.5)
       remeda:
-        specifier: ^2.33.7
+        specifier: ^2.34.0
         version: 2.34.0
       remix-utils:
         specifier: ^9.3.1
         version: 9.3.1(@standard-schema/spec@1.1.0)(is-ip@5.0.1)(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(react@19.2.5)
       resend:
-        specifier: ^6.10.0
+        specifier: ^6.12.2
         version: 6.12.2
       tailwind-merge:
         specifier: ^3.5.0
@@ -206,13 +203,13 @@ importers:
         specifier: workspace:^
         version: link:../../packages/tsconfig
       '@react-router/dev':
-        specifier: ^7.14.0
+        specifier: ^7.14.2
         version: 7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3))(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3)
       '@react-router/fs-routes':
-        specifier: ^7.14.0
+        specifier: ^7.14.2
         version: 7.14.2(@react-router/dev@7.14.2(@react-router/serve@7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3))(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(tsx@4.21.0)(typescript@6.0.3)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(yaml@2.8.3))(typescript@6.0.3)
       '@react-router/serve':
-        specifier: ^7.14.0
+        specifier: ^7.14.2
         version: 7.14.2(react-router@7.14.2(react-dom@19.2.5(react@19.2.5))(react@19.2.5))(typescript@6.0.3)
       '@tailwindcss/forms':
         specifier: ^0.5.11
@@ -221,7 +218,7 @@ importers:
         specifier: ^0.5.19
         version: 0.5.19(tailwindcss@4.2.4)
       '@tailwindcss/vite':
-        specifier: ^4.2.2
+        specifier: ^4.2.4
         version: 4.2.4(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
       '@types/node':
         specifier: ^24.12.2
@@ -236,31 +233,31 @@ importers:
         specifier: ^6.0.1
         version: 6.0.1(babel-plugin-react-compiler@1.0.0)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
       '@vitest/browser-playwright':
-        specifier: ^4.1.2
+        specifier: ^4.1.5
         version: 4.1.5(playwright@1.59.1)(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))(vitest@4.1.5)
       dotenv-cli:
         specifier: ^11.0.0
         version: 11.0.0
       knip:
-        specifier: ^6.3.0
+        specifier: ^6.7.0
         version: 6.7.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       playwright:
         specifier: ^1.59.1
         version: 1.59.1
       tailwindcss:
-        specifier: ^4.2.2
+        specifier: ^4.2.4
         version: 4.2.4
       tailwindcss-animate:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.2.4)
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
       vite:
         specifier: 8.0.10
         version: 8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3)
       vitest:
-        specifier: ^4.1.2
+        specifier: ^4.1.5
         version: 4.1.5(@edge-runtime/vm@3.2.0)(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(@vitest/browser-playwright@4.1.5)(jsdom@29.1.0(@noble/hashes@2.2.0))(vite@8.0.10(@types/node@24.12.2)(esbuild@0.27.0)(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
       vitest-browser-react:
         specifier: ^2.2.0
@@ -275,10 +272,10 @@ importers:
         specifier: ^24.12.2
         version: 24.12.2
       dotenv:
-        specifier: ^17.4.1
+        specifier: ^17.4.2
         version: 17.4.2
       knip:
-        specifier: ^6.3.0
+        specifier: ^6.7.0
         version: 6.7.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       tiny-invariant:
         specifier: ^1.3.3
@@ -297,19 +294,19 @@ importers:
         specifier: workspace:^
         version: link:../tsconfig
       '@graphql-codegen/cli':
-        specifier: ^6.2.1
+        specifier: ^6.3.1
         version: 6.3.1(@types/node@24.12.2)(graphql@16.13.2)(typescript@6.0.3)
       '@graphql-codegen/schema-ast':
-        specifier: ^5.0.1
+        specifier: ^5.0.2
         version: 5.0.2(graphql@16.13.2)
       knip:
-        specifier: ^6.3.0
+        specifier: ^6.7.0
         version: 6.7.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       tsdown:
-        specifier: ^0.21.7
+        specifier: ^0.21.10
         version: 0.21.10(oxc-resolver@11.19.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(typescript@6.0.3)
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
 
   packages/shopify-client:
@@ -325,19 +322,19 @@ importers:
         specifier: workspace:^
         version: link:../tsconfig
       '@graphql-codegen/cli':
-        specifier: ^6.2.1
+        specifier: ^6.3.1
         version: 6.3.1(@types/node@24.12.2)(graphql@16.13.2)(typescript@6.0.3)
       '@graphql-codegen/schema-ast':
-        specifier: ^5.0.1
+        specifier: ^5.0.2
         version: 5.0.2(graphql@16.13.2)
       knip:
-        specifier: ^6.3.0
+        specifier: ^6.7.0
         version: 6.7.0(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0)
       tsdown:
-        specifier: ^0.21.7
+        specifier: ^0.21.10
         version: 0.21.10(oxc-resolver@11.19.1(@emnapi/core@1.10.0)(@emnapi/runtime@1.10.0))(typescript@6.0.3)
       typescript:
-        specifier: ^6.0.2
+        specifier: ^6.0.3
         version: 6.0.3
 
   packages/tsconfig: {}
@@ -6144,9 +6141,6 @@ packages:
     resolution: {integrity: sha512-ua1L4OgXSBdsu1FPb7F3tYH0F48a6kxvod4pLUlGY9COeJAJQNX/sNH2IiEmsxw7lqYiAwrdHMjz1FctOsyDQg==}
     engines: {node: '>=18'}
 
-  package-manager-detector@1.6.0:
-    resolution: {integrity: sha512-61A5ThoTiDG/C8s8UMZwSorAGwMJ0ERVGj2OjoW5pAalsNOg15+iQiPzrLJ4jhZ1HJzmC2PIHT2oEiH3R5fzNA==}
-
   pako@0.2.9:
     resolution: {integrity: sha512-NUcwaKxUxWrZLpDG+z/xZaCgQITkA/Dv4V/T6bw7VON6l1Xz/VnrBqrYjZQ12TamKHzITTfOEIYUj48y2KXImA==}
 
@@ -6961,19 +6955,6 @@ packages:
 
   stackback@0.0.2:
     resolution: {integrity: sha512-1XMJE5fQo1jGH6Y/7ebnwPOBEkIEnT4QF32d5R1+VXdXveM0IBMJt8zfaxX1P3QhVwrYe+576+jkANtSS2mBbw==}
-
-  stale-dep@0.8.6:
-    resolution: {integrity: sha512-bmNOmAnNdSvVWqX3Z+YQoVNErwSGJKKy99XlNgaFt/V3lBIss4dm8FugyO5Lf9gvDYgjSpqA2QwFCtc+tWFyhA==}
-    engines: {node: '>=20.19.0'}
-    hasBin: true
-    peerDependencies:
-      '@nuxt/kit': ^3.0.0
-      '@nuxt/schema': ^3.0.0
-    peerDependenciesMeta:
-      '@nuxt/kit':
-        optional: true
-      '@nuxt/schema':
-        optional: true
 
   standardwebhooks@1.0.0:
     resolution: {integrity: sha512-BbHGOQK9olHPMvQNHWul6MYlrRTAOKn03rOe4A8O3CLWhNf4YHBqq2HJKKC+sfqpxiBY52pNeesD6jIiLDz8jg==}
@@ -8098,7 +8079,7 @@ snapshots:
       '@babel/types': 7.29.0
       '@jridgewell/gen-mapping': 0.3.13
       '@jridgewell/trace-mapping': 0.3.31
-      jsesc: 3.0.2
+      jsesc: 3.1.0
 
   '@babel/generator@8.0.0-rc.3':
     dependencies:
@@ -9960,7 +9941,7 @@ snapshots:
       consola: 3.4.2
       detect-libc: 2.1.2
       https-proxy-agent: 7.0.6
-      node-fetch: 2.6.9
+      node-fetch: 2.7.0
       nopt: 8.1.0
       semver: 7.7.4
       tar: 7.5.13
@@ -14389,8 +14370,6 @@ snapshots:
       registry-url: 6.0.1
       semver: 7.7.4
 
-  package-manager-detector@1.6.0: {}
-
   pako@0.2.9: {}
 
   param-case@3.0.4:
@@ -15322,12 +15301,6 @@ snapshots:
       tslib: 2.8.1
 
   stackback@0.0.2: {}
-
-  stale-dep@0.8.6:
-    dependencies:
-      cac: 7.0.0
-      consola: 3.4.2
-      package-manager-detector: 1.6.0
 
   standardwebhooks@1.0.0:
     dependencies:
