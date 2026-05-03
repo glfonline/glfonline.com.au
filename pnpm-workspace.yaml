@@ -21,8 +21,8 @@ overrides:
   ajv: '>=8.18.0'
   # Fix path-to-regexp ReDoS vulnerability (backtracking regex)
   path-to-regexp@>=4.0.0 <6.3.0: '>=8.4.2'
-  # Fix undici decompression chain DoS vulnerability
-  undici: '>=8.0.2'
+  # Fix undici decompression chain DoS vulnerability (stay on 7.x for jsdom compatibility)
+  undici: '^7.25.0'
   # Fix chokidar trust issue - use v5 with Trusted Publishing instead of v4 without provenance
   chokidar: '^5.0.0'
   # Fix tar path traversal vulnerability (CVE-2026-31802) in sanity export
@@ -37,6 +37,8 @@ overrides:
   js-yaml: '>=3.14.2'
   # Fix smol-toml DoS (GHSA-v3rj-xjv7-4jmq) in vercel python-analysis
   smol-toml: '>=1.6.1'
+  # Pin groq to stable release - @sanity/sdk@2.9.0 pulls 3.88.1-typegen-experimental.0 which lacks provenance
+  groq: '3.88.1'
 
 # Suppress warnings for deprecated packages we can't fix (upstream issues)
 allowedDeprecatedVersions:
