@@ -156,6 +156,14 @@ export function ErrorBoundary() {
 	useEffect(() => {
 		if (isResponse) return;
 
+		// Don't report Safari/WebKit transient network errors to Sentry.
+		// These are caused by fetch() failing during React Router's client-side
+		// `.data` route navigation (network drops, content blockers, ITP, etc.)
+		// and are not actionable code bugs.
+		if (error instanceof TypeError && error.message.includes('Load failed')) {
+			return;
+		}
+
 		captureException(error);
 	}, [error, isResponse]);
 

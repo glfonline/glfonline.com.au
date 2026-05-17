@@ -9,7 +9,7 @@ if (import.meta.env.PROD) {
 	Sentry.init({
 		dsn: SENTRY_DSN,
 		environment: import.meta.env.MODE,
-		beforeSend(event) {
+		beforeSend(event, hint) {
 			if (event.request?.url) {
 				const url = new URL(event.request.url);
 				if (url.protocol === 'chrome-extension:' || url.protocol === 'moz-extension:') {
@@ -17,6 +17,17 @@ if (import.meta.env.PROD) {
 					return null;
 				}
 			}
+
+			// Filter Safari/WebKit "Load failed" errors from transient network issues.
+			// In React Router framework mode, client-side navigation fetches `.data`
+			// routes. When these fail due to network conditions, browser privacy
+			// features (ITP), or content blockers, Safari throws a generic
+			// `TypeError: Load failed`. These are not actionable code bugs.
+			const error = hint?.originalException;
+			if (error instanceof TypeError && typeof error.message === 'string' && error.message.includes('Load failed')) {
+				return null;
+			}
+
 			return event;
 		},
 		integrations: [

@@ -19,10 +19,10 @@
 		"test:e2e": "pnpm exec playwright install && playwright test"
 	},
 	"devDependencies": {
-		"@playwright/test": "^1.59.1",
-		"@types/node": "^24.12.2",
-		"dotenv": "^17.4.2",
-		"knip": "^6.7.0",
-		"tiny-invariant": "^1.3.3"
+		"@playwright/test": "catalog:",
+		"@types/node": "catalog:",
+		"dotenv": "catalog:",
+		"knip": "catalog:",
+		"tiny-invariant": "catalog:"
 	}
 }
