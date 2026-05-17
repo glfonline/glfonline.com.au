@@ -40,6 +40,13 @@ export function GenericError({ error }: { error?: Partial<ErrorResponse> }) {
 						<ButtonLink href="/" variant="neutral">
 							Go back home
 						</ButtonLink>
+						<button
+							className="font-semibold text-gray-900 text-sm hover:text-gray-700"
+							onClick={() => window.location.reload()}
+							type="button"
+						>
+							Reload page
+						</button>
 					</div>
 				</div>
 			</div>
