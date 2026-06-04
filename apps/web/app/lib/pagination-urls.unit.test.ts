@@ -6,10 +6,10 @@ function createMockLocation(pathname: string, search: string): Location {
 	return {
 		hash: '',
 		key: 'default',
+		mask: undefined,
 		pathname,
 		search,
 		state: null,
-		unstable_mask: undefined,
 	};
 }
 
