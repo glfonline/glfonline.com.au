@@ -1,7 +1,7 @@
 import type { KnipConfig } from 'knip';
 
 export default {
-	ignoreBinaries: ['remix-serve'],
+	ignoreBinaries: ['react-router-serve'],
 	ignoreDependencies: [
 		'@tanstack/query-core',
 		'@tanstack/react-query-devtools',

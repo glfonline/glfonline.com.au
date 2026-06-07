@@ -87,13 +87,12 @@ function processCollectionData({
 }
 
 // Parse and validate URL parameters
-function parseRequestParameters(params: unknown, request: Request) {
+function parseRequestParameters(params: unknown, url: URL) {
 	const paramsResult = collectionSchema.safeParse(params);
 	if (!paramsResult.success) {
 		badRequest('Invalid collection parameters', params);
 	}
 
-	const url = new URL(request.url);
 	const parseResult = SortSchema.safeParse(Object.fromEntries(url.searchParams.entries()));
 
 	const { after, sort, productType, ...remainingFilterOptions } = parseResult.success
@@ -116,9 +115,9 @@ function parseRequestParameters(params: unknown, request: Request) {
 	};
 }
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ params, url }: LoaderFunctionArgs) {
 	// Parse request parameters
-	const { params: validatedParams, after, sort, productType, filterOptions } = parseRequestParameters(params, request);
+	const { params: validatedParams, after, sort, productType, filterOptions } = parseRequestParameters(params, url);
 	const { collection: collectionHandle, theme } = validatedParams;
 
 	// Fetch collection data and options
