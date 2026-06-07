@@ -529,7 +529,7 @@ function ImageGallery({
 			<TabPanels className="relative aspect-square w-full bg-gray-200">
 				{images.map(({ node }) => {
 					return (
-						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
+						<TabPanel className="absolute inset-0" key={node.id}>
 							<Image
 								alt={node.altText || ''}
 								breakpoints={[640, 768, 1024, 1280]}

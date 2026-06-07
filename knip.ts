@@ -6,6 +6,7 @@ export default {
 		'@tanstack/query-core',
 		'@tanstack/react-query-devtools',
 		'@vercel/node',
+		'isbot',
 		'react-router-dom',
 		'turbo-ignore',
 	],

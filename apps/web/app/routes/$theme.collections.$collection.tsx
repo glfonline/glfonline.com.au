@@ -334,7 +334,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 	});
 
 	return (
-		<div className="group relative flex flex-col overflow-hidden rounded-lg border border-gray-200 bg-white">
+		<div className="group relative flex flex-col rounded-lg border border-gray-200 bg-white">
 			<div className="aspect-3/4 group-hover:opacity-75 sm:aspect-auto sm:h-96">
 				{node.featuredImage?.url ? (
 					<Image
