@@ -72,7 +72,6 @@ export async function getProductsFromCollectionByTag({
 			title: collection?.title,
 		};
 	} catch (err) {
-		/** @todo */
 		console.error(err);
 	}
 }

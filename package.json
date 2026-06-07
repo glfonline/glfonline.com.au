@@ -27,8 +27,8 @@
 		"fix:lint": "turbo run fix:lint",
 		"fresh": "pnpm run clean && pnpm install",
 		"generate": "turbo run generate",
-		"preinstall": "pnpm dlx only-allow pnpm",
 		"postinstall": "manypkg check",
+		"preinstall": "pnpm dlx only-allow pnpm",
 		"sort:packages": "pnpm dlx sort-package-json 'package.json' './apps/*/package.json' './packages/*/package.json'",
 		"test": "turbo run test:browser test:e2e test:unit",
 		"test:browser": "turbo run test:browser",
@@ -45,11 +45,11 @@
 		"turbo-ignore": "catalog:",
 		"typescript": "catalog:"
 	},
-	"packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1",
 	"engines": {
 		"node": ">=22",
 		"pnpm": ">=9"
 	},
+	"packageManager": "pnpm@11.5.0+sha512.dbfcc4f81cf48597afd4bc391ffdf12c11f1a9fb83a395bfa6b0a2d9cc2fd8ffebafdb1ccbd529632153f793904c2615b7f09fe1a345473fd1c35845172a8eb1",
 	"manypkg": {
 		"defaultBranch": "main",
 		"workspaceProtocol": "require"

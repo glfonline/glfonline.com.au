@@ -1,8 +1,7 @@
 import type { Location } from 'react-router';
 
 /**
- * Builds the previous page URL for cursor-based pagination.
- * Removes the 'after' parameter to go back to the first page.
+ * Builds the previous page URL for cursor-based pagination. Removes the 'after' parameter to go back to the first page.
  *
  * @param location - The current React Router location object
  * @returns The previous page URL without the 'after' parameter, or undefined if no 'after' parameter exists
@@ -24,8 +23,7 @@ type BuildNextCursorUrlInput = {
 };
 
 /**
- * Builds the next page URL for cursor-based pagination.
- * Sets the 'after' parameter to the provided cursor.
+ * Builds the next page URL for cursor-based pagination. Sets the 'after' parameter to the provided cursor.
  *
  * @returns The next page URL with the 'after' parameter set to the cursor, or undefined if cursor is invalid
  */
@@ -46,8 +44,7 @@ type BuildNextOffsetUrlInput = {
 };
 
 /**
- * Builds the next page URL for offset-based pagination.
- * Sets the 'after' parameter to the next offset value.
+ * Builds the next page URL for offset-based pagination. Sets the 'after' parameter to the next offset value.
  *
  * @returns The next page URL with 'after' set to currentOffset + limit
  */
@@ -67,8 +64,8 @@ type BuildPrevOffsetUrlInput = {
 };
 
 /**
- * Builds the previous page URL for offset-based pagination.
- * Sets the 'after' parameter to the previous offset value, or removes it if going to the first page.
+ * Builds the previous page URL for offset-based pagination. Sets the 'after' parameter to the previous offset value, or
+ * removes it if going to the first page.
  *
  * @returns The previous page URL, or undefined if currentOffset <= 0
  */

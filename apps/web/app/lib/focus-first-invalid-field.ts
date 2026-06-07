@@ -9,9 +9,7 @@ const focusableSelector = [
 	'[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
-/**
- * Focus the first focusable element that is marked invalid within a form.
- */
+/** Focus the first focusable element that is marked invalid within a form. */
 export function focusFirstInvalidField(formEl: ParentNode | null) {
 	if (!formEl) return;
 

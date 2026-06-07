@@ -11,17 +11,13 @@ export const seoConfig: SeoConfig = {
 		'Dedicated entirely to womens and mens golfing and clothing needs with personalised service and brands like Nivo and Jamie Sadock, our online golf store has the largest product range and excellent service.',
 };
 
-/**
- * Applies title template to a title string
- */
+/** Applies title template to a title string */
 function applyTitleTemplate(title: string, template: string): string {
 	if (!title) return '';
 	return template.replace('%s', title);
 }
 
-/**
- * Generates SEO meta tags for pages
- */
+/** Generates SEO meta tags for pages */
 export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>) {
 	const mergedConfig: SeoConfig = {};
 

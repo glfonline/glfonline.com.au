@@ -10,9 +10,7 @@ export interface ErrorFormState<TFormData> extends ServerFormState<TFormData, un
 	};
 }
 
-/**
- * Creates an error response for non-Zod errors (e.g., network errors, server errors).
- */
+/** Creates an error response for non-Zod errors (e.g., network errors, server errors). */
 export function createErrorResponse<TFormData>(message: string): ReturnType<
 	typeof json<{
 		type: 'error';
