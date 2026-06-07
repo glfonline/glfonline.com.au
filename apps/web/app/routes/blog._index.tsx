@@ -34,8 +34,7 @@ const BlogSchema = z
 		};
 	});
 
-export async function loader({ request }: LoaderFunctionArgs) {
-	const url = new URL(request.url);
+export async function loader({ url }: LoaderFunctionArgs) {
 	const parseResult = BlogSchema.safeParse(Object.fromEntries(url.searchParams.entries()));
 	const { after = 0 } = parseResult.success
 		? parseResult.data

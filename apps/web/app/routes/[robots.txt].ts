@@ -2,9 +2,7 @@ import dedent from 'dedent';
 import type { LoaderFunctionArgs } from 'react-router';
 import { CACHE_LONG } from '../lib/cache';
 
-export function loader({ request }: LoaderFunctionArgs) {
-	const url = new URL(request.url);
-
+export function loader({ url }: LoaderFunctionArgs) {
 	const body = robotsTxtData({
 		url: url.origin,
 	});
