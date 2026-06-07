@@ -6,7 +6,6 @@ export const SENTRY_DSN =
 export const CHANTALE_PHONE = '0431 248 847';
 const GORDON_PHONE = '0401 726 598';
 export const WEB_ADDRESS = 'https://www.glfonline.com.au';
-const PUBLIC_STORE_DOMAIN = 'golfladiesfirst.myshopify.com';
 export const EMAIL_ADDRESS = 'info@glfonline.com.au';
 export const CONTACT_NUMBERS = [
 	{

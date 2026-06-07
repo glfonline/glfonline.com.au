@@ -3,17 +3,13 @@
  */
 export interface AllCacheOptions {
 	/**
-	 * The caching mode, generally `public`, `private`, or `no-store`.
-	 */
-	mode?: string;
-	/**
 	 * The maximum amount of time in seconds that a resource will be considered fresh. See `max-age` in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#:~:text=Response%20Directives-,max%2Dage,-The%20max%2Dage).
 	 */
 	maxAge?: number;
 	/**
-	 * Indicate that the cache should serve the stale response in the background while revalidating the cache. See `stale-while-revalidate` in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#stale-while-revalidate).
+	 * The caching mode, generally `public`, `private`, or `no-store`.
 	 */
-	staleWhileRevalidate?: number;
+	mode?: string;
 	/**
 	 * Similar to `maxAge` but specific to shared caches. See `s-maxage` in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#s-maxage).
 	 */
@@ -22,6 +18,10 @@ export interface AllCacheOptions {
 	 * Indicate that the cache should serve the stale response if an error occurs while revalidating the cache. See `stale-if-error` in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#stale-if-error).
 	 */
 	staleIfError?: number;
+	/**
+	 * Indicate that the cache should serve the stale response in the background while revalidating the cache. See `stale-while-revalidate` in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control#stale-while-revalidate).
+	 */
+	staleWhileRevalidate?: number;
 }
 
 /**
@@ -109,20 +109,6 @@ function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 		staleWhileRevalidate: 604_800, // 7 days
 		...overrideOptions,
 	};
-}
-
-function CacheDefault(overrideOptions?: CachingStrategy): AllCacheOptions {
-	guardExpirableModeType(overrideOptions);
-	return {
-		mode: PUBLIC,
-		maxAge: 1,
-		staleWhileRevalidate: 86_399, // 1 second less than 24 hours
-		...overrideOptions,
-	};
-}
-
-function CacheCustom(overrideOptions: CachingStrategy): AllCacheOptions {
-	return overrideOptions as AllCacheOptions;
 }
 
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
