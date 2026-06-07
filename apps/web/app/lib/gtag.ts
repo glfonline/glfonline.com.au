@@ -10,9 +10,7 @@ export const trackingIds = [
 	'AW-596987398', // AdWords
 ];
 
-/**
- * @see https://developers.google.com/analytics/devguides/collection/gtagjs/pages
- */
+/** @see https://developers.google.com/analytics/devguides/collection/gtagjs/pages */
 export function pageview(url: string, trackingId: string) {
 	if (!window.gtag) {
 		console.warn(

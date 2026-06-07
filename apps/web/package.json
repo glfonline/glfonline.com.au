@@ -2,8 +2,8 @@
 	"name": "@glfonline/web",
 	"version": "0.0.0",
 	"private": true,
-	"sideEffects": false,
 	"type": "module",
+	"sideEffects": false,
 	"scripts": {
 		"build": "mkdir -p build/client/.vite && react-router build",
 		"check:deps": "pnpm --dir ../.. exec knip --workspace apps/web --no-exit-code --dependencies",

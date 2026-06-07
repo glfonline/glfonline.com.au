@@ -10,9 +10,7 @@ type LegacyTypes<TDoc> = {
 	};
 };
 
-/*******************************************************************************
- * Fragments
- ******************************************************************************/
+/** Fragments */
 
 export const MONEY_FRAGMENT = graphql(`
 	fragment MONEY_FRAGMENT on MoneyV2 {
@@ -121,9 +119,7 @@ export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 	}
 `);
 
-/*******************************************************************************
- * Queries
- ******************************************************************************/
+/** Queries */
 
 export const LEGAL_PAGE_QUERY = graphql(`
 	query LEGAL_PAGE_QUERY($handle: String) {
@@ -138,72 +134,72 @@ export const LEGAL_PAGE_QUERY = graphql(`
 
 export const COLLECTION_QUERY = graphql(
 	`
-	query COLLECTION_QUERY(
-		$after: String
-		$before: String
-		$filters: [ProductFilter!]
-		$first: Int
-		$handle: String
-		$last: Int
-		$reverse: Boolean
-		$sortKey: ProductCollectionSortKeys
-	) {
-		collection(handle: $handle) {
-			id
-			image {
-				...IMAGE_FRAGMENT
-			}
-			products(
-				after: $after
-				before: $before
-				filters: $filters
-				first: $first
-				last: $last
-				reverse: $reverse
-				sortKey: $sortKey
-			) {
-				pageInfo {
-					endCursor
-					hasNextPage
-					hasPreviousPage
+		query COLLECTION_QUERY(
+			$after: String
+			$before: String
+			$filters: [ProductFilter!]
+			$first: Int
+			$handle: String
+			$last: Int
+			$reverse: Boolean
+			$sortKey: ProductCollectionSortKeys
+		) {
+			collection(handle: $handle) {
+				id
+				image {
+					...IMAGE_FRAGMENT
 				}
-				edges {
-					node {
-						id
-						availableForSale
-						compareAtPriceRange {
-							...PRODUCT_PRICE_RANGE_FRAGMENT
-						}
-						handle
-						featuredImage {
-							...IMAGE_FRAGMENT
-						}
-						priceRange {
-							...PRODUCT_PRICE_RANGE_FRAGMENT
-						}
-						tags
-						title
-						variants(first: 250) {
-							edges {
-								node {
-									id
-									compareAtPrice {
-										amount
-										currencyCode
-									}
-									price {
-										amount
-										currencyCode
+				products(
+					after: $after
+					before: $before
+					filters: $filters
+					first: $first
+					last: $last
+					reverse: $reverse
+					sortKey: $sortKey
+				) {
+					pageInfo {
+						endCursor
+						hasNextPage
+						hasPreviousPage
+					}
+					edges {
+						node {
+							id
+							availableForSale
+							compareAtPriceRange {
+								...PRODUCT_PRICE_RANGE_FRAGMENT
+							}
+							handle
+							featuredImage {
+								...IMAGE_FRAGMENT
+							}
+							priceRange {
+								...PRODUCT_PRICE_RANGE_FRAGMENT
+							}
+							tags
+							title
+							variants(first: 250) {
+								edges {
+									node {
+										id
+										compareAtPrice {
+											amount
+											currencyCode
+										}
+										price {
+											amount
+											currencyCode
+										}
 									}
 								}
 							}
 						}
 					}
 				}
+				title
 			}
-			title
 		}
-	}
 	`,
 	[IMAGE_FRAGMENT, PRODUCT_PRICE_RANGE_FRAGMENT],
 );
@@ -235,17 +231,17 @@ export const COLLECTION_OPTIONS_QUERY = graphql(`
 
 const ALL_PRODUCTS_QUERY_DOC = graphql(
 	`
-	query ALL_PRODUCTS_QUERY(
-		$first: Int = 20
-		$query: String = ""
-		$sortKey: ProductSortKeys = RELEVANCE
-		$reverse: Boolean = false
-		$cursor: String = null
-	) {
-		products(first: $first, sortKey: $sortKey, reverse: $reverse, query: $query, after: $cursor) {
-			...PRODUCT_CONNECTION_FRAGMENT
+		query ALL_PRODUCTS_QUERY(
+			$first: Int = 20
+			$query: String = ""
+			$sortKey: ProductSortKeys = RELEVANCE
+			$reverse: Boolean = false
+			$cursor: String = null
+		) {
+			products(first: $first, sortKey: $sortKey, reverse: $reverse, query: $query, after: $cursor) {
+				...PRODUCT_CONNECTION_FRAGMENT
+			}
 		}
-	}
 	`,
 	[PRODUCT_CONNECTION_FRAGMENT],
 );
@@ -256,68 +252,68 @@ export const ALL_PRODUCTS_QUERY = ALL_PRODUCTS_QUERY_DOC as typeof ALL_PRODUCTS_
 
 export const SINGLE_PRODUCT_QUERY = graphql(
 	`
-	query SINGLE_PRODUCT_QUERY($handle: String!) {
-		product(handle: $handle) {
-			id
-			availableForSale
-			description
-			descriptionHtml
-			images(first: 20) {
-				pageInfo {
-					hasNextPage
-					hasPreviousPage
-				}
-				edges {
-					node {
-						...IMAGE_FRAGMENT
-					}
-				}
-			}
-			options {
+		query SINGLE_PRODUCT_QUERY($handle: String!) {
+			product(handle: $handle) {
 				id
-				name
-				values
-			}
-			priceRange {
-				minVariantPrice {
-					amount
-				}
-			}
-			productType
-			sizeChartLabel: metafield(namespace: "custom", key: "size_chart_label") {
-				value
-			}
-			sizeChartUrl: metafield(namespace: "custom", key: "size_chart_url") {
-				value
-				reference {
-					__typename
-					... on GenericFile {
-						url
+				availableForSale
+				description
+				descriptionHtml
+				images(first: 20) {
+					pageInfo {
+						hasNextPage
+						hasPreviousPage
 					}
-					... on MediaImage {
-						image {
-							url
+					edges {
+						node {
+							...IMAGE_FRAGMENT
 						}
 					}
 				}
-			}
-			tags
-			title
-			updatedAt
-			variants(first: 250) {
-				pageInfo {
-					hasNextPage
-					hasPreviousPage
+				options {
+					id
+					name
+					values
 				}
-				edges {
-					node {
-						...PRODUCT_VARIANT_FRAGMENT
+				priceRange {
+					minVariantPrice {
+						amount
 					}
 				}
+				productType
+				sizeChartLabel: metafield(namespace: "custom", key: "size_chart_label") {
+					value
+				}
+				sizeChartUrl: metafield(namespace: "custom", key: "size_chart_url") {
+					value
+					reference {
+						__typename
+						... on GenericFile {
+							url
+						}
+						... on MediaImage {
+							image {
+								url
+							}
+						}
+					}
+				}
+				tags
+				title
+				updatedAt
+				variants(first: 250) {
+					pageInfo {
+						hasNextPage
+						hasPreviousPage
+					}
+					edges {
+						node {
+							...PRODUCT_VARIANT_FRAGMENT
+						}
+					}
+				}
+				vendor
 			}
-			vendor
 		}
-	}
 	`,
 	[IMAGE_FRAGMENT, PRODUCT_VARIANT_FRAGMENT],
 );
@@ -334,165 +330,71 @@ export const SHOP_QUERY = graphql(`
 
 export const CART_QUERY = graphql(
 	`
-	query CART_QUERY($cartId: ID!, $country: CountryCode, $language: LanguageCode)
-	@inContext(country: $country, language: $language) {
-		cart(id: $cartId) {
-			id
-			checkoutUrl
-			totalQuantity
-			buyerIdentity {
-				countryCode
-				customer {
-					id
-					email
-					firstName
-					lastName
-					displayName
-				}
-				email
-				phone
-			}
-			lines(first: 100) {
-				edges {
-					node {
-						id
-						quantity
-						attributes {
-							key
-							value
-						}
-						cost {
-							totalAmount {
-								amount
-								currencyCode
-							}
-							amountPerQuantity {
-								amount
-								currencyCode
-							}
-							compareAtAmountPerQuantity {
-								amount
-								currencyCode
-							}
-						}
-						merchandise {
-							... on ProductVariant {
-								id
-								availableForSale
-								compareAtPrice {
-									...MONEY_FRAGMENT
-								}
-								price {
-									...MONEY_FRAGMENT
-								}
-								requiresShipping
-								title
-								image {
-									...IMAGE_FRAGMENT
-								}
-								product {
-									handle
-									title
-									id
-								}
-								selectedOptions {
-									name
-									value
-								}
-							}
-						}
-					}
-				}
-			}
-			cost {
-				subtotalAmount {
-					...MONEY_FRAGMENT
-				}
-				totalAmount {
-					...MONEY_FRAGMENT
-				}
-				totalDutyAmount {
-					...MONEY_FRAGMENT
-				}
-				totalTaxAmount {
-					...MONEY_FRAGMENT
-				}
-			}
-			note
-			attributes {
-				key
-				value
-			}
-			discountCodes {
-				code
-			}
-		}
-	}
-
-	`,
-	[IMAGE_FRAGMENT, MONEY_FRAGMENT],
-);
-
-/*******************************************************************************
- * Mutations
- ******************************************************************************/
-
-export const CREATE_CART_MUTATION = graphql(
-	`
-	mutation CREATE_CART_MUTATION($input: CartInput!) {
-		cartCreate(input: $input) {
-			cart {
+		query CART_QUERY($cartId: ID!, $country: CountryCode, $language: LanguageCode)
+		@inContext(country: $country, language: $language) {
+			cart(id: $cartId) {
 				id
 				checkoutUrl
-				lines(first: 250) {
+				totalQuantity
+				buyerIdentity {
+					countryCode
+					customer {
+						id
+						email
+						firstName
+						lastName
+						displayName
+					}
+					email
+					phone
+				}
+				lines(first: 100) {
 					edges {
 						node {
 							id
 							quantity
+							attributes {
+								key
+								value
+							}
 							cost {
+								totalAmount {
+									amount
+									currencyCode
+								}
 								amountPerQuantity {
-									...MONEY_FRAGMENT
+									amount
+									currencyCode
 								}
 								compareAtAmountPerQuantity {
-									...MONEY_FRAGMENT
-								}
-								totalAmount {
-									...MONEY_FRAGMENT
-								}
-							}
-							discountAllocations {
-								... on CartAutomaticDiscountAllocation {
-									title
-									discountedAmount {
-										...MONEY_FRAGMENT
-									}
-								}
-								... on CartCodeDiscountAllocation {
-									code
-									discountedAmount {
-										...MONEY_FRAGMENT
-									}
+									amount
+									currencyCode
 								}
 							}
 							merchandise {
 								... on ProductVariant {
 									id
 									availableForSale
-									currentlyNotInStock
-									image {
-										...IMAGE_FRAGMENT
+									compareAtPrice {
+										...MONEY_FRAGMENT
 									}
 									price {
 										...MONEY_FRAGMENT
 									}
-									product {
-										id
-										handle
-										tags
-										title
-									}
-									quantityAvailable
+									requiresShipping
 									title
+									image {
+										...IMAGE_FRAGMENT
+									}
+									product {
+										handle
+										title
+										id
+									}
+									selectedOptions {
+										name
+										value
+									}
 								}
 							}
 						}
@@ -512,13 +414,104 @@ export const CREATE_CART_MUTATION = graphql(
 						...MONEY_FRAGMENT
 					}
 				}
-			}
-			userErrors {
-				field
-				message
+				note
+				attributes {
+					key
+					value
+				}
+				discountCodes {
+					code
+				}
 			}
 		}
-	}
+	`,
+	[IMAGE_FRAGMENT, MONEY_FRAGMENT],
+);
+
+/** Mutations */
+
+export const CREATE_CART_MUTATION = graphql(
+	`
+		mutation CREATE_CART_MUTATION($input: CartInput!) {
+			cartCreate(input: $input) {
+				cart {
+					id
+					checkoutUrl
+					lines(first: 250) {
+						edges {
+							node {
+								id
+								quantity
+								cost {
+									amountPerQuantity {
+										...MONEY_FRAGMENT
+									}
+									compareAtAmountPerQuantity {
+										...MONEY_FRAGMENT
+									}
+									totalAmount {
+										...MONEY_FRAGMENT
+									}
+								}
+								discountAllocations {
+									... on CartAutomaticDiscountAllocation {
+										title
+										discountedAmount {
+											...MONEY_FRAGMENT
+										}
+									}
+									... on CartCodeDiscountAllocation {
+										code
+										discountedAmount {
+											...MONEY_FRAGMENT
+										}
+									}
+								}
+								merchandise {
+									... on ProductVariant {
+										id
+										availableForSale
+										currentlyNotInStock
+										image {
+											...IMAGE_FRAGMENT
+										}
+										price {
+											...MONEY_FRAGMENT
+										}
+										product {
+											id
+											handle
+											tags
+											title
+										}
+										quantityAvailable
+										title
+									}
+								}
+							}
+						}
+					}
+					cost {
+						subtotalAmount {
+							...MONEY_FRAGMENT
+						}
+						totalAmount {
+							...MONEY_FRAGMENT
+						}
+						totalDutyAmount {
+							...MONEY_FRAGMENT
+						}
+						totalTaxAmount {
+							...MONEY_FRAGMENT
+						}
+					}
+				}
+				userErrors {
+					field
+					message
+				}
+			}
+		}
 	`,
 	[IMAGE_FRAGMENT, MONEY_FRAGMENT],
 );

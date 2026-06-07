@@ -1,10 +1,7 @@
 import type { Maybe } from '../types';
 import { isPopulatedArray } from './is-populated-array';
 
-/**
- * Merges multiple refs into one. Works with either callback or object refs.
- * Supports React 19 ref cleanup functions.
- */
+/** Merges multiple refs into one. Works with either callback or object refs. Supports React 19 ref cleanup functions. */
 export function mergeRefs<T>(...refs: Array<Maybe<React.Ref<T>>>) {
 	return (value: T) => {
 		const cleanupFunctions: Array<(() => void) | undefined> = [];

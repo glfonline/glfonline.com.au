@@ -10,38 +10,23 @@ try {
 	}
 }
 
-/**
- * Use process.env.PORT by default and fallback to port 3000.
- */
+/** Use process.env.PORT by default and fallback to port 3000. */
 const PORT = process.env.PORT || 3000;
 
-/**
- * Set webServer.url and use.baseURL with the location of the web server
- * respecting the correct port.
- */
+/** Set webServer.url and use.baseURL with the location of the web server respecting the correct port. */
 const baseURL = process.env.BASE_URL ?? `http://localhost:${PORT}`;
 
-/**
- * @see https://playwright.dev/docs/test-configuration
- */
+/** @see https://playwright.dev/docs/test-configuration */
 export default defineConfig({
-	/**
-	 * Fail the build on CI if you accidentally left test.only in the source code.
-	 */
+	/** Fail the build on CI if you accidentally left test.only in the source code. */
 	forbidOnly: Boolean(process.env.CI),
 
-	/**
-	 * Run tests in files in parallel.
-	 */
+	/** Run tests in files in parallel. */
 	fullyParallel: true,
 
-	/**
-	 * Configure projects for major browsers.
-	 */
+	/** Configure projects for major browsers. */
 	projects: [
-		/**
-		 * Desktop browsers.
-		 */
+		/** Desktop browsers. */
 		{
 			name: 'Desktop Chrome',
 			use: {
@@ -61,9 +46,7 @@ export default defineConfig({
 			},
 		},
 
-		/**
-		 * Mobile browsers.
-		 */
+		/** Mobile browsers. */
 		{
 			name: 'Mobile Chrome',
 			use: {
@@ -80,29 +63,28 @@ export default defineConfig({
 
 	/**
 	 * Reporter to use.
+	 *
 	 * @see https://playwright.dev/docs/test-reporters
 	 * Use list for console output (non-blocking) and html for report file generation
 	 */
 	reporter: [['list'], ['html', { open: 'never' }]],
 
-	/**
-	 * Retry on CI only.
-	 */
+	/** Retry on CI only. */
 	retries: process.env.CI ? 2 : 0,
 	testDir: './e2e',
 
 	/**
 	 * Shared settings for all the projects below.
+	 *
 	 * @see https://playwright.dev/docs/api/class-testoptions.
 	 */
 	use: {
-		/**
-		 * Base URL to use in actions like `await page.goto('/')`.
-		 */
+		/** Base URL to use in actions like `await page.goto('/')`. */
 		baseURL,
 
 		/**
 		 * Collect trace when retrying the failed test.
+		 *
 		 * @see https://playwright.dev/docs/trace-viewer
 		 */
 		trace: 'on-first-retry',
@@ -112,6 +94,7 @@ export default defineConfig({
 	 * Run your local dev server before starting the tests
 	 *
 	 * Logic:
+	 *
 	 * - If BASE_URL is set: Use external server (e.g., staging/production)
 	 * - If SKIP_WEB_SERVER is set: Don't start server (manual control)
 	 * - Otherwise: Start dev server automatically
@@ -138,8 +121,7 @@ export default defineConfig({
 	/**
 	 * Opt out of parallel tests on CI.
 	 *
-	 * Explicitly set the number of workers Playwright should use.
-	 * 3 for macos-latest on public GitHub repos.
+	 * Explicitly set the number of workers Playwright should use. 3 for macos-latest on public GitHub repos.
 	 */
 	workers: process.env.CI ? 3 : undefined,
 });

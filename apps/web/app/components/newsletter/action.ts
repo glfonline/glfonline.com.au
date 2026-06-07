@@ -46,6 +46,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<Newslette
 
 		/**
 		 * Validate Cloudflare Turnstyle token server-side
+		 *
 		 * @see https://developers.cloudflare.com/turnstile/get-started/server-side-validation
 		 */
 		const challengeResponse = await fetch('https://challenges.cloudflare.com/turnstile/v0/siteverify', {

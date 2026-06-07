@@ -4,8 +4,8 @@ import { data as json } from 'react-router';
 import type { ZodError, ZodType } from 'zod';
 
 /**
- * Validates JSON data directly with a Zod schema and formats errors for TanStack Form.
- * This avoids the JSON -> FormData -> validation round-trip that loses type information.
+ * Validates JSON data directly with a Zod schema and formats errors for TanStack Form. This avoids the JSON -> FormData
+ * -> validation round-trip that loses type information.
  */
 export async function validateJson<T>(
 	schema: ZodType<T>,
@@ -33,10 +33,7 @@ export async function validateJson<T>(
 	};
 }
 
-/**
- * Builds the form state structure from a Zod error for TanStack Form.
- * This is extracted for testability.
- */
+/** Builds the form state structure from a Zod error for TanStack Form. This is extracted for testability. */
 export function buildFormStateFromZodError<TFormData>(error: ZodError): ServerFormState<TFormData, undefined> {
 	// TanStack Form expects flat field keys. For nested objects, we use dot notation
 	// (e.g. "user.name") based on the Zod issue path.
@@ -76,8 +73,8 @@ export function buildFormStateFromZodError<TFormData>(error: ZodError): ServerFo
 }
 
 /**
- * Creates a TanStack Form error response from a Zod error.
- * This matches the structure that createServerValidate would return.
+ * Creates a TanStack Form error response from a Zod error. This matches the structure that createServerValidate would
+ * return.
  */
 export function createZodErrorResponse<TFormData>(error: ZodError): ReturnType<
 	typeof json<{

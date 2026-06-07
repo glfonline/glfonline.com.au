@@ -1,6 +1,6 @@
 /**
- * Extracts a string message from an error object.
- * Handles strings, objects with message properties, Error instances, ZodError, and other types.
+ * Extracts a string message from an error object. Handles strings, objects with message properties, Error instances,
+ * ZodError, and other types.
  */
 export function getErrorMessage(error: unknown): string {
 	if (typeof error === 'string') return error;
@@ -35,9 +35,8 @@ export function getErrorMessage(error: unknown): string {
 }
 
 /**
- * Extracts form-level errors from form state.
- * Only returns server-side errors (meta.errors) since client-side validation
- * errors should be shown at the field level, not in the live region.
+ * Extracts form-level errors from form state. Only returns server-side errors (meta.errors) since client-side
+ * validation errors should be shown at the field level, not in the live region.
  */
 export function getFormErrors(formState: {
 	errors: Array<unknown>;
@@ -50,9 +49,7 @@ export function getFormErrors(formState: {
 	return formState.meta?.errors ?? [];
 }
 
-/**
- * Checks if there are any field-level errors in the form state.
- */
+/** Checks if there are any field-level errors in the form state. */
 export function hasFieldErrors(formState: {
 	errorMap?: {
 		onServer?: Record<string, string | undefined>;

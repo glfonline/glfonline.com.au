@@ -94,10 +94,7 @@ export function FieldMessage({ message, id, tone }: FieldMessageProps) {
 
 type NativeDivProps = React.ComponentPropsWithRef<'div'>;
 export type FieldProps = NativeDivProps & {
-	/**
-	 * Indicates that the field is perceivable but disabled, so it is not editable
-	 * or otherwise operable.
-	 */
+	/** Indicates that the field is perceivable but disabled, so it is not editable or otherwise operable. */
 	disabled?: boolean;
 	/** Provide additional information that will aid user input. */
 	description?: string;

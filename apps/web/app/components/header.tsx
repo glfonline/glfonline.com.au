@@ -167,10 +167,8 @@ function MegaMenu() {
 								>
 									<PopoverPanel className="absolute inset-x-0 top-full sm:text-sm">
 										{/**
-										 * Presentational element used to render the bottom
-										 * shadow, if we put the shadow on the actual panel it
-										 * pokes out the top, so we use this shorter element
-										 * to hide the top of the shadow.
+										 * Presentational element used to render the bottom shadow, if we put the shadow on the actual panel it pokes out the
+										 * top, so we use this shorter element to hide the top of the shadow.
 										 */}
 										<div aria-hidden="true" className="absolute inset-0 top-1/2 bg-white shadow" />
 

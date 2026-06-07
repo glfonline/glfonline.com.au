@@ -49,7 +49,7 @@ directive @inContext(
 	preferredLocationId: ID
 ) on MUTATION | QUERY
 
-"A version of the API, as defined by [Shopify API versioning](https://shopify.dev/api/usage/versioning).\nVersions are commonly referred to by their handle (for example, `2021-10`).\n"
+"A version of the Shopify API. Each version has a unique handle in date-based format (YYYY-MM) or `unstable` for the development version.\n\nShopify guarantees supported versions are stable. Unsupported versions include unstable and release candidate versions. Use the [`publicApiVersions`](https://shopify.dev/docs/api/storefront/current/queries/publicApiVersions) query to retrieve all available versions. Learn more about [Shopify API versioning](https://shopify.dev/docs/api/usage/versioning).\n"
 type ApiVersion {
 	"""
 	The human-readable name of the version.
@@ -163,9 +163,7 @@ type AppliedGiftCard implements Node {
 	presentmentAmountUsed: MoneyV2!
 }
 
-"""
-An article in an online store blog.
-"""
+"A post that belongs to a [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog). Each article includes content with optional HTML formatting, an excerpt for previews, [`ArticleAuthor`](https://shopify.dev/docs/api/storefront/current/objects/ArticleAuthor) information, and an associated [`Image`](https://shopify.dev/docs/api/storefront/current/objects/Image).\n\nArticles can be organized with tags and include [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) metadata. You can manage [comments](https://shopify.dev/docs/api/storefront/current/objects/Comment) when the blog's comment policy enables them.\n"
 type Article implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	The article's author.
@@ -412,9 +410,7 @@ enum ArticleSortKeys {
 	UPDATED_AT
 }
 
-"""
-Represents a generic custom attribute, such as whether an order is a customer's first.
-"""
+"A custom key-value pair for storing additional information on [carts](https://shopify.dev/docs/api/storefront/current/objects/Cart), [cart lines](https://shopify.dev/docs/api/storefront/current/objects/CartLine), [orders](https://shopify.dev/docs/api/storefront/current/objects/Order), and [order line items](https://shopify.dev/docs/api/storefront/current/objects/OrderLineItem). Common uses include gift wrapping requests, customer notes, and tracking whether a customer is a first-time buyer.\n\nAttributes set on a cart carry over to the resulting order after checkout. Use the [`cartAttributesUpdate`](https://shopify.dev/docs/api/storefront/current/mutations/cartAttributesUpdate) mutation to add or modify cart attributes. For a step-by-step guide, see [managing carts with the Storefront API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/manage).\n"
 type Attribute {
 	"The key or name of the attribute. For example, `\"customersFirstOrder\"`.\n"
 	key: String!
@@ -423,9 +419,7 @@ type Attribute {
 	value: String
 }
 
-"""
-The input fields for an attribute.
-"""
+"A custom key-value pair that stores additional information on a [cart](https://shopify.dev/docs/api/storefront/current/objects/Cart) or [cart line](https://shopify.dev/docs/api/storefront/current/objects/CartLine). Attributes capture additional information like gift messages, special instructions, or custom order details. Learn more about [managing carts with the Storefront API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/manage).\n"
 input AttributeInput {
 	"""
 	Key or name of the attribute.
@@ -438,7 +432,7 @@ input AttributeInput {
 	value: String!
 }
 
-"Automatic discount applications capture the intentions of a discount that was automatically applied.\n"
+"An [automatic discount](https://help.shopify.com/manual/discounts/discount-methods/automatic-discounts) applied to a cart or checkout without requiring a discount code. Implements the [`DiscountApplication`](https://shopify.dev/docs/api/storefront/current/interfaces/DiscountApplication) interface.\n\nIncludes the discount's title, value, and allocation details that specify how the discount amount distributes across entitled line items or shipping lines.\n"
 type AutomaticDiscountApplication implements DiscountApplication {
 	"""
 	The method by which the discount's value is allocated to its entitled items.
@@ -466,9 +460,7 @@ type AutomaticDiscountApplication implements DiscountApplication {
 	value: PricingValue!
 }
 
-"""
-Represents a cart line common fields.
-"""
+"Defines the shared fields for items in a shopping cart. Implemented by [`CartLine`](https://shopify.dev/docs/api/storefront/current/objects/CartLine) for individual merchandise and [`ComponentizableCartLine`](https://shopify.dev/docs/api/storefront/current/objects/ComponentizableCartLine) for grouped merchandise like bundles.\n\nEach implementation includes the merchandise being purchased, quantity, cost breakdown, applied discounts, custom attributes, and any associated [`SellingPlan`](https://shopify.dev/docs/api/storefront/current/objects/SellingPlan).\n"
 interface BaseCartLine implements Node {
 	"""
 	An attribute associated with the cart line.
@@ -552,9 +544,7 @@ type BaseCartLineEdge {
 	node: BaseCartLine!
 }
 
-"""
-An online store blog.
-"""
+"A blog container for [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) objects. Stores can have multiple blogs, for example to organize content by topic or purpose.\n\nEach blog provides access to its articles, contributing [`ArticleAuthor`](https://shopify.dev/docs/api/storefront/current/objects/ArticleAuthor) objects, and [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) information. You can retrieve articles individually [by handle](https://shopify.dev/docs/api/storefront/current/objects/Blog#field-Blog.fields.articleByHandle) or as a [paginated list](https://shopify.dev/docs/api/storefront/current/objects/Blog#field-Blog.fields.articles).\n"
 type Blog implements HasMetafields & Node & OnlineStorePublishable {
 	"""
 	Find an article by its handle.
@@ -714,7 +704,7 @@ enum BlogSortKeys {
 	TITLE
 }
 
-"The store's [branding configuration](https://help.shopify.com/en/manual/promoting-marketing/managing-brand-assets).\n"
+"The store's [branding configuration](https://help.shopify.com/manual/promoting-marketing/managing-brand-assets), such as logos, colors, and slogan. Access this through the [`Shop`](https://shopify.dev/docs/api/storefront/current/objects/Shop#field-Shop.fields.brand) object to display consistent brand assets across your storefront.\n"
 type Brand {
 	"""
 	The colors of the store's brand.
@@ -773,7 +763,7 @@ type BrandColors {
 	secondary: [BrandColorGroup!]!
 }
 
-"The input fields for obtaining the buyer's identity.\n"
+"Identifies a B2B buyer for the [`@inContext`](https://shopify.dev/docs/storefronts/headless/bring-your-own-stack/b2b) directive. Pass this input to contextualize Storefront API queries with data like B2B-specific pricing, quantity rules, and quantity price breaks.\n\nFor B2B customers with access to multiple company locations, include the [`companyLocationId`](https://shopify.dev/docs/api/storefront/latest/input-objects/BuyerInput#fields-companyLocationId) to specify which location they're purchasing for.\n"
 input BuyerInput {
 	"""
 	The identifier of the company location.
@@ -821,7 +811,7 @@ enum CardBrand {
 	VISA
 }
 
-"A cart represents the merchandise that a buyer intends to purchase,\nand the estimated cost associated with the cart. Learn how to\n[interact with a cart](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nduring a customer's session.\n"
+"A cart represents the merchandise that a buyer intends to purchase, and the estimated cost associated with the cart, throughout a customer's session.\n\nUse the [`checkoutUrl`](https://shopify.dev/docs/api/storefront/current/objects/Cart#field-checkoutUrl) field to direct buyers to Shopify's web checkout to complete their purchase.\n\nLearn more about [interacting with carts](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/manage).\n"
 type Cart implements HasMetafields & Node {
 	"""
 	The gift cards that have been applied to the cart.
@@ -903,6 +893,9 @@ type Cart implements HasMetafields & Node {
 	The discounts that have been applied to the entire cart.
 	"""
 	discountAllocations: [CartDiscountAllocation!]!
+		@deprecated(
+			reason: "Use `cart.lines[].discountAllocations(lineLevelOnly: false)` and `cart.deliveryGroups[].discountAllocations` instead."
+		)
 
 	"""
 	The case-insensitive discount codes that the customer added at checkout.
@@ -997,9 +990,7 @@ A delivery address of the buyer that is interacting with the cart.
 """
 union CartAddress = CartDeliveryAddress
 
-"""
-The input fields to provide exactly one of a variety of delivery address types.
-"""
+"Specifies a delivery address for a cart. Provide either a [`deliveryAddress`](https://shopify.dev/docs/api/storefront/current/input-objects/CartAddressInput#fields-deliveryAddress) with full address details, or a [`copyFromCustomerAddressId`](https://shopify.dev/docs/api/storefront/current/input-objects/CartAddressInput#fields-copyFromCustomerAddressId) to copy from an existing customer address. Used by [`CartSelectableAddressInput`](https://shopify.dev/docs/api/storefront/current/input-objects/CartSelectableAddressInput) and [`CartSelectableAddressUpdateInput`](https://shopify.dev/docs/api/storefront/current/input-objects/CartSelectableAddressUpdateInput).\n"
 input CartAddressInput {
 	"""
 	Copies details from the customer address to an address on this cart.
@@ -1032,14 +1023,12 @@ type CartAttributesUpdatePayload {
 	warnings: [CartWarning!]!
 }
 
-"""
-The discounts automatically applied to the cart line based on prerequisites that have been met.
-"""
+"A discount allocation [that applies automatically](https://help.shopify.com/manual/discounts/discount-methods/automatic-discounts) to a cart line when configured conditions are met. Unlike [`CartCodeDiscountAllocation`](https://shopify.dev/docs/api/storefront/current/objects/CartCodeDiscountAllocation), automatic discounts don't require customers to enter a code.\n"
 type CartAutomaticDiscountAllocation implements CartDiscountAllocation {
 	"""
 	The discount that have been applied on the cart line.
 	"""
-	discountApplication: CartDiscountApplication!
+	discountApplication: CartDiscountApplication! @deprecated(reason: "Use `sourceDiscountApplication` instead.")
 
 	"""
 	The discounted amount that has been applied to the cart line.
@@ -1077,9 +1066,7 @@ type CartBillingAddressUpdatePayload {
 	warnings: [CartWarning!]!
 }
 
-"""
-Represents information about the buyer that is interacting with the cart.
-"""
+"Contact information about the buyer interacting with a [cart](https://shopify.dev/docs/api/storefront/current/objects/Cart). The buyer's country determines [international pricing](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/markets/international-pricing) and should match their shipping address.\n\nFor B2B scenarios, the [`purchasingCompany`](https://shopify.dev/docs/api/storefront/current/objects/CartBuyerIdentity#field-CartBuyerIdentity.fields.purchasingCompany) field identifies the company and location on whose behalf a business customer purchases. The [`preferences`](https://shopify.dev/docs/api/storefront/current/objects/CartBuyerIdentity#field-CartBuyerIdentity.fields.preferences) field stores delivery and wallet settings that prefill checkout fields to streamline the buying process.\n"
 type CartBuyerIdentity {
 	"""
 	The country where the buyer is located.
@@ -1113,7 +1100,7 @@ type CartBuyerIdentity {
 	purchasingCompany: PurchasingCompany
 }
 
-"Specifies the input fields to update the buyer information associated with a cart.\nBuyer identity is used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nand should match the customer's shipping address.\n"
+"The input fields for identifying the buyer associated with a cart. Buyer identity determines [international pricing](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/markets/international-pricing) and should match the customer's shipping address.\n\nUsed by [`cartCreate`](https://shopify.dev/docs/api/storefront/current/mutations/cartCreate) and [`cartBuyerIdentityUpdate`](https://shopify.dev/docs/api/storefront/current/mutations/cartBuyerIdentityUpdate) to set contact information, location, and checkout preferences.\n\n> Note:\n> Preferences prefill fields at checkout but don't sync back to the cart if overwritten.\n"
 input CartBuyerIdentityInput {
 	"""
 	The company location of the buyer that is interacting with the cart.
@@ -1170,9 +1157,7 @@ enum CartCardSource {
 	SAVED_CREDIT_CARD
 }
 
-"""
-The discount that has been applied to the cart line using a discount code.
-"""
+"A discount allocation applied to a cart line when a customer enters a [discount code](https://help.shopify.com/manual/discounts/discount-methods/discount-codes).\n"
 type CartCodeDiscountAllocation implements CartDiscountAllocation {
 	"""
 	The code used to apply the discount.
@@ -1182,7 +1167,7 @@ type CartCodeDiscountAllocation implements CartDiscountAllocation {
 	"""
 	The discount that have been applied on the cart line.
 	"""
-	discountApplication: CartDiscountApplication!
+	discountApplication: CartDiscountApplication! @deprecated(reason: "Use `sourceDiscountApplication` instead.")
 
 	"""
 	The discounted amount that has been applied to the cart line.
@@ -1279,7 +1264,7 @@ type CartCompletionSuccess {
 	orderUrl: URL!
 }
 
-"The costs that the buyer will pay at checkout.\nThe cart cost uses [`CartBuyerIdentity`](https://shopify.dev/api/storefront/reference/cart/cartbuyeridentity) to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\n"
+"The estimated costs that a buyer will pay at checkout. The `Cart` object's [`cost`](https://shopify.dev/docs/api/storefront/current/objects/Cart#field-Cart.fields.cost) field returns this. The costs are subject to change and changes will be reflected at checkout. Costs reflect [international pricing](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/markets/international-pricing) based on the buyer's context.\n\nAmounts include the subtotal before taxes and cart-level discounts, the checkout charge amount excluding deferred payments, and the total. The subtotal and total amounts each include a corresponding boolean field indicating whether the value is an estimate.\n"
 type CartCost {
 	"""
 	The estimated amount, before taxes and discounts, for the customer to pay at checkout. The checkout charge amount doesn't include any deferred payments that'll be paid at a later date. If the cart has no deferred payments, then the checkout charge amount is equivalent to `subtotalAmount`.
@@ -1366,7 +1351,7 @@ type CartCustomDiscountAllocation implements CartDiscountAllocation {
 	"""
 	The discount that have been applied on the cart line.
 	"""
-	discountApplication: CartDiscountApplication!
+	discountApplication: CartDiscountApplication! @deprecated(reason: "Use `sourceDiscountApplication` instead.")
 
 	"""
 	The discounted amount that has been applied to the cart line.
@@ -1620,9 +1605,7 @@ input CartDeliveryCoordinatesPreferenceInput {
 	longitude: Float!
 }
 
-"""
-Information about the options available for one or more line items to be delivered to a specific address.
-"""
+"Groups cart line items that share the same delivery destination. Each group provides the available [`CartDeliveryOption`](https://shopify.dev/docs/api/storefront/current/objects/CartDeliveryOption) choices for that address, along with the customer's selected option.\n\nAccess through the [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart) object's `deliveryGroups` field. Items are grouped by merchandise type (one-time purchase vs subscription), allowing different delivery methods for each.\n"
 type CartDeliveryGroup {
 	"""
 	A list of cart lines for the delivery group.
@@ -1734,9 +1717,7 @@ input CartDeliveryInput {
 	addresses: [CartSelectableAddressInput!]
 }
 
-"""
-Information about a delivery option.
-"""
+"A shipping or delivery choice available to customers during checkout. Each option includes a title, estimated cost, and delivery method type such as shipping or local pickup.\n\nReturned by the [`CartDeliveryGroup`](https://shopify.dev/docs/api/storefront/current/objects/CartDeliveryGroup) object's [`deliveryOptions`](https://shopify.dev/docs/api/storefront/current/objects/CartDeliveryGroup#field-CartDeliveryGroup.fields.deliveryOptions) field and [`selectedDeliveryOption`](https://shopify.dev/docs/api/storefront/current/objects/CartDeliveryGroup#field-CartDeliveryGroup.fields.selectedDeliveryOption) field.\n"
 type CartDeliveryOption {
 	"""
 	The code of the delivery option.
@@ -1833,14 +1814,12 @@ input CartDirectPaymentMethodInput {
 	sessionId: String!
 }
 
-"""
-The discounts that have been applied to the cart line.
-"""
+"A common interface for querying discount allocations regardless of how the discount was applied ([automatic](https://help.shopify.com/manual/discounts/discount-methods/automatic-discounts), [code](https://help.shopify.com/manual/discounts/discount-methods/discount-codes), or custom). Each implementation represents a different discount source.\n\nTracks how a discount distributes across [cart lines](https://shopify.dev/docs/api/storefront/current/objects/CartLine). Each allocation includes the [`CartDiscountApplication`](https://shopify.dev/docs/api/storefront/current/objects/CartDiscountApplication) details, the discounted amount, and whether the discount targets line items or shipping.\n"
 interface CartDiscountAllocation {
 	"""
 	The discount that have been applied on the cart line.
 	"""
-	discountApplication: CartDiscountApplication!
+	discountApplication: CartDiscountApplication! @deprecated(reason: "Use `sourceDiscountApplication` instead.")
 
 	"""
 	The discounted amount that has been applied to the cart line.
@@ -1853,10 +1832,7 @@ interface CartDiscountAllocation {
 	targetType: DiscountApplicationTargetType!
 }
 
-"""
-The discount application capture the intentions of a discount source at
-        the time of application.
-"""
+"Captures the intent of a discount source at the time it was applied to a cart. This includes the discount value, how it's allocated across entitled items, and which line types it targets.\n\nThe actual discounted amounts on specific cart lines are represented by [`CartDiscountAllocation`](https://shopify.dev/docs/api/storefront/current/interfaces/CartDiscountAllocation) objects, which reference this application.\n"
 type CartDiscountApplication {
 	"""
 	The method by which the discount's value is allocated to its entitled items.
@@ -1879,9 +1855,7 @@ type CartDiscountApplication {
 	value: PricingValue!
 }
 
-"""
-The discount codes applied to the cart.
-"""
+"A discount code applied to a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). Discount codes are case-insensitive and can be added using the [`cartDiscountCodesUpdate`](https://shopify.dev/docs/api/storefront/current/mutations/cartDiscountCodesUpdate) mutation.\n\nThe [`applicable`](https://shopify.dev/docs/api/storefront/current/objects/CartDiscountCode#field-CartDiscountCode.fields.applicable) field indicates whether the code applies to the cart's current contents, which might change as items are added or removed.\n"
 type CartDiscountCode {
 	"""
 	Whether the discount code is applicable to the cart's current contents.
@@ -1914,9 +1888,7 @@ type CartDiscountCodesUpdatePayload {
 	warnings: [CartWarning!]!
 }
 
-"""
-Possible error codes that can be returned by `CartUserError`.
-"""
+"Error codes returned by [`CartUserError`](https://shopify.dev/docs/api/storefront/current/objects/CartUserError) during cart mutations. Covers validation failures for addresses, quantities, delivery options, merchandise lines, discount codes, and metafields.\n"
 enum CartErrorCode {
 	"""
 	The specified address field contains emojis.
@@ -1947,6 +1919,16 @@ enum CartErrorCode {
 	The specified address field is too long.
 	"""
 	ADDRESS_FIELD_IS_TOO_LONG
+
+	"""
+	Buyer cannot purchase for company location.
+	"""
+	BUYER_CANNOT_PURCHASE_FOR_COMPANY_LOCATION
+
+	"""
+	The cart is too large to save.
+	"""
+	CART_TOO_LARGE
 
 	"""
 	The input value is invalid.
@@ -1992,6 +1974,11 @@ enum CartErrorCode {
 	The payment wasn't valid.
 	"""
 	INVALID_PAYMENT
+
+	"""
+	The payment is invalid. Deferred payment is required.
+	"""
+	INVALID_PAYMENT_DEFERRED_PAYMENT_REQUIRED
 
 	"""
 	Cannot update payment on an empty cart
@@ -2049,14 +2036,84 @@ enum CartErrorCode {
 	ONLY_ONE_DELIVERY_ADDRESS_CAN_BE_SELECTED
 
 	"""
+	Credit card has expired.
+	"""
+	PAYMENTS_CREDIT_CARD_BASE_EXPIRED
+
+	"""
+	Credit card gateway is not supported.
+	"""
+	PAYMENTS_CREDIT_CARD_BASE_GATEWAY_NOT_SUPPORTED
+
+	"""
+	Credit card error.
+	"""
+	PAYMENTS_CREDIT_CARD_GENERIC
+
+	"""
+	Credit card month is invalid.
+	"""
+	PAYMENTS_CREDIT_CARD_MONTH_INCLUSION
+
+	"""
+	Credit card number is invalid.
+	"""
+	PAYMENTS_CREDIT_CARD_NUMBER_INVALID
+
+	"""
+	Credit card number format is invalid.
+	"""
+	PAYMENTS_CREDIT_CARD_NUMBER_INVALID_FORMAT
+
+	"""
+	Credit card verification value is blank.
+	"""
+	PAYMENTS_CREDIT_CARD_VERIFICATION_VALUE_BLANK
+
+	"""
+	Credit card verification value is invalid for card type.
+	"""
+	PAYMENTS_CREDIT_CARD_VERIFICATION_VALUE_INVALID_FOR_CARD_TYPE
+
+	"""
+	Credit card has expired.
+	"""
+	PAYMENTS_CREDIT_CARD_YEAR_EXPIRED
+
+	"""
+	Credit card expiry year is invalid.
+	"""
+	PAYMENTS_CREDIT_CARD_YEAR_INVALID_EXPIRY_YEAR
+
+	"""
+	The payment method is not applicable.
+	"""
+	PAYMENT_METHOD_NOT_APPLICABLE
+
+	"""
 	The payment method is not supported.
 	"""
 	PAYMENT_METHOD_NOT_SUPPORTED
 
 	"""
+	The delivery group is in a pending state.
+	"""
+	PENDING_DELIVERY_GROUPS
+
+	"""
 	The given province cannot be found.
 	"""
 	PROVINCE_NOT_FOUND
+
+	"""
+	Selling plan is not applicable.
+	"""
+	SELLING_PLAN_NOT_APPLICABLE
+
+	"""
+	An error occurred while saving the cart.
+	"""
+	SERVICE_UNAVAILABLE
 
 	"""
 	Too many delivery addresses on Cart.
@@ -2074,14 +2131,17 @@ enum CartErrorCode {
 	VALIDATION_CUSTOM
 
 	"""
+	Variant can only be purchased with a selling plan.
+	"""
+	VARIANT_REQUIRES_SELLING_PLAN
+
+	"""
 	The given zip code is unsupported.
 	"""
 	ZIP_CODE_NOT_SUPPORTED
 }
 
-"""
-The estimated costs that the buyer will pay at checkout. The estimated cost uses [`CartBuyerIdentity`](https://shopify.dev/api/storefront/reference/cart/cartbuyeridentity) to determine [international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).
-"""
+"The estimated costs that the buyer pays at checkout. Uses [`CartBuyerIdentity`](https://shopify.dev/docs/api/storefront/current/objects/CartBuyerIdentity) to determine [international pricing](https://shopify.dev/docs/custom-storefronts/internationalization/international-pricing).\n\nIncludes the subtotal, total amount, duties, and taxes. The [`checkoutChargeAmount`](https://shopify.dev/docs/api/storefront/current/objects/CartEstimatedCost#field-CartEstimatedCost.fields.checkoutChargeAmount) field excludes deferred payments that are charged later, making it useful for displaying what the customer pays immediately.\n"
 type CartEstimatedCost {
 	"""
 	The estimated amount, before taxes and discounts, for the customer to pay at checkout. The checkout charge amount doesn't include any deferred payments that'll be paid at a later date. If the cart has no deferred payments, then the checkout charge amount is equivalent to`subtotal_amount`.
@@ -2157,9 +2217,7 @@ type CartGiftCardCodesUpdatePayload {
 	warnings: [CartWarning!]!
 }
 
-"""
-The input fields to create a cart.
-"""
+"The input fields for creating a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). Used by the [`cartCreate`](https://shopify.dev/docs/api/storefront/current/mutations/cartCreate) mutation.\n\nAccepts merchandise lines, discount codes, gift card codes, and a note. You can also set custom attributes, metafields, buyer identity for international pricing, and delivery addresses.\n"
 input CartInput {
 	"""
 	An array of key-value pairs that contains additional information about the cart.
@@ -2208,9 +2266,7 @@ input CartInput {
 	note: String
 }
 
-"""
-The input fields for a cart metafield value to set.
-"""
+"The input fields for a cart metafield value to set.\n\nCart metafields will be copied to order metafields at order creation time if there is a matching order metafield definition with the [`cart to order copyable`](https://shopify.dev/docs/apps/build/metafields/use-metafield-capabilities#cart-to-order-copyable) capability enabled.\n"
 input CartInputMetafieldInput {
 	"""
 	The key name of the metafield.
@@ -2224,9 +2280,7 @@ input CartInputMetafieldInput {
 	value: String!
 }
 
-"""
-Represents information about the merchandise in the cart.
-"""
+"An item in a customer's [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart) representing a product variant they intend to purchase. Each cart line tracks the merchandise, quantity, cost breakdown, and any applied discounts.\n\nCart lines can include custom attributes for additional information like gift wrapping requests, and can be associated with a [`SellingPlanAllocation`](https://shopify.dev/docs/api/storefront/current/objects/SellingPlanAllocation) for purchase options like subscriptions, pre-orders, or try-before-you-buy. The [`instructions`](https://shopify.dev/docs/api/storefront/current/objects/CartLine#field-CartLine.fields.instructions) field indicates whether the line can be removed or have its quantity updated.\n"
 type CartLine implements BaseCartLine & Node {
 	"""
 	An attribute associated with the cart line.
@@ -2279,9 +2333,7 @@ type CartLine implements BaseCartLine & Node {
 	sellingPlanAllocation: SellingPlanAllocation
 }
 
-"""
-The cost of the merchandise line that the buyer will pay at checkout.
-"""
+"Cost breakdown for a single line item in a [cart](https://shopify.dev/docs/api/storefront/current/objects/Cart). Includes the per-unit price, the subtotal before line-level discounts, and the final total amount the buyer pays.\n\nThe [`compareAtAmountPerQuantity`](https://shopify.dev/docs/api/storefront/current/objects/CartLineCost#field-CartLineCost.fields.compareAtAmountPerQuantity) field shows the original price when the item is on sale, enabling the display of savings to customers.\n"
 type CartLineCost {
 	"""
 	The amount of the merchandise line.
@@ -2327,9 +2379,7 @@ type CartLineEstimatedCost {
 	totalAmount: MoneyV2!
 }
 
-"""
-The input fields to create a merchandise line on a cart.
-"""
+"The input fields for adding a merchandise line to a cart. Each line represents a [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) the buyer intends to purchase, along with the quantity and optional [`SellingPlan`](https://shopify.dev/docs/api/storefront/current/objects/SellingPlan) for subscriptions.\n\nUsed by the [`cartCreate`](https://shopify.dev/docs/api/storefront/current/mutations/cartCreate) mutation when creating a cart with initial items, and the [`cartLinesAdd`](https://shopify.dev/docs/api/storefront/current/mutations/cartLinesAdd) mutation when adding items to an existing cart.\n"
 input CartLineInput {
 	"""
 	An array of key-value pairs that contains additional information about the merchandise line.
@@ -2354,9 +2404,7 @@ input CartLineInput {
 	sellingPlanId: ID
 }
 
-"""
-The input fields to update a line item on a cart.
-"""
+"The input fields for updating a merchandise line in a cart. Used by the [`cartLinesUpdate`](https://shopify.dev/docs/api/storefront/current/mutations/cartLinesUpdate) mutation.\n\nSpecify the line item's [`id`](https://shopify.dev/docs/api/storefront/current/input-objects/CartLineUpdateInput#fields-id) along with any fields to modify. You can change the quantity, swap the merchandise, update custom attributes, or associate a different selling plan.\n"
 input CartLineUpdateInput {
 	"""
 	An array of key-value pairs that contains additional information about the merchandise line.
@@ -2478,9 +2526,7 @@ type CartMetafieldDeletePayload {
 The input fields for a cart metafield value to set.
 """
 input CartMetafieldsSetInput {
-	"""
-	The key name of the cart metafield.
-	"""
+	"The key name of the cart metafield. This can either be a composite key (`namespace.key`) or a simple key\nthat relies on the default app-reserved namespace.\n"
 	key: String!
 
 	"""
@@ -2634,6 +2680,26 @@ The result of cart preparation.
 """
 union CartPrepareForCompletionResult = CartStatusNotReady | CartStatusReady | CartThrottled
 
+"""
+Return type for `cartRemovePersonalData` mutation.
+"""
+type CartRemovePersonalDataPayload {
+	"""
+	The updated cart.
+	"""
+	cart: Cart
+
+	"""
+	The list of errors that occurred from executing the mutation.
+	"""
+	userErrors: [CartUserError!]!
+
+	"""
+	A list of warnings that occurred during the mutation.
+	"""
+	warnings: [CartWarning!]!
+}
+
 "A selectable delivery address for a cart.\n"
 type CartSelectableAddress {
 	"""
@@ -2657,9 +2723,7 @@ type CartSelectableAddress {
 	selected: Boolean!
 }
 
-"""
-The input fields for a selectable delivery address in a cart.
-"""
+"The input fields for a selectable delivery address to present to the buyer. Used by [`CartDeliveryInput`](https://shopify.dev/docs/api/storefront/current/input-objects/CartDeliveryInput) when creating a cart with the [`cartCreate`](https://shopify.dev/docs/api/storefront/current/mutations/cartCreate) mutation.\n\nYou can pre-select an address for the buyer, mark it as one-time use so it isn't saved after checkout, and specify how strictly the address should be validated.\n"
 input CartSelectableAddressInput {
 	"""
 	Exactly one kind of delivery address.
@@ -2793,6 +2857,11 @@ union CartSubmitForCompletionResult = SubmitAlreadyAccepted | SubmitFailed | Sub
 "Response signifying that the access to cart request is currently being throttled.\nThe client can retry after `poll_after`.\n"
 type CartThrottled {
 	"""
+	The result of cart preparation for completion.
+	"""
+	cart: Cart
+
+	"""
 	The polling delay.
 	"""
 	pollAfter: DateTime!
@@ -2831,9 +2900,7 @@ input CartWalletPaymentMethodInput {
 	shopPayWalletContent: ShopPayWalletContentInput
 }
 
-"""
-A warning that occurred during a cart mutation.
-"""
+"A non-blocking issue that occurred during a cart mutation. Unlike errors, warnings don't prevent the mutation from completing but indicate potential problems that may affect the buyer's experience.\n\nEach warning includes a code identifying the issue type, a human-readable message, and a target ID pointing to the affected resource.\n"
 type CartWarning {
 	"""
 	The code of the warning.
@@ -2855,6 +2922,66 @@ type CartWarning {
 The code for the cart warning.
 """
 enum CartWarningCode {
+	"""
+	The discount code cannot be honored.
+	"""
+	DISCOUNT_CODE_NOT_HONOURED
+
+	"""
+	The discount is currently inactive.
+	"""
+	DISCOUNT_CURRENTLY_INACTIVE
+
+	"""
+	The customer is not eligible for this discount.
+	"""
+	DISCOUNT_CUSTOMER_NOT_ELIGIBLE
+
+	"""
+	The customer's discount usage limit has been reached.
+	"""
+	DISCOUNT_CUSTOMER_USAGE_LIMIT_REACHED
+
+	"""
+	An eligible customer is missing for this discount.
+	"""
+	DISCOUNT_ELIGIBLE_CUSTOMER_MISSING
+
+	"""
+	The purchase type is incompatible with this discount.
+	"""
+	DISCOUNT_INCOMPATIBLE_PURCHASE_TYPE
+
+	"""
+	The discount was not found.
+	"""
+	DISCOUNT_NOT_FOUND
+
+	"""
+	There are no entitled line items for this discount.
+	"""
+	DISCOUNT_NO_ENTITLED_LINE_ITEMS
+
+	"""
+	There are no entitled shipping lines for this discount.
+	"""
+	DISCOUNT_NO_ENTITLED_SHIPPING_LINES
+
+	"""
+	The purchase is not in range for this discount.
+	"""
+	DISCOUNT_PURCHASE_NOT_IN_RANGE
+
+	"""
+	The quantity is not in range for this discount.
+	"""
+	DISCOUNT_QUANTITY_NOT_IN_RANGE
+
+	"""
+	The discount usage limit has been reached.
+	"""
+	DISCOUNT_USAGE_LIMIT_REACHED
+
 	"""
 	A delivery address with the same details already exists on this cart.
 	"""
@@ -2884,7 +3011,7 @@ input CategoryFilter {
 	id: String!
 }
 
-"A collection represents a grouping of products that a shop owner can create to\norganize them or make their shops easier to browse.\n"
+"A group of products [organized by a merchant](https://help.shopify.com/manual/products/collections) to make their store easier to browse. Collections can help customers discover related products by category, season, promotion, or other criteria.\n\nQuery a collection's products with [filtering options](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/filter-products) like availability, price range, vendor, and tags. Each collection includes [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) information, an optional [`Image`](https://shopify.dev/docs/api/storefront/current/objects/Image), and supports custom data through [`metafields`](https://shopify.dev/docs/api/storefront/current/objects/Metafield).\n"
 type Collection implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	Stripped description of the collection, single line with HTML tags removed.
@@ -3147,9 +3274,7 @@ type CommentEdge {
 	node: Comment!
 }
 
-"""
-Represents information about a company which is also a customer of the shop.
-"""
+"A B2B organization that purchases from the shop. In the Storefront API, company information is accessed through the [`PurchasingCompany`](https://shopify.dev/docs/api/storefront/current/objects/PurchasingCompany) object on [`CartBuyerIdentity`](https://shopify.dev/docs/api/storefront/current/objects/CartBuyerIdentity), which provides the associated location and contact for the current purchasing context.\n\nYou can store custom data using [metafields](https://shopify.dev/docs/apps/build/metafields).\n"
 type Company implements HasMetafields & Node {
 	"""
 	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company was created in Shopify.
@@ -3234,9 +3359,7 @@ type CompanyContact implements Node {
 	updatedAt: DateTime!
 }
 
-"""
-A company's location.
-"""
+"A branch or office of a [`Company`](https://shopify.dev/docs/api/storefront/current/objects/Company) where B2B customers can place orders. When a B2B customer selects a location after logging in, the Storefront API contextualizes product queries to return location-specific pricing and quantity rules.\n\nAccess through the [`PurchasingCompany`](https://shopify.dev/docs/api/storefront/current/objects/PurchasingCompany) object, which associates the location with the buyer's [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart).\n"
 type CompanyLocation implements HasMetafields & Node {
 	"""
 	The date and time ([ISO 8601 format](http://en.wikipedia.org/wiki/ISO_8601)) at which the company location was created in Shopify.
@@ -3430,9 +3553,7 @@ enum CountPrecision {
 	EXACT
 }
 
-"""
-A country.
-"""
+"A country with localization settings for a storefront. Includes the country's currency, available languages, default language, and unit system (metric or imperial).\n\nAccess countries through the [localization](https://shopify.dev/docs/api/storefront/current/queries/localization) query, which returns both the list of available countries and the currently active country. Use the [`@inContext`](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/in-context) directive to change the active country context.\n"
 type Country {
 	"""
 	The languages available for the country.
@@ -3445,6 +3566,11 @@ type Country {
 	currency: Currency!
 
 	"""
+	The default language for the country.
+	"""
+	defaultLanguage: Language!
+
+	"""
 	The ISO code of the country.
 	"""
 	isoCode: CountryCode!
@@ -3452,7 +3578,7 @@ type Country {
 	"""
 	The market that includes this country.
 	"""
-	market: Market
+	market: Market @deprecated(reason: "This `market` field will be removed in a future version of the API.")
 
 	"""
 	The name of the country.
@@ -5551,9 +5677,7 @@ enum CurrencyCode {
 	ZMW
 }
 
-"""
-A customer represents a customer account with the shop. Customer accounts store contact information for the customer, saving logged-in customers the trouble of having to provide it at every checkout.
-"""
+"A customer account with the shop. Includes data such as contact information, [addresses](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress) and marketing preferences for logged-in customers, so they don't have to provide these details at every checkout.\n\nAccess the customer through the [`customer`](https://shopify.dev/docs/api/storefront/current/queries/customer) query using a customer access token obtained from the [`customerAccessTokenCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreate) mutation.\n\nThe object implements the [`HasMetafields`](https://shopify.dev/docs/api/storefront/current/interfaces/HasMetafields) interface, enabling retrieval of [custom data](https://shopify.dev/docs/apps/build/custom-data) associated with the customer.\n"
 type Customer implements HasMetafields {
 	"""
 	Indicates whether the customer has consented to be sent marketing material via email.
@@ -5709,9 +5833,7 @@ type Customer implements HasMetafields {
 	updatedAt: DateTime!
 }
 
-"""
-A CustomerAccessToken represents the unique token required to make modifications to the customer object.
-"""
+"A unique authentication token that identifies a logged-in customer and authorizes modifications to the [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) object. The token is required for customer-specific operations like updating profile information or managing addresses.\n\nTokens have an expiration date and must be renewed using [`customerAccessTokenRenew`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenRenew) before they expire. Create tokens with [`customerAccessTokenCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreate) using legacy customer account authentication (email and password), or with [`customerAccessTokenCreateWithMultipass`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreateWithMultipass) for single sign-on flows.\n"
 type CustomerAccessToken {
 	"""
 	The customer’s access token.
@@ -5724,9 +5846,7 @@ type CustomerAccessToken {
 	expiresAt: DateTime!
 }
 
-"""
-The input fields required to create a customer access token.
-"""
+"The input fields for authenticating a customer with email and password. Used by the [`customerAccessTokenCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreate) mutation to generate a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken), which is required to read or modify customer data.\n"
 input CustomerAccessTokenCreateInput {
 	"""
 	The email associated to the customer.
@@ -5929,9 +6049,7 @@ type CustomerAddressUpdatePayload {
 	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
-"""
-The input fields to create a new customer.
-"""
+"The input fields for creating a new [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) account. Used by the [`customerCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerCreate) mutation.\n\nFor legacy customer accounts only and requires an email address and password. Optionally accepts the customer's name, phone number, and email marketing consent.\n\n> Caution:\n> The password is used for customer authentication. Ensure it's transmitted securely and never logged or stored in plain text.\n"
 input CustomerCreateInput {
 	"""
 	Indicates whether the customer has consented to be sent marketing material via email.
@@ -6002,9 +6120,7 @@ type CustomerDefaultAddressUpdatePayload {
 	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
-"""
-Possible error codes that can be returned by `CustomerUserError`.
-"""
+"Error codes returned by the [`CustomerUserError`](https://shopify.dev/docs/api/storefront/current/objects/CustomerUserError) object. These codes identify specific validation and processing failures for customer-related mutations, including account creation, updates, password resets, and address management.\n"
 enum CustomerErrorCode {
 	"""
 	Customer already enabled.
@@ -6162,9 +6278,7 @@ type CustomerResetPayload {
 	userErrors: [UserError!]! @deprecated(reason: "Use `customerUserErrors` instead.")
 }
 
-"""
-The input fields to update the Customer information.
-"""
+"The input fields for updating a [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer). Used by the [`customerUpdate`](https://shopify.dev/docs/api/storefront/current/mutations/customerUpdate) mutation.\n\n> Caution:\n> Updating the password invalidates all existing access tokens, including the one used to perform the mutation. The response returns a new access token. Ensure your app handles the new token returned in the response to avoid logging the customer out.\n"
 input CustomerUpdateInput {
 	"""
 	Indicates whether the customer has consented to be sent marketing material via email.
@@ -6268,7 +6382,7 @@ input DeliveryAddressInput {
 	oneTimeUse: Boolean = false
 }
 
-"Defines the types of available validation strategies for delivery addresses.\n"
+"Controls how delivery addresses are validated during cart operations. The default validation checks only the country code, while strict validation verifies all address fields against Shopify's checkout rules and rejects invalid addresses.\n\nUsed by [`DeliveryAddressInput`](https://shopify.dev/docs/api/storefront/current/input-objects/DeliveryAddressInput) when setting buyer identity preferences, and by [`CartSelectableAddressInput`](https://shopify.dev/docs/api/storefront/current/input-objects/CartSelectableAddressInput) and [`CartSelectableAddressUpdateInput`](https://shopify.dev/docs/api/storefront/current/input-objects/CartSelectableAddressUpdateInput) when managing cart delivery addresses.\n"
 enum DeliveryAddressValidationStrategy {
 	"""
 	Only the country code is validated.
@@ -6339,7 +6453,7 @@ enum DigitalWallet {
 	SHOPIFY_PAY
 }
 
-"An amount discounting the line that has been allocated by a discount.\n"
+"The calculated discount amount applied to a line item or shipping line. While a [`DiscountApplication`](https://shopify.dev/docs/api/storefront/current/interfaces/DiscountApplication) captures the discount's rules and intentions, the allocation shows how much was actually deducted.\n\nEach allocation includes the discounted amount and a reference to the originating discount application.\n"
 type DiscountAllocation {
 	"""
 	Amount of discount allocated.
@@ -6352,7 +6466,7 @@ type DiscountAllocation {
 	discountApplication: DiscountApplication!
 }
 
-"Discount applications capture the intentions of a discount source at\nthe time of application.\n"
+"Captures the intent of a discount at the time it was applied. Each implementation represents a different discount source, such as [automatic discounts](https://help.shopify.com/manual/discounts/discount-methods/automatic-discounts), [discount codes](https://help.shopify.com/manual/discounts/discount-methods/discount-codes), and manual discounts.\n\nThe actual discounted amount on a line item or shipping line is represented by the [`DiscountAllocation`](https://shopify.dev/docs/api/storefront/current/objects/DiscountAllocation) object, which references the discount application it originated from.\n"
 interface DiscountApplication {
 	"""
 	The method by which the discount's value is allocated to its entitled items.
@@ -6375,9 +6489,7 @@ interface DiscountApplication {
 	value: PricingValue!
 }
 
-"""
-The method by which the discount's value is allocated onto its entitled lines.
-"""
+"Controls how a discount's value is distributed across entitled lines. A discount can either spread its value across all entitled lines or apply the full value to each line individually.\n\nUsed by the [`DiscountApplication`](https://shopify.dev/docs/api/storefront/current/interfaces/DiscountApplication) interface and its implementations to capture the intentions of a discount source at the time of application.\n"
 enum DiscountApplicationAllocationMethod {
 	"""
 	The value is spread across all entitled lines.
@@ -6457,7 +6569,7 @@ enum DiscountApplicationTargetType {
 	SHIPPING_LINE
 }
 
-"Discount code applications capture the intentions of a discount code at\nthe time that it is applied.\n"
+"Records the configuration and intent of a [discount code](https://help.shopify.com/manual/discounts/discount-methods/discount-codes) when a customer applies it. This includes the code string, allocation method, target type, and discount value at the time of application. The [`applicable`](https://shopify.dev/docs/api/storefront/latest/objects/DiscountCodeApplication#field-DiscountCodeApplication.fields.applicable) field indicates whether the code was successfully applied.\n\n> Note:\n> To see the actual amounts discounted on specific line items or shipping lines, use the [`DiscountAllocation`](https://shopify.dev/docs/api/storefront/current/objects/DiscountAllocation) object instead.\n"
 type DiscountCodeApplication implements DiscountApplication {
 	"""
 	The method by which the discount's value is allocated to its entitled items.
@@ -6505,9 +6617,7 @@ interface DisplayableError {
 	message: String!
 }
 
-"""
-Represents a web address.
-"""
+"A web address associated with a shop. The [`Shop`](https://shopify.dev/docs/api/storefront/current/objects/Shop) object's [`primaryDomain`](https://shopify.dev/docs/api/storefront/current/objects/Shop#field-Shop.fields.primaryDomain) field returns this to identify the shop's online store URL.\n"
 type Domain {
 	"""
 	The host name of the domain (eg: `example.com`).
@@ -6575,9 +6685,7 @@ type ExternalVideo implements Media & Node {
 	previewImage: Image
 }
 
-"""
-A filter that is supported on the parent field.
-"""
+"A filter option available on collection and search results pages. Each filter includes a type, display label, and selectable values that customers can use to narrow down products.\n\nThe [`FilterValue`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue) objects contain an [`input`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue#field-FilterValue.fields.input) field that you can combine to [build dynamic filtering queries](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/filter-products). Merchants [configure available filters](https://help.shopify.com/manual/online-store/search-and-discovery/filters) using the Shopify Search & Discovery app.\n"
 type Filter {
 	"""
 	A unique identifier.
@@ -6639,9 +6747,7 @@ enum FilterType {
 	PRICE_RANGE
 }
 
-"""
-A selectable value within a filter.
-"""
+"A selectable option within a [`Filter`](https://shopify.dev/docs/api/storefront/current/objects/Filter), such as a specific color, size, or product type. Each value includes a count of matching results and a human-readable label for display.\n\nThe [`input`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue#field-FilterValue.fields.input) field provides ready-to-use JSON for building dynamic filtering interfaces. You can combine the `input` values from multiple selected [`FilterValue`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue) objects to construct filter queries. Visual representations are available through the [`image`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue#field-FilterValue.fields.image) or [`swatch`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue#field-FilterValue.fields.swatch) fields when the parent filter's presentation type supports them.\n"
 type FilterValue {
 	"""
 	The number of results that match this filter value.
@@ -6672,9 +6778,7 @@ type FilterValue {
 	swatch: Swatch
 }
 
-"""
-Represents a single fulfillment in an order.
-"""
+"A shipment of one or more items in an order. Accessed through the [`Order`](https://shopify.dev/docs/api/storefront/current/objects/Order) object's [`successfulFulfillments`](https://shopify.dev/docs/api/storefront/current/objects/Order#field-Order.fields.successfulFulfillments) field.\n\nEach fulfillment includes the line items that shipped, the tracking company name, and tracking details like numbers and URLs. An order can have multiple fulfillments when items ship separately or from different locations.\n"
 type Fulfillment {
 	"""
 	List of the fulfillment's line items.
@@ -6720,9 +6824,7 @@ type Fulfillment {
 	): [FulfillmentTrackingInfo!]!
 }
 
-"""
-Represents a single line item in a fulfillment. There is at most one fulfillment line item for each order line item.
-"""
+"Records how many units of an [`OrderLineItem`](https://shopify.dev/docs/api/storefront/current/objects/OrderLineItem) were included in a [`Fulfillment`](https://shopify.dev/docs/api/storefront/current/objects/Fulfillment). Each order line item has at most one fulfillment line item per fulfillment.\n"
 type FulfillmentLineItem {
 	"""
 	The associated order's line item.
@@ -6781,9 +6883,7 @@ type FulfillmentTrackingInfo {
 	url: URL
 }
 
-"""
-The generic file resource lets you manage files in a merchant’s store. Generic files include any file that doesn’t fit into a designated type such as image or video. Example: PDF, JSON.
-"""
+"Any file that doesn't fit into a designated type like image or video. For example, a PDF or JSON document. Use this object to manage files in a merchant's store.\n\nGeneric files are commonly referenced through [file reference metafields](https://shopify.dev/docs/apps/build/metafields/list-of-data-types) and returned as part of the [`MetafieldReference`](https://shopify.dev/docs/api/storefront/current/unions/MetafieldReference) union.\n\nIncludes the file's URL, MIME type, size in bytes, and an optional preview image.\n"
 type GenericFile implements Node {
 	"""
 	A word or phrase to indicate the contents of a file.
@@ -6834,9 +6934,7 @@ input GeoCoordinateInput {
 "A string containing HTML code. Refer to the [HTML spec](https://html.spec.whatwg.org/#elements-3) for a\ncomplete list of HTML elements.\n\nExample value: `\"<p>Grey cotton knit sweater.</p>\"`\n"
 scalar HTML
 
-"""
-Represents information about the metafields associated to the specified resource.
-"""
+"Implemented by resources that support custom metadata through [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) objects. Types like [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product), [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection), and [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) implement this interface to provide consistent access to metafields.\n\nYou can retrieve a [single metafield](https://shopify.dev/docs/api/storefront/current/interfaces/HasMetafields#fields-metafield) by namespace and key, or fetch [multiple metafields](https://shopify.dev/docs/api/storefront/current/interfaces/HasMetafields#fields-metafields) in a single request. If you omit the namespace, then the [app-reserved namespace](https://shopify.dev/docs/apps/build/metafields#app-owned-metafields) is used by default.\n"
 interface HasMetafields {
 	"""
 	A [custom field](https://shopify.dev/docs/apps/build/custom-data), including its `namespace` and `key`, that's associated with a Shopify resource for the purposes of adding and storing additional information.
@@ -6866,9 +6964,7 @@ interface HasMetafields {
 	): [Metafield]!
 }
 
-"""
-The input fields to identify a metafield on an owner resource by namespace and key.
-"""
+"The input fields to identify a [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) on an owner resource by namespace and key. Used as an argument to the [`metafields`](https://shopify.dev/docs/api/storefront/current/interfaces/HasMetafields#fields-metafields) field of the `HasMetafields` interface to retrieve multiple metafields in a single request.\n\nIf you omit the namespace, then the [app-reserved namespace](https://shopify.dev/docs/apps/build/metafields#app-owned-metafields) is used by default.\n"
 input HasMetafieldsIdentifier {
 	"""
 	The identifier for the metafield.
@@ -6886,9 +6982,7 @@ An ISO 8601-encoded datetime
 """
 scalar ISO8601DateTime
 
-"""
-Represents an image resource.
-"""
+"An image resource with URL, dimensions, and transformation options. Used for product images, collection images, media previews, and other visual content throughout the storefront.\n\nThe [`url`](https://shopify.dev/docs/api/storefront/current/objects/Image#field-Image.fields.url) field accepts an [`ImageTransformInput`](https://shopify.dev/docs/api/storefront/current/input-objects/ImageTransformInput) argument for resizing, cropping, scaling for retina displays, and converting between image formats. Use the [`thumbhash`](https://shopify.dev/docs/api/storefront/current/objects/Image#field-Image.fields.thumbhash) field to display lightweight placeholders while images load.\n"
 type Image {
 	"""
 	A word or phrase to share the nature or contents of an image.
@@ -6912,6 +7006,9 @@ type Image {
 	The location of the image as a URL.
 	"""
 	src: URL! @deprecated(reason: "Use `url` instead.")
+
+	"The ThumbHash of the image.\n\nUseful to display placeholder images while the original image is loading.\n\nSee https://evanw.github.io/thumbhash/ for details on how to use it.\n"
+	thumbhash: String
 
 	"The location of the transformed image as a URL.\n\nAll transformation arguments are considered \"best-effort\". If they can be applied to an image, they will be.\nOtherwise any transformations which an image type doesn't support will be ignored.\n"
 	transformedSrc(
@@ -7043,9 +7140,7 @@ type InContextAnnotationType {
 "A [JSON](https://www.json.org/json-en.html) object.\n\nExample value:\n`{\n  \"product\": {\n    \"id\": \"gid://shopify/Product/1346443542550\",\n    \"title\": \"White T-shirt\",\n    \"options\": [{\n      \"name\": \"Size\",\n      \"values\": [\"M\", \"L\"]\n    }]\n  }\n}`\n"
 scalar JSON
 
-"""
-A language.
-"""
+"A language available for a localized storefront experience. Provides the language name in both its native form (endonym) and translated into the current language, along with its [`LanguageCode`](https://shopify.dev/docs/api/storefront/current/enums/LanguageCode).\n\nReturned by the [`Localization`](https://shopify.dev/docs/api/storefront/current/objects/Localization) and [`Country`](https://shopify.dev/docs/api/storefront/current/objects/Country) objects to indicate available and active languages. Pass the `isoCode` to the [`@inContext`](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/in-context) directive to retrieve translated content in that language.\n"
 type Language {
 	"""
 	The name of the language in the language itself. If the language uses capitalization, it is capitalized for a mid-sentence position.
@@ -7063,9 +7158,7 @@ type Language {
 	name: String!
 }
 
-"""
-Language codes supported by Shopify.
-"""
+"Supported languages for retrieving translated storefront content. Pass a language code to the [`@inContext`](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/in-context) directive to return product titles, descriptions, and other translatable fields in that language. \n\nThe [`Localization`](https://shopify.dev/docs/api/storefront/current/objects/Localization) object provides the list of available languages for the active country, and each [`Country`](https://shopify.dev/docs/api/storefront/current/objects/Country) in [`availableCountries`](https://shopify.dev/docs/api/storefront/current/objects/Localization#field-Localization.fields.availableCountries) includes its own available languages.\n"
 enum LanguageCode {
 	"""
 	Afrikaans.
@@ -7788,9 +7881,7 @@ enum LanguageCode {
 	ZU
 }
 
-"""
-Information about the localized experiences configured for the shop.
-"""
+"Information about the shop's configured localized experiences, including available countries and languages. The [`country`](https://shopify.dev/docs/api/storefront/current/objects/Localization#field-Localization.fields.country) and [`language`](https://shopify.dev/docs/api/storefront/current/objects/Localization#field-Localization.fields.language) fields reflect the active localization context, which you can change using the `@inContext` directive on queries.\n\nUse [`availableCountries`](https://shopify.dev/docs/api/storefront/current/objects/Localization#field-Localization.fields.availableCountries) to list all countries with enabled localized experiences, and [`availableLanguages`](https://shopify.dev/docs/api/storefront/current/objects/Localization#field-Localization.fields.availableLanguages) to get languages available for the currently active country. Each [`Country`](https://shopify.dev/docs/api/storefront/current/objects/Country) includes its own currency, unit system, and available languages.\n"
 type Localization {
 	"""
 	The list of countries with enabled localized experiences.
@@ -7815,12 +7906,10 @@ type Localization {
 	"""
 	The market including the country of the active localized experience. Use the `@inContext` directive to change this value.
 	"""
-	market: Market!
+	market: Market! @deprecated(reason: "This `market` field will be removed in a future version of the API.")
 }
 
-"""
-Represents a location where product inventory is held.
-"""
+"A physical store location where product inventory is held and that supports in-store pickup. Provides the location's name, address, and geographic coordinates for proximity-based sorting. Use with [`StoreAvailability`](https://shopify.dev/docs/api/storefront/current/objects/StoreAvailability) to show customers where a [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) is available for pickup. \n\nLearn more about [supporting local pickup on storefronts](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/local-pickup).\n"
 type Location implements HasMetafields & Node {
 	"""
 	The address of the location.
@@ -7982,9 +8071,7 @@ enum LocationSortKeys {
 	NAME
 }
 
-"""
-Represents a mailing address for customers and shipping.
-"""
+"A physical mailing address associated with a [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) or [`Order`](https://shopify.dev/docs/api/storefront/current/objects/Order). Stores standard address components including street address, city, province, country, and postal code, along with customer name and company information.\n\nThe address includes geographic coordinates and provides pre-formatted output through the [`formatted`](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress#field-MailingAddress.fields.formatted) field, which can optionally include or exclude name and company details.\n"
 type MailingAddress implements Node {
 	"""
 	The first line of the address. Typically the street address or PO Box number.
@@ -8113,9 +8200,7 @@ type MailingAddressEdge {
 	node: MailingAddress!
 }
 
-"""
-The input fields to create or update a mailing address.
-"""
+"The input fields for creating or updating a [`MailingAddress`](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress). Accepts standard address components including street address, city, province, country, and postal code, along with customer name and contact information.\n\nUsed by the [`customerAddressCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAddressCreate) and [`customerAddressUpdate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAddressUpdate) mutations, and as part of [`DeliveryAddressInput`](https://shopify.dev/docs/api/storefront/current/input-objects/DeliveryAddressInput) for cart delivery preferences.\n"
 input MailingAddressInput {
 	"The first line of the address. Typically the street address or PO Box number.\n"
 	address1: String
@@ -8158,7 +8243,7 @@ input MailingAddressInput {
 	zip: String
 }
 
-"Manual discount applications capture the intentions of a discount that was manually created.\n"
+"A discount created manually by a merchant, as opposed to [automatic discounts](https://help.shopify.com/manual/discounts/discount-methods/automatic-discounts) or [discount codes](https://help.shopify.com/manual/discounts/discount-methods/discount-codes). Implements the [`DiscountApplication`](https://shopify.dev/docs/api/storefront/current/interfaces/DiscountApplication) interface and includes a title, optional description, and the discount value as either a fixed amount or percentage.\n"
 type ManualDiscountApplication implements DiscountApplication {
 	"""
 	The method by which the discount's value is allocated to its entitled items.
@@ -8191,9 +8276,7 @@ type ManualDiscountApplication implements DiscountApplication {
 	value: PricingValue!
 }
 
-"""
-A group of one or more regions of the world that a merchant is targeting for sales. To learn more about markets, refer to [the Shopify Markets conceptual overview](/docs/apps/markets).
-"""
+"An audience of buyers that a merchant targets for sales. Audiences can include geographic regions, company locations, and retail locations. Markets enable localized shopping experiences with region-specific languages, currencies, and pricing.\n\nEach market has a unique [`handle`](https://shopify.dev/docs/api/storefront/current/objects/Market#field-Market.fields.handle) for identification and supports custom data through [`metafields`](https://shopify.dev/docs/api/storefront/current/objects/Metafield). Learn more about [building localized experiences with Shopify Markets](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/markets).\n"
 type Market implements HasMetafields & Node {
 	"A human-readable unique string for the market automatically generated from its title.\n"
 	handle: String!
@@ -8231,9 +8314,7 @@ type Market implements HasMetafields & Node {
 	): [Metafield]!
 }
 
-"""
-Represents a media interface.
-"""
+"A common set of fields for media content associated with [products](https://shopify.dev/docs/api/storefront/current/objects/Product). Implementations include [`MediaImage`](https://shopify.dev/docs/api/storefront/current/objects/MediaImage) for Shopify-hosted images, [`Video`](https://shopify.dev/docs/api/storefront/current/objects/Video) for Shopify-hosted videos, [`ExternalVideo`](https://shopify.dev/docs/api/storefront/current/objects/ExternalVideo) for videos hosted on platforms like YouTube or Vimeo, and [`Model3d`](https://shopify.dev/docs/api/storefront/current/objects/Model3d) for 3D models.\n\nEach implementation shares fields for alt text, content type, and preview images, while adding type-specific fields like embed URLs for external videos or source files for 3D models.\n"
 interface Media {
 	"""
 	A word or phrase to share the nature or contents of a media.
@@ -8332,9 +8413,7 @@ enum MediaHost {
 	YOUTUBE
 }
 
-"""
-Represents a Shopify hosted image.
-"""
+"An image hosted on Shopify's content delivery network (CDN). Used for product images, brand logos, and other visual content across the storefront.\n\nThe [`image`](https://shopify.dev/docs/api/storefront/current/objects/MediaImage#field-MediaImage.fields.image) field provides the actual image data with transformation options. Implements the [`Media`](https://shopify.dev/docs/api/storefront/current/interfaces/Media) interface alongside other media types like [`Video`](https://shopify.dev/docs/api/storefront/current/objects/Video) and [`Model3d`](https://shopify.dev/docs/api/storefront/current/objects/Model3d).\n"
 type MediaImage implements Media & Node {
 	"""
 	A word or phrase to share the nature or contents of a media.
@@ -8405,7 +8484,7 @@ enum MediaPresentationFormat {
 	MODEL_VIEWER
 }
 
-"A [navigation menu](https://help.shopify.com/manual/online-store/menus-and-links) representing a hierarchy\nof hyperlinks (items).\n"
+"A navigation structure for building store [menus](https://help.shopify.com/manual/online-store/menus-and-links). Each menu contains [`MenuItem`](https://shopify.dev/docs/api/storefront/current/objects/MenuItem) objects that can be nested to create multi-level navigation hierarchies.\n\nMenu items can link to [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection), [products](https://shopify.dev/docs/api/storefront/current/objects/Product), [pages](https://shopify.dev/docs/api/storefront/current/objects/Page), [blogs](https://shopify.dev/docs/api/storefront/current/objects/Blog), or external URLs. Use the [`menu`](https://shopify.dev/docs/api/storefront/current/queries/menu) query to retrieve a menu by its handle.\n"
 type Menu implements Node {
 	"""
 	The menu's handle.
@@ -8433,9 +8512,7 @@ type Menu implements Node {
 	title: String!
 }
 
-"""
-A menu item within a parent menu.
-"""
+"A navigation link within a [`Menu`](https://shopify.dev/docs/api/storefront/current/objects/Menu). Each item has a title, URL, and can link to store resources like [products](https://shopify.dev/docs/api/storefront/current/objects/Product), [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection), [pages](https://shopify.dev/docs/api/storefront/current/objects/Page), [blogs](https://shopify.dev/docs/api/storefront/current/objects/Blog), or external URLs.\n\nMenu items support nested hierarchies through the [`items`](https://shopify.dev/docs/api/storefront/current/objects/MenuItem#field-MenuItem.fields.items) field, enabling dropdown or multi-level navigation structures. The [`tags`](https://shopify.dev/docs/api/storefront/current/objects/MenuItem#field-MenuItem.fields.tags) field filters results when the item links to a collection specifically.\n"
 type MenuItem implements Node {
 	"""
 	A globally-unique ID.
@@ -8551,12 +8628,10 @@ enum MenuItemType {
 	SHOP_POLICY
 }
 
-"""
-The merchandise to be purchased at checkout.
-"""
+"A [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) that a buyer intends to purchase at checkout.\n"
 union Merchandise = ProductVariant
 
-"Metafields represent custom metadata attached to a resource. Metafields can be sorted into namespaces and are\ncomprised of keys, values, and value types.\n"
+"[Custom metadata](https://shopify.dev/docs/apps/build/metafields) attached to a Shopify resource such as a [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product), [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection), or [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer). Each metafield is identified by a namespace and key, and stores a value with an associated type.\n\nValues are always stored as strings, but the [`type`](https://shopify.dev/docs/api/storefront/current/objects/Metafield#field-Metafield.fields.type) field indicates how to interpret the data. When a metafield's type is a resource reference, use the [`reference`](https://shopify.dev/docs/api/storefront/current/objects/Metafield#field-Metafield.fields.reference) or [`references`](https://shopify.dev/docs/api/storefront/current/objects/Metafield#field-Metafield.fields.references) fields to retrieve the linked objects. Access metafields on any resource that implements the [`HasMetafields`](https://shopify.dev/docs/api/storefront/current/interfaces/HasMetafields) interface.\n"
 type Metafield implements Node {
 	"""
 	The date and time when the storefront metafield was created.
@@ -8577,6 +8652,11 @@ type Metafield implements Node {
 	The unique identifier for the metafield within its namespace.
 	"""
 	key: String!
+
+	"""
+	Whether the metafield's type is a list type. Returns `true` for types like `list.color` or `list.single_line_text_field`.
+	"""
+	list: Boolean!
 
 	"""
 	The container for a group of metafields that the metafield is associated with.
@@ -8672,7 +8752,7 @@ type MetafieldDeleteUserError implements DisplayableError {
 	message: String!
 }
 
-"A filter used to view a subset of products in a collection matching a specific metafield value.\n\nOnly the following metafield types are currently supported:\n- `number_integer`\n- `number_decimal`\n- `single_line_text_field`\n- `boolean` as of 2022-04.\n"
+"Filters products in a collection by matching a specific metafield value. Used by the [`ProductFilter`](https://shopify.dev/docs/api/storefront/current/input-objects/ProductFilter) input's `productMetafield` and `variantMetafield` fields.\n\nSupports the following metafield types: `number_integer`, `number_decimal`, `single_line_text_field`, and `boolean`.\n"
 input MetafieldFilter {
 	"""
 	The key of the metafield to filter on.
@@ -8690,9 +8770,7 @@ input MetafieldFilter {
 	value: String!
 }
 
-"""
-A resource that the metafield belongs to.
-"""
+"The Shopify resource that owns a metafield. Returned by the `Metafield` object's [`parentResource`](https://shopify.dev/docs/api/storefront/current/objects/Metafield#field-Metafield.fields.parentResource) field, enabling traversal from a metafield back to the resource it's attached to.\n"
 union MetafieldParentResource =
 	| Article
 	| Blog
@@ -8710,7 +8788,7 @@ union MetafieldParentResource =
 	| SellingPlan
 	| Shop
 
-"Returns the resource which is being referred to by a metafield.\n"
+"The resource that a metafield points to when its type is a resource reference. Metafields can store references to other Shopify resources, and this union provides access to the actual referenced object.\n\nReturned by the `Metafield` object's [`reference`](https://shopify.dev/docs/api/storefront/current/objects/Metafield#field-Metafield.fields.reference) field for single references or the [`references`](https://shopify.dev/docs/api/storefront/current/objects/Metafield#field-Metafield.fields.references) field for lists.\n"
 union MetafieldReference =
 	| Collection
 	| GenericFile
@@ -8833,9 +8911,7 @@ enum MetafieldsSetUserErrorCode {
 	TOO_SHORT
 }
 
-"""
-An instance of a user-defined model based on a MetaobjectDefinition.
-"""
+"An instance of [custom structured data](https://shopify.dev/docs/apps/build/metaobjects) defined by a metaobject definition. Metaobjects store reusable content that extends beyond standard Shopify resources, such as size charts, author profiles, or custom content sections.\n\nEach metaobject contains fields that match the types and validation rules specified in its definition. [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) references can point to metaobjects, connecting custom data with products, collections, and other resources. If the definition has the `renderable` capability, then the [`seo`](https://shopify.dev/docs/api/storefront/current/objects/Metaobject#field-Metaobject.fields.seo) field provides SEO metadata. If it has the `online_store` capability, then the [`onlineStoreUrl`](https://shopify.dev/docs/api/storefront/current/objects/Metaobject#field-Metaobject.fields.onlineStoreUrl) field returns the public URL.\n"
 type Metaobject implements Node & OnlineStorePublishable {
 	"""
 	Accesses a field of the object by key.
@@ -8910,9 +8986,7 @@ type MetaobjectEdge {
 	node: Metaobject!
 }
 
-"""
-Provides the value of a Metaobject field.
-"""
+"The value of a field within a [`Metaobject`](https://shopify.dev/docs/api/storefront/current/objects/Metaobject). For fields that reference other resources, use the [`reference`](https://shopify.dev/docs/api/storefront/current/objects/MetaobjectField#field-MetaobjectField.fields.reference) field for single references or [`references`](https://shopify.dev/docs/api/storefront/current/objects/MetaobjectField#field-MetaobjectField.fields.references) for lists.\n"
 type MetaobjectField {
 	"""
 	The field key.
@@ -9063,7 +9137,7 @@ input MoneyInput {
 	currencyCode: CurrencyCode!
 }
 
-"A monetary value with currency.\n"
+"A precise monetary value with its associated currency. Combines a decimal amount with a three-letter [`CurrencyCode`](https://shopify.dev/docs/api/storefront/current/enums/CurrencyCode) to express prices, costs, and other financial values. For example, 12.99 USD.\n"
 type MoneyV2 {
 	"""
 	Decimal money amount.
@@ -9080,9 +9154,7 @@ type MoneyV2 {
 The schema’s entry-point for mutations. This acts as the public, top-level API from which all mutation queries must start.
 """
 type Mutation {
-	"""
-	Updates the attributes on a cart.
-	"""
+	"Updates the attributes on a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). Attributes are custom key-value pairs that store additional information, such as gift messages, special instructions, or order notes.\n"
 	cartAttributesUpdate(
 		"""
 		An array of key-value pairs that contains additional information about the cart.
@@ -9112,7 +9184,7 @@ type Mutation {
 		cartId: ID!
 	): CartBillingAddressUpdatePayload
 
-	"Updates customer information associated with a cart.\nBuyer identity is used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing)\nand should match the customer's shipping address.\n"
+	"Updates the buyer identity on a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart), including contact information, location, and checkout preferences. The buyer's country determines [international pricing](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/markets/international-pricing) and should match their shipping address.\n\nUse this mutation to associate a logged-in customer via access token, set a B2B company location, or configure checkout preferences like delivery method. Preferences prefill checkout fields but don't sync back to the cart if overwritten at checkout.\n"
 	cartBuyerIdentityUpdate(
 		"The customer associated with the cart. Used to determine\n[international pricing](https://shopify.dev/custom-storefronts/internationalization/international-pricing).\nBuyer identity should match the customer's shipping address.\n"
 		buyerIdentity: CartBuyerIdentityInput!
@@ -9123,9 +9195,7 @@ type Mutation {
 		cartId: ID!
 	): CartBuyerIdentityUpdatePayload
 
-	"""
-	Creates a new cart.
-	"""
+	"Creates a new [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart) for a buyer session. You can optionally initialize the cart with merchandise lines, discount codes, gift card codes, buyer identity for international pricing, and custom attributes.\n\nThe returned cart includes a `checkoutUrl` that directs the buyer to complete their purchase.\n"
 	cartCreate(
 		"""
 		The fields used to create a cart.
@@ -9133,9 +9203,7 @@ type Mutation {
 		input: CartInput
 	): CartCreatePayload
 
-	"""
-	Adds delivery addresses to the cart.
-	"""
+	"Adds delivery addresses to a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). A cart can have up to 20 delivery addresses. One address can be marked as selected for checkout, and addresses can optionally be marked as one-time use so they aren't saved to the customer's account.\n"
 	cartDeliveryAddressesAdd(
 		"""
 		A list of delivery addresses to add to the cart.
@@ -9150,9 +9218,7 @@ type Mutation {
 		cartId: ID!
 	): CartDeliveryAddressesAddPayload
 
-	"""
-	Removes delivery addresses from the cart.
-	"""
+	"Removes delivery addresses from a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart) by their IDs, allowing batch removal in a single request.\n"
 	cartDeliveryAddressesRemove(
 		"""
 		A list of delivery addresses by handle to remove from the cart.
@@ -9167,9 +9233,7 @@ type Mutation {
 		cartId: ID!
 	): CartDeliveryAddressesRemovePayload
 
-	"""
-	Updates one or more delivery addresses on a cart.
-	"""
+	"Updates one or more delivery addresses on a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). Each address can be modified to change its details, set it as the pre-selected address for checkout, or mark it for one-time use so it isn't saved to the customer's account.\n"
 	cartDeliveryAddressesUpdate(
 		"""
 		The delivery addresses to update.
@@ -9184,9 +9248,7 @@ type Mutation {
 		cartId: ID!
 	): CartDeliveryAddressesUpdatePayload
 
-	"""
-	Updates the discount codes applied to the cart.
-	"""
+	"Updates the discount codes applied to a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). This mutation replaces all existing discount codes with the provided list, so pass an empty array to remove all codes. Discount codes are case-insensitive.\n\nAfter updating, check each [`CartDiscountCode`](https://shopify.dev/docs/api/storefront/current/objects/CartDiscountCode) in the cart's [`discountCodes`](https://shopify.dev/docs/api/storefront/current/objects/Cart#field-Cart.fields.discountCodes) field to see whether the code is applicable to the cart's current contents.\n"
 	cartDiscountCodesUpdate(
 		"""
 		The ID of the cart.
@@ -9201,9 +9263,7 @@ type Mutation {
 		discountCodes: [String!]
 	): CartDiscountCodesUpdatePayload
 
-	"""
-	Removes the gift card codes applied to the cart.
-	"""
+	"Removes gift cards from a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart) using their IDs. You can retrieve the IDs of applied gift cards from the cart's [`appliedGiftCards`](https://shopify.dev/docs/api/storefront/current/objects/Cart#field-Cart.fields.appliedGiftCards) field.\n"
 	cartGiftCardCodesRemove(
 		"""
 		The gift cards to remove.
@@ -9218,9 +9278,7 @@ type Mutation {
 		cartId: ID!
 	): CartGiftCardCodesRemovePayload
 
-	"""
-	Updates the gift card codes applied to the cart.
-	"""
+	"Updates the gift card codes applied to the cart. Unlike [`cartGiftCardCodesAdd`](https://shopify.dev/docs/api/storefront/current/mutations/cartGiftCardCodesAdd), which adds codes without replacing existing ones, this mutation sets the gift card codes for the cart. Gift card codes are case-insensitive.\n"
 	cartGiftCardCodesUpdate(
 		"""
 		The ID of the cart.
@@ -9235,9 +9293,7 @@ type Mutation {
 		giftCardCodes: [String!]!
 	): CartGiftCardCodesUpdatePayload
 
-	"""
-	Adds a merchandise line to the cart.
-	"""
+	"Adds one or more merchandise lines to an existing [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). Each line specifies the [product variant](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) to purchase. Quantity defaults to `1` if not provided.\n\nYou can add up to 250 lines in a single request. Use [`CartLineInput`](https://shopify.dev/docs/api/storefront/current/input-objects/CartLineInput) to configure each line's merchandise, quantity, selling plan, custom attributes, and any parent relationships for nested line items such as warranties or add-ons.\n"
 	cartLinesAdd(
 		"""
 		The ID of the cart.
@@ -9252,9 +9308,7 @@ type Mutation {
 		lines: [CartLineInput!]!
 	): CartLinesAddPayload
 
-	"""
-	Removes one or more merchandise lines from the cart.
-	"""
+	"Removes one or more merchandise lines from a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). Accepts up to 250 line IDs per request. Returns the updated cart along with any errors or warnings.\n"
 	cartLinesRemove(
 		"""
 		The ID of the cart.
@@ -9269,9 +9323,7 @@ type Mutation {
 		lineIds: [ID!]!
 	): CartLinesRemovePayload
 
-	"""
-	Updates one or more merchandise lines on a cart.
-	"""
+	"Updates one or more merchandise lines on a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). You can modify the quantity, swap the merchandise, change custom attributes, or update the selling plan for each line. You can update a maximum of 250 lines per request.\n\nOmitting the [`attributes`](https://shopify.dev/docs/api/storefront/current/mutations/cartLinesUpdate#arguments-lines.fields.attributes) field or setting it to null preserves existing line attributes. Pass an empty array to clear all attributes from a line.\n"
 	cartLinesUpdate(
 		"""
 		The ID of the cart.
@@ -9286,9 +9338,7 @@ type Mutation {
 		lines: [CartLineUpdateInput!]!
 	): CartLinesUpdatePayload
 
-	"""
-	Deletes a cart metafield.
-	"""
+	"Deletes a cart metafield.\n\n> Note:\n> This mutation won't trigger [Shopify Functions](https://shopify.dev/docs/api/functions). The changes won't be available to Shopify Functions until the buyer goes to checkout or performs another cart interaction that triggers the functions.\n"
 	cartMetafieldDelete(
 		"""
 		The input fields used to delete a cart metafield.
@@ -9296,7 +9346,7 @@ type Mutation {
 		input: CartMetafieldDeleteInput!
 	): CartMetafieldDeletePayload
 
-	"Sets cart metafield values. Cart metafield values will be set regardless if they were previously created or not.\n\nAllows a maximum of 25 cart metafields to be set at a time.\n"
+	"Sets [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) values on a cart, creating new metafields or updating existing ones. Accepts up to 25 metafields per request.\n\nCart metafields can automatically copy to order metafields when an order is created, if there's a matching order metafield definition with the [cart to order copyable](https://shopify.dev/docs/apps/build/metafields/use-metafield-capabilities#cart-to-order-copyable) capability enabled.\n\n> Note:\n> This mutation doesn't trigger [Shopify Functions](https://shopify.dev/docs/api/functions). Changes aren't available to Shopify Functions until the buyer goes to checkout or performs another cart interaction that triggers the functions.\n"
 	cartMetafieldsSet(
 		"""
 		The list of Cart metafield values to set. Maximum of 25.
@@ -9306,9 +9356,7 @@ type Mutation {
 		metafields: [CartMetafieldsSetInput!]!
 	): CartMetafieldsSetPayload
 
-	"""
-	Updates the note on the cart.
-	"""
+	"Updates the note on a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart). The note is a text field that stores additional information, such as a personalized message from the buyer or special instructions for the order.\n"
 	cartNoteUpdate(
 		"""
 		The ID of the cart.
@@ -9347,8 +9395,16 @@ type Mutation {
 	): CartPrepareForCompletionPayload
 
 	"""
-	Update the selected delivery options for a delivery group.
+	Removes personally identifiable information from the cart.
 	"""
+	cartRemovePersonalData(
+		"""
+		The ID of the cart.
+		"""
+		cartId: ID!
+	): CartRemovePersonalDataPayload
+
+	"Updates the selected delivery option for one or more [`CartDeliveryGroup`](https://shopify.dev/docs/api/storefront/current/objects/CartDeliveryGroup) objects in a cart. Each delivery group represents items shipping to a specific address and offers multiple delivery options with different costs and methods.\n\nUse this mutation when a customer chooses their preferred shipping method during checkout. The [`deliveryOptionHandle`](https://shopify.dev/docs/api/storefront/current/input-objects/CartSelectedDeliveryOptionInput#field-CartSelectedDeliveryOptionInput.fields.deliveryOptionHandle) identifies which [`CartDeliveryOption`](https://shopify.dev/docs/api/storefront/current/objects/CartDeliveryOption) to select for each delivery group.\n"
 	cartSelectedDeliveryOptionsUpdate(
 		"""
 		The ID of the cart.
@@ -9376,7 +9432,7 @@ type Mutation {
 		cartId: ID!
 	): CartSubmitForCompletionPayload
 
-	"Creates a customer access token.\nThe customer access token is required to modify the customer object in any way.\n"
+	"For legacy customer accounts only.\n\nCreates a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) using the customer's email and password. The access token is required to read or modify the [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) object, such as updating account information or managing addresses.\n\nThe token has an expiration time. Use [`customerAccessTokenRenew`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenRenew) to extend the token before it expires, or create a new token if it's already expired.\n\n> Caution:\n> This mutation handles customer credentials. Always transmit requests over HTTPS and never log or expose the password.\n"
 	customerAccessTokenCreate(
 		"""
 		The fields used to create a customer access token.
@@ -9384,7 +9440,7 @@ type Mutation {
 		input: CustomerAccessTokenCreateInput!
 	): CustomerAccessTokenCreatePayload
 
-	"Creates a customer access token using a\n[multipass token](https://shopify.dev/api/multipass) instead of email and\npassword. A customer record is created if the customer doesn't exist. If a customer\nrecord already exists but the record is disabled, then the customer record is enabled.\n"
+	"Creates a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) using a [multipass token](https://shopify.dev/docs/api/multipass) instead of email and password. This enables single sign-on for customers who authenticate through an external system.\n\nIf the customer doesn't exist in Shopify, then a new customer record is created automatically. If the customer exists but the record is disabled, then the customer record is re-enabled.\n\n> Caution:\n> Multipass tokens are only valid for 15 minutes and can only be used once. Generate tokens on-the-fly when needed rather than in advance.\n"
 	customerAccessTokenCreateWithMultipass(
 		"""
 		A valid [multipass token](https://shopify.dev/api/multipass) to be authenticated.
@@ -9392,9 +9448,7 @@ type Mutation {
 		multipassToken: String!
 	): CustomerAccessTokenCreateWithMultipassPayload
 
-	"""
-	Permanently destroys a customer access token.
-	"""
+	"Permanently destroys a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken). Use this mutation when a customer explicitly signs out or when you need to revoke the token. Use [`customerAccessTokenCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreate) to generate a new token with the customer's credentials.\n\n> Caution:\n> This action is irreversible. The customer needs to sign in again to obtain a new access token.\n"
 	customerAccessTokenDelete(
 		"""
 		The access token used to identify the customer.
@@ -9402,7 +9456,7 @@ type Mutation {
 		customerAccessToken: String!
 	): CustomerAccessTokenDeletePayload
 
-	"Renews a customer access token.\n\nAccess token renewal must happen *before* a token expires.\nIf a token has already expired, a new one should be created instead via `customerAccessTokenCreate`.\n"
+	"Extends the validity of a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) before it expires. The renewed token maintains authenticated access to customer operations.\n\nRenewal must happen before the token's [`expiresAt`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken#field-CustomerAccessToken.fields.expiresAt) time. If a token has already expired, then use [`customerAccessTokenCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreate) to generate a new token with the customer's credentials.\n\n> Caution:\n> Store access tokens securely. Never store tokens in plain text or insecure locations, and avoid exposing them in URLs or logs.\n"
 	customerAccessTokenRenew(
 		"""
 		The access token used to identify the customer.
@@ -9410,9 +9464,7 @@ type Mutation {
 		customerAccessToken: String!
 	): CustomerAccessTokenRenewPayload
 
-	"""
-	Activates a customer.
-	"""
+	"Activates a customer account using an activation token received from the [`customerCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerCreate) mutation. The customer sets their password during activation and receives a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) for authenticated access.\n\nFor a simpler approach that doesn't require parsing the activation URL, use [`customerActivateByUrl`](https://shopify.dev/docs/api/storefront/current/mutations/customerActivateByUrl) instead.\n\n> Caution:\n> This mutation handles customer credentials. Always use HTTPS and never log or expose the password or access token.\n"
 	customerActivate(
 		"""
 		Specifies the customer to activate.
@@ -9425,9 +9477,7 @@ type Mutation {
 		input: CustomerActivateInput!
 	): CustomerActivatePayload
 
-	"""
-	Activates a customer with the activation url received from `customerCreate`.
-	"""
+	"Activates a customer account using the full activation URL from the [`customerCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerCreate) mutation. This approach simplifies activation by accepting the complete URL directly, eliminating the need to parse it for the customer ID and activation token. Returns a [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) for authenticating subsequent requests.\n\n> Caution:\n> Store the returned access token securely. It grants access to the customer's account data.\n"
 	customerActivateByUrl(
 		"""
 		The customer activation URL.
@@ -9440,9 +9490,7 @@ type Mutation {
 		password: String!
 	): CustomerActivateByUrlPayload
 
-	"""
-	Creates a new address for a customer.
-	"""
+	"Creates a new [`MailingAddress`](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress) for a [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer). Use the customer's [access token](https://shopify.dev/docs/api/storefront/current/mutations/customerAddressCreate#arguments-customerAccessToken) to identify them. Successful creation returns the new address. \n\nEach customer can have multiple addresses.\n"
 	customerAddressCreate(
 		"""
 		The customer mailing address to create.
@@ -9455,9 +9503,7 @@ type Mutation {
 		customerAccessToken: String!
 	): CustomerAddressCreatePayload
 
-	"""
-	Permanently deletes the address of an existing customer.
-	"""
+	"Permanently deletes a specific [`MailingAddress`](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress) for a [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer). Requires a valid [customer access token](https://shopify.dev/docs/api/storefront/current/mutations/customerAddressDelete#arguments-customerAccessToken) to authenticate the request.\n\n> Caution:\n> This action is irreversible. You can't recover the deleted address.\n"
 	customerAddressDelete(
 		"""
 		The access token used to identify the customer.
@@ -9470,9 +9516,7 @@ type Mutation {
 		id: ID!
 	): CustomerAddressDeletePayload
 
-	"""
-	Updates the address of an existing customer.
-	"""
+	"Updates an existing [`MailingAddress`](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress) for a [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer). Requires a [customer access token](https://shopify.dev/docs/api/storefront/current/mutations/customerAddressUpdate#arguments-customerAccessToken) to identify the customer, an ID to specify which address to modify, and an [`address`](https://shopify.dev/docs/api/storefront/current/input-objects/MailingAddressInput) with the updated fields.\n\nSuccessful update returns the updated [`MailingAddress`](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress).\n"
 	customerAddressUpdate(
 		"""
 		The customer’s mailing address.
@@ -9490,9 +9534,7 @@ type Mutation {
 		id: ID!
 	): CustomerAddressUpdatePayload
 
-	"""
-	Creates a new customer.
-	"""
+	"Creates a new [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) account with the provided contact information and login credentials. The customer can then sign in for things such as accessing their account, viewing order history, and managing saved addresses.\n\n> Caution:\n> This mutation creates customer credentials. Ensure passwords are collected securely and never logged or exposed in client-side code.\n"
 	customerCreate(
 		"""
 		The fields used to create a new customer.
@@ -9500,9 +9542,7 @@ type Mutation {
 		input: CustomerCreateInput!
 	): CustomerCreatePayload
 
-	"""
-	Updates the default address of an existing customer.
-	"""
+	"Updates the default address of an existing [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer). Requires a [customer access token](https://shopify.dev/docs/api/storefront/current/mutations/customerDefaultAddressUpdate#arguments-customerAccessToken) to identify the customer and an address ID to specify which address to set as the new default.\n"
 	customerDefaultAddressUpdate(
 		"""
 		ID of the address to set as the new default for the customer.
@@ -9515,7 +9555,7 @@ type Mutation {
 		customerAccessToken: String!
 	): CustomerDefaultAddressUpdatePayload
 
-	"Sends a reset password email to the customer. The reset password\nemail contains a reset password URL and token that you can pass to\nthe [`customerResetByUrl`](https://shopify.dev/api/storefront/latest/mutations/customerResetByUrl) or\n[`customerReset`](https://shopify.dev/api/storefront/latest/mutations/customerReset) mutation to reset the\ncustomer password.\n\nThis mutation is throttled by IP. With private access,\nyou can provide a [`Shopify-Storefront-Buyer-IP`](https://shopify.dev/api/usage/authentication#optional-ip-header) instead of the request IP.\nThe header is case-sensitive and must be sent as `Shopify-Storefront-Buyer-IP`.\n\nMake sure that the value provided to `Shopify-Storefront-Buyer-IP` is trusted. Unthrottled access to this\nmutation presents a security risk.\n"
+	"Sends a reset password email to the customer. The email contains a reset password URL and token that you can pass to the [`customerResetByUrl`](https://shopify.dev/docs/api/storefront/current/mutations/customerResetByUrl) or [`customerReset`](https://shopify.dev/docs/api/storefront/current/mutations/customerReset) mutation to reset the customer's password.\n\nThis mutation is throttled by IP. With private access, you can provide a [`Shopify-Storefront-Buyer-IP` header](https://shopify.dev/docs/api/usage/authentication#optional-ip-header) instead of the request IP. The header is case-sensitive.\n\n> Caution:\n> Ensure the value provided to `Shopify-Storefront-Buyer-IP` is trusted. Unthrottled access to this mutation presents a security risk.\n"
 	customerRecover(
 		"""
 		The email address of the customer to recover.
@@ -9523,7 +9563,7 @@ type Mutation {
 		email: String!
 	): CustomerRecoverPayload
 
-	"\"Resets a customer’s password with the token received from a reset password email. You can send a reset password email with the [`customerRecover`](https://shopify.dev/api/storefront/latest/mutations/customerRecover) mutation.\"\n"
+	"Resets a customer's password using the reset token from a password recovery email. On success, returns the updated [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) and a new [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) for immediate authentication.\n\nUse the [`customerRecover`](https://shopify.dev/docs/api/storefront/current/mutations/customerRecover) mutation to send the password recovery email that provides the reset token. Alternatively, use [`customerResetByUrl`](https://shopify.dev/docs/api/storefront/current/mutations/customerResetByUrl) if you have the full reset URL instead of the customer ID and token.\n\n> Caution:\n> This mutation handles sensitive customer credentials. Validate password requirements on the client before submission.\n"
 	customerReset(
 		"""
 		Specifies the customer to reset.
@@ -9536,7 +9576,7 @@ type Mutation {
 		input: CustomerResetInput!
 	): CustomerResetPayload
 
-	"\"Resets a customer’s password with the reset password URL received from a reset password email. You can send a reset password email with the [`customerRecover`](https://shopify.dev/api/storefront/latest/mutations/customerRecover) mutation.\"\n"
+	"Resets a customer's password using the reset URL from a password recovery email. The reset URL is generated by the [`customerRecover`](https://shopify.dev/docs/api/storefront/current/mutations/customerRecover) mutation.\n\nOn success, returns the updated [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) and a new [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) for immediate authentication.\n\n> Caution:\n> This mutation handles customer credentials. Ensure the new password is transmitted securely and never logged or exposed in client-side code.\n"
 	customerResetByUrl(
 		"""
 		New password that will be set as part of the reset password process.
@@ -9549,9 +9589,7 @@ type Mutation {
 		resetUrl: URL!
 	): CustomerResetByUrlPayload
 
-	"""
-	Updates an existing customer.
-	"""
+	"Updates a [customer's](https://shopify.dev/docs/api/storefront/current/objects/Customer) personal information such as name, password, and marketing preferences. Requires a valid [`CustomerAccessToken`](https://shopify.dev/docs/api/storefront/current/objects/CustomerAccessToken) to authenticate the customer making the update.\n\nIf the customer's password is updated, then all previous access tokens become invalid. The mutation returns a new access token in the payload to maintain the customer's session.\n\n> Caution:\n> Password changes invalidate all existing access tokens. Ensure your app handles the new token returned in the response to avoid logging the customer out.\n"
 	customerUpdate(
 		"""
 		The customer object input.
@@ -9564,9 +9602,7 @@ type Mutation {
 		customerAccessToken: String!
 	): CustomerUpdatePayload
 
-	"""
-	Create a new Shop Pay payment request session.
-	"""
+	"Creates a [Shop Pay payment request session](https://shopify.dev/docs/api/storefront/current/objects/ShopPayPaymentRequestSession) for processing payments. The session includes a checkout URL where customers complete their purchase and a token for subsequent operations like submitting the payment.\n\nThe `sourceIdentifier` must be unique across all orders to ensure accurate reconciliation.\n\nFor a complete integration guide including the JavaScript SDK setup and checkout flow, refer to the [Shop Component API documentation](https://shopify.dev/docs/api/commerce-components/pay). For implementation steps, see the [development journey guide](https://shopify.dev/docs/api/commerce-components/pay/development-journey). For common error scenarios, see the [troubleshooting guide](https://shopify.dev/docs/api/commerce-components/pay/troubleshooting-guide).\n"
 	shopPayPaymentRequestSessionCreate(
 		"""
 		A payment request object.
@@ -9579,9 +9615,7 @@ type Mutation {
 		sourceIdentifier: String!
 	): ShopPayPaymentRequestSessionCreatePayload
 
-	"""
-	Submits a Shop Pay payment request session.
-	"""
+	"Finalizes a [Shop Pay payment request session](https://shopify.dev/docs/api/storefront/current/objects/ShopPayPaymentRequestSession). Call this mutation after creating a session with [`shopPayPaymentRequestSessionCreate`](https://shopify.dev/docs/api/storefront/current/mutations/shopPayPaymentRequestSessionCreate).\n\nThe [`idempotencyKey`](https://shopify.dev/docs/api/storefront/current/mutations/shopPayPaymentRequestSessionSubmit#arguments-idempotencyKey) argument ensures the payment transaction occurs only once, preventing duplicate charges. On success, returns a [`ShopPayPaymentRequestReceipt`](https://shopify.dev/docs/api/storefront/current/objects/ShopPayPaymentRequestReceipt) with the processing status and a receipt token.\n\nFor a complete integration guide including the JavaScript SDK setup and checkout flow, refer to the [Shop Component API documentation](https://shopify.dev/docs/api/commerce-components/pay). For implementation steps, see the [development journey guide](https://shopify.dev/docs/api/commerce-components/pay/development-journey). For common error scenarios, see the [troubleshooting guide](https://shopify.dev/docs/api/commerce-components/pay/troubleshooting-guide).\n"
 	shopPayPaymentRequestSessionSubmit(
 		"""
 		The idempotency key is used to guarantee an idempotent result.
@@ -9605,7 +9639,7 @@ type Mutation {
 	): ShopPayPaymentRequestSessionSubmitPayload
 }
 
-"An object with an ID field to support global identification, in accordance with the\n[Relay specification](https://relay.dev/graphql/objectidentification.htm#sec-Node-Interface).\nThis interface is used by the [node](/docs/api/storefront/latest/queries/node)\nand [nodes](/docs/api/storefront/latest/queries/nodes) queries.\n"
+"Enables global object identification following the [Relay specification](https://relay.dev/graphql/objectidentification.htm#sec-Node-Interface). Any type implementing this interface has a globally-unique `id` field and can be fetched directly using the [`node`](https://shopify.dev/docs/api/storefront/current/queries/node) or [`nodes`](https://shopify.dev/docs/api/storefront/current/queries/nodes) queries.\n"
 interface Node {
 	"""
 	A globally-unique ID.
@@ -10010,9 +10044,7 @@ enum OrderFinancialStatus {
 	VOIDED
 }
 
-"""
-Represents the order's aggregated fulfillment status for display purposes.
-"""
+"The aggregated fulfillment status of an [`Order`](https://shopify.dev/docs/api/storefront/current/objects/Order), summarizing the state of all line items. Used for display purposes. \n\nStatuses range from unfulfilled to fully fulfilled, with intermediate states such as in progress and on hold.\n\nLearn more about [order statuses](https://help.shopify.com/manual/fulfillment/managing-orders/order-status).\n"
 enum OrderFulfillmentStatus {
 	"""
 	Displayed as **Fulfilled**. All of the items in the order have been fulfilled.
@@ -10159,9 +10191,7 @@ enum OrderSortKeys {
 	TOTAL_PRICE
 }
 
-"""
-Shopify merchants can create pages to hold static HTML content. Each Page object represents a custom page on the online store.
-"""
+"A [custom content page](https://help.shopify.com/manual/online-store/add-edit-pages) on a merchant's store. Pages display HTML-formatted content, such as \"About Us\", contact details, or store policies.\n\nEach page has a unique [`handle`](https://shopify.dev/docs/api/storefront/current/objects/Page#field-Page.fields.handle) for URL routing and includes [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) information for search engine optimization. Pages support [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) attachments for storing additional custom data.\n"
 type Page implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"""
 	The description of the page, complete with HTML formatting.
@@ -10384,7 +10414,7 @@ enum PredictiveSearchLimitScope {
 	EACH
 }
 
-"A predictive search result represents a list of products, collections, pages, articles, and query suggestions\nthat matches the predictive search query.\n"
+"Returned by the [`predictiveSearch`](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) query to power type-ahead search experiences. Includes matching [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product), [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection), [`Page`](https://shopify.dev/docs/api/storefront/current/objects/Page), and [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) objects, along with query suggestions that help customers refine their search.\n"
 type PredictiveSearchResult {
 	"""
 	The articles that match the search query.
@@ -10462,7 +10492,7 @@ enum PreferenceDeliveryMethodType {
 	SHIPPING
 }
 
-"The input fields for a filter used to view a subset of products in a collection matching a specific price range.\n"
+"A price range for filtering products in a collection. Used by the [`ProductFilter`](https://shopify.dev/docs/api/storefront/current/input-objects/ProductFilter) input's [`price`](https://shopify.dev/docs/api/storefront/current/input-objects/ProductFilter#fields-price) field.\n\n> Note: Omitting the [maximum](https://shopify.dev/docs/api/storefront/currents/input-objects/PriceRangeFilter#fields-max) returns all products above the [minimum](https://shopify.dev/docs/api/storefront/current/input-objects/PriceRangeFilter#fields-min).\n"
 input PriceRangeFilter {
 	"""
 	The maximum price in the range. Empty indicates no max price.
@@ -10475,9 +10505,7 @@ input PriceRangeFilter {
 	min: Float = 0
 }
 
-"""
-The value of the percentage pricing object.
-"""
+"A percentage discount value applied to cart items or orders. Returned as part of the [`PricingValue`](https://shopify.dev/docs/api/storefront/current/unions/PricingValue) union on [discount applications](https://shopify.dev/docs/api/storefront/current/interfaces/DiscountApplication), where it represents discounts calculated as a percentage off rather than a [fixed amount](https://shopify.dev/docs/api/storefront/current/objects/MoneyV2).\n"
 type PricingPercentageValue {
 	"""
 	The percentage value of the object.
@@ -10490,7 +10518,7 @@ The price value (fixed or percentage) for a discount application.
 """
 union PricingValue = MoneyV2 | PricingPercentageValue
 
-"The `Product` object lets you manage products in a merchant’s store.\n\nProducts are the goods and services that merchants offer to customers.\nThey can include various details such as title, description, price, images, and options such as size or color.\nYou can use [product variants](/docs/api/storefront/latest/objects/ProductVariant)\nto create or update different versions of the same product.\nYou can also add or update product [media](/docs/api/storefront/latest/interfaces/Media).\nProducts can be organized by grouping them into a [collection](/docs/api/storefront/latest/objects/Collection).\n\nLearn more about working with [products and collections](/docs/storefronts/headless/building-with-the-storefront-api/products-collections).\n"
+"Represents an item listed in a shop's catalog.\n\nProducts support multiple [product variants](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant), representing different versions of the same product, and can include various [media](https://shopify.dev/docs/api/storefront/current/interfaces/Media) types. Use the [`selectedOrFirstAvailableVariant`](https://shopify.dev/docs/api/storefront/current/objects/Product#field-Product.fields.selectedOrFirstAvailableVariant) or [`variantBySelectedOptions`](https://shopify.dev/docs/api/storefront/current/objects/Product#field-Product.fields.variantBySelectedOptions) fields to help customers find the right variant based on their selections.\n\nProducts can be organized into [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection), associated with [selling plans](https://shopify.dev/docs/api/storefront/current/objects/SellingPlanGroup) for subscriptions, and extended with custom data through [metafields](https://shopify.dev/docs/api/storefront/current/objects/Metafield).\n\nLearn more about working with [products and collections](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections).\n"
 type Product implements HasMetafields & Node & OnlineStorePublishable & Trackable {
 	"A list of variants whose selected options differ with the provided selected options by one, ordered by variant id.\nIf selected options are not provided, adjacent variants to the first available variant is returned.\n\nNote that this field returns an array of variants. In most cases, the number of variants in this array will be low.\nHowever, with a low number of options and a high number of values per option, the number of variants returned\nhere can be high. In such cases, it recommended to avoid using this field.\n\nThis list of variants can be used in combination with the `options` field to build a rich variant picker that\nincludes variant availability or other variant information.\n"
 	adjacentVariants(
@@ -10861,9 +10889,7 @@ type Product implements HasMetafields & Node & OnlineStorePublishable & Trackabl
 	vendor: String!
 }
 
-"""
-The set of valid sort keys for the ProductCollection query.
-"""
+"Sort options for products within a [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection). Used by the [`products`](https://shopify.dev/docs/api/storefront/current/objects/Collection#field-Collection.fields.products) connection to order results by best-selling, price, title, creation date, or the collection's default and manual ordering.\n\n> Note: The [`RELEVANCE`](https://shopify.dev/docs/api/storefront/current/enums/ProductCollectionSortKeys#enums-RELEVANCE) key applies only when you specify a search query.\n"
 enum ProductCollectionSortKeys {
 	"""
 	Sort by the `best-selling` value.
@@ -11034,7 +11060,7 @@ enum ProductMediaSortKeys {
 	RELEVANCE
 }
 
-"Product property names like \"Size\", \"Color\", and \"Material\" that the customers can select.\nVariants are selected based on permutations of these options.\n255 characters limit each.\n"
+"A customizable product attribute that customers select when purchasing, such as \"Size\", \"Color\", or \"Material\". Each option has a name and a set of [`ProductOptionValue`](https://shopify.dev/docs/api/storefront/current/objects/ProductOptionValue) objects representing the available choices.\n\nDifferent combinations of option values create distinct [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) objects. Option values can include visual swatches that display colors or images to help customers make selections. Option names have a 255-character limit.\n\nLearn more about [Shopify's product model](https://shopify.dev/docs/apps/build/product-merchandising/products-and-collections).\n"
 type ProductOption implements Node {
 	"""
 	A globally-unique ID.
@@ -11057,7 +11083,7 @@ type ProductOption implements Node {
 	values: [String!]! @deprecated(reason: "Use `optionValues` instead.")
 }
 
-"The product option value names. For example, \"Red\", \"Blue\", and \"Green\" for a \"Color\" option.\n"
+"A specific value for a [`ProductOption`](https://shopify.dev/docs/api/storefront/current/objects/ProductOption), such as \"Red\" or \"Blue\" for a \"Color\" option. Option values combine across different options to create [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) objects.\n\nEach value can include a visual swatch that displays a color or image. The [`firstSelectableVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductOptionValue#field-ProductOptionValue.fields.firstSelectableVariant) field returns the variant that combines this option value with the lowest-position values for all other options. This is useful for building product selection interfaces.\n\nLearn more about [Shopify's product model](https://shopify.dev/docs/apps/build/product-merchandising/products-and-collections).\n"
 type ProductOptionValue implements Node {
 	"The product variant that combines this option value with the\nlowest-position option values for all other options.\n\nThis field will always return a variant, provided a variant including this option value exists.\n"
 	firstSelectableVariant: ProductVariant
@@ -11078,7 +11104,7 @@ type ProductOptionValue implements Node {
 	swatch: ProductOptionValueSwatch
 }
 
-"The product option value swatch.\n"
+"A visual representation for a [`ProductOptionValue`](https://shopify.dev/docs/api/storefront/current/objects/ProductOptionValue), such as a color or image. Swatches help customers visualize options like \"Red\" or \"Blue\" without relying solely on text labels.\n"
 type ProductOptionValueSwatch {
 	"""
 	The swatch color.
@@ -11091,9 +11117,7 @@ type ProductOptionValueSwatch {
 	image: Media
 }
 
-"""
-The price range of the product.
-"""
+"The minimum and maximum prices across all variants of a [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product).\n"
 type ProductPriceRange {
 	"""
 	The highest variant's price.
@@ -11119,9 +11143,7 @@ enum ProductRecommendationIntent {
 	RELATED
 }
 
-"""
-The set of valid sort keys for the Product query.
-"""
+"Sorting options for the [`products`](https://shopify.dev/docs/api/storefront/current/queries/products) query. Supports sorting products by criteria such as best-selling and price, and by product attributes such as type, and vendor. \n\n> Note: Use the [`RELEVANCE`](https://shopify.dev/docs/api/storefront/current/enums/ProductSortKeys#enums-RELEVANCE) key only when a search query is specified.\n"
 enum ProductSortKeys {
 	"""
 	Sort by the `best_selling` value.
@@ -11167,7 +11189,7 @@ enum ProductSortKeys {
 	VENDOR
 }
 
-"A product variant represents a different version of a product, such as differing sizes or differing colors.\n"
+"A specific version of a [product](https://shopify.dev/docs/api/storefront/current/objects/Product) available for sale, differentiated by options like size or color. For example, a small blue t-shirt and a large blue t-shirt are separate variants of the same product. For more information, see the docs on [Shopify's product model](https://shopify.dev/docs/apps/build/product-merchandising/products-and-collections).\n\nFor products with quantity rules, variants enforce minimum, maximum, and increment constraints on purchases.\n\nVariants also support subscriptions and pre-orders through [selling plan allocations](https://shopify.dev/docs/api/storefront/current/objects/SellingPlanAllocation) objects, bundle configurations through [product variant components](https://shopify.dev/docs/api/storefront/current/objects/ProductVariantComponent) objects, and [shop pay installments pricing](https://shopify.dev/docs/api/storefront/current/objects/ShopPayInstallmentsPricing) for flexible payment options.\n"
 type ProductVariant implements HasMetafields & Node {
 	"""
 	Indicates if the product variant is available for sale.
@@ -11446,7 +11468,7 @@ type ProductVariant implements HasMetafields & Node {
 	weightUnit: WeightUnit!
 }
 
-"Represents a component of a bundle variant.\n"
+"An individual product variant included in a [fixed bundle](https://shopify.dev/docs/apps/build/product-merchandising/bundles). Fixed bundles group multiple products together and sell them as a single unit, with the bundle's inventory determined by its components.\n\nAccess components through the `ProductVariant` object's [`components`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant#field-ProductVariant.fields.components) field.\n"
 type ProductVariantComponent {
 	"""
 	The product variant object that the component belongs to.
@@ -11621,13 +11643,9 @@ type QuantityRule {
 	minimum: Int!
 }
 
-"""
-The schema’s entry-point for queries. This acts as the public, top-level API from which all queries must start.
-"""
+"The entry point for all Storefront API queries. Provides access to shop resources including products, collections, carts, and customer data, as well as content like articles and pages. This query acts as the public, top-level type from which all queries must start.\n\nUse individual queries like [`product`](https://shopify.dev/docs/api/storefront/current/queries/product) or [`collection`](https://shopify.dev/docs/api/storefront/current/queries/collection) to fetch specific resources by ID or handle. Use plural queries like [`products`](https://shopify.dev/docs/api/storefront/current/queries/products) or [`collections`](https://shopify.dev/docs/api/storefront/current/queries/collections) to retrieve paginated lists with optional filtering and sorting. The [`search`](https://shopify.dev/docs/api/storefront/current/queries/search) and [`predictiveSearch`](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) queries enable storefront search functionality.\n\nExplore queries interactively with the [GraphiQL explorer and sample query kit](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/api-exploration).\n"
 type QueryRoot {
-	"""
-	Fetch a specific Article by its ID.
-	"""
+	"Returns an [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) by its ID. Each article belongs to a [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog) and includes content in both plain text and HTML formats, [`ArticleAuthor`](https://shopify.dev/docs/api/storefront/current/objects/ArticleAuthor) information, [`Comment`](https://shopify.dev/docs/api/storefront/current/objects/Comment) objects, tags, and [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) data.\n"
 	article(
 		"""
 		The ID of the `Article`.
@@ -11635,9 +11653,7 @@ type QueryRoot {
 		id: ID!
 	): Article
 
-	"""
-	List of the shop's articles.
-	"""
+	"Returns a paginated list of [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) objects from the shop's [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog) objects. Each article is a blog post containing content, author information, tags, and optional images.\n\nUse the `query` argument to filter results by author, blog title, tags, or date fields. Sort results using the `sortKey` argument and reverse them with the `reverse` argument.\n"
 	articles(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -11673,9 +11689,7 @@ type QueryRoot {
 		sortKey: ArticleSortKeys = ID
 	): ArticleConnection!
 
-	"""
-	Fetch a specific `Blog` by one of its unique attributes.
-	"""
+	"Retrieves a [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog) by its handle or ID. A blog organizes [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) objects for the online store and includes author information, [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) settings, and custom [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) objects.\n"
 	blog(
 		"""
 		The handle of the `Blog`.
@@ -11688,9 +11702,7 @@ type QueryRoot {
 		id: ID
 	): Blog
 
-	"""
-	Find a blog by its handle.
-	"""
+	"Retrieves a [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog) by its handle. A blog organizes [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) objects for the online store and includes author information, [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) settings, and custom [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) objects.\n"
 	blogByHandle(
 		"""
 		The handle of the blog.
@@ -11698,9 +11710,7 @@ type QueryRoot {
 		handle: String!
 	): Blog @deprecated(reason: "Use `blog` instead.")
 
-	"""
-	List of the shop's blogs.
-	"""
+	"Returns a paginated list of the shop's [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog) objects. Each blog serves as a container for [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) objects.\n"
 	blogs(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -11736,7 +11746,7 @@ type QueryRoot {
 		sortKey: BlogSortKeys = ID
 	): BlogConnection!
 
-	"Retrieve a cart by its ID. For more information, refer to\n[Manage a cart with the Storefront API](https://shopify.dev/custom-storefronts/cart/manage).\n"
+	"Returns a [`Cart`](https://shopify.dev/docs/api/storefront/current/objects/Cart) by its ID. The cart contains the merchandise lines a buyer intends to purchase, along with estimated costs, applied discounts, gift cards, and delivery options.\n\nUse the [`checkoutUrl`](https://shopify.dev/docs/api/storefront/latest/queries/cart#returns-Cart.fields.checkoutUrl) field to redirect buyers to Shopify's web checkout when they're ready to complete their purchase. For more information, refer to [Manage a cart with the Storefront API](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/cart/manage).\n"
 	cart(
 		"""
 		The ID of the cart.
@@ -11752,9 +11762,7 @@ type QueryRoot {
 		attemptId: String!
 	): CartCompletionAttemptResult
 
-	"""
-	Fetch a specific `Collection` by one of its unique attributes.
-	"""
+	"Retrieves a single [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection) by its ID or handle. Use the [`products`](https://shopify.dev/docs/api/storefront/current/objects/Collection#field-Collection.fields.products) field to access items in the collection.\n"
 	collection(
 		"""
 		The handle of the `Collection`.
@@ -11767,9 +11775,7 @@ type QueryRoot {
 		id: ID
 	): Collection
 
-	"""
-	Find a collection by its handle.
-	"""
+	"Retrieves a [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection) by its URL-friendly handle. Handles are automatically generated from collection titles but merchants can customize them.\n"
 	collectionByHandle(
 		"""
 		The handle of the collection.
@@ -11777,9 +11783,7 @@ type QueryRoot {
 		handle: String!
 	): Collection @deprecated(reason: "Use `collection` instead.")
 
-	"""
-	List of the shop’s collections.
-	"""
+	"Returns a paginated list of the shop's [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection). Each `Collection` object includes a nested connection to its [products](https://shopify.dev/docs/api/storefront/current/objects/Collection#field-Collection.fields.products).\n"
 	collections(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -11815,7 +11819,7 @@ type QueryRoot {
 		sortKey: CollectionSortKeys = ID
 	): CollectionConnection!
 
-	"The customer associated with the given access token. Tokens are obtained by using the\n[`customerAccessTokenCreate` mutation](https://shopify.dev/docs/api/storefront/latest/mutations/customerAccessTokenCreate).\n"
+	"Retrieves the [`Customer`](https://shopify.dev/docs/api/storefront/current/objects/Customer) associated with the provided access token. Use the [`customerAccessTokenCreate`](https://shopify.dev/docs/api/storefront/current/mutations/customerAccessTokenCreate) mutation to obtain an access token using legacy customer account authentication (email and password).\n\nThe returned customer includes data such as contact information, [addresses](https://shopify.dev/docs/api/storefront/current/objects/MailingAddress), [orders](https://shopify.dev/docs/api/storefront/current/objects/Order), and [custom data](https://shopify.dev/docs/apps/build/custom-data) associated with the customer.\n"
 	customer(
 		"""
 		The customer access token.
@@ -11823,12 +11827,10 @@ type QueryRoot {
 		customerAccessToken: String!
 	): Customer
 
-	"""
-	Returns the localized experiences configured for the shop.
-	"""
+	"Returns the shop's localization settings. Use this query to build [country and language selectors](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/markets) for your storefront.\n\nThe [`country`](https://shopify.dev/docs/api/storefront/latest/queries/localization#returns-Localization.fields.country) and [`language`](https://shopify.dev/docs/api/storefront/latest/queries/localization#returns-Localization.fields.language) fields reflect the active localized experience. To change the context, use the [`@inContext`](https://shopify.dev/docs/api/storefront#directives) directive with your desired country or language code.\n"
 	localization: Localization!
 
-	"List of the shop's locations that support in-store pickup.\n\nWhen sorting by distance, you must specify a location via the `near` argument.\n\n"
+	"Returns shop locations that support in-store pickup. Use the `near` argument with [`GeoCoordinateInput`](https://shopify.dev/docs/api/storefront/current/input-objects/GeoCoordinateInput) to sort results by proximity to the customer's location.\n\nWhen sorting by distance, set `sortKey` to [`DISTANCE`](https://shopify.dev/docs/api/storefront/current/queries/locations#arguments-sortKey.enums.DISTANCE) and provide coordinates using the [`near`](https://shopify.dev/docs/api/storefront/current/queries/locations#arguments-near) argument.\n\nLearn more about [supporting local pickup on storefronts](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/local-pickup).\n"
 	locations(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -11866,9 +11868,7 @@ type QueryRoot {
 		sortKey: LocationSortKeys = ID
 	): LocationConnection!
 
-	"""
-	Retrieve a [navigation menu](https://help.shopify.com/manual/online-store/menus-and-links) by its handle.
-	"""
+	"Retrieves a [`Menu`](https://shopify.dev/docs/api/storefront/current/objects/Menu) by its handle. Menus are [hierarchical navigation structures](https://help.shopify.com/manual/online-store/menus-and-links) that merchants configure for their storefront, such as header and footer navigation.\n\nEach menu contains [`MenuItem`](https://shopify.dev/docs/api/storefront/current/objects/MenuItem) objects that can nest up to three levels deep, with each item linking to [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection), [products](https://shopify.dev/docs/api/storefront/current/objects/Product), [pages](https://shopify.dev/docs/api/storefront/current/objects/Page), [blogs](https://shopify.dev/docs/api/storefront/current/objects/Blog), or external URLs.\n"
 	menu(
 		"""
 		The navigation menu's handle.
@@ -11876,9 +11876,7 @@ type QueryRoot {
 		handle: String!
 	): Menu
 
-	"""
-	Fetch a specific Metaobject by one of its unique identifiers.
-	"""
+	"Retrieves a single [`Metaobject`](https://shopify.dev/docs/api/storefront/current/objects/Metaobject) by either its [`global ID`](https://shopify.dev/docs/api/storefront/current/queries/metaobject#arguments-id) or its [`handle`](https://shopify.dev/docs/api/storefront/current/queries/metaobject#arguments-handle).\n\n> Note:\n> When using the handle, you must also provide the metaobject type because handles are only unique within a type.\n"
 	metaobject(
 		"""
 		The handle and type of the metaobject.
@@ -11891,9 +11889,7 @@ type QueryRoot {
 		id: ID
 	): Metaobject
 
-	"""
-	All active metaobjects for the shop.
-	"""
+	"Returns a paginated list of [`Metaobject`](https://shopify.dev/docs/api/storefront/current/objects/Metaobject) entries for a specific type. Metaobjects are [custom data structures](https://shopify.dev/docs/apps/build/metaobjects) that extend Shopify's data model with merchant-defined or app-defined content like size charts, product highlights, or custom sections.\n\nThe required `type` argument specifies which metaobject type to retrieve. You can sort results by `id` or `updated_at` using the `sortKey` argument.\n"
 	metaobjects(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -11931,9 +11927,7 @@ type QueryRoot {
 		type: String!
 	): MetaobjectConnection!
 
-	"""
-	Returns a specific node by ID.
-	"""
+	"Retrieves any object that implements the [`Node`](https://shopify.dev/docs/api/storefront/current/interfaces/Node) interface by its globally-unique ID. Use inline fragments to access type-specific fields on the returned object.\n\nThis query follows the [Relay specification](https://relay.dev/graphql/objectidentification.htm#sec-Node-Interface) and is commonly used for refetching objects when you have their ID but need updated data.\n"
 	node(
 		"""
 		The ID of the Node to return.
@@ -11941,9 +11935,7 @@ type QueryRoot {
 		id: ID!
 	): Node
 
-	"""
-	Returns the list of nodes with the given IDs.
-	"""
+	"Retrieves multiple objects by their global IDs in a single request. Any object that implements the [`Node`](https://shopify.dev/docs/api/storefront/current/interfaces/Node) interface can be fetched, including [products](https://shopify.dev/docs/api/storefront/current/objects/Product), [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection), and [pages](https://shopify.dev/docs/api/storefront/current/objects/Page).\n\nUse inline fragments to access type-specific fields on the returned objects. The input accepts up to 250 IDs.\n"
 	nodes(
 		"""
 		The IDs of the Nodes to return.
@@ -11953,9 +11945,7 @@ type QueryRoot {
 		ids: [ID!]!
 	): [Node]!
 
-	"""
-	Fetch a specific `Page` by one of its unique attributes.
-	"""
+	"Retrieves a [`Page`](https://shopify.dev/docs/api/storefront/current/objects/Page) by its [`handle`](https://shopify.dev/docs/api/storefront/current/queries/page#arguments-handle) or [`id`](https://shopify.dev/docs/api/storefront/current/queries/page#arguments-id). Pages are static content pages that merchants display outside their product catalog, such as \"About Us,\" \"Contact,\" or policy pages.\n\nThe returned page includes information such as the [HTML body content](https://shopify.dev/docs/api/storefront/current/queries/page#returns-Page.fields.body), [`SEO`](https://shopify.dev/docs/api/storefront/current/objects/SEO) information, and any associated [`Metafield`](https://shopify.dev/docs/api/storefront/current/objects/Metafield) objects.\n"
 	page(
 		"""
 		The handle of the `Page`.
@@ -11968,9 +11958,7 @@ type QueryRoot {
 		id: ID
 	): Page
 
-	"""
-	Find a page by its handle.
-	"""
+	"Retrieves a [`Page`](https://shopify.dev/docs/api/storefront/current/objects/Page) by its handle.\n"
 	pageByHandle(
 		"""
 		The handle of the page.
@@ -11978,9 +11966,7 @@ type QueryRoot {
 		handle: String!
 	): Page @deprecated(reason: "Use `page` instead.")
 
-	"""
-	List of the shop's pages.
-	"""
+	"Returns a paginated list of the shop's content [pages](https://shopify.dev/docs/api/storefront/current/objects/Page). Pages are custom HTML content like \"About Us\", \"Contact\", or policy information that merchants display outside their product catalog.\n"
 	pages(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -12021,9 +12007,7 @@ type QueryRoot {
 	"""
 	paymentSettings: PaymentSettings!
 
-	"""
-	List of the predictive search results.
-	"""
+	"Returns suggested results as customers type in a search field, enabling type-ahead search experiences. The query matches [products](https://shopify.dev/docs/api/storefront/current/objects/Product), [collections](https://shopify.dev/docs/api/storefront/current/objects/Collection), [pages](https://shopify.dev/docs/api/storefront/current/objects/Page), and [articles](https://shopify.dev/docs/api/storefront/current/objects/Article) based on partial search terms, and also provides [search query suggestions](https://shopify.dev/docs/api/storefront/current/objects/SearchQuerySuggestion) to help customers refine their search.\n\nYou can filter results by resource type and limit the quantity. The [`limitScope`](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch#arguments-limitScope) argument controls whether limits apply across all result types or per type. Use [`unavailableProducts`](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch#arguments-unavailableProducts) to control how out-of-stock products appear in results.\n"
 	predictiveSearch(
 		"""
 		Limits the number of results based on `limit_scope`. The value can range from 1 to 10, and the default is 10.
@@ -12060,9 +12044,7 @@ type QueryRoot {
 		unavailableProducts: SearchUnavailableProductsType
 	): PredictiveSearchResult
 
-	"""
-	Fetch a specific `Product` by one of its unique attributes.
-	"""
+	"Retrieves a single [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product) by its ID or handle. Use this query to build product detail pages, access variant and pricing information, or fetch product media and [metafields](https://shopify.dev/docs/api/storefront/current/objects/Metafield). See some [examples of querying products](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/getting-started).\n"
 	product(
 		"""
 		The handle of the `Product`.
@@ -12075,15 +12057,13 @@ type QueryRoot {
 		id: ID
 	): Product
 
-	"""
-	Find a product by its handle.
-	"""
+	"Retrieves a [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product) by its handle. The handle is a URL-friendly identifier that's automatically generated from the product's title. If no product exists with the specified handle, returns `null`.\n"
 	productByHandle(
 		"A unique, human-readable string of the product's title.\nA handle can contain letters, hyphens (`-`), and numbers, but no spaces.\nThe handle is used in the online store URL for the product.\n"
 		handle: String!
 	): Product @deprecated(reason: "Use `product` instead.")
 
-	"Find recommended products related to a given `product_id`.\nTo learn more about how recommendations are generated, see\n[*Showing product recommendations on product pages*](https://help.shopify.com/themes/development/recommended-products).\n"
+	"Returns recommended products for a given product, identified by either ID or handle. Use the [`intent`](https://shopify.dev/docs/api/storefront/current/enums/ProductRecommendationIntent) argument to control the recommendation strategy.\n\nShopify [auto-generates related recommendations](https://shopify.dev/docs/storefronts/themes/product-merchandising/recommendations) based on sales data, product descriptions, and collection relationships. Complementary recommendations require [manual configuration](https://help.shopify.com/manual/online-store/storefront-search/search-and-discovery-recommendations) through the Shopify Search & Discovery app. Returns up to ten [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product) objects.\n"
 	productRecommendations(
 		"""
 		The recommendation intent that is used to generate product recommendations. You can use intent to generate product recommendations on various pages across the channels, according to different strategies.
@@ -12101,7 +12081,7 @@ type QueryRoot {
 		productId: ID
 	): [Product!]
 
-	"Tags added to products.\nAdditional access scope required: unauthenticated_read_product_tags.\n"
+	"Returns a paginated list of all tags that have been added to [products](https://shopify.dev/docs/api/storefront/current/objects/Product) in the shop. Useful for building tag-based product filtering or navigation in a storefront.\n"
 	productTags(
 		"""
 		Returns up to the first `n` elements from the list.
@@ -12109,9 +12089,7 @@ type QueryRoot {
 		first: Int!
 	): StringConnection!
 
-	"""
-	List of product types for the shop's products that are published to your app.
-	"""
+	"Returns a list of product types from the shop's [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product) objects that are published to your app. Use this query to build [filtering interfaces](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/filter-products) or navigation menus based on product categorization.\n"
 	productTypes(
 		"""
 		Returns up to the first `n` elements from the list.
@@ -12119,9 +12097,7 @@ type QueryRoot {
 		first: Int!
 	): StringConnection!
 
-	"""
-	Returns a list of the shop's products. For storefront search, use the [`search`](https://shopify.dev/docs/api/storefront/latest/queries/search) query.
-	"""
+	"Returns a paginated list of the shop's [products](https://shopify.dev/docs/api/storefront/current/objects/Product).\n\nFor full-text storefront search, use the [`search`](https://shopify.dev/docs/api/storefront/current/queries/search) query instead.\n"
 	products(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -12157,14 +12133,10 @@ type QueryRoot {
 		sortKey: ProductSortKeys = ID
 	): ProductConnection!
 
-	"""
-	The list of public Storefront API versions, including supported, release candidate and unstable versions.
-	"""
+	"Returns all public Storefront [API versions](https://shopify.dev/docs/api/storefront/current/objects/ApiVersion), including supported, release candidate, and unstable versions.\n"
 	publicApiVersions: [ApiVersion!]!
 
-	"""
-	List of the search results.
-	"""
+	"Returns paginated search results for [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product), [`Page`](https://shopify.dev/docs/api/storefront/current/objects/Page), and [`Article`](https://shopify.dev/docs/api/storefront/current/objects/Article) resources based on a query string. Results are sorted by relevance by default.\n\nThe response includes the total result count and available product filters for building [faceted search interfaces](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/filter-products). Use the [`prefix`](https://shopify.dev/docs/api/storefront/current/enums/SearchPrefixQueryType) argument to enable partial word matching on the last search term, allowing queries like \"winter snow\" to match \"snowboard\" or \"snowshoe\".\n"
 	search(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -12226,14 +12198,10 @@ type QueryRoot {
 		unavailableProducts: SearchUnavailableProductsType
 	): SearchResultItemConnection!
 
-	"""
-	The shop associated with the storefront access token.
-	"""
+	"Returns the [`Shop`](https://shopify.dev/docs/api/storefront/current/objects/Shop) associated with the storefront access token. The `Shop` object provides general store information such as the shop name, description, and primary domain.\n\nUse this query to access data like store policies, [`PaymentSettings`](https://shopify.dev/docs/api/storefront/current/objects/PaymentSettings), [`Brand`](https://shopify.dev/docs/api/storefront/current/objects/Brand) configuration, and shipping destinations. It also exposes [`ShopPayInstallmentsPricing`](https://shopify.dev/docs/api/storefront/current/objects/ShopPayInstallmentsPricing) and [`SocialLoginProvider`](https://shopify.dev/docs/api/storefront/current/objects/SocialLoginProvider) options for customer accounts.\n"
 	shop: Shop!
 
-	"""
-	Contains all fields required to generate sitemaps.
-	"""
+	"Returns sitemap data for a specific resource type, enabling headless storefronts to generate XML sitemaps for search engine optimization. The query provides a page count and paginated access to resources like [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product), [`Collection`](https://shopify.dev/docs/api/storefront/current/objects/Collection), [`Page`](https://shopify.dev/docs/api/storefront/current/objects/Page), and [`Blog`](https://shopify.dev/docs/api/storefront/current/objects/Blog) objects.\n\nWhen paginating through resources, the number of items per page varies from 0 to 250, and empty pages can occur without indicating the end of results. Always check [`hasNextPage`](https://shopify.dev/docs/api/storefront/current/objects/PaginatedSitemapResources#field-PaginatedSitemapResources.fields.hasNextPage) to determine if more pages are available.\n"
 	sitemap(
 		"""
 		The type of the resource for the sitemap.
@@ -12241,9 +12209,7 @@ type QueryRoot {
 		type: SitemapType!
 	): Sitemap!
 
-	"""
-	A list of redirects for a shop.
-	"""
+	"Returns a paginated list of [`UrlRedirect`](https://shopify.dev/docs/api/storefront/current/objects/UrlRedirect) objects configured for the shop. Each redirect maps an old path to a target location.\n"
 	urlRedirects(
 		"""
 		Returns the elements that come after the specified cursor.
@@ -12275,9 +12241,7 @@ type QueryRoot {
 	): UrlRedirectConnection!
 }
 
-"""
-SEO information.
-"""
+"Search engine optimization metadata for a resource. The title and description appear in search engine results and browser tabs.\n"
 type SEO {
 	"""
 	The meta description.
@@ -12290,7 +12254,7 @@ type SEO {
 	title: String
 }
 
-"Script discount applications capture the intentions of a discount that\nwas created by a Shopify Script.\n"
+"A discount application created by a Shopify Script. Implements the [`DiscountApplication`](https://shopify.dev/docs/api/storefront/current/interfaces/DiscountApplication) interface and captures the discount's value, allocation method, and targeting rules at the time the script applied it.\n"
 type ScriptDiscountApplication implements DiscountApplication {
 	"""
 	The method by which the discount's value is allocated to its entitled items.
@@ -12333,9 +12297,7 @@ enum SearchPrefixQueryType {
 	NONE
 }
 
-"""
-A search query suggestion.
-"""
+"A suggested search term returned by the [`predictiveSearch`](https://shopify.dev/docs/api/storefront/current/queries/predictiveSearch) query. Query suggestions help customers refine their searches by showing relevant terms as they type.\n\nThe [`text`](https://shopify.dev/docs/api/storefront/current/objects/SearchQuerySuggestion#field-SearchQuerySuggestion.fields.text) field provides the plain suggestion, while [`styledText`](https://shopify.dev/docs/api/storefront/current/objects/SearchQuerySuggestion#field-SearchQuerySuggestion.fields.styledText) includes HTML tags to highlight matching portions. Implements [`Trackable`](https://shopify.dev/docs/api/storefront/current/interfaces/Trackable) for analytics reporting on search traffic origins.\n"
 type SearchQuerySuggestion implements Trackable {
 	"""
 	The text of the search query suggestion with highlighted HTML tags.
@@ -12502,7 +12464,7 @@ enum SearchableField {
 	VENDOR
 }
 
-"Properties used by customers to select a product variant.\nProducts can have multiple options, like different sizes or colors.\n"
+"A name/value pair representing a product option selection on a variant. The [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) object's [`selectedOptions`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant#field-ProductVariant.fields.selectedOptions) field returns this to indicate which options define that variant, such as \"Size: Large\" or \"Color: Red\".\n"
 type SelectedOption {
 	"""
 	The product option’s name.
@@ -12530,9 +12492,7 @@ input SelectedOptionInput {
 	value: String!
 }
 
-"""
-Represents how products and variants can be sold and purchased.
-"""
+"Represents deferred or recurring purchase options for [products](https://shopify.dev/docs/api/storefront/current/objects/Product) and [product variants](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant), such as subscriptions, pre-orders, or try-before-you-buy. Each selling plan belongs to a [`SellingPlanGroup`](https://shopify.dev/docs/api/storefront/current/objects/SellingPlanGroup) and defines billing, pricing, inventory, and delivery policies.\n"
 type SellingPlan implements HasMetafields {
 	"""
 	The billing policy for the selling plan.
@@ -12607,9 +12567,7 @@ type SellingPlan implements HasMetafields {
 	recurringDeliveries: Boolean!
 }
 
-"""
-Represents an association between a variant and a selling plan. Selling plan allocations describe the options offered for each variant, and the price of the variant when purchased with a selling plan.
-"""
+"Links a [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) to a [`SellingPlan`](https://shopify.dev/docs/api/storefront/current/objects/SellingPlan), providing the pricing details for that specific combination. Each allocation includes the checkout charge amount, any remaining balance due for the purchase, and up to two price adjustments that show how the selling plan affects the variant's price.\n\nSelling plan allocations are available on product variants and [cart lines](https://shopify.dev/docs/api/storefront/current/objects/CartLine), enabling storefronts to display information such as subscription or purchase option pricing before and during checkout.\n"
 type SellingPlanAllocation {
 	"""
 	The checkout charge amount due for the purchase.
@@ -12794,9 +12752,7 @@ type SellingPlanFixedPriceAdjustment {
 	price: MoneyV2!
 }
 
-"""
-Represents a selling method. For example, 'Subscribe and save' is a selling method where customers pay for goods or services per delivery. A selling plan group contains individual selling plans.
-"""
+"A selling method that defines how products can be sold through purchase options like subscriptions, pre-orders, or try-before-you-buy. Groups one or more [`SellingPlan`](https://shopify.dev/docs/api/storefront/current/objects/SellingPlan) objects that share the same selling method and options.\n\nThe `SellingPlanGroup` acts as a container for one or more individual `SellingPlan` objects, enabling merchants to offer multiple options (like weekly or monthly deliveries) under one, unified category on a product page.\n"
 type SellingPlanGroup {
 	"""
 	A display friendly name for the app that created the selling plan group.
@@ -12995,14 +12951,17 @@ type SellingPlanRecurringDeliveryPolicy {
 	intervalCount: Int!
 }
 
-"""
-Shop represents a collection of the general settings and information about the shop.
-"""
+"The central hub for store-wide settings and information accessible through the Storefront API. Provides the shop's name, description, and branding configuration including logos and colors through the [`Brand`](https://shopify.dev/docs/api/storefront/current/objects/Brand) object.\n\nAccess store policies such as privacy, refund, shipping, and terms of service via [`ShopPolicy`](https://shopify.dev/docs/api/storefront/current/objects/ShopPolicy), and the subscription policy via [`ShopPolicyWithDefault`](https://shopify.dev/docs/api/storefront/current/objects/ShopPolicyWithDefault). [`PaymentSettings`](https://shopify.dev/docs/api/storefront/current/objects/PaymentSettings) expose accepted card brands, supported digital wallets, and enabled presentment currencies. The object also includes the primary [`Domain`](https://shopify.dev/docs/api/storefront/current/objects/Domain), countries the shop ships to, [`ShopPayInstallmentsPricing`](https://shopify.dev/docs/api/storefront/current/objects/ShopPayInstallmentsPricing), and [`SocialLoginProvider`](https://shopify.dev/docs/api/storefront/current/objects/SocialLoginProvider) options for customer accounts.\n"
 type Shop implements HasMetafields & Node {
 	"""
 	The shop's branding configuration.
 	"""
 	brand: Brand
+
+	"""
+	The URL for the customer account (only present if shop has a customer account vanity domain).
+	"""
+	customerAccountUrl: String
 
 	"""
 	A description of the shop.
@@ -13250,6 +13209,7 @@ type ShopPayPaymentRequest {
 	The delivery methods for the payment request.
 	"""
 	deliveryMethods: [ShopPayPaymentRequestDeliveryMethod!]!
+		@deprecated(reason: "This field is deprecated and will be removed in a future version.")
 
 	"""
 	The discount codes for the payment request.
@@ -13531,13 +13491,6 @@ input ShopPayPaymentRequestImageInput {
 The input fields represent a Shop Pay payment request.
 """
 input ShopPayPaymentRequestInput {
-	"""
-	The delivery methods for the payment request.
-
-	The input must not contain more than `250` values.
-	"""
-	deliveryMethods: [ShopPayPaymentRequestDeliveryMethodInput!]
-
 	"""
 	The discount codes for the payment request.
 
@@ -14093,7 +14046,7 @@ enum SitemapType {
 	PRODUCT
 }
 
-"The availability of a product variant at a particular location.\nLocal pick-up must be enabled in the  store's shipping settings, otherwise this will return an empty result.\n"
+"Inventory information for a product variant at a physical store location that offers local pickup. Includes stock availability, quantity on hand, and estimated pickup readiness time.\n\nLocal pickup must be [enabled in the store's shipping settings](https://help.shopify.com/manual/shipping/setting-up-and-managing-your-shipping/local-methods/local-pickup) for this data to be returned. Results can be sorted by proximity to a customer's location using the `near` argument on the [`ProductVariant.storeAvailability`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant#field-ProductVariant.fields.storeAvailability) connection. \n\nLearn more about [supporting local pickup on storefronts](https://shopify.dev/docs/storefronts/headless/building-with-the-storefront-api/products-collections/local-pickup).\n"
 type StoreAvailability {
 	"""
 	Whether the product variant is in-stock at this location.
@@ -14287,9 +14240,19 @@ enum SubmissionErrorCode {
 	PAYMENTS_SHOPIFY_PAYMENTS_REQUIRED
 	PAYMENTS_UNACCEPTABLE_PAYMENT_AMOUNT
 	PAYMENTS_WALLET_CONTENT_MISSING
+
+	"""
+	Redirect to checkout required to complete this action.
+	"""
+	REDIRECT_TO_CHECKOUT_REQUIRED
 	TAXES_DELIVERY_GROUP_ID_NOT_FOUND
 	TAXES_LINE_ID_NOT_FOUND
 	TAXES_MUST_BE_DEFINED
+
+	"""
+	Validation failed.
+	"""
+	VALIDATION_CUSTOM
 }
 
 """
@@ -14340,9 +14303,7 @@ type SubmitThrottled {
 	pollAfter: DateTime!
 }
 
-"""
-Color and image for visual representation.
-"""
+"A visual representation for filter values, containing a color, an image, or both. The [`FilterValue`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue) object's [`swatch`](https://shopify.dev/docs/api/storefront/current/objects/FilterValue#field-FilterValue.fields.swatch) field returns this when the filter's presentation is set to `SWATCH`.\n"
 type Swatch {
 	"""
 	The swatch color.
@@ -14355,7 +14316,7 @@ type Swatch {
 	image: MediaImage
 }
 
-"The taxonomy category for the product.\n"
+"A category from Shopify's [Standard Product Taxonomy](https://shopify.github.io/product-taxonomy/releases/unstable/?categoryId=sg-4-17-2-17) assigned to a [`Product`](https://shopify.dev/docs/api/storefront/current/objects/Product). Categories provide hierarchical classification through the `ancestors` field.\n\nThe [`ancestors`](https://shopify.dev/docs/api/storefront/current/objects/TaxonomyCategory#field-TaxonomyCategory.fields.ancestors) field returns the parent chain from the immediate parent up to the root. Each ancestor category also includes its own `ancestors`.\n\nThe [`name`](https://shopify.dev/docs/api/storefront/latest/objects/TaxonomyCategory#field-TaxonomyCategory.fields.name) field returns the localized category name based on the storefront's request language with shop locale fallbacks. If a translation isn't available for the resolved locale, the English taxonomy name is returned.\n"
 type TaxonomyCategory implements Node {
 	"""
 	All parent nodes of the current taxonomy category.
@@ -14404,7 +14365,7 @@ interface Trackable {
 "Represents an [RFC 3986](https://datatracker.ietf.org/doc/html/rfc3986) and\n[RFC 3987](https://datatracker.ietf.org/doc/html/rfc3987)-compliant URI string.\n\nFor example, `\"https://example.myshopify.com\"` is a valid URL. It includes a scheme (`https`) and a host\n(`example.myshopify.com`).\n"
 scalar URL
 
-"The measurement used to calculate a unit price for a product variant (e.g. $9.99 / 100ml).\n"
+"The measurement data used to calculate unit prices for a [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant). Unit pricing helps customers compare costs across different package sizes by showing a standardized price, such as \"$9.99 / 100ml\".\n\nThe object includes the quantity being sold (value and unit) and the reference measurement used for price comparison. Use this alongside the variant's [`unitPrice`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant#field-ProductVariant.fields.unitPrice) field to display complete unit pricing information.\n"
 type UnitPriceMeasurement {
 	"""
 	The type of unit of measurement for the unit price measurement.
@@ -14442,9 +14403,19 @@ enum UnitPriceMeasurementMeasuredType {
 	AREA
 
 	"""
+	Unit of measurements representing counts.
+	"""
+	COUNT
+
+	"""
 	Unit of measurements representing lengths.
 	"""
 	LENGTH
+
+	"""
+	The type of measurement is unknown. Upgrade to the latest version of the API to resolve this type.
+	"""
+	UNKNOWN
 
 	"""
 	Unit of measurements representing volumes.
@@ -14472,9 +14443,39 @@ enum UnitPriceMeasurementMeasuredUnit {
 	CM
 
 	"""
+	Imperial system unit of volume (U.S. customary unit).
+	"""
+	FLOZ
+
+	"""
+	1 foot equals 12 inches.
+	"""
+	FT
+
+	"""
+	Imperial system unit of area.
+	"""
+	FT2
+
+	"""
 	Metric system unit of weight.
 	"""
 	G
+
+	"""
+	1 gallon equals 128 fluid ounces (U.S. customary unit).
+	"""
+	GAL
+
+	"""
+	Imperial system unit of length.
+	"""
+	IN
+
+	"""
+	1 item, a unit of count.
+	"""
+	ITEM
 
 	"""
 	1 kilogram equals 1000 grams.
@@ -14485,6 +14486,11 @@ enum UnitPriceMeasurementMeasuredUnit {
 	Metric system unit of volume.
 	"""
 	L
+
+	"""
+	Imperial system unit of weight.
+	"""
+	LB
 
 	"""
 	Metric system unit of length.
@@ -14515,6 +14521,31 @@ enum UnitPriceMeasurementMeasuredUnit {
 	1000 millimeters equals 1 meter.
 	"""
 	MM
+
+	"""
+	16 ounces equals 1 pound.
+	"""
+	OZ
+
+	"""
+	1 pint equals 16 fluid ounces (U.S. customary unit).
+	"""
+	PT
+
+	"""
+	1 quart equals 32 fluid ounces (U.S. customary unit).
+	"""
+	QT
+
+	"""
+	The unit of measurement is unknown. Upgrade to the latest version of the API to resolve this unit.
+	"""
+	UNKNOWN
+
+	"""
+	1 yard equals 36 inches.
+	"""
+	YD
 }
 
 """
@@ -14656,9 +14687,7 @@ input VariantOptionFilter {
 	value: String!
 }
 
-"""
-Represents a Shopify hosted video.
-"""
+"A video hosted on Shopify's servers. Implements the [`Media`](https://shopify.dev/docs/api/storefront/current/interfaces/Media) interface and provides multiple video sources through the [`sources`](https://shopify.dev/docs/api/storefront/current/objects/Video#field-Video.fields.sources) field, each with [format](https://shopify.dev/docs/api/storefront/current/objects/Video#field-Video.fields.sources.format), dimensions, and [URL information](https://shopify.dev/docs/api/storefront/current/objects/Video#field-Video.fields.sources.url) for adaptive playback.\n\nFor videos hosted on external platforms like YouTube or Vimeo, use [`ExternalVideo`](https://shopify.dev/docs/api/storefront/current/objects/ExternalVideo) instead.\n"
 type Video implements Media & Node {
 	"""
 	A word or phrase to share the nature or contents of a media.
@@ -14721,9 +14750,7 @@ type VideoSource {
 	width: Int!
 }
 
-"""
-Units of measurement for weight.
-"""
+"Units of measurement for weight, supporting both metric and imperial systems. Used by [`ProductVariant`](https://shopify.dev/docs/api/storefront/current/objects/ProductVariant) to specify the unit for the variant's weight value.\n"
 enum WeightUnit {
 	"""
 	Metric system unit of mass.

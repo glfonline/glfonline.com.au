@@ -1,6 +1,6 @@
 /**
- * TanStack Form validators may return a single error or an array of errors.
- * Normalize to a single message for a "form-level" error summary.
+ * TanStack Form validators may return a single error or an array of errors. Normalize to a single message for a
+ * "form-level" error summary.
  */
 type MessageBearingError =
 	| string
