@@ -5,6 +5,12 @@ export type CartItem = {
 	quantity: number;
 };
 
+export type CartSession = {
+	commitSession(): Promise<string>;
+	getCart(): Promise<Array<CartItem>>;
+	setCart(cart: Array<CartItem>): void;
+};
+
 if (!process.env.ENCRYPTION_KEY) {
 	throw new Error('ENCRYPTION_KEY environment variable is not set');
 }
@@ -21,7 +27,7 @@ const sessionStorage = createCookieSessionStorage({
 
 const cartSessionKey = 'cart';
 
-export async function getSession(input: Request | string | null | undefined) {
+export async function getSession(input: Request | string | null | undefined): Promise<CartSession> {
 	const cookieHeader = !input || typeof input === 'string' ? input : input.headers.get('Cookie');
 	const session = await sessionStorage.getSession(cookieHeader);
 

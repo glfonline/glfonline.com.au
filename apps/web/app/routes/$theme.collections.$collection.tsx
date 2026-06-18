@@ -26,6 +26,7 @@ import type { SortBy } from '../lib/get-collection-products';
 import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { getProductFilterOptions, PRODUCT_TYPE } from '../lib/get-product-filter-options';
 import { buildNextCursorUrl, buildPrevUrl } from '../lib/pagination-urls';
+import { storefrontContext } from '../root';
 import { getSeoMeta } from '../seo';
 
 const collectionSchema = z.object({
@@ -115,7 +116,9 @@ function parseRequestParameters(params: unknown, url: URL) {
 	};
 }
 
-export async function loader({ params, url }: LoaderFunctionArgs) {
+export async function loader({ context, params, url }: LoaderFunctionArgs) {
+	const storefront = context.get(storefrontContext);
+
 	// Parse request parameters
 	const { params: validatedParams, after, sort, productType, filterOptions } = parseRequestParameters(params, url);
 	const { collection: collectionHandle, theme } = validatedParams;
@@ -129,11 +132,13 @@ export async function loader({ params, url }: LoaderFunctionArgs) {
 			itemsPerPage: ITEMS_PER_PAGE,
 			productType,
 			sortBy: sort,
+			storefront,
 			theme,
 		}),
 		getProductFilterOptions({
 			collectionHandle,
 			first: 250,
+			storefront,
 			theme,
 		}),
 	]);
@@ -365,9 +370,7 @@ function ProductCard({ node }: { node: ProductNode }) {
 				<div className="flex flex-1 flex-col justify-end">
 					<p className="text-gray-900">
 						<small>{node.priceRange.minVariantPrice.currencyCode}</small>{' '}
-						<span className="font-bold">
-							{formatMoney(node.priceRange.minVariantPrice.amount, node.priceRange.minVariantPrice.currencyCode)}
-						</span>
+						<span className="font-bold">{formatMoney(node.priceRange.minVariantPrice)}</span>
 					</p>
 				</div>
 			</div>

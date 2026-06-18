@@ -1,11 +1,13 @@
-import { SHOP_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import type { Storefront } from '@glfonline/shopify-client';
+import { createStorefront, SHOP_QUERY } from '@glfonline/shopify-client';
 import { captureException } from '@sentry/react-router';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect } from 'react';
-import type { LinksFunction, LoaderFunctionArgs, MetaFunction } from 'react-router';
+import type { LinksFunction, LoaderFunctionArgs, MetaFunction, MiddlewareFunction } from 'react-router';
 import {
+	createContext,
 	isRouteErrorResponse,
 	Links,
 	Meta,
@@ -23,11 +25,27 @@ import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
-import { getCartInfo } from './lib/get-cart-info';
+import { createCart } from './lib/cart-model';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import { getSeoMeta, seoConfig } from './seo';
 import tailwindCssUrl from './tailwind.css?url';
+
+export const storefrontContext = createContext<Storefront>();
+
+export const middleware: Array<MiddlewareFunction> = [
+	async ({ context }, next) => {
+		context.set(
+			storefrontContext,
+			createStorefront({
+				apiUrl:
+					process.env.SHOPIFY_STOREFRONT_API_URL ?? 'https://golfladiesfirst.myshopify.com/api/2024-07/graphql.json',
+				accessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN ?? '2288cabae0640a8f47933d6ed4116607',
+			}),
+		);
+		return next();
+	},
+];
 
 export const links: LinksFunction = () => {
 	return [
@@ -57,32 +75,23 @@ export const links: LinksFunction = () => {
 	];
 };
 
-export async function loader({ request }: LoaderFunctionArgs) {
+export async function loader({ context, request }: LoaderFunctionArgs) {
+	const storefront = context.get(storefrontContext);
 	const session = await getSession(request);
-	const cart = await session.getCart();
+	const cart = createCart({ session, storefront });
 
-	// Only attempt to validate cart if it has items
-	if (cart.length > 0) {
-		const cartResult = await getCartInfo(cart);
+	const [view, { shop }, mainNavigation] = await Promise.all([
+		cart.read(),
+		storefront.request(SHOP_QUERY),
+		getMainNavigation(),
+	]);
 
-		// Clear the cart if we get an error
-		if (cartResult.type === 'error') {
-			session.setCart([]);
-			const [{ shop: shopData }, navigationData] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
-			return {
-				cartCount: 0,
-				mainNavigation: navigationData,
-				shop: shopData,
-			};
-		}
-	}
-
-	const [{ shop }, mainNavigation] = await Promise.all([shopifyClient(SHOP_QUERY), getMainNavigation()]);
-
-	// Calculate total quantity by summing all item quantities
+	// Calculate total quantity by summing all reconciled line quantities.
 	let cartCount = 0;
-	for (const item of cart) {
-		cartCount += item.quantity;
+	if (view.type === 'success' && view.cart) {
+		for (const { node } of view.cart.lines.edges) {
+			cartCount += node.quantity;
+		}
 	}
 
 	return {
