@@ -1,4 +1,4 @@
-import { SINGLE_PRODUCT_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import { SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { captureException } from '@sentry/react-router';
 import { mergeForm, revalidateLogic } from '@tanstack/react-form';
@@ -24,15 +24,15 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import type { CartItem } from '../lib/cart';
-import { addToCart, getSession } from '../lib/cart';
+import { getSession } from '../lib/cart';
+import { createCart } from '../lib/cart-model';
 import { notFound } from '../lib/errors.server';
 import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
-import type { CartLineNode } from '../lib/get-cart-info';
-import { getCartInfo } from '../lib/get-cart-info';
 import { getSizingChart } from '../lib/get-sizing-chart';
 import { getSeoMeta } from '../seo';
+import { storefrontContext } from '../root';
 
 const productSchema = z.object({
 	handle: z.string().min(1),
@@ -116,17 +116,6 @@ function getQuantityInCartByVariantId(cart: Array<CartItem>) {
 	return quantityInCartByVariantId;
 }
 
-function getSessionCartItems(lines: ReadonlyArray<{ node: CartLineNode }>): Array<CartItem> {
-	const items: Array<CartItem> = [];
-	for (const edge of lines) {
-		items.push({
-			variantId: edge.node.merchandise.id,
-			quantity: edge.node.quantity,
-		});
-	}
-	return items;
-}
-
 export type ProductActionResult = ReturnType<
 	typeof json<
 		| {
@@ -139,12 +128,12 @@ export type ProductActionResult = ReturnType<
 	>
 >;
 
-export async function loader({ params, request }: LoaderFunctionArgs) {
+export async function loader({ context, params, request }: LoaderFunctionArgs) {
 	const result = productSchema.safeParse(params);
 	if (result.success) {
 		const [session, { product }] = await Promise.all([
 			getSession(request),
-			shopifyClient(SINGLE_PRODUCT_QUERY, { handle: result.data.handle }),
+			context.get(storefrontContext).request(SINGLE_PRODUCT_QUERY, { handle: result.data.handle }),
 		]);
 		if (!product) notFound();
 		const cart = await session.getCart();
@@ -164,7 +153,7 @@ export async function loader({ params, request }: LoaderFunctionArgs) {
 	notFound();
 }
 
-export async function action({ request }: ActionFunctionArgs): Promise<ProductActionResult> {
+export async function action({ context, request }: ActionFunctionArgs): Promise<ProductActionResult> {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 
 	try {
@@ -175,32 +164,18 @@ export async function action({ request }: ActionFunctionArgs): Promise<ProductAc
 		// Use TanStack Form server validation
 		const { variantId } = await serverValidate(formData);
 
-		// Get current cart
-		const currentCart = await session.getCart();
-		const tempCart = addToCart(currentCart, variantId, 1);
+		const storefront = context.get(storefrontContext);
+		const cart = createCart({ storefront, session });
+		await cart.add(variantId, 1);
 
-		// Validate the potential new cart with Shopify first
-		const cartResult = await getCartInfo(tempCart);
-
-		// Only update the session if Shopify accepts the cart. Use Shopify's cart lines as source of truth so we never store more than inventory (Shopify may cap quantities).
-		if (cartResult.type === 'success' && cartResult.cart) {
-			await session.setCart(getSessionCartItems(cartResult.cart.lines.edges));
-			return data(
-				{ type: 'success' },
-				{
-					headers: {
-						'Set-Cookie': await session.commitSession(),
-					},
+		return data(
+			{ type: 'success' },
+			{
+				headers: {
+					'Set-Cookie': await session.commitSession(),
 				},
-			);
-		}
-
-		// Shopify rejected the cart (e.g. quantity exceeds inventory); surface its message
-		const message: string = (() => {
-			if (cartResult.type === 'error') return cartResult.error;
-			return 'Unable to add item to cart. The item might be out of stock or unavailable.';
-		})();
-		throw new Error(message);
+			},
+		);
 	} catch (err) {
 		if (err instanceof ServerValidateError) {
 			return json(
@@ -336,11 +311,11 @@ export default function ProductPage() {
 										{isOnSale && variant.node.compareAtPrice?.amount && (
 											<del>
 												<span className="sr-only">was </span>
-												{formatMoney(variant.node.compareAtPrice.amount, 'AUD')}
+												{formatMoney(variant.node.compareAtPrice)}
 											</del>
 										)}
-										{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price.amount, 'AUD')}{' '}
-										<small className="font-normal">{'AUD'}</small>
+										{isOnSale && <span className="sr-only">now</span>} {formatMoney(variant.node.price)}{' '}
+										<small className="font-normal">{variant.node.price.currencyCode}</small>
 									</p>
 									<PayPalMessages amount={Number(variant.node.price.amount)} placement="product" />
 								</>

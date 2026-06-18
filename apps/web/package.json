@@ -10,7 +10,7 @@
 		"check:exports": "pnpm --dir ../.. exec knip --workspace apps/web --no-exit-code --exports",
 		"check:format": "pnpm biome format",
 		"check:lint": "pnpm biome lint",
-		"check:types": "tsc --noEmit",
+		"check:types": "react-router typegen && tsc --noEmit",
 		"clean": "pnpm clean:outputs && rm -rf node_modules",
 		"clean:outputs": "rm -rf .cache && rm -rf .turbo && rm -rf api && rm -rf public/build",
 		"dev": "react-router dev",

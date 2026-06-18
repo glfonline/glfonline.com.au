@@ -1,14 +1,16 @@
-import { LEGAL_PAGE_QUERY, shopifyClient } from '@glfonline/shopify-client';
-import type { MetaFunction } from 'react-router';
+import { LEGAL_PAGE_QUERY } from '@glfonline/shopify-client';
+import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { data as json, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { PageLayout } from '../components/page-layout';
 import { CACHE_LONG, routeHeaders } from '../lib/cache';
 import { notFound } from '../lib/errors.server';
+import { storefrontContext } from '../root';
 import { getSeoMeta } from '../seo';
 
-export async function loader() {
-	const { page } = await shopifyClient(LEGAL_PAGE_QUERY, {
+export async function loader({ context }: LoaderFunctionArgs) {
+	const storefront = context.get(storefrontContext);
+	const { page } = await storefront.request(LEGAL_PAGE_QUERY, {
 		handle: 'terms-and-conditions',
 	});
 

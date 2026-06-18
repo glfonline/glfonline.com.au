@@ -2,6 +2,7 @@ import type { ResultOf, VariablesOf } from 'gql.tada';
 import { graphql } from './gql';
 
 export type OperationData<TDoc> = ResultOf<TDoc>;
+export type OperationVariables<TDoc> = VariablesOf<TDoc>;
 
 type LegacyTypes<TDoc> = {
 	___type: {
@@ -96,6 +97,7 @@ export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 		availableForSale
 		compareAtPrice {
 			amount
+			currencyCode
 		}
 		currentlyNotInStock
 		image {
@@ -107,6 +109,7 @@ export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 		}
 		price {
 			amount
+			currencyCode
 		}
 		quantityAvailable
 		requiresShipping

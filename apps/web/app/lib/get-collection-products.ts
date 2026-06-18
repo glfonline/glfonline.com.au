@@ -1,4 +1,5 @@
-import { COLLECTION_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import type { Storefront } from '@glfonline/shopify-client';
+import { COLLECTION_QUERY } from '@glfonline/shopify-client';
 import type { LooseAutocomplete } from '../types';
 import { capitalise } from './capitalise';
 
@@ -20,6 +21,7 @@ type GetProductsFromCollectionByTag = {
 	sortBy?: LooseAutocomplete<SortBy>;
 	theme: string;
 	productType?: string;
+	storefront: Storefront;
 };
 
 export async function getProductsFromCollectionByTag({
@@ -30,9 +32,10 @@ export async function getProductsFromCollectionByTag({
 	sortBy = 'collection-default',
 	theme,
 	productType,
+	storefront,
 }: GetProductsFromCollectionByTag) {
 	try {
-		const { collection } = await shopifyClient(COLLECTION_QUERY, {
+		const { collection } = await storefront.request(COLLECTION_QUERY, {
 			...getSortOptions(sortBy),
 			after,
 			filters: [

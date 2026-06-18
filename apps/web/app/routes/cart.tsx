@@ -11,55 +11,30 @@ import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
-import { getSession, removeCartItem, updateCartItem } from '../lib/cart';
+import { getSession } from '../lib/cart';
+import { createCart } from '../lib/cart-model';
 import { formatMoney } from '../lib/format-money';
-import type { CartResult } from '../lib/get-cart-info';
-import { getCartInfo } from '../lib/get-cart-info';
 import type { LineDisplay } from '../lib/line-display';
-import { getLineDisplay } from '../lib/line-display';
+import { storefrontContext } from '../root';
 import { getSeoMeta } from '../seo';
 
-type CartLoaderData = CartResult & { linesDisplay?: Array<LineDisplay> };
-
-export async function loader({ request }: LoaderFunctionArgs): Promise<ReturnType<typeof data<CartLoaderData>>> {
+export async function loader({ context, request }: LoaderFunctionArgs) {
 	const session = await getSession(request);
-	const cart = await session.getCart();
-	const cartResult = await getCartInfo(cart);
+	const storefront = context.get(storefrontContext);
+	const cart = createCart({ session, storefront });
+	const view = await cart.read();
 
-	// Clear cart if there was an error fetching cart info
-	if (['error', 'empty'].includes(cartResult.type)) {
-		await session.setCart([]);
-		return data(cartResult, {
-			headers: {
-				'Cache-Control': CACHE_NONE,
-				'Set-Cookie': await session.commitSession(),
-			},
-		});
-	}
+	const loaderData =
+		view.type === 'success'
+			? { cart: view.cart, linesDisplay: view.linesDisplay, type: view.type }
+			: { type: view.type };
 
-	// Sync session to Shopify's cart so session never holds more than inventory; checkout URL then matches.
-	if (cartResult.type === 'success' && cartResult.cart) {
-		const shopifyCart = cartResult.cart.lines.edges.map((edge) => ({
-			variantId: edge.node.merchandise.id,
-			quantity: edge.node.quantity,
-		}));
-		session.setCart(shopifyCart);
-	}
-
-	const linesDisplay =
-		cartResult.type === 'success' && cartResult.cart
-			? cartResult.cart.lines.edges.map((edge) => getLineDisplay(edge.node))
-			: undefined;
-
-	return data(
-		{ ...cartResult, linesDisplay },
-		{
-			headers: {
-				'Cache-Control': CACHE_NONE,
-				'Set-Cookie': await session.commitSession(),
-			},
+	return data(loaderData, {
+		headers: {
+			'Cache-Control': CACHE_NONE,
+			'Set-Cookie': await session.commitSession(),
 		},
-	);
+	});
 }
 
 const INTENT = 'intent';
@@ -174,9 +149,14 @@ export type CartActionResult = ReturnType<
 	>
 >;
 
-export async function action({ request }: ActionFunctionArgs): Promise<CartActionResult | ReturnType<typeof redirect>> {
+export async function action({
+	context,
+	request,
+}: ActionFunctionArgs): Promise<CartActionResult | ReturnType<typeof redirect>> {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
 	const intent = formData.get(INTENT);
+	const storefront = context.get(storefrontContext);
+	const cart = createCart({ session, storefront });
 
 	try {
 		switch (intent) {
@@ -188,14 +168,8 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 			case ACTIONS.INCREMENT_ACTION:
 			case ACTIONS.DECREMENT_ACTION: {
 				const { quantity, variantId } = await quantityServerValidate(formData);
-				const cart = await session.getCart();
-				const newCart = updateCartItem(
-					cart,
-					variantId,
-					// We need to coerce quantity to a number as quantityServerValidate doesn't seem to be handling this for us
-					Number(quantity),
-				);
-				await session.setCart(newCart);
+				// We need to coerce quantity to a number as quantityServerValidate doesn't seem to be handling this for us
+				await cart.setQuantity(variantId, Number(quantity));
 				return data(
 					{
 						type: 'success',
@@ -210,9 +184,7 @@ export async function action({ request }: ActionFunctionArgs): Promise<CartActio
 
 			case ACTIONS.REMOVE_ACTION: {
 				const { variantId } = await removeServerValidate(formData);
-				const cart = await session.getCart();
-				const newCart = removeCartItem(cart, variantId);
-				await session.setCart(newCart);
+				await cart.remove(variantId);
 				return data(
 					{
 						type: 'success',
@@ -410,7 +382,7 @@ export default function CartPage() {
 						<dl className="mt-6 space-y-4">
 							<div className="flex items-center justify-between">
 								<dt className="text-gray-600 text-sm">Subtotal</dt>
-								<dd className="text-gray-900 text-sm">{formatMoney(cart.cost.subtotalAmount.amount || 0, 'AUD')}</dd>
+								<dd className="text-gray-900 text-sm">{formatMoney(cart.cost.subtotalAmount)}</dd>
 							</div>
 						</dl>
 						<PayPalMessages amount={Number(cart.cost.subtotalAmount.amount || 0)} placement="cart" />

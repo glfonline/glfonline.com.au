@@ -1,4 +1,5 @@
-import { COLLECTION_OPTIONS_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import type { Storefront } from '@glfonline/shopify-client';
+import { COLLECTION_OPTIONS_QUERY } from '@glfonline/shopify-client';
 import { z } from 'zod';
 import { capitalise } from './capitalise';
 import { sortSizes } from './sort-sizes';
@@ -13,18 +14,20 @@ export async function getProductFilterOptions({
 	collectionHandle,
 	first,
 	theme,
+	storefront,
 }: {
 	after?: string;
 	collectionHandle: string;
 	first: number;
 	theme: string;
+	storefront: Storefront;
 }) {
 	const optionsMap = new Map<string, Set<string>>();
 	const productTypesSet = new Set<string>();
 	let hasNextPage = true;
 	let cursor = after;
 	while (hasNextPage) {
-		const { collection } = await shopifyClient(COLLECTION_OPTIONS_QUERY, {
+		const { collection } = await storefront.request(COLLECTION_OPTIONS_QUERY, {
 			after: cursor,
 			filters: [
 				{

@@ -1,15 +1,18 @@
-import { ALL_PRODUCTS_QUERY, shopifyClient } from '@glfonline/shopify-client';
+import { ALL_PRODUCTS_QUERY } from '@glfonline/shopify-client';
+import type { LoaderFunctionArgs } from 'react-router';
 import { CACHE_LONG } from '../lib/cache';
 import { WEB_ADDRESS } from '../lib/constants';
+import { storefrontContext } from '../root';
 
 type Products = (typeof ALL_PRODUCTS_QUERY)['___type']['result']['products']['edges'];
 
-export async function loader() {
+export async function loader({ context }: LoaderFunctionArgs) {
+	const storefront = context.get(storefrontContext);
 	async function getAllProductPages() {
 		let pages: Products = [];
 
 		async function getProductPages(cursor?: string) {
-			const newPages = await shopifyClient(ALL_PRODUCTS_QUERY, {
+			const newPages = await storefront.request(ALL_PRODUCTS_QUERY, {
 				cursor,
 				first: 250,
 			});
