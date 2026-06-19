@@ -7,7 +7,6 @@ import { Turnstile } from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
 import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
-import { isFieldRequired } from '../../lib/get-required-fields';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -117,43 +116,13 @@ export function NewsletterSignup() {
 						</form.AppField>
 
 						<form.AppField name="gender">
-							{(field) => {
-								const errorMessage = field.state.meta.errors[0]?.message;
-								const errorMessageId = `${field.name}-error`;
-								const required = isFieldRequired(field.form, field.name);
-
-								const fieldsetA11yProps = {
-									'aria-describedby': errorMessage ? errorMessageId : undefined,
-									'aria-invalid': errorMessage ? true : undefined,
-									'aria-required': required || undefined,
-								};
-
-								return (
-									<fieldset {...fieldsetA11yProps} className="flex flex-col gap-4 sm:col-span-4">
-										<legend className="text-gray-700 text-sm">Which list would you like to sign up to?</legend>
-										<div className="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
-											{(['Ladies', 'Mens'] as const).map((option) => (
-												<div className="flex items-center gap-3" key={option}>
-													<input
-														className="h-5 w-5 border-gray-300 text-brand-primary focus:ring-brand-light"
-														id={option}
-														name={field.name}
-														onBlur={field.handleBlur}
-														onChange={(event) => field.handleChange(event.target.value)}
-														required={required}
-														type="radio"
-														value={option}
-													/>
-													<label className="block font-medium text-gray-700 text-sm" htmlFor={option}>
-														{option}
-													</label>
-												</div>
-											))}
-										</div>
-										{errorMessage && <FieldMessage id={errorMessageId} message={errorMessage} tone="critical" />}
-									</fieldset>
-								);
-							}}
+							{(field) => (
+								<field.RadioGroup
+									className="sm:col-span-4"
+									legend="Which list would you like to sign up to?"
+									options={['Ladies', 'Mens']}
+								/>
+							)}
 						</form.AppField>
 
 						<form.AppField name="token">
