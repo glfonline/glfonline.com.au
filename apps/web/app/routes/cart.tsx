@@ -1,4 +1,4 @@
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
+import { CheckIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { captureException } from '@sentry/react-router';
 import type { ServerFormState } from '@tanstack/react-form-remix';
 import { createServerValidate, formOptions, initialFormState, ServerValidateError } from '@tanstack/react-form-remix';
@@ -7,11 +7,13 @@ import { clsx } from 'clsx';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { data, Form, Link, redirect, useFetcher, useLoaderData, useNavigation } from 'react-router';
 import { z } from 'zod';
+import { QuantityPicker } from '../components/cart/quantity-picker';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { Heading } from '../components/design-system/heading';
 import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import { getSession } from '../lib/cart';
+import { CART_ACTIONS, CART_INTENT } from '../lib/cart-actions';
 import { createCart } from '../lib/cart-model';
 import { formatMoney } from '../lib/format-money';
 import type { LineDisplay } from '../lib/line-display';
@@ -36,15 +38,6 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 		},
 	});
 }
-
-const INTENT = 'intent';
-
-const ACTIONS = {
-	CHECKOUT_ACTION: 'checkout',
-	DECREMENT_ACTION: 'decrement',
-	INCREMENT_ACTION: 'increment',
-	REMOVE_ACTION: 'remove',
-};
 
 const checkoutScheme = z.object({
 	checkoutUrl: z.url(),
@@ -154,19 +147,19 @@ export async function action({
 	request,
 }: ActionFunctionArgs): Promise<CartActionResult | ReturnType<typeof redirect>> {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
-	const intent = formData.get(INTENT);
+	const intent = formData.get(CART_INTENT);
 	const storefront = context.get(storefrontContext);
 	const cart = createCart({ session, storefront });
 
 	try {
 		switch (intent) {
-			case ACTIONS.CHECKOUT_ACTION: {
+			case CART_ACTIONS.CHECKOUT_ACTION: {
 				const { checkoutUrl } = await checkoutServerValidate(formData);
 				return redirect(checkoutUrl);
 			}
 
-			case ACTIONS.INCREMENT_ACTION:
-			case ACTIONS.DECREMENT_ACTION: {
+			case CART_ACTIONS.INCREMENT_ACTION:
+			case CART_ACTIONS.DECREMENT_ACTION: {
 				const { quantity, variantId } = await quantityServerValidate(formData);
 				// We need to coerce quantity to a number as quantityServerValidate doesn't seem to be handling this for us
 				await cart.setQuantity(variantId, Number(quantity));
@@ -182,7 +175,7 @@ export async function action({
 				);
 			}
 
-			case ACTIONS.REMOVE_ACTION: {
+			case CART_ACTIONS.REMOVE_ACTION: {
 				const { variantId } = await removeServerValidate(formData);
 				await cart.remove(variantId);
 				return data(
@@ -394,9 +387,9 @@ export default function CartPage() {
 								<input name="checkoutUrl" type="hidden" value={cart.checkoutUrl} />
 								<Button
 									disabled={navigation.state !== 'idle'}
-									name={INTENT}
+									name={CART_INTENT}
 									type="submit"
-									value={ACTIONS.CHECKOUT_ACTION}
+									value={CART_ACTIONS.CHECKOUT_ACTION}
 									variant="neutral"
 								>
 									Checkout
@@ -434,77 +427,6 @@ function LineItemPrice({ display }: { display: LineDisplay | undefined }) {
 	);
 }
 
-export function QuantityPicker({
-	variantId,
-	quantity,
-	quantityAvailable,
-}: {
-	variantId: string;
-	quantity: number;
-	quantityAvailable: number;
-}) {
-	const fetcher = useFetcher();
-
-	return (
-		<div className="flex flex-col items-start gap-2">
-			<span className="text-gray-700 text-sm hover:text-gray-800">Quantity</span>
-			<span className="isolate inline-flex shadow-sm">
-				<fetcher.Form method="post">
-					<input name="variantId" type="hidden" value={variantId} />
-					<input name="quantity" type="hidden" value={quantity - 1} />
-					<button
-						className={clsx(
-							'relative inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-gray-700 text-sm',
-							'hover:bg-gray-50',
-							'focus:z-10 focus:border-brand-primary focus:outline-hidden focus:ring-1 focus:ring-brand-primary',
-							'disabled:opacity-50',
-							fetcher.state === 'loading' && 'opacity-50',
-						)}
-						data-testid="quantity-decrement"
-						disabled={quantity <= 1}
-						name={INTENT}
-						type="submit"
-						value={ACTIONS.DECREMENT_ACTION}
-					>
-						<span className="sr-only">Decrease quantity</span>
-						<ChevronLeftIcon aria-hidden="true" className="h-5 w-5" />
-					</button>
-				</fetcher.Form>
-				<span
-					className={clsx(
-						fetcher.state === 'loading' && 'opacity-50',
-						'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-4 py-2 text-gray-700 text-sm',
-					)}
-					data-testid="quantity-display"
-				>
-					{quantity}
-				</span>
-				<fetcher.Form method="post">
-					<input name="variantId" type="hidden" value={variantId} />
-					<input name="quantity" type="hidden" value={quantity + 1} />
-					<button
-						className={clsx(
-							'relative -ml-px inline-flex items-center border border-gray-300 bg-white px-2 py-2 text-gray-700 text-sm',
-							'hover:bg-gray-50',
-							'focus:z-10 focus:border-brand-primary focus:outline-hidden focus:ring-1 focus:ring-brand-primary',
-							'disabled:opacity-50',
-							fetcher.state === 'loading' && 'opacity-50',
-						)}
-						data-testid="quantity-increment"
-						disabled={quantity + 1 >= quantityAvailable}
-						name={INTENT}
-						type="submit"
-						value={ACTIONS.INCREMENT_ACTION}
-					>
-						<span className="sr-only">Increase quantity</span>
-						<ChevronRightIcon aria-hidden="true" className="h-5 w-5" />
-					</button>
-				</fetcher.Form>
-			</span>
-		</div>
-	);
-}
-
 function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
 
@@ -517,9 +439,9 @@ function RemoveFromCart({ variantId }: { variantId: string }) {
 					'hover:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-brand-primary focus:ring-offset-2',
 				)}
 				data-testid="remove-from-cart"
-				name={INTENT}
+				name={CART_INTENT}
 				type="submit"
-				value={ACTIONS.REMOVE_ACTION}
+				value={CART_ACTIONS.REMOVE_ACTION}
 			>
 				<span className="sr-only">Remove</span>
 				<XMarkIcon aria-hidden="true" className="h-5 w-5" />

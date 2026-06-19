@@ -1,7 +1,7 @@
 import { createRoutesStub } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { render } from 'vitest-browser-react';
-import { QuantityPicker } from './cart';
+import { QuantityPicker } from './quantity-picker';
 
 describe('QuantityPicker (browser)', () => {
 	it('exposes accessible names for the decrement and increment buttons', async () => {
