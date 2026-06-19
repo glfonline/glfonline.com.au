@@ -199,7 +199,16 @@ function CartSummary({
 				</div>
 			</dl>
 
-			<PayPalMessages amount={Number(cart.cost.subtotalAmount.amount || 0)} placement="cart" />
+			{/*
+			 * Only the full cart page renders PayPal messaging. The drawer (footer
+			 * placement) overlays product pages that already mount a PayPal provider,
+			 * and the PayPal SDK is a global singleton: a second provider unmounting
+			 * (e.g. when the cart empties) tears down every PayPal component and
+			 * crashes the page. Keeping one provider per view avoids that.
+			 */}
+			{placement === 'inline' && (
+				<PayPalMessages amount={Number(cart.cost.subtotalAmount.amount || 0)} placement="cart" />
+			)}
 			<p className="text-gray-600 text-sm">Taxes and shipping are calculated at checkout</p>
 
 			{cart.checkoutUrl && (

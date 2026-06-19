@@ -15,7 +15,6 @@ import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { Form, data as json, redirect, useActionData, useFetcher, useLoaderData } from 'react-router';
-import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { FieldMessage } from '../components/design-system/field';
@@ -32,7 +31,7 @@ import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { getSeoMeta } from '../seo';
+import { getSeoMeta, seoConfig } from '../seo';
 import { storefrontContext } from '../root';
 
 const productSchema = z.object({
@@ -214,7 +213,10 @@ export async function action({ context, params, request }: ActionFunctionArgs): 
 }
 
 export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
-	invariant(loaderData, 'Expected data for meta function');
+	// `loaderData` can be undefined when the route is rendered through its error
+	// boundary or mid-revalidation, so fall back to the site defaults rather than
+	// throwing (a throw here surfaces as a full-page "Invariant failed" crash).
+	if (!loaderData) return getSeoMeta(seoConfig);
 	return getSeoMeta({
 		description: loaderData.product.description,
 		title: loaderData.product.title,
