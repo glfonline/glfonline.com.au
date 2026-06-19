@@ -7,6 +7,7 @@ import { Turnstile } from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
 import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
+import { isFieldRequired } from '../../lib/get-required-fields';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -94,7 +95,7 @@ export function NewsletterSignup() {
 						<form.AppField name="first_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField label="First name" required />
+									<field.TextField label="First name" />
 								</div>
 							)}
 						</form.AppField>
@@ -102,7 +103,7 @@ export function NewsletterSignup() {
 						<form.AppField name="last_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField label="Last name" required />
+									<field.TextField label="Last name" />
 								</div>
 							)}
 						</form.AppField>
@@ -110,7 +111,7 @@ export function NewsletterSignup() {
 						<form.AppField name="email">
 							{(field) => (
 								<div className="sm:col-span-4">
-									<field.TextField label="Email address" required type="email" />
+									<field.TextField label="Email address" type="email" />
 								</div>
 							)}
 						</form.AppField>
@@ -119,11 +120,12 @@ export function NewsletterSignup() {
 							{(field) => {
 								const errorMessage = field.state.meta.errors[0]?.message;
 								const errorMessageId = `${field.name}-error`;
+								const required = isFieldRequired(field.form, field.name);
 
 								const fieldsetA11yProps = {
 									'aria-describedby': errorMessage ? errorMessageId : undefined,
 									'aria-invalid': errorMessage ? true : undefined,
-									'aria-required': true,
+									'aria-required': required || undefined,
 								};
 
 								return (
@@ -138,7 +140,7 @@ export function NewsletterSignup() {
 														name={field.name}
 														onBlur={field.handleBlur}
 														onChange={(event) => field.handleChange(event.target.value)}
-														required
+														required={required}
 														type="radio"
 														value={option}
 													/>

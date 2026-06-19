@@ -96,14 +96,14 @@ export function ContactForm() {
 					}}
 					ref={formRef}
 				>
-					<form.AppField name="first_name">{(field) => <field.TextField label="First name" required />}</form.AppField>
+					<form.AppField name="first_name">{(field) => <field.TextField label="First name" />}</form.AppField>
 
-					<form.AppField name="last_name">{(field) => <field.TextField label="Last name" required />}</form.AppField>
+					<form.AppField name="last_name">{(field) => <field.TextField label="Last name" />}</form.AppField>
 
 					<form.AppField name="email">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField label="Email" required type="email" />
+								<field.TextField label="Email" type="email" />
 							</div>
 						)}
 					</form.AppField>
@@ -111,7 +111,7 @@ export function ContactForm() {
 					<form.AppField name="phone_number">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField label="Phone number" required type="tel" />
+								<field.TextField label="Phone number" type="tel" />
 							</div>
 						)}
 					</form.AppField>
@@ -119,7 +119,7 @@ export function ContactForm() {
 					<form.AppField name="subject">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField label="Subject" required />
+								<field.TextField label="Subject" />
 							</div>
 						)}
 					</form.AppField>
@@ -127,7 +127,7 @@ export function ContactForm() {
 					<form.AppField name="message">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextArea label="Message" required />
+								<field.TextArea label="Message" />
 							</div>
 						)}
 					</form.AppField>
@@ -135,7 +135,7 @@ export function ContactForm() {
 					<form.AppField name="agree_to_privacy_policy">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.Checkbox label={<PrivacyPolicyLabel />} required />
+								<field.Checkbox label={<PrivacyPolicyLabel />} />
 							</div>
 						)}
 					</form.AppField>

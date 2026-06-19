@@ -9,6 +9,7 @@ import type { TextAreaProps } from '../components/design-system/text-area';
 import { TextArea } from '../components/design-system/text-area';
 import type { TextInputProps } from '../components/design-system/text-input';
 import { TextInput } from '../components/design-system/text-input';
+import { isFieldRequired } from './get-required-fields';
 
 const { fieldContext, formContext, useFieldContext } = createFormHookContexts();
 
@@ -41,7 +42,7 @@ function InlineFormFieldWrapper(props: InlineFieldProps) {
 function FormTextField(props: TextFieldProps) {
 	const field = useFieldContext<string>();
 	const errorMessage = field.state.meta.errors[0]?.message;
-	const { label, ...inputProps } = props;
+	const { label, required, ...inputProps } = props;
 
 	return (
 		<Field label={label} message={errorMessage}>
@@ -50,6 +51,7 @@ function FormTextField(props: TextFieldProps) {
 				name={field.name}
 				onBlur={field.handleBlur}
 				onChange={(event) => field.handleChange(event.target.value)}
+				required={required ?? isFieldRequired(field.form, field.name)}
 				value={field.state.value}
 			/>
 		</Field>
@@ -59,7 +61,7 @@ function FormTextField(props: TextFieldProps) {
 function FormTextArea(props: TextAreaFieldProps) {
 	const field = useFieldContext<string>();
 	const errorMessage = field.state.meta.errors[0]?.message;
-	const { label, ...inputProps } = props;
+	const { label, required, ...inputProps } = props;
 
 	return (
 		<Field label={label} message={errorMessage}>
@@ -68,6 +70,7 @@ function FormTextArea(props: TextAreaFieldProps) {
 				name={field.name}
 				onBlur={field.handleBlur}
 				onChange={(event) => field.handleChange(event.target.value)}
+				required={required ?? isFieldRequired(field.form, field.name)}
 				value={field.state.value}
 			/>
 		</Field>
@@ -77,7 +80,7 @@ function FormTextArea(props: TextAreaFieldProps) {
 function FormCheckbox(props: CheckboxFieldProps) {
 	const field = useFieldContext<boolean>();
 	const errorMessage = field.state.meta.errors[0]?.message;
-	const { label, ...inputProps } = props;
+	const { label, required, ...inputProps } = props;
 
 	return (
 		<InlineField label={label} message={errorMessage}>
@@ -87,6 +90,7 @@ function FormCheckbox(props: CheckboxFieldProps) {
 				name={field.name}
 				onBlur={field.handleBlur}
 				onChange={(event) => field.handleChange(event.target.checked)}
+				required={required ?? isFieldRequired(field.form, field.name)}
 			/>
 		</InlineField>
 	);
