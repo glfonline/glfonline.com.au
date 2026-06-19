@@ -5,6 +5,8 @@ import type { FieldProps } from '../components/design-system/field';
 import { Field } from '../components/design-system/field';
 import type { InlineFieldProps } from '../components/design-system/field/inline-field';
 import { InlineField } from '../components/design-system/field/inline-field';
+import type { RadioGroupProps } from '../components/design-system/radio-group';
+import { RadioGroup } from '../components/design-system/radio-group';
 import type { TextAreaProps } from '../components/design-system/text-area';
 import { TextArea } from '../components/design-system/text-area';
 import type { TextInputProps } from '../components/design-system/text-input';
@@ -24,6 +26,8 @@ type TextAreaFieldProps = Omit<TextAreaProps, 'checked' | 'name' | 'onBlur' | 'o
 type CheckboxFieldProps = Omit<CheckboxProps, 'checked' | 'name' | 'onBlur' | 'onChange' | 'value'> & {
 	label: React.ReactNode;
 };
+
+type RadioGroupFieldProps = Omit<RadioGroupProps, 'message' | 'name' | 'onBlur' | 'onChange' | 'tone' | 'value'>;
 
 function FormFieldWrapper(props: FieldProps) {
 	const field = useFieldContext<string>();
@@ -96,11 +100,30 @@ function FormCheckbox(props: CheckboxFieldProps) {
 	);
 }
 
+function FormRadioGroup(props: RadioGroupFieldProps) {
+	const field = useFieldContext<string>();
+	const errorMessage = field.state.meta.errors[0]?.message;
+	const { required, ...rest } = props;
+
+	return (
+		<RadioGroup
+			{...rest}
+			message={errorMessage}
+			name={field.name}
+			onBlur={field.handleBlur}
+			onChange={(event) => field.handleChange(event.target.value)}
+			required={required ?? isFieldRequired(field.form, field.name)}
+			value={field.state.value}
+		/>
+	);
+}
+
 export const { useAppForm } = createFormHook({
 	fieldComponents: {
 		Checkbox: FormCheckbox,
 		FormField: FormFieldWrapper,
 		InlineFormField: InlineFormFieldWrapper,
+		RadioGroup: FormRadioGroup,
 		TextArea: FormTextArea,
 		TextField: FormTextField,
 	},

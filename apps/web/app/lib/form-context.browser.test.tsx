@@ -5,9 +5,10 @@ import { useAppForm } from './form-context';
 
 function TestForm() {
 	const form = useAppForm({
-		defaultValues: { name: '', token: '' },
+		defaultValues: { gender: '', name: '', token: '' },
 		validators: {
 			onSubmit: z.object({
+				gender: z.string().min(1),
 				name: z.string().min(1),
 				token: z.string(),
 			}),
@@ -18,6 +19,9 @@ function TestForm() {
 		<form>
 			<form.AppField name="name">{(field) => <field.TextField label="Name" />}</form.AppField>
 			<form.AppField name="token">{(field) => <field.TextField label="Token" />}</form.AppField>
+			<form.AppField name="gender">
+				{(field) => <field.RadioGroup legend="Gender" options={['Ladies', 'Mens']} />}
+			</form.AppField>
 		</form>
 	);
 }
@@ -39,5 +43,14 @@ describe('useAppForm required derivation (browser)', () => {
 
 		await expect.element(token).not.toBeRequired();
 		expect(token.element().hasAttribute('aria-required')).toBe(false);
+	});
+
+	it('derives required for a RadioGroup field from the schema', async () => {
+		const screen = await render(<TestForm />);
+
+		// Required state is conveyed natively on the radio inputs (valid for a
+		// fieldset/group, unlike aria-required which the role does not support).
+		await expect.element(screen.getByRole('radio', { name: 'Ladies' })).toBeRequired();
+		await expect.element(screen.getByRole('radio', { name: 'Mens' })).toBeRequired();
 	});
 });
