@@ -1,5 +1,6 @@
 import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
+import { clsx } from 'clsx';
 import { useRef } from 'react';
 import { Link, useFetcher } from 'react-router';
 import { Turnstile } from 'react-turnstile';
@@ -178,7 +179,16 @@ export function ContactForm() {
 						</div>
 					)}
 
-					{showSuccessMessage && <p className="text-center sm:col-span-2">Thank you for your message!</p>}
+					{/* Always mounted so the live region is established before its content
+					    changes; otherwise screen readers may not announce the message.
+					    Visually hidden (and removed from layout) until it has content. */}
+					<div
+						aria-live="polite"
+						className={clsx('sm:col-span-2', showSuccessMessage ? 'text-center' : 'sr-only')}
+						role="status"
+					>
+						{showSuccessMessage ? 'Thank you for your message!' : null}
+					</div>
 				</fetcher.Form>
 			</div>
 		</article>

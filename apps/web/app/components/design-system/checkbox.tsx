@@ -4,13 +4,14 @@ import { useFieldContext } from './field/context';
 type NativeInputProps = React.ComponentPropsWithRef<'input'>;
 export type CheckboxProps = Omit<NativeInputProps, 'children' | 'type'>;
 
-export function Checkbox({ className, ref, ...consumerProps }: CheckboxProps) {
+export function Checkbox({ className, ref, required, ...consumerProps }: CheckboxProps) {
 	const [{ disabled, invalid }, a11yProps] = useFieldContext();
 	return (
 		<div className="flex h-5 items-center">
 			<input
 				{...consumerProps}
 				{...a11yProps}
+				aria-required={required || undefined}
 				className={clsx(
 					'h-4 w-4 rounded border-gray-300',
 					invalid ? 'text-red-600 focus:ring-red-500' : 'text-brand-600 focus:ring-brand-500',
@@ -18,6 +19,7 @@ export function Checkbox({ className, ref, ...consumerProps }: CheckboxProps) {
 				)}
 				disabled={disabled}
 				ref={ref}
+				required={required}
 				type="checkbox"
 			/>
 		</div>

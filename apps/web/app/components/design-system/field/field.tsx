@@ -85,6 +85,7 @@ export function FieldMessage({ message, id, tone }: FieldMessageProps) {
 				tone === 'neutral' && 'text-gray-600',
 				'flex items-start gap-1 text-sm',
 			)}
+			role={tone === 'critical' ? 'alert' : undefined}
 		>
 			{Icon && <Icon className="h-5 w-5 shrink-0" />}
 			<span id={id}>{message}</span>

@@ -1,11 +1,13 @@
 import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
+import { clsx } from 'clsx';
 import { useRef } from 'react';
 import { useFetcher } from 'react-router';
 import { Turnstile } from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
 import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
+import { isFieldRequired } from '../../lib/get-required-fields';
 import { useClientOnlyMount } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
@@ -118,10 +120,12 @@ export function NewsletterSignup() {
 							{(field) => {
 								const errorMessage = field.state.meta.errors[0]?.message;
 								const errorMessageId = `${field.name}-error`;
+								const required = isFieldRequired(field.form, field.name);
 
 								const fieldsetA11yProps = {
 									'aria-describedby': errorMessage ? errorMessageId : undefined,
 									'aria-invalid': errorMessage ? true : undefined,
+									'aria-required': required || undefined,
 								};
 
 								return (
@@ -136,6 +140,7 @@ export function NewsletterSignup() {
 														name={field.name}
 														onBlur={field.handleBlur}
 														onChange={(event) => field.handleChange(event.target.value)}
+														required={required}
 														type="radio"
 														value={option}
 													/>
@@ -197,7 +202,12 @@ export function NewsletterSignup() {
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">
-					{showSuccessMessage && <p>Thank you for subscribing!</p>}
+					{/* Always mounted so the live region is established before its content
+					    changes; otherwise screen readers may not announce the message.
+					    Visually hidden until it has content. */}
+					<div aria-live="polite" className={clsx(showSuccessMessage ? undefined : 'sr-only')} role="status">
+						{showSuccessMessage ? <p>Thank you for subscribing!</p> : null}
+					</div>
 					<p>* by clicking join, you agree to receive our newsletter as well as top tips to improve your game</p>
 				</div>
 			</div>
