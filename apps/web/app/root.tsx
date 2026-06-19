@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction, MiddlewareFunction } from 'react-router';
 import {
 	createContext,
+	data,
 	isRouteErrorResponse,
 	Links,
 	Meta,
@@ -85,6 +86,10 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 		storefront.request(SHOP_QUERY),
 		getMainNavigation(),
 	]);
+	const cartResult =
+		view.type === 'success'
+			? { cart: view.cart, linesDisplay: view.linesDisplay, type: view.type }
+			: { type: view.type };
 
 	// Calculate total quantity by summing all reconciled line quantities.
 	let cartCount = 0;
@@ -94,11 +99,19 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 		}
 	}
 
-	return {
-		cartCount,
-		mainNavigation,
-		shop,
-	};
+	return data(
+		{
+			cartCount,
+			cartResult,
+			mainNavigation,
+			shop,
+		},
+		{
+			headers: {
+				'Set-Cookie': await session.commitSession(),
+			},
+		},
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = () => {
