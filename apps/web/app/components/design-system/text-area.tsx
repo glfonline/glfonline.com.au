@@ -10,7 +10,7 @@ export function TextArea({ className, ref, rows = 4, ...consumerProps }: TextAre
 			{...consumerProps}
 			{...a11yProps}
 			className={clsx(
-				'block w-full transition focus:ring focus:ring-offset-2',
+				'block w-full border transition focus:ring focus:ring-offset-2',
 				invalid
 					? 'border-red-300 focus:border-red-300 focus:ring-red-400'
 					: 'border-gray-300 focus:border-brand-300 focus:ring-brand-400',

@@ -93,7 +93,7 @@ export function NewsletterSignup() {
 						<form.AppField name="first_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField label="First name" />
+									<field.TextField aria-required="true" label="First name" required />
 								</div>
 							)}
 						</form.AppField>
@@ -101,7 +101,7 @@ export function NewsletterSignup() {
 						<form.AppField name="last_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField label="Last name" />
+									<field.TextField aria-required="true" label="Last name" required />
 								</div>
 							)}
 						</form.AppField>
@@ -109,7 +109,7 @@ export function NewsletterSignup() {
 						<form.AppField name="email">
 							{(field) => (
 								<div className="sm:col-span-4">
-									<field.TextField label="Email address" type="email" />
+									<field.TextField aria-required="true" label="Email address" required type="email" />
 								</div>
 							)}
 						</form.AppField>
@@ -122,6 +122,7 @@ export function NewsletterSignup() {
 								const fieldsetA11yProps = {
 									'aria-describedby': errorMessage ? errorMessageId : undefined,
 									'aria-invalid': errorMessage ? true : undefined,
+									'aria-required': true,
 								};
 
 								return (
@@ -136,6 +137,7 @@ export function NewsletterSignup() {
 														name={field.name}
 														onBlur={field.handleBlur}
 														onChange={(event) => field.handleChange(event.target.value)}
+														required
 														type="radio"
 														value={option}
 													/>
@@ -197,7 +199,11 @@ export function NewsletterSignup() {
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">
-					{showSuccessMessage && <p>Thank you for subscribing!</p>}
+					{showSuccessMessage && (
+						<div aria-live="polite" role="status">
+							<p>Thank you for subscribing!</p>
+						</div>
+					)}
 					<p>* by clicking join, you agree to receive our newsletter as well as top tips to improve your game</p>
 				</div>
 			</div>

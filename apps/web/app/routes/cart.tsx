@@ -434,7 +434,7 @@ function LineItemPrice({ display }: { display: LineDisplay | undefined }) {
 	);
 }
 
-function QuantityPicker({
+export function QuantityPicker({
 	variantId,
 	quantity,
 	quantityAvailable,
@@ -466,6 +466,7 @@ function QuantityPicker({
 						type="submit"
 						value={ACTIONS.DECREMENT_ACTION}
 					>
+						<span className="sr-only">Decrease quantity</span>
 						<ChevronLeftIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
 				</fetcher.Form>
@@ -495,6 +496,7 @@ function QuantityPicker({
 						type="submit"
 						value={ACTIONS.INCREMENT_ACTION}
 					>
+						<span className="sr-only">Increase quantity</span>
 						<ChevronRightIcon aria-hidden="true" className="h-5 w-5" />
 					</button>
 				</fetcher.Form>
