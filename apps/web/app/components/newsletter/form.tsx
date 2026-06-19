@@ -1,5 +1,6 @@
 import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
+import { clsx } from 'clsx';
 import { useRef } from 'react';
 import { useFetcher } from 'react-router';
 import { Turnstile } from 'react-turnstile';
@@ -93,7 +94,7 @@ export function NewsletterSignup() {
 						<form.AppField name="first_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField aria-required="true" label="First name" required />
+									<field.TextField label="First name" required />
 								</div>
 							)}
 						</form.AppField>
@@ -101,7 +102,7 @@ export function NewsletterSignup() {
 						<form.AppField name="last_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField aria-required="true" label="Last name" required />
+									<field.TextField label="Last name" required />
 								</div>
 							)}
 						</form.AppField>
@@ -109,7 +110,7 @@ export function NewsletterSignup() {
 						<form.AppField name="email">
 							{(field) => (
 								<div className="sm:col-span-4">
-									<field.TextField aria-required="true" label="Email address" required type="email" />
+									<field.TextField label="Email address" required type="email" />
 								</div>
 							)}
 						</form.AppField>
@@ -199,11 +200,12 @@ export function NewsletterSignup() {
 					</div>
 				</fetcher.Form>
 				<div className="prose text-center text-gray-600">
-					{showSuccessMessage && (
-						<div aria-live="polite" role="status">
-							<p>Thank you for subscribing!</p>
-						</div>
-					)}
+					{/* Always mounted so the live region is established before its content
+					    changes; otherwise screen readers may not announce the message.
+					    Visually hidden until it has content. */}
+					<div aria-live="polite" className={clsx(showSuccessMessage ? undefined : 'sr-only')} role="status">
+						{showSuccessMessage ? <p>Thank you for subscribing!</p> : null}
+					</div>
 					<p>* by clicking join, you agree to receive our newsletter as well as top tips to improve your game</p>
 				</div>
 			</div>

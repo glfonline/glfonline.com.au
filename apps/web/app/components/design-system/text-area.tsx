@@ -3,12 +3,13 @@ import { useFieldContext } from './field/context';
 
 export type TextAreaProps = React.ComponentPropsWithRef<'textarea'>;
 
-export function TextArea({ className, ref, rows = 4, ...consumerProps }: TextAreaProps) {
+export function TextArea({ className, ref, required, rows = 4, ...consumerProps }: TextAreaProps) {
 	const [{ disabled, invalid }, a11yProps] = useFieldContext();
 	return (
 		<textarea
 			{...consumerProps}
 			{...a11yProps}
+			aria-required={required || undefined}
 			className={clsx(
 				'block w-full border transition focus:ring focus:ring-offset-2',
 				invalid
@@ -18,6 +19,7 @@ export function TextArea({ className, ref, rows = 4, ...consumerProps }: TextAre
 			)}
 			disabled={disabled}
 			ref={ref}
+			required={required}
 			rows={rows}
 		/>
 	);

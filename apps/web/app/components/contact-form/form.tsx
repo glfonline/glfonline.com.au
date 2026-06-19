@@ -1,5 +1,6 @@
 import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
+import { clsx } from 'clsx';
 import { useRef } from 'react';
 import { Link, useFetcher } from 'react-router';
 import { Turnstile } from 'react-turnstile';
@@ -95,18 +96,14 @@ export function ContactForm() {
 					}}
 					ref={formRef}
 				>
-					<form.AppField name="first_name">
-						{(field) => <field.TextField aria-required="true" label="First name" required />}
-					</form.AppField>
+					<form.AppField name="first_name">{(field) => <field.TextField label="First name" required />}</form.AppField>
 
-					<form.AppField name="last_name">
-						{(field) => <field.TextField aria-required="true" label="Last name" required />}
-					</form.AppField>
+					<form.AppField name="last_name">{(field) => <field.TextField label="Last name" required />}</form.AppField>
 
 					<form.AppField name="email">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField aria-required="true" label="Email" required type="email" />
+								<field.TextField label="Email" required type="email" />
 							</div>
 						)}
 					</form.AppField>
@@ -114,7 +111,7 @@ export function ContactForm() {
 					<form.AppField name="phone_number">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField aria-required="true" label="Phone number" required type="tel" />
+								<field.TextField label="Phone number" required type="tel" />
 							</div>
 						)}
 					</form.AppField>
@@ -122,7 +119,7 @@ export function ContactForm() {
 					<form.AppField name="subject">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField aria-required="true" label="Subject" required />
+								<field.TextField label="Subject" required />
 							</div>
 						)}
 					</form.AppField>
@@ -130,7 +127,7 @@ export function ContactForm() {
 					<form.AppField name="message">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextArea aria-required="true" label="Message" required />
+								<field.TextArea label="Message" required />
 							</div>
 						)}
 					</form.AppField>
@@ -138,7 +135,7 @@ export function ContactForm() {
 					<form.AppField name="agree_to_privacy_policy">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.Checkbox aria-required="true" label={<PrivacyPolicyLabel />} required />
+								<field.Checkbox label={<PrivacyPolicyLabel />} required />
 							</div>
 						)}
 					</form.AppField>
@@ -182,11 +179,16 @@ export function ContactForm() {
 						</div>
 					)}
 
-					{showSuccessMessage && (
-						<div aria-live="polite" className="sm:col-span-2" role="status">
-							<p className="text-center">Thank you for your message!</p>
-						</div>
-					)}
+					{/* Always mounted so the live region is established before its content
+					    changes; otherwise screen readers may not announce the message.
+					    Visually hidden (and removed from layout) until it has content. */}
+					<div
+						aria-live="polite"
+						className={clsx('sm:col-span-2', showSuccessMessage ? 'text-center' : 'sr-only')}
+						role="status"
+					>
+						{showSuccessMessage ? 'Thank you for your message!' : null}
+					</div>
 				</fetcher.Form>
 			</div>
 		</article>

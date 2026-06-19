@@ -16,10 +16,10 @@ describe('Field (browser)', () => {
 		expect(screen.container.querySelector('[role="alert"]')).toBeNull();
 	});
 
-	it('forwards required/aria-required from the call site to the input', async () => {
+	it('derives aria-required from the required prop alone', async () => {
 		const screen = await render(
 			<Field label="Email">
-				<TextInput aria-required="true" required />
+				<TextInput required />
 			</Field>,
 		);
 
@@ -29,5 +29,19 @@ describe('Field (browser)', () => {
 
 		await expect.element(input).toBeRequired();
 		await expect.element(input).toHaveAttribute('aria-required', 'true');
+	});
+
+	it('omits aria-required when the field is not required', async () => {
+		const screen = await render(
+			<Field label="Email">
+				<TextInput />
+			</Field>,
+		);
+
+		const input = screen.getByRole('textbox', {
+			name: 'Email',
+		});
+
+		expect(input.element().hasAttribute('aria-required')).toBe(false);
 	});
 });

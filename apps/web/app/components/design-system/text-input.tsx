@@ -3,12 +3,13 @@ import { useFieldContext } from './field/context';
 
 export type TextInputProps = React.ComponentPropsWithRef<'input'>;
 
-export function TextInput({ className, ref, type = 'text', ...consumerProps }: TextInputProps) {
+export function TextInput({ className, ref, required, type = 'text', ...consumerProps }: TextInputProps) {
 	const [{ disabled, invalid }, a11yProps] = useFieldContext();
 	return (
 		<input
 			{...consumerProps}
 			{...a11yProps}
+			aria-required={required || undefined}
 			className={clsx(
 				'block h-12 w-full border transition focus:ring focus:ring-offset-2',
 				invalid
@@ -18,6 +19,7 @@ export function TextInput({ className, ref, type = 'text', ...consumerProps }: T
 			)}
 			disabled={disabled}
 			ref={ref}
+			required={required}
 			type={type}
 		/>
 	);
