@@ -21,13 +21,26 @@ type CartContentProps = {
 
 export function CartContent({ result, showHeading = true, summaryPlacement = 'inline' }: CartContentProps) {
 	if (result.type !== 'success' || result.cart.lines.edges.length === 0) {
-		return <EmptyCart showHeading={showHeading} />;
+		return <EmptyCart placement={summaryPlacement} showHeading={showHeading} />;
 	}
 
 	return <FilledCart result={result} showHeading={showHeading} summaryPlacement={summaryPlacement} />;
 }
 
-function EmptyCart({ showHeading }: { showHeading: boolean }) {
+function EmptyCart({ showHeading, placement }: { showHeading: boolean; placement: 'inline' | 'footer' }) {
+	// In the drawer (footer placement) fill the panel and centre the message so it
+	// doesn't cling to the top with a tall empty void beneath it.
+	if (placement === 'footer') {
+		return (
+			<div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
+				<p className="text-gray-600">Your cart is currently empty.</p>
+				<ButtonLink href="/" variant="neutral">
+					Continue shopping
+				</ButtonLink>
+			</div>
+		);
+	}
+
 	return (
 		<div className="flex flex-col gap-6 text-center">
 			{showHeading && (
