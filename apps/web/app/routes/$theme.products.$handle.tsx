@@ -14,7 +14,7 @@ import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { data, Form, data as json, useActionData, useFetcher, useLoaderData } from 'react-router';
+import { Form, data as json, redirect, useActionData, useFetcher, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
@@ -25,6 +25,7 @@ import { PayPalMessages } from '../components/paypal';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import type { CartItem } from '../lib/cart';
 import { getSession } from '../lib/cart';
+import { productCartOpenHref } from '../lib/cart-actions';
 import { createCart } from '../lib/cart-model';
 import { notFound } from '../lib/errors.server';
 import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
@@ -153,8 +154,9 @@ export async function loader({ context, params, request }: LoaderFunctionArgs) {
 	notFound();
 }
 
-export async function action({ context, request }: ActionFunctionArgs): Promise<ProductActionResult> {
+export async function action({ context, params, request }: ActionFunctionArgs): Promise<ProductActionResult> {
 	const [formData, session] = await Promise.all([request.formData(), getSession(request)]);
+	const { theme, handle } = productSchema.parse(params);
 
 	try {
 		// Get the default variant ID from the form data or use empty string
@@ -168,15 +170,18 @@ export async function action({ context, request }: ActionFunctionArgs): Promise<
 		const cart = createCart({ storefront, session });
 		await cart.add(variantId, 1);
 
-		return data(
-			{ type: 'success' },
-			{
-				headers: {
-					'Set-Cookie': await session.commitSession(),
-				},
+		// Open the cart drawer by putting the state in the URL. The fetcher follows
+		// this redirect, so `?cart=open` becomes the source of truth for the drawer.
+		throw redirect(productCartOpenHref(theme, handle), {
+			headers: {
+				'Set-Cookie': await session.commitSession(),
 			},
-		);
+		});
 	} catch (err) {
+		// Intentional thrown Responses (e.g. the `?cart=open` redirect above) must
+		// propagate untouched rather than being treated as errors.
+		if (err instanceof Response) throw err;
+
 		if (err instanceof ServerValidateError) {
 			return json(
 				{ type: 'error', formState: err.formState },

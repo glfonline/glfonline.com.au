@@ -9,13 +9,37 @@
 	},
 	"editor.defaultFormatter": "biomejs.biome",
 	"editor.formatOnSave": true,
-	"files.readonlyInclude": { "**/routeTree.gen.ts": true },
-	"files.watcherExclude": { "**/routeTree.gen.ts": true },
-	"search.exclude": { "**/routeTree.gen.ts": true },
+	"editor.quickSuggestions": {
+		"strings": "on"
+	},
+	"files.associations": {
+		"*.css": "tailwindcss"
+	},
+	"js/ts.tsdk.path": "node_modules/typescript/lib",
+	"search.exclude": {
+		"**/routeTree.gen.ts": true
+	},
+	"tailwindCSS.classAttributes": [
+		"class",
+		"className",
+		"ngClass",
+		"class:list",
+		"enter",
+		"enterFrom",
+		"enterTo",
+		"leave",
+		"leaveFrom",
+		"leaveTo"
+	],
+	"tailwindCSS.classFunctions": ["clsx", "cn", "cva"],
 	"tailwindCSS.experimental.classRegex": [
 		["clsx\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
 		["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"],
 		["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"]
 	],
-	"typescript.tsdk": "node_modules/typescript/lib"
+	"tailwindCSS.experimental.configFile": "apps/web/app/tailwind.css",
+	"tailwindCSS.lint.cssConflict": "warning",
+	"tailwindCSS.lint.recommendedVariantOrder": "warning",
+	"tailwindCSS.lint.suggestCanonicalClasses": "warning",
+	"tailwindCSS.validate": true
 }
