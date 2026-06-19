@@ -5,15 +5,17 @@ import invariant from 'tiny-invariant';
 const CHECKOUT_URL_REGEX = /^https:\/\/golfladiesfirst\.myshopify\.com\/checkouts\//;
 const CART_LINK_REGEX = /items in cart, view bag/;
 const ADD_TO_CART_BUTTON_REGEX = /add to cart|adding/i;
-const ADDING_BUTTON_REGEX = /adding/i;
 
 async function addToCart(page: Page) {
-	const addToCartButton = page.getByRole('button', { name: ADD_TO_CART_BUTTON_REGEX });
-	await addToCartButton.click();
-	await expect(addToCartButton).toBeDisabled();
-	await expect(addToCartButton).toHaveText(ADDING_BUTTON_REGEX);
-	await expect(addToCartButton).toBeEnabled();
-	await expect(addToCartButton).toHaveText('Add to cart');
+	await page.getByRole('button', { name: ADD_TO_CART_BUTTON_REGEX }).click();
+
+	// Adding redirects to `?cart=open`, which opens the cart drawer over the page.
+	// Its appearance confirms the item was added; close it so the header and the
+	// Add to cart button stay clickable for the next step.
+	const closeDrawer = page.getByRole('button', { name: 'Close cart' });
+	await expect(closeDrawer).toBeVisible();
+	await closeDrawer.click();
+	await expect(closeDrawer).toBeHidden();
 }
 
 test.describe('Search and checkout flow', () => {
