@@ -1,5 +1,6 @@
-import { Dialog, DialogPanel, Transition, TransitionChild } from '@headlessui/react';
-import { Fragment, useEffect } from 'react';
+import { useEffect } from 'react';
+import { Dialog } from 'react-aria-components/Dialog';
+import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import { useFetchers } from 'react-router';
 import { noop } from '../lib/noop';
 import { NewsletterSignup } from './newsletter/form';
@@ -22,36 +23,22 @@ export function NewsletterDialog({ isOpen, onClose }: { isOpen: boolean; onClose
 	}, [fetcher, onClose]);
 
 	return (
-		<Transition appear show={isOpen}>
-			<Dialog as="div" className="relative z-30" onClose={onClose}>
-				<TransitionChild
-					as={Fragment}
-					enter="ease-out duration-300"
-					enterFrom="opacity-0"
-					enterTo="opacity-100"
-					leave="ease-in duration-200"
-					leaveFrom="opacity-100"
-					leaveTo="opacity-0"
+		<ModalOverlay
+			className="fixed inset-0 z-30 overflow-y-auto bg-gray-500/25 p-4 transition-opacity duration-300 ease-out data-entering:opacity-0 data-exiting:opacity-0 data-exiting:duration-200 motion-reduce:transition-none sm:p-6 md:p-20"
+			isDismissable
+			isOpen={isOpen}
+			onOpenChange={(open) => {
+				if (!open) onClose();
+			}}
+		>
+			<Modal className="mx-auto max-w-xl transition duration-300 ease-out data-entering:scale-95 data-exiting:scale-95 data-entering:opacity-0 data-exiting:opacity-0 data-exiting:duration-200 motion-reduce:transition-none">
+				<Dialog
+					aria-label="Newsletter signup"
+					className="transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 focus:outline-hidden"
 				>
-					<div className="fixed inset-0 bg-gray-500/25 transition-opacity" />
-				</TransitionChild>
-
-				<div className="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
-					<TransitionChild
-						as={Fragment}
-						enter="ease-out duration-300"
-						enterFrom="opacity-0 scale-95"
-						enterTo="opacity-100 scale-100"
-						leave="ease-in duration-200"
-						leaveFrom="opacity-100 scale-100"
-						leaveTo="opacity-0 scale-95"
-					>
-						<DialogPanel className="mx-auto max-w-xl transform divide-y divide-gray-100 overflow-hidden rounded-xl bg-white shadow-2xl ring-1 ring-black/5 transition-all">
-							<NewsletterSignup />
-						</DialogPanel>
-					</TransitionChild>
-				</div>
-			</Dialog>
-		</Transition>
+					<NewsletterSignup />
+				</Dialog>
+			</Modal>
+		</ModalOverlay>
 	);
 }

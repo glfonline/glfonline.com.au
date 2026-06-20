@@ -9,7 +9,6 @@ catalog:
   '@biomejs/biome': 2.4.13
   '@graphql-codegen/cli': ^7.1.2
   '@graphql-codegen/schema-ast': ^6.0.1
-  '@headlessui/react': ^2.2.10
   '@heroicons/react': ^2.2.0
   '@manypkg/cli': ^0.25.1
   '@paypal/react-paypal-js': ^9.2.0
@@ -54,6 +53,7 @@ catalog:
   knip: ^6.15.0
   playwright: ^1.60.0
   react: ^19.2.7
+  react-aria-components: ^1.18.0
   react-dom: ^19.2.7
   react-intersection-observer: ^10.0.3
   react-router: ^8.0.1

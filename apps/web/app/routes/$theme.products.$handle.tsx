@@ -1,5 +1,4 @@
 import { SINGLE_PRODUCT_QUERY } from '@glfonline/shopify-client';
-import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/react';
 import { captureException } from '@sentry/react-router';
 import { mergeForm, revalidateLogic } from '@tanstack/react-form';
 import type { ServerFormState } from '@tanstack/react-form-remix';
@@ -10,7 +9,6 @@ import {
 	ServerValidateError,
 	useTransform,
 } from '@tanstack/react-form-remix';
-import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
@@ -20,8 +18,8 @@ import { z } from 'zod';
 import { Button, ButtonLink } from '../components/design-system/button';
 import { FieldMessage } from '../components/design-system/field';
 import { getHeadingStyles, Heading } from '../components/design-system/heading';
-import { DiagonalBanner } from '../components/diagonal-banner';
 import { PayPalMessages } from '../components/paypal';
+import { ImageGallery } from '../components/product-gallery';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import type { CartItem } from '../lib/cart';
 import { getSession } from '../lib/cart';
@@ -31,8 +29,8 @@ import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { getSeoMeta } from '../seo';
 import { storefrontContext } from '../root';
+import { getSeoMeta } from '../seo';
 
 const productSchema = z.object({
 	handle: z.string().min(1),
@@ -443,83 +441,5 @@ export default function ProductPage() {
 				</div>
 			</div>
 		</div>
-	);
-}
-
-function ImageGallery({
-	images,
-	isOnSale,
-}: {
-	images: Array<{
-		node: {
-			id: string | null;
-			altText: string | null;
-			url: any;
-			height: number | null;
-			width: number | null;
-		};
-	}>;
-	isOnSale: boolean;
-}) {
-	return (
-		<TabGroup as="div" className="flex flex-col-reverse gap-6">
-			{/* Image selector */}
-			<div className="mx-auto w-full max-w-2xl lg:max-w-none">
-				<TabList className={clsx(images.length > 1 ? 'grid grid-cols-4 gap-6' : 'sr-only')}>
-					{images.map(({ node }) => (
-						<Tab
-							className="relative flex h-24 cursor-pointer items-center justify-center bg-white font-medium text-gray-900 text-sm uppercase hover:bg-gray-50 focus:outline-hidden focus:ring focus:ring-brand/50 focus:ring-offset-4"
-							key={node.id}
-						>
-							{({ selected }) => {
-								return (
-									<>
-										<span className="absolute inset-0 overflow-hidden">
-											<Image
-												alt={node.altText || ''}
-												breakpoints={[276]}
-												className="h-full w-full object-cover object-center"
-												height={192}
-												layout="constrained"
-												priority
-												src={node.url}
-												width={276}
-											/>
-										</span>
-										<span
-											aria-hidden="true"
-											className={clsx(
-												selected ? 'ring-brand-primary' : 'ring-transparent',
-												'pointer-events-none absolute inset-0 ring-1',
-											)}
-										/>
-									</>
-								);
-							}}
-						</Tab>
-					))}
-				</TabList>
-			</div>
-
-			<TabPanels className="relative aspect-square w-full bg-gray-200">
-				{images.map(({ node }) => {
-					return (
-						<TabPanel className="absolute inset-0 overflow-hidden" key={node.id}>
-							<Image
-								alt={node.altText || ''}
-								breakpoints={[640, 768, 1024, 1280]}
-								className="h-full w-full object-contain object-center sm:rounded-lg"
-								height={624}
-								layout="constrained"
-								priority
-								src={node.url}
-								width={624}
-							/>
-							{isOnSale && <DiagonalBanner>On Sale</DiagonalBanner>}
-						</TabPanel>
-					);
-				})}
-			</TabPanels>
-		</TabGroup>
 	);
 }
