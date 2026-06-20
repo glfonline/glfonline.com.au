@@ -15,10 +15,10 @@ catalog:
   '@paypal/react-paypal-js': ^9.2.0
   '@playwright/test': ^1.60.0
   '@portabletext/react': ^6.2.0
-  '@react-router/dev': ^7.16.0
-  '@react-router/fs-routes': ^7.16.0
-  '@react-router/node': ^7.16.0
-  '@react-router/serve': ^7.16.0
+  '@react-router/dev': ^8.0.1
+  '@react-router/fs-routes': ^8.0.1
+  '@react-router/node': ^8.0.1
+  '@react-router/serve': ^8.0.1
   '@sanity/asset-utils': ^2.3.0
   '@sanity/image-url': ^2.1.1
   '@sanity/vision': 5.30.0
@@ -56,8 +56,7 @@ catalog:
   react: ^19.2.7
   react-dom: ^19.2.7
   react-intersection-observer: ^10.0.3
-  react-router: ^7.16.0
-  react-router-dom: ^7.16.0
+  react-router: ^8.0.1
   react-turnstile: ^1.1.5
   remeda: ^2.37.0
   remix-utils: ^9.3.1
@@ -82,6 +81,13 @@ minimumReleaseAgeExclude:
   - undici
   - vite@8.0.16
   - dompurify@3.4.11
+  # React Router 8.0.1 (published 2026-06-18) adopted ahead of the release-age window.
+  - react-router@8.0.1
+  - '@react-router/dev@8.0.1'
+  - '@react-router/express@8.0.1'
+  - '@react-router/fs-routes@8.0.1'
+  - '@react-router/node@8.0.1'
+  - '@react-router/serve@8.0.1'
 overrides:
   '@types/node': ^24.12.4
   '@sanity/uuid>uuid': 11.1.1
@@ -109,6 +115,13 @@ peerDependencyRules:
     tailwindcss: '4'
     ts-toolbelt: '6'
     typescript: '6'
+    # React Router 8: these adapters/utils still pin their peers to v7 but are
+    # API-compatible with v8. Remove each once the package ships v8 peer ranges.
+    '@vercel/react-router>@react-router/dev': '8'
+    '@vercel/react-router>@react-router/node': '8'
+    '@sentry/react-router>@react-router/node': '8'
+    '@sentry/react-router>react-router': '8'
+    remix-utils>react-router: '8'
 trustLockfile: true
 trustPolicy: no-downgrade
 trustPolicyExclude:
