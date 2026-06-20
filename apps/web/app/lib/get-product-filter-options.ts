@@ -2,7 +2,10 @@ import type { Storefront } from '@glfonline/shopify-client';
 import { COLLECTION_OPTIONS_QUERY } from '@glfonline/shopify-client';
 import { z } from 'zod';
 import { capitalise } from './capitalise';
+import { PRODUCT_TYPE } from './product-filter-constants';
 import { sortSizes } from './sort-sizes';
+
+export { PRODUCT_TYPE };
 
 type Option = {
 	name: string;
@@ -95,5 +98,3 @@ const schema = z.object({
 		}),
 	}),
 });
-
-export const PRODUCT_TYPE = 'productType';

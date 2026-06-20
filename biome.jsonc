@@ -5,7 +5,6 @@
 		"enabled": true,
 		"actions": {
 			"source": {
-				"recommended": true,
 				"organizeImports": "on",
 				"useSortedAttributes": "on",
 				"useSortedKeys": "off",
@@ -73,9 +72,7 @@
 			"turborepo": "recommended"
 		},
 		"rules": {
-			"recommended": true,
 			"a11y": {
-				"recommended": true,
 				"noAriaHiddenOnFocusable": "off",
 				"noNoninteractiveTabindex": "off",
 				"noRedundantRoles": "off",
@@ -83,13 +80,11 @@
 				"useSemanticElements": "off"
 			},
 			"complexity": {
-				"recommended": true,
 				"noExcessiveCognitiveComplexity": "off",
 				"noUselessUndefined": "on",
 				"useLiteralKeys": "off"
 			},
 			"correctness": {
-				"recommended": true,
 				"noNodejsModules": "off",
 				"noUndeclaredDependencies": "off",
 				"noUnresolvedImports": "off",
@@ -99,10 +94,7 @@
 				"useImportExtensions": "off"
 			},
 			"nursery": {
-				"recommended": true,
 				"noFloatingPromises": "on",
-				"noShadow": "on",
-				"noUndeclaredEnvVars": "error",
 				"useExhaustiveSwitchCases": "on",
 				"useExplicitType": "off",
 				"useSortedClasses": {
@@ -111,7 +103,6 @@
 				}
 			},
 			"performance": {
-				"recommended": true,
 				"noAccumulatingSpread": "on",
 				"noBarrelFile": "off", // TODO: enable this
 				"noDelete": "on",
@@ -120,11 +111,9 @@
 				"useTopLevelRegex": "on"
 			},
 			"security": {
-				"recommended": true,
 				"noDangerouslySetInnerHtml": "off"
 			},
 			"style": {
-				"recommended": true,
 				"useBlockStatements": "off",
 				"useConsistentArrayType": {
 					"level": "warn",
@@ -143,7 +132,6 @@
 				"useSelfClosingElements": "error"
 			},
 			"suspicious": {
-				"recommended": true,
 				"noArrayIndexKey": "off",
 				"noConsole": "off",
 				"noExplicitAny": "off",

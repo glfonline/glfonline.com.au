@@ -5,6 +5,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect } from 'react';
+import { RouterProvider } from 'react-aria-components';
 import type { LinksFunction, LoaderFunctionArgs, MetaFunction, MiddlewareFunction } from 'react-router';
 import {
 	createContext,
@@ -14,7 +15,9 @@ import {
 	Outlet,
 	Scripts,
 	ScrollRestoration,
+	useHref,
 	useLocation,
+	useNavigate,
 	useRouteError,
 } from 'react-router';
 import favicon from '../assets/favicon.svg';
@@ -112,6 +115,7 @@ const persister = createAsyncStoragePersister({
 
 function App() {
 	const location = useLocation();
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (import.meta.env.PROD) {
@@ -137,16 +141,18 @@ function App() {
 					</>
 				)}
 				<LoadingProgress />
-				<PersistQueryClientProvider
-					client={queryClient}
-					persistOptions={{
-						persister,
-					}}
-				>
-					<MainLayout>
-						<Outlet key={location.pathname} />
-					</MainLayout>
-				</PersistQueryClientProvider>
+				<RouterProvider navigate={navigate} useHref={useHref}>
+					<PersistQueryClientProvider
+						client={queryClient}
+						persistOptions={{
+							persister,
+						}}
+					>
+						<MainLayout>
+							<Outlet key={location.pathname} />
+						</MainLayout>
+					</PersistQueryClientProvider>
+				</RouterProvider>
 				<ScrollRestoration />
 				<Scripts />
 			</body>
