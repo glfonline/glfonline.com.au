@@ -11,6 +11,8 @@ import {
 } from '@tanstack/react-form-remix';
 import { clsx } from 'clsx';
 import { useRef, useState } from 'react';
+import { Label } from 'react-aria-components/Label';
+import { RadioButton, RadioField, RadioGroup } from 'react-aria-components/RadioGroup';
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { data, Form, data as json, useActionData, useFetcher, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
@@ -347,49 +349,40 @@ export default function ProductPage() {
 											: fieldError || addToCartErrorMessage || buttonText;
 									return (
 										<>
-											<fieldset
+											<RadioGroup
 												aria-describedby={errorMessage ? `${field.name}-error` : undefined}
-												aria-invalid={errorMessage ? true : undefined}
 												className={clsx(hasNoVariants ? 'sr-only' : 'flex flex-col gap-3')}
+												isInvalid={Boolean(errorMessage)}
+												name={field.name}
+												onBlur={field.handleBlur}
+												onChange={(value) => {
+													field.handleChange(value);
+													setVariant(product.variants.edges.find((v) => v.node.id === value));
+												}}
+												validationBehavior="aria"
+												value={field.state.value}
 											>
-												<div className="flex items-center justify-between">
-													<legend className="font-bold text-gray-900 text-sm">Options</legend>
-												</div>
+												<Label className="font-bold text-gray-900 text-sm">Options</Label>
 												<div className="flex flex-wrap gap-3">
 													{product.variants.edges.map(({ node }) => (
-														<label className="relative" htmlFor={node.id} key={node.id}>
-															<input
-																aria-describedby={errorMessage ? `${field.name}-error` : undefined}
-																checked={variant?.node.id === node.id}
-																className="sr-only"
-																disabled={!node.availableForSale}
-																id={node.id}
-																name={field.name}
-																onBlur={field.handleBlur}
-																onChange={(event) => {
-																	field.handleChange(event.target.value);
-																	setVariant(product.variants.edges.find((v) => v.node.id === event.target.value));
-																}}
-																type="radio"
-																value={node.id}
-															/>
-															<span
-																className={clsx(
-																	'inline-flex h-12 min-w-12 items-center justify-center border px-3 font-bold text-sm uppercase',
-																	'border-gray-200 bg-white text-gray-900 hover:bg-gray-50',
-																	node.availableForSale
-																		? 'cursor-pointer focus:outline-hidden'
-																		: 'cursor-not-allowed opacity-25',
-																	'[:focus+&]:ring-2 [:focus+&]:ring-brand-500 [:focus+&]:ring-offset-2',
-																	'[:checked+&]:border-transparent [:checked+&]:bg-brand-primary [:checked+&]:text-white [:checked+&]:hover:bg-brand-light',
-																)}
-															>
-																{node.title}
-															</span>
-														</label>
+														<RadioField isDisabled={!node.availableForSale} key={node.id} value={node.id}>
+															<RadioButton className="group block cursor-pointer outline-hidden data-disabled:cursor-not-allowed">
+																<span
+																	className={clsx(
+																		'inline-flex h-12 min-w-12 items-center justify-center border px-3 font-bold text-gray-900 text-sm uppercase',
+																		'border-gray-200 bg-white hover:bg-gray-50',
+																		'group-data-focused:ring-2 group-data-focused:ring-brand-500 group-data-focused:ring-offset-2',
+																		'group-data-selected:border-transparent group-data-selected:bg-brand-primary group-data-selected:text-white group-data-selected:hover:bg-brand-light',
+																		'group-data-disabled:opacity-25',
+																	)}
+																>
+																	{node.title}
+																</span>
+															</RadioButton>
+														</RadioField>
 													))}
 												</div>
-											</fieldset>
+											</RadioGroup>
 
 											<div className="flex flex-col gap-4">
 												{sizingChart && (

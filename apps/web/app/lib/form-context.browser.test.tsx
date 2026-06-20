@@ -48,9 +48,8 @@ describe('useAppForm required derivation (browser)', () => {
 	it('derives required for a RadioGroup field from the schema', async () => {
 		const screen = await render(<TestForm />);
 
-		// Required state is conveyed natively on the radio inputs (valid for a
-		// fieldset/group, unlike aria-required which the role does not support).
-		await expect.element(screen.getByRole('radio', { name: 'Ladies' })).toBeRequired();
-		await expect.element(screen.getByRole('radio', { name: 'Mens' })).toBeRequired();
+		// React Aria conveys requiredness on the group via aria-required (the
+		// correct ARIA pattern for a radiogroup) rather than on each radio input.
+		await expect.element(screen.getByRole('radiogroup', { name: 'Gender' })).toHaveAttribute('aria-required', 'true');
 	});
 });

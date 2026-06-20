@@ -1,6 +1,13 @@
 import { clsx } from 'clsx';
-import { mergeIds } from '../../lib/merge-ids';
-import { FieldMessage, useFieldIds } from './field/field';
+import {
+	RadioGroup as AriaRadioGroup,
+	FieldError,
+	Label,
+	RadioButton,
+	RadioField,
+	Text,
+} from 'react-aria-components/RadioGroup';
+import { ExclamationCircleIcon } from '../vectors/exclamation-circle-icon';
 
 type RadioOption = { label: string; value: string };
 
@@ -9,81 +16,65 @@ function toOption(option: RadioOption | string): RadioOption {
 }
 
 export type RadioGroupProps = {
-	/** Additional classes for the fieldset (e.g. grid placement). */
-	className?: string;
-	/** Provide additional information that will aid user input. */
-	description?: string;
-	disabled?: boolean;
-	id?: string;
 	/** Labels the group of options. */
 	legend: string;
-	/** Provide a message, informing the user about changes in state. */
-	message?: string;
-	name?: string;
-	onBlur?: React.FocusEventHandler<HTMLInputElement>;
-	onChange?: React.ChangeEventHandler<HTMLInputElement>;
+	/** Provide additional information that will aid user input. */
+	description?: string;
+	/** Validation message to surface for the group. */
+	errorMessage?: string;
+	/** Additional classes for the group wrapper (e.g. grid placement). */
+	className?: string;
 	options: ReadonlyArray<RadioOption | string>;
-	required?: boolean;
-	tone?: 'critical' | 'neutral' | 'positive';
+	isDisabled?: boolean;
+	isRequired?: boolean;
+	name?: string;
+	onBlur?: React.FocusEventHandler<Element>;
+	onChange?: (value: string) => void;
 	value?: string;
 };
 
 export function RadioGroup({
 	className,
 	description,
-	disabled = false,
-	id,
+	errorMessage,
+	isRequired,
 	legend,
-	message,
-	name,
-	onBlur,
-	onChange,
 	options,
-	required,
-	tone = 'critical',
-	value,
+	...fieldProps
 }: RadioGroupProps) {
-	const { descriptionId, inputId, messageId } = useFieldIds(id);
-	const invalid = Boolean(message && tone === 'critical');
-
 	return (
-		<fieldset
-			aria-describedby={mergeIds(message && messageId, description && descriptionId)}
-			aria-invalid={invalid || undefined}
+		<AriaRadioGroup
+			{...fieldProps}
 			className={clsx('flex flex-col gap-4', className)}
+			isInvalid={Boolean(errorMessage)}
+			isRequired={isRequired}
+			validationBehavior="aria"
 		>
-			<legend className="text-gray-700 text-sm">{legend}</legend>
-			{description && (
-				<span className="text-gray-600" id={descriptionId}>
+			<Label className="text-gray-700 text-sm">{legend}</Label>
+			{description ? (
+				<Text className="text-gray-600" slot="description">
 					{description}
-				</span>
-			)}
+				</Text>
+			) : null}
 			<div className="mt-4 space-y-4 sm:flex sm:items-center sm:space-x-10 sm:space-y-0">
 				{options.map((option) => {
-					const { label, value: optionValue } = toOption(option);
-					const optionId = `${inputId}-${optionValue}`;
+					const { label, value } = toOption(option);
 					return (
-						<div className="flex items-center gap-3" key={optionValue}>
-							<input
-								checked={value === optionValue}
-								className="h-5 w-5 border-gray-300 text-brand-primary focus:ring-brand-light"
-								disabled={disabled}
-								id={optionId}
-								name={name}
-								onBlur={onBlur}
-								onChange={onChange}
-								required={required}
-								type="radio"
-								value={optionValue}
-							/>
-							<label className="block font-medium text-gray-700 text-sm" htmlFor={optionId}>
+						<RadioField key={value} value={value}>
+							<RadioButton className="group flex items-center gap-3 font-medium text-gray-700 text-sm data-disabled:text-gray-400">
+								<span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 bg-white transition group-data-invalid:border-red-500 group-data-selected:border-brand-primary group-data-selected:bg-brand-primary group-data-focused:ring group-data-focused:ring-brand-light group-data-focused:ring-offset-2">
+									<span className="h-1.5 w-1.5 rounded-full bg-white opacity-0 group-data-selected:opacity-100" />
+								</span>
 								{label}
-							</label>
-						</div>
+							</RadioButton>
+						</RadioField>
 					);
 				})}
 			</div>
-			{message && <FieldMessage id={messageId} message={message} tone={tone} />}
-		</fieldset>
+			<FieldError className="flex items-start gap-1 text-red-600 text-sm">
+				<ExclamationCircleIcon className="h-5 w-5 shrink-0" />
+				<span>{errorMessage}</span>
+			</FieldError>
+		</AriaRadioGroup>
 	);
 }
