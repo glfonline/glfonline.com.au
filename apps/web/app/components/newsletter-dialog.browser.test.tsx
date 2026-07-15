@@ -4,7 +4,13 @@ import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 import { NewsletterDialog } from './newsletter-dialog';
 
-function renderDialog({ isOpen, onOpenChange = () => {} }: { isOpen: boolean; onOpenChange?: (open: boolean) => void }) {
+function renderDialog({
+	isOpen,
+	onOpenChange = () => {},
+}: {
+	isOpen: boolean;
+	onOpenChange?: (open: boolean) => void;
+}) {
 	const Stub = createRoutesStub([
 		{
 			path: '/',

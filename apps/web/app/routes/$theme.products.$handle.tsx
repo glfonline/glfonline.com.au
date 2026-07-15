@@ -31,8 +31,8 @@ import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { getSeoMeta, seoConfig } from '../seo';
 import { storefrontContext } from '../root';
+import { getSeoMeta, seoConfig } from '../seo';
 
 const productSchema = z.object({
 	handle: z.string().min(1),

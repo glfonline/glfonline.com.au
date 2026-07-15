@@ -10,7 +10,13 @@ export function SignupBanner() {
 	if (!showBanner) return null;
 	return (
 		<>
-			<NewsletterDialog isOpen={isDialogOpen} onOpenChange={(open) => { setDialogOpen(open); if (!open) setShowBanner(false); }} />
+			<NewsletterDialog
+				isOpen={isDialogOpen}
+				onOpenChange={(open) => {
+					setDialogOpen(open);
+					if (!open) setShowBanner(false);
+				}}
+			/>
 			<div className="fixed inset-x-0 bottom-0 isolate flex gap-x-6 overflow-hidden bg-[#006747] p-6 sm:before:flex-1">
 				<div className="flex flex-wrap items-center gap-x-4 gap-y-2">
 					<div className="flex flex-col items-start gap-4 text-white">
