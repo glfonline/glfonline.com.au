@@ -29,7 +29,7 @@ test.describe('Search and checkout flow', () => {
 		await page.getByRole('button', { name: 'Search' }).first().click();
 		await expect(page.getByTestId('search-input')).toBeVisible();
 		await page.getByTestId('search-input').fill('select height');
-		await page.getByRole('link', { name: 'Select Height Step Tees' }).click();
+		await page.getByRole('option', { name: 'Select Height Step Tees' }).click();
 
 		await addToCart(page);
 		await addToCart(page);
@@ -45,7 +45,7 @@ test.describe('Search and checkout flow', () => {
 		await expect(page.getByTestId('search-input')).toBeVisible();
 
 		await page.getByTestId('search-input').fill('select height');
-		await page.getByRole('link', { name: 'Select Height Step Tees' }).click();
+		await page.getByRole('option', { name: 'Select Height Step Tees' }).click();
 		await addToCart(page);
 		await page.getByRole('link', { name: CART_LINK_REGEX }).click();
 

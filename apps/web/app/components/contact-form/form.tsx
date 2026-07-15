@@ -96,14 +96,18 @@ export function ContactForm() {
 					}}
 					ref={formRef}
 				>
-					<form.AppField name="first_name">{(field) => <field.TextField label="First name" />}</form.AppField>
+					<form.AppField name="first_name">
+						{(field) => <field.TextField autoComplete="given-name" label="First name" />}
+					</form.AppField>
 
-					<form.AppField name="last_name">{(field) => <field.TextField label="Last name" />}</form.AppField>
+					<form.AppField name="last_name">
+						{(field) => <field.TextField autoComplete="family-name" label="Last name" />}
+					</form.AppField>
 
 					<form.AppField name="email">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField label="Email" type="email" />
+								<field.TextField autoComplete="email" label="Email" type="email" />
 							</div>
 						)}
 					</form.AppField>
@@ -111,7 +115,7 @@ export function ContactForm() {
 					<form.AppField name="phone_number">
 						{(field) => (
 							<div className="sm:col-span-2">
-								<field.TextField label="Phone number" type="tel" />
+								<field.TextField autoComplete="tel" label="Phone number" type="tel" />
 							</div>
 						)}
 					</form.AppField>

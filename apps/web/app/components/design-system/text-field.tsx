@@ -1,10 +1,8 @@
 import { clsx } from 'clsx';
-import { TextArea as AriaTextArea } from 'react-aria-components/TextArea';
-import { TextField as AriaTextField, FieldError, Label, Text } from 'react-aria-components/TextField';
+import { TextField as AriaTextField, FieldError, Input, Label, Text } from 'react-aria-components/TextField';
 import { ExclamationCircleIcon } from '../vectors/exclamation-circle-icon';
-import { fieldControlClasses } from './text-field';
 
-export type TextAreaProps = {
+export type TextFieldProps = {
 	/** Concisely label the field. */
 	label: string;
 	/** Provide additional information that will aid user input. */
@@ -13,7 +11,7 @@ export type TextAreaProps = {
 	errorMessage?: string;
 	/** Additional classes for the field wrapper (e.g. grid placement). */
 	className?: string;
-	rows?: number;
+	type?: React.HTMLInputTypeAttribute;
 	/** HTML autocomplete token so the browser can autofill the field. */
 	autoComplete?: React.HTMLInputAutoCompleteAttribute;
 	placeholder?: string;
@@ -26,17 +24,22 @@ export type TextAreaProps = {
 	value?: string;
 };
 
-export function TextArea({
+// The control is a real <input>, so native `focus:` matches the previous
+// design system (a ring on any focus — mouse or keyboard).
+export const fieldControlClasses =
+	'block w-full border border-gray-300 bg-white transition focus:border-brand-300 focus:ring focus:ring-brand-400 focus:ring-offset-2 group-data-invalid:border-red-300 group-data-invalid:focus:border-red-300 group-data-invalid:focus:ring-red-400';
+
+export function TextField({
 	label,
 	description,
 	errorMessage,
 	className,
 	isRequired,
-	rows,
+	type,
 	autoComplete,
 	placeholder,
 	...fieldProps
-}: TextAreaProps) {
+}: TextFieldProps) {
 	return (
 		<AriaTextField
 			{...fieldProps}
@@ -51,11 +54,11 @@ export function TextArea({
 					{description}
 				</Text>
 			) : null}
-			<AriaTextArea
+			<Input
 				autoComplete={autoComplete}
-				className={clsx(fieldControlClasses, 'min-h-24')}
+				className={clsx(fieldControlClasses, 'h-12')}
 				placeholder={placeholder}
-				rows={rows ?? 4}
+				type={type ?? 'text'}
 			/>
 			<FieldError className="flex items-start gap-1 text-red-600 text-sm">
 				<ExclamationCircleIcon className="h-5 w-5 shrink-0" />
