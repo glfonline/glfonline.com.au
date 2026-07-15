@@ -14,6 +14,7 @@ async function addToCart(page: Page) {
 	// Add to cart button stay clickable for the next step.
 	const closeDrawer = page.getByRole('button', { name: 'Close cart' });
 	await expect(closeDrawer).toBeVisible();
+	await expect(page.getByTestId('quantity-display')).toBeVisible();
 	await closeDrawer.click();
 	await expect(closeDrawer).toBeHidden();
 }

@@ -70,7 +70,18 @@ function FilledCart({
 	const navigation = useNavigation();
 	const { cart, linesDisplay } = result;
 
-	if (summaryPlacement === 'footer') {
+	const isFooter = summaryPlacement === 'footer';
+
+	const cartLinesSection = (
+		<section aria-labelledby="cart-heading" className={clsx(isFooter && 'min-h-0 flex-1 overflow-y-auto px-4')}>
+			<h2 className="sr-only" id="cart-heading">
+				Items in your shopping cart
+			</h2>
+			<CartLines linesDisplay={linesDisplay} result={result} />
+		</section>
+	);
+
+	if (isFooter) {
 		return (
 			<div className="@container/cart flex min-h-0 flex-1 flex-col">
 				{showHeading && (
@@ -80,14 +91,7 @@ function FilledCart({
 						</Heading>
 					</div>
 				)}
-
-				<section aria-labelledby="cart-heading" className="min-h-0 flex-1 overflow-y-auto px-4">
-					<h2 className="sr-only" id="cart-heading">
-						Items in your shopping cart
-					</h2>
-					<CartLines linesDisplay={linesDisplay} result={result} />
-				</section>
-
+				{cartLinesSection}
 				<CartSummary cart={cart} isPending={navigation.state !== 'idle'} placement="footer" />
 			</div>
 		);
@@ -101,13 +105,7 @@ function FilledCart({
 				</Heading>
 			)}
 			<div className="grid @5xl/cart:grid-cols-[minmax(0,1fr)_minmax(18rem,0.42fr)] grid-cols-1 items-start @5xl/cart:gap-12 gap-10">
-				<section aria-labelledby="cart-heading">
-					<h2 className="sr-only" id="cart-heading">
-						Items in your shopping cart
-					</h2>
-					<CartLines linesDisplay={linesDisplay} result={result} />
-				</section>
-
+				{cartLinesSection}
 				<CartSummary cart={cart} isPending={navigation.state !== 'idle'} placement="inline" />
 			</div>
 		</div>
@@ -245,16 +243,19 @@ function CartSummary({
 function LineItemPrice({ display }: { display: LineDisplay | undefined }) {
 	if (display == null) return null;
 
+	const compareAt = display.compareAt;
+	const showWasNow = display.showWasNow && compareAt != null;
+
 	return (
 		<div className="mt-1 flex flex-col gap-0.5 text-gray-900 text-sm">
-			{display.showWasNow && display.compareAt != null && (
+			{showWasNow && (
 				<del className="text-gray-500">
 					<span className="sr-only">Was </span>
-					{formatMoney(display.compareAt, 'AUD')}
+					{formatMoney(compareAt, 'AUD')}
 				</del>
 			)}
 			<span>
-				{display.showWasNow && display.compareAt != null && <span className="sr-only">Now </span>}
+				{showWasNow && <span className="sr-only">Now </span>}
 				{formatMoney(display.pricePerUnit, 'AUD')}
 			</span>
 			{display.discountLabels.map(({ label, amount }, index) => (
