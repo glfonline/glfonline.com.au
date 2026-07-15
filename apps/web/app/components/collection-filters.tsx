@@ -15,50 +15,6 @@ export type FilterOption = {
 	values: Array<string>;
 };
 
-function getSearchUrl({ location, value, key }: { location: Location; value: string; key: string }) {
-	const params = new URLSearchParams(location.search);
-	params.delete('cursor');
-	if (key === PRODUCT_TYPE) {
-		params.delete('after');
-	}
-	params.set(key, value);
-	return `${location.pathname}?${params.toString()}`;
-}
-
-function clearSearchUrl({ location, key }: { location: Location; key: string }) {
-	const params = new URLSearchParams(location.search);
-	params.delete('cursor');
-	params.delete(key);
-	return `${location.pathname}?${params.toString()}`;
-}
-
-function FilterDisclosure({ label, children }: { label: string; children: React.ReactNode }) {
-	return (
-		<Disclosure className="py-2">
-			{({ isExpanded }) => (
-				<>
-					<h2>
-						<Button
-							className="flex w-full items-center justify-between gap-6 px-4 py-2 outline-hidden data-focus-visible:ring-2 data-focus-visible:ring-brand-primary data-focus-visible:ring-inset"
-							slot="trigger"
-						>
-							<span className="-ml-4 font-bold">{label}</span>
-							<span className="-mr-4 inline-flex items-center">
-								{isExpanded ? (
-									<MinusIcon aria-hidden="true" className="h-5 w-5" />
-								) : (
-									<PlusIcon aria-hidden="true" className="h-5 w-5" />
-								)}
-							</span>
-						</Button>
-					</h2>
-					<DisclosurePanel className="flex flex-col">{children}</DisclosurePanel>
-				</>
-			)}
-		</Disclosure>
-	);
-}
-
 export function DisplayOptions({ options }: { options: Array<FilterOption> }) {
 	const location = useLocation();
 	const params = new URLSearchParams(location.search);
@@ -255,3 +211,47 @@ const sortOptions = [
 	label: string;
 	value: SortBy;
 }>;
+
+function getSearchUrl({ location, value, key }: { location: Location; value: string; key: string }) {
+	const params = new URLSearchParams(location.search);
+	params.delete('cursor');
+	if (key === PRODUCT_TYPE) {
+		params.delete('after');
+	}
+	params.set(key, value);
+	return `${location.pathname}?${params.toString()}`;
+}
+
+function clearSearchUrl({ location, key }: { location: Location; key: string }) {
+	const params = new URLSearchParams(location.search);
+	params.delete('cursor');
+	params.delete(key);
+	return `${location.pathname}?${params.toString()}`;
+}
+
+function FilterDisclosure({ label, children }: { label: string; children: React.ReactNode }) {
+	return (
+		<Disclosure className="py-2">
+			{({ isExpanded }) => (
+				<>
+					<h2>
+						<Button
+							className="flex w-full items-center justify-between gap-6 px-4 py-2 outline-hidden data-focus-visible:ring-2 data-focus-visible:ring-brand-primary data-focus-visible:ring-inset"
+							slot="trigger"
+						>
+							<span className="-ml-4 font-bold">{label}</span>
+							<span className="-mr-4 inline-flex items-center">
+								{isExpanded ? (
+									<MinusIcon aria-hidden="true" className="h-5 w-5" />
+								) : (
+									<PlusIcon aria-hidden="true" className="h-5 w-5" />
+								)}
+							</span>
+						</Button>
+					</h2>
+					<DisclosurePanel className="flex flex-col">{children}</DisclosurePanel>
+				</>
+			)}
+		</Disclosure>
+	);
+}

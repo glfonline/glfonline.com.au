@@ -15,7 +15,7 @@ export function Header() {
 
 	return (
 		<header className="sticky top-0 z-20 shrink-0 bg-white">
-			<MobileMenu open={open} setOpen={setOpen} />
+			<MobileMenu isOpen={open} onOpenChange={setOpen} />
 			<div className="relative">
 				<nav aria-label="Top">
 					<TopNav />

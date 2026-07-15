@@ -4,11 +4,11 @@ import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
 import { NewsletterDialog } from './newsletter-dialog';
 
-function renderDialog({ isOpen, onClose = () => {} }: { isOpen: boolean; onClose?: () => void }) {
+function renderDialog({ isOpen, onOpenChange = () => {} }: { isOpen: boolean; onOpenChange?: (open: boolean) => void }) {
 	const Stub = createRoutesStub([
 		{
 			path: '/',
-			Component: () => <NewsletterDialog isOpen={isOpen} onClose={onClose} />,
+			Component: () => <NewsletterDialog isOpen={isOpen} onOpenChange={onOpenChange} />,
 		},
 	]);
 	return render(<Stub initialEntries={['/']} />);
@@ -35,13 +35,13 @@ describe('NewsletterDialog (browser)', () => {
 		expect(screen.container.querySelector('[role="dialog"]')).toBeNull();
 	});
 
-	it('calls onClose when the user presses Escape', async () => {
-		const onClose = vi.fn();
-		const screen = await renderDialog({ isOpen: true, onClose });
+	it('calls onOpenChange(false) when the user presses Escape', async () => {
+		const onOpenChange = vi.fn();
+		const screen = await renderDialog({ isOpen: true, onOpenChange });
 
 		await expect.element(screen.getByRole('dialog')).toBeVisible();
 		await userEvent.keyboard('{Escape}');
 
-		expect(onClose).toHaveBeenCalled();
+		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
 });

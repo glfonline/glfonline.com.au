@@ -349,11 +349,11 @@ export default function ProductPage() {
 									const quantityInCart = variant?.node.id ? (quantityInCartByVariantId[variant.node.id] ?? 0) : 0;
 									const atStockLimit = quantityAvailable > 0 && quantityInCart >= quantityAvailable;
 									const fieldError = 'meta' in field.state ? field.state.meta.errors[0]?.message : undefined;
-									const buttonLabel = isProductUnavailable
-										? 'Sold Out'
-										: atStockLimit
-											? 'Maximum in cart'
-											: fieldError || addToCartErrorMessage || buttonText;
+									const buttonLabel = (() => {
+										if (isProductUnavailable) return 'Sold Out';
+										if (atStockLimit) return 'Maximum in cart';
+										return fieldError || addToCartErrorMessage || buttonText;
+									})();
 									return (
 										<>
 											<RadioGroup

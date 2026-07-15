@@ -13,22 +13,22 @@ import { socialLinks } from '../lib/constants';
 import { ChevronDownIcon } from './vectors/chevron-down-icon';
 
 type MobileMenuProps = {
-	open: boolean;
-	setOpen: (open: boolean) => void;
+	isOpen: boolean;
+	onOpenChange: (open: boolean) => void;
 };
 
-export function MobileMenu({ open, setOpen }: MobileMenuProps) {
+export function MobileMenu({ isOpen, onOpenChange }: MobileMenuProps) {
 	const { mainNavigation } = useLoaderData<typeof loader>();
 	const close = () => {
-		setOpen(false);
+		onOpenChange(false);
 	};
 
 	return (
 		<ModalOverlay
 			className="fixed inset-0 z-40 flex bg-black/25 transition-opacity duration-300 ease-linear data-entering:opacity-0 data-exiting:opacity-0 motion-reduce:transition-none lg:hidden"
 			isDismissable
-			isOpen={open}
-			onOpenChange={setOpen}
+			isOpen={isOpen}
+			onOpenChange={onOpenChange}
 		>
 			<Modal className="flex w-full max-w-xs transition duration-300 ease-in-out data-entering:-translate-x-full data-exiting:-translate-x-full motion-reduce:transition-none">
 				<Dialog

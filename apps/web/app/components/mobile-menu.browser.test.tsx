@@ -22,12 +22,12 @@ const mainNavigation = {
 	pages: [{ label: 'Sale', href: '/sale' }],
 };
 
-function renderMenu({ open, setOpen = () => {} }: { open: boolean; setOpen?: (open: boolean) => void }) {
+function renderMenu({ isOpen, onOpenChange = () => {} }: { isOpen: boolean; onOpenChange?: (open: boolean) => void }) {
 	const Stub = createRoutesStub([
 		{
 			path: '/',
 			loader: () => ({ mainNavigation }),
-			Component: () => <MobileMenu open={open} setOpen={setOpen} />,
+			Component: () => <MobileMenu isOpen={isOpen} onOpenChange={onOpenChange} />,
 		},
 	]);
 	return render(<Stub initialEntries={['/']} />);
@@ -35,7 +35,7 @@ function renderMenu({ open, setOpen = () => {} }: { open: boolean; setOpen?: (op
 
 describe('MobileMenu (browser)', () => {
 	it('shows a labelled dialog with a tab per category when open', async () => {
-		const screen = await renderMenu({ open: true });
+		const screen = await renderMenu({ isOpen: true });
 
 		await expect.element(screen.getByRole('dialog', { name: 'Menu' })).toBeVisible();
 		await expect.element(screen.getByRole('tab', { name: 'Ladies' })).toBeVisible();
@@ -43,13 +43,13 @@ describe('MobileMenu (browser)', () => {
 	});
 
 	it('renders nothing when closed', async () => {
-		const screen = await renderMenu({ open: false });
+		const screen = await renderMenu({ isOpen: false });
 
 		expect(screen.container.querySelector('[role="dialog"]')).toBeNull();
 	});
 
 	it('reveals a section’s links when its disclosure is expanded', async () => {
-		const screen = await renderMenu({ open: true });
+		const screen = await renderMenu({ isOpen: true });
 
 		const topsTrigger = screen.getByRole('button', { name: 'Tops' });
 		await expect.element(topsTrigger).toHaveAttribute('aria-expanded', 'false');
@@ -60,7 +60,7 @@ describe('MobileMenu (browser)', () => {
 	});
 
 	it('switches category panels when another tab is selected', async () => {
-		const screen = await renderMenu({ open: true });
+		const screen = await renderMenu({ isOpen: true });
 
 		await userEvent.click(screen.getByRole('tab', { name: 'Mens' }).element());
 
@@ -68,22 +68,22 @@ describe('MobileMenu (browser)', () => {
 	});
 
 	it('closes when the user presses Escape', async () => {
-		const setOpen = vi.fn();
-		const screen = await renderMenu({ open: true, setOpen });
+		const onOpenChange = vi.fn();
+		const screen = await renderMenu({ isOpen: true, onOpenChange });
 
 		await expect.element(screen.getByRole('dialog', { name: 'Menu' })).toBeVisible();
 		await userEvent.keyboard('{Escape}');
 
-		expect(setOpen).toHaveBeenCalledWith(false);
+		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
 
 	it('closes after a navigation link is activated', async () => {
-		const setOpen = vi.fn();
-		const screen = await renderMenu({ open: true, setOpen });
+		const onOpenChange = vi.fn();
+		const screen = await renderMenu({ isOpen: true, onOpenChange });
 
 		await userEvent.click(screen.getByRole('button', { name: 'Tops' }).element());
 		await userEvent.click(screen.getByRole('link', { name: 'Shirts' }).element());
 
-		expect(setOpen).toHaveBeenCalledWith(false);
+		expect(onOpenChange).toHaveBeenCalledWith(false);
 	});
 });
