@@ -1,3 +1,4 @@
+import { CartDrawer } from './cart-drawer';
 import { Footer } from './footer';
 import { Header } from './header';
 
@@ -11,6 +12,7 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 				Skip to content
 			</a>
 			<Header />
+			<CartDrawer />
 			<main className="mx-auto w-full max-w-7xl flex-1 scroll-mt-24 bg-white" id="main-content">
 				{children}
 			</main>
