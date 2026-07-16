@@ -1,4 +1,4 @@
-import { mergeForm, revalidateLogic, useStore } from '@tanstack/react-form';
+import { mergeForm, revalidateLogic, useSelector } from '@tanstack/react-form';
 import { formOptions, useTransform } from '@tanstack/react-form-remix';
 import { clsx } from 'clsx';
 import { useRef } from 'react';
@@ -7,7 +7,7 @@ import { Turnstile } from 'react-turnstile';
 import { focusFirstInvalidField } from '../../lib/focus-first-invalid-field';
 import { useAppForm } from '../../lib/form-context';
 import { getErrorMessage, getFormErrors, hasFieldErrors } from '../../lib/form-utils';
-import { useClientOnlyMount } from '../../lib/use-client-only-mount';
+import { ClientOnly } from '../../lib/use-client-only-mount';
 import { Button } from '../design-system/button';
 import { FieldMessage } from '../design-system/field';
 import { Heading } from '../design-system/heading';
@@ -30,7 +30,6 @@ const formOpts = formOptions({
 });
 
 export function NewsletterSignup() {
-	const { isMounted } = useClientOnlyMount();
 	const formRef = useRef<HTMLFormElement>(null);
 	const fetcher = useFetcher<typeof action>({
 		key: 'newsletter-form',
@@ -61,8 +60,8 @@ export function NewsletterSignup() {
 		},
 	});
 
-	const formErrors = useStore(form.store, getFormErrors);
-	const hasFieldsWithErrors = useStore(form.store, hasFieldErrors);
+	const formErrors = useSelector(form.store, getFormErrors);
+	const hasFieldsWithErrors = useSelector(form.store, hasFieldErrors);
 
 	// Only show form-level errors if there are no field-level errors
 	const showFormErrors = formErrors.length > 0 && !hasFieldsWithErrors;
@@ -127,17 +126,19 @@ export function NewsletterSignup() {
 
 						<form.AppField name="token">
 							{(field) => (
-								<div className="flex min-h-[65px] items-center sm:col-span-4">
-									{isMounted && (
-										<Turnstile
-											className="*:w-full!"
-											onVerify={field.handleChange}
-											sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
-											size="normal"
-											style={{ width: '100%' }}
-											theme="light"
-										/>
-									)}
+								<div className="flex min-h-16.25 items-center sm:col-span-4">
+									<ClientOnly>
+										{() => (
+											<Turnstile
+												className="*:w-full!"
+												onVerify={field.handleChange}
+												sitekey="0x4AAAAAAAC-VGG5RS47Tgsn"
+												size="normal"
+												style={{ width: '100%' }}
+												theme="light"
+											/>
+										)}
+									</ClientOnly>
 									<input name={field.name} type="hidden" value={field.state.value} />
 								</div>
 							)}

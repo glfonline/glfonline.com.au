@@ -22,8 +22,6 @@ export default {
 		'apps/web': {
 			entry: [
 				'app/routes/**/*.{ts,tsx}',
-				'app/components/**/*.{ts,tsx}',
-				'app/lib/**/*.{ts,tsx}',
 				'vitest.*.config.ts',
 			],
 			project: [
