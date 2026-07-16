@@ -1617,6 +1617,7 @@ type SanityImageMetadata {
 	location: Geopoint
 	lqip: String
 	palette: SanityImagePalette
+	thumbHash: String
 }
 
 input SanityImageMetadataFilter {
@@ -1629,6 +1630,7 @@ input SanityImageMetadataFilter {
 	location: GeopointFilter
 	lqip: StringFilter
 	palette: SanityImagePaletteFilter
+	thumbHash: StringFilter
 }
 
 input SanityImageMetadataSorting {
@@ -1641,6 +1643,7 @@ input SanityImageMetadataSorting {
 	location: GeopointSorting
 	lqip: SortOrder
 	palette: SanityImagePaletteSorting
+	thumbHash: SortOrder
 }
 
 type SanityImagePalette {
