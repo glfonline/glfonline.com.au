@@ -6,7 +6,8 @@ import { CART_ACTIONS, CART_INTENT } from '../lib/cart-actions';
 import type { CartView } from '../lib/cart-model';
 import { formatMoney } from '../lib/format-money';
 import type { LineDisplay } from '../lib/line-display';
-import { Button, ButtonLink } from './design-system/button';
+import { Button } from './design-system/button';
+import { ButtonLink } from './design-system/button-link';
 import { Heading } from './design-system/heading';
 import { PayPalMessages } from './paypal';
 

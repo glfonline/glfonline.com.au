@@ -5,8 +5,6 @@ import { capitalise } from './capitalise';
 import { PRODUCT_TYPE } from './product-filter-constants';
 import { sortSizes } from './sort-sizes';
 
-export { PRODUCT_TYPE };
-
 type Option = {
 	name: string;
 	values: Array<string>;

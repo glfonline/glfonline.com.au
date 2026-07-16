@@ -1,6 +1,6 @@
 import { clsx } from 'clsx';
-import { CheckCircleIcon } from '../../vectors/check-circle-icon';
-import { ExclamationCircleIcon } from '../../vectors/exclamation-circle-icon';
+import { CheckCircleIcon } from '../vectors/check-circle-icon';
+import { ExclamationCircleIcon } from '../vectors/exclamation-circle-icon';
 
 const messageIconMap = {
 	critical: ExclamationCircleIcon,

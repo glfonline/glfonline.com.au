@@ -4,7 +4,7 @@ import { NavLink, useLoaderData } from 'react-router';
 import { CHANTALE_PHONE, socialLinks } from '../lib/constants';
 import { useSearchHotkey } from '../lib/use-search-hotkey';
 import type { loader } from '../root';
-import { ButtonLink } from './design-system/button';
+import { ButtonLink } from './design-system/button-link';
 import { MegaMenu } from './mega-menu';
 import { MobileMenu } from './mobile-menu';
 import { SearchDialog } from './search-dialog';

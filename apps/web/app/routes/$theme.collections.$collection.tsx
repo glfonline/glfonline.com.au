@@ -5,7 +5,7 @@ import { data as json, Link, useLoaderData, useLocation } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Filters, MobileFilters } from '../components/collection-filters';
-import { ButtonLink } from '../components/design-system/button';
+import { ButtonLink } from '../components/design-system/button-link';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';

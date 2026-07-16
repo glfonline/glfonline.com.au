@@ -3,7 +3,7 @@ import { Fragment } from 'react';
 import type { MetaFunction } from 'react-router';
 import { data, useLoaderData } from 'react-router';
 import { z } from 'zod';
-import { getHeadingStyles } from '../components/design-system/heading';
+import { getHeadingStyles } from '../components/design-system/get-heading-styles';
 import { Divider } from '../components/divider';
 import { Hero } from '../components/hero';
 import { StoreLocationMap } from '../components/map';

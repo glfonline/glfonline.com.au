@@ -1,4 +1,4 @@
-import * as arrays from './arrays';
+import * as arrays from './arrays/block-content';
 import * as documents from './documents';
 import * as objects from './objects';
 

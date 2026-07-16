@@ -1,9 +1,9 @@
 import { clsx } from 'clsx';
 import { useCallback, useRef } from 'react';
-import { mergeRefs } from '../../../lib/merge-refs';
-import { Spinner } from '../spinner';
+import { mergeRefs } from '../../lib/merge-refs';
 import type { ButtonVariantProps } from './get-button-styles';
 import { getButtonStyles } from './get-button-styles';
+import { Spinner } from './spinner';
 
 export function Button({
 	children,

@@ -16,9 +16,11 @@ import { RadioButton, RadioField, RadioGroup } from 'react-aria-components/Radio
 import type { ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { Form, data as json, redirect, useActionData, useFetcher, useLoaderData } from 'react-router';
 import { z } from 'zod';
-import { Button, ButtonLink } from '../components/design-system/button';
+import { Button } from '../components/design-system/button';
+import { ButtonLink } from '../components/design-system/button-link';
 import { FieldMessage } from '../components/design-system/field';
-import { getHeadingStyles, Heading } from '../components/design-system/heading';
+import { getHeadingStyles } from '../components/design-system/get-heading-styles';
+import { Heading } from '../components/design-system/heading';
 import { PayPalMessages } from '../components/paypal';
 import { ImageGallery } from '../components/product-gallery';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
