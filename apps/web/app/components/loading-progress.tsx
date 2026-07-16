@@ -9,7 +9,7 @@ export function LoadingProgress() {
 
 	const navigation = useNavigation();
 	const isActive = navigation.state !== 'idle';
-	const progress = (() => {
+	const progress: number = (() => {
 		if (navigation.state === 'idle' && animationComplete) return 0;
 		if (navigation.state === 'submitting') return (4 / 12) * 100;
 		if (navigation.state === 'loading') return (10 / 12) * 100;

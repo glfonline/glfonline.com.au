@@ -94,7 +94,7 @@ export function NewsletterSignup() {
 						<form.AppField name="first_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField label="First name" />
+									<field.TextField autoComplete="given-name" label="First name" />
 								</div>
 							)}
 						</form.AppField>
@@ -102,7 +102,7 @@ export function NewsletterSignup() {
 						<form.AppField name="last_name">
 							{(field) => (
 								<div className="sm:col-span-2">
-									<field.TextField label="Last name" />
+									<field.TextField autoComplete="family-name" label="Last name" />
 								</div>
 							)}
 						</form.AppField>
@@ -110,7 +110,7 @@ export function NewsletterSignup() {
 						<form.AppField name="email">
 							{(field) => (
 								<div className="sm:col-span-4">
-									<field.TextField label="Email address" type="email" />
+									<field.TextField autoComplete="email" label="Email address" type="email" />
 								</div>
 							)}
 						</form.AppField>

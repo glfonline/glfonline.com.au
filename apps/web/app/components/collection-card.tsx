@@ -1,6 +1,6 @@
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
-import { ButtonLink } from './design-system/button';
+import { ButtonLink } from './design-system/button-link';
 
 export type CollectionCardProps = {
 	cta: {

@@ -1,5 +1,8 @@
-import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import { Button } from 'react-aria-components/Button';
+import { Dialog } from 'react-aria-components/Dialog';
+import { Heading } from 'react-aria-components/Heading';
+import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import { useLoaderData, useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
 import type { loader } from '../root';
@@ -25,40 +28,38 @@ export function CartDrawer() {
 	}
 
 	return (
-		<Dialog as="div" className="relative z-40" onClose={close} open={open} transition>
+		<ModalOverlay
+			className="fixed inset-0 z-40 flex justify-end bg-black/25 transition-opacity duration-300 ease-linear data-entering:opacity-0 data-exiting:opacity-0 motion-reduce:transition-none"
+			isDismissable
+			isOpen={open}
+			onOpenChange={(isOpen) => {
+				if (!isOpen) close();
+			}}
+		>
 			{/*
-			 * Entry/exit animation is CSS-driven, not JS-timed. `starting:` emits an
-			 * `@starting-style` rule so the browser guarantees the slid-out first frame
-			 * on mount — Headless UI's class-swap enter is otherwise skipped when the
-			 * drawer mounts inside a router navigation (the `?cart=open` redirect).
-			 * `data-closed:` defines the closed state for both enter and exit; under
-			 * reduced motion the slide is dropped to a plain opacity fade.
+			 * Entry/exit animation is CSS-driven via `data-entering`/`data-exiting`
+			 * utility classes — react-aria keeps the element mounted through the exit
+			 * transition, so no `@starting-style`/`starting:` hack is needed.
+			 * `motion-reduce:` drops the slide/fade for users who prefer reduced motion.
 			 */}
-			<DialogBackdrop
-				className="fixed inset-0 bg-black/25 starting:opacity-0 transition-opacity duration-300 ease-out data-closed:opacity-0"
-				transition
-			/>
-
-			<div className="fixed inset-0 z-40 flex justify-end">
-				<DialogPanel
-					className="flex h-full w-full max-w-md starting:translate-x-full transform-gpu flex-col overflow-hidden bg-white starting:opacity-0 shadow-xl transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] data-closed:translate-x-full data-closed:opacity-0 data-leave:duration-200 data-leave:ease-in motion-reduce:starting:translate-x-0 data-closed:motion-reduce:translate-x-0"
-					transition
-				>
+			<Modal className="flex h-full w-full max-w-md transition duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] data-entering:translate-x-full data-exiting:translate-x-full motion-reduce:transition-none">
+				<Dialog className="relative flex h-full w-full flex-col overflow-hidden bg-white shadow-xl outline-hidden">
 					<div className="flex shrink-0 items-center justify-between border-gray-200 border-b px-4 py-5">
-						<DialogTitle className="font-bold text-gray-900 text-lg">Cart</DialogTitle>
-						<button
-							className="-m-2 inline-flex items-center justify-center p-2 text-gray-400 hover:text-gray-500 focus:outline-hidden focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
-							onClick={close}
-							type="button"
+						<Heading className="font-bold text-gray-900 text-lg" slot="title">
+							Cart
+						</Heading>
+						<Button
+							className="-m-2 inline-flex items-center justify-center rounded-md p-2 text-gray-400 outline-hidden data-focus-visible:ring-2 data-focus-visible:ring-brand-primary"
+							slot="close"
 						>
 							<span className="sr-only">Close cart</span>
 							<XMarkIcon aria-hidden="true" className="h-6 w-6" />
-						</button>
+						</Button>
 					</div>
 
 					<CartContent result={cartResult} showHeading={false} summaryPlacement="footer" />
-				</DialogPanel>
-			</div>
-		</Dialog>
+				</Dialog>
+			</Modal>
+		</ModalOverlay>
 	);
 }

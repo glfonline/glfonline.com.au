@@ -1,5 +1,5 @@
 import type { ErrorResponse } from 'react-router';
-import { ButtonLink } from './design-system/button';
+import { ButtonLink } from './design-system/button-link';
 import { Heading } from './design-system/heading';
 import { SplitBackground } from './split-background';
 
