@@ -1,6 +1,6 @@
 import type { PayPalMessagesComponentProps } from '@paypal/react-paypal-js';
 import { lazy, Suspense } from 'react';
-import { useClientOnlyMount } from '../lib/use-client-only-mount';
+import { ClientOnly } from '../lib/use-client-only-mount';
 
 type PayPalMessagesProps = Pick<PayPalMessagesComponentProps, 'amount' | 'placement'>;
 
@@ -18,17 +18,15 @@ function PayPalSkeleton() {
 }
 
 export function PayPalMessages({ amount, placement }: PayPalMessagesProps) {
-	const { isMounted } = useClientOnlyMount();
-
 	return (
 		<div className="min-h-5" data-testid="paypal-messages">
-			{isMounted ? (
-				<Suspense fallback={<PayPalSkeleton />}>
-					<ClientPayPalMessages amount={amount} placement={placement} />
-				</Suspense>
-			) : (
-				<PayPalSkeleton />
-			)}
+			<ClientOnly fallback={<PayPalSkeleton />}>
+				{() => (
+					<Suspense fallback={<PayPalSkeleton />}>
+						<ClientPayPalMessages amount={amount} placement={placement} />
+					</Suspense>
+				)}
+			</ClientOnly>
 		</div>
 	);
 }
