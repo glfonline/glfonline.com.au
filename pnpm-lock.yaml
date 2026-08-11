@@ -52,7 +52,7 @@ catalogs:
       specifier: ^2.1.1
       version: 2.1.1
     '@sanity/vision':
-      specifier: ^6.8.0
+      specifier: ^6.9.0
       version: 6.9.0
     '@sentry/react-router':
       specifier: ^10.69.0
@@ -175,10 +175,10 @@ catalogs:
       specifier: ^6.18.1
       version: 6.18.1
     sanity:
-      specifier: ^6.8.0
+      specifier: ^6.9.0
       version: 6.9.0
     styled-components:
-      specifier: ^6.4.4
+      specifier: ^6.5.0
       version: 6.5.0
     tailwind-merge:
       specifier: ^3.6.0

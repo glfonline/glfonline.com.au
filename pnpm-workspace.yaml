@@ -44,7 +44,7 @@ catalog:
   '@react-router/serve': ^8.3.0
   '@sanity/asset-utils': ^2.3.0
   '@sanity/image-url': ^2.1.1
-  '@sanity/vision': ^6.8.0
+  '@sanity/vision': ^6.9.0
   '@sentry/react-router': ^10.69.0
   '@tailwindcss/forms': ^0.5.11
   '@tailwindcss/typography': ^0.5.20
@@ -85,8 +85,8 @@ catalog:
   remeda: ^2.39.0
   remix-utils: ^9.3.1
   resend: ^6.18.1
-  sanity: ^6.8.0
-  styled-components: ^6.4.4
+  sanity: ^6.9.0
+  styled-components: ^6.5.0
   tailwind-merge: ^3.6.0
   tailwindcss: ^4.3.3
   tailwindcss-animate: ^1.0.7
