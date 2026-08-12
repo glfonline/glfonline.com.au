@@ -2,10 +2,9 @@ __generated__
 .cache
 .env
 .env.sentry-build-plugin
+.netlify
 .output
 .sentryclirc
-.vercel
-api
 build/
 node_modules
 public/build

@@ -5,10 +5,8 @@ export default {
 	ignoreDependencies: [
 		'@tanstack/query-core',
 		'@tanstack/react-query-devtools',
-		'@vercel/node',
 		'isbot',
 		'react-router-dom',
-		'turbo-ignore',
 	],
 	ignoreExportsUsedInFile: {
 		interface: true,

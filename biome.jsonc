@@ -35,14 +35,14 @@
 			"!**/src/graphql-env.d.ts",
 			"!**/.cache",
 			"!**/.env",
+			"!**/.netlify",
 			"!**/.sanity",
 			"!**/.tsconfig.tsbuildinfo",
 			"!**/.turbo",
 			"!**/build",
 			"!**/dist",
 			"!**/node_modules",
-			"!**/pnpm-lock.yaml",
-			"!**/apps/web/api"
+			"!**/pnpm-lock.yaml"
 		]
 	},
 	"formatter": {
