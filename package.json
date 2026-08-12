@@ -42,7 +42,6 @@
 		"@playwright/test": "catalog:",
 		"knip": "catalog:",
 		"turbo": "catalog:",
-		"turbo-ignore": "catalog:",
 		"typescript": "catalog:"
 	},
 	"engines": {

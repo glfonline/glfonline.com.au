@@ -6,7 +6,7 @@
 			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"],
 			"env": [
 				"AKISMET_API_KEY",
-				"COMMIT_SHA",
+				"COMMIT_REF",
 				"DEV",
 				"ENABLE_EXPERIMENTAL_COREPACK",
 				"ENCRYPTION_KEY",
@@ -21,7 +21,7 @@
 				"SENTRY_PROJECT",
 				"TURNSTILE_SECRET_KEY"
 			],
-			"outputs": [".cache/**", "build/**", "public/build/**"]
+			"outputs": [".cache/**", ".netlify/**", "build/**", "public/build/**"]
 		},
 		"check:lint": {
 			"env": ["DEV", "MODE", "PROD"]

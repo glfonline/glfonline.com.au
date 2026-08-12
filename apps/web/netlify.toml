@@ -1,0 +1,11 @@
+# Netlify reads this file because the site's Package directory is set to
+# apps/web. Paths are relative to the base directory (the repository root),
+# where pnpm installs the workspace.
+[build]
+command = "pnpm build:web"
+publish = "apps/web/build/client"
+
+# Skip the build when a commit only touched the Sanity CMS app, which deploys
+# separately. Exit 0 skips, non-zero builds — so anything else (including a
+# failed diff) is fail-safe and triggers a build.
+ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF -- . ':(exclude)apps/cms'"

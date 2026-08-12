@@ -20,12 +20,6 @@ trustLockfile: true
 trustPolicy: no-downgrade
 
 trustPolicyExclude:
-  - '@vercel/build-utils@14.0.1'
-  - '@vercel/error-utils@2.2.1'
-  - '@vercel/node@5.9.5'
-  - '@vercel/python-analysis@0.13.1'
-  - '@vercel/react-router@1.3.2'
-  - '@vercel/static-config@3.4.1'
   - resend@6.18.1
 
 catalog:
@@ -35,6 +29,7 @@ catalog:
   '@graphql-codegen/schema-ast': ^6.1.0
   '@heroicons/react': ^2.2.0
   '@manypkg/cli': ^0.25.1
+  '@netlify/vite-plugin-react-router': ^4.0.0
   '@paypal/react-paypal-js': ^9.3.0
   '@playwright/test': ^1.62.1
   '@portabletext/react': ^6.2.0
@@ -60,8 +55,6 @@ catalog:
   '@types/react': ^19.2.18
   '@types/react-dom': ^19.2.4
   '@unpic/react': ^1.0.2
-  '@vercel/node': ^5.9.5
-  '@vercel/react-router': ^1.3.2
   '@vitejs/plugin-react': ^6.0.5
   '@vitest/browser-playwright': ^4.1.10
   algoliasearch: ^5.56.0
@@ -93,7 +86,6 @@ catalog:
   tiny-invariant: ^1.3.3
   tsdown: ^0.22.14
   turbo: ^2.10.8
-  turbo-ignore: ^2.10.8
   typescript: ^6.0.3
   vite: ^8.2.0
   vitest: ^4.1.10
