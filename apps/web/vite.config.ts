@@ -32,6 +32,21 @@ const sentryConfig: SentryReactRouterBuildOptions = {
 	},
 };
 
+function isSentryUploadValidationEnabled(): boolean {
+	return ['true', '1'].includes(process.env.SENTRY_UPLOAD ?? '');
+}
+
+function validateSentryUploadConfig(): void {
+	const missingEnvironmentVariables = [
+		!process.env.SENTRY_AUTH_TOKEN && 'SENTRY_AUTH_TOKEN',
+		!process.env.WORKERS_CI_COMMIT_SHA && 'WORKERS_CI_COMMIT_SHA',
+	].filter(Boolean);
+
+	if (missingEnvironmentVariables.length === 0) return;
+
+	throw new Error(`SENTRY_UPLOAD is enabled but ${missingEnvironmentVariables.join(', ')} is missing.`);
+}
+
 /**
  * `@sentry/react-router`'s exports map lists its `browser` condition before its
  * `worker` one, so the Cloudflare plugin's condition set resolves the bare
@@ -59,6 +74,10 @@ export default defineConfig(async (config) => {
 		tailwindcss(),
 		sentryCloudflareResolver(),
 	];
+
+	if (config.mode === 'production' && isSentryUploadValidationEnabled()) {
+		validateSentryUploadConfig();
+	}
 
 	if (config.mode === 'production' && process.env.SENTRY_AUTH_TOKEN) {
 		const sentryPlugin = await sentryReactRouter(sentryConfig, config);
