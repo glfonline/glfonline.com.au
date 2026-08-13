@@ -1,0 +1,16 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	"name": "glfonline-web",
+	"main": "./workers/app.ts",
+	// `nodejs_compat` gives us AsyncLocalStorage (needed by Sentry) and, from
+	// 2025-04-01 onwards, Cloudflare populates `process.env` from bindings.
+	"compatibility_date": "2026-08-01",
+	"compatibility_flags": ["nodejs_compat"],
+	"assets": {
+		"directory": "./build/client"
+	},
+	"observability": {
+		"enabled": true
+	},
+	"upload_source_maps": true
+}

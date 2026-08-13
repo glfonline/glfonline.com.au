@@ -1,40 +1,47 @@
-import '../instrumentation.server.mjs';
-import { PassThrough } from 'node:stream';
-import { createReadableStreamFromReadable } from '@react-router/node';
-import * as Sentry from '@sentry/react-router';
-import { renderToPipeableStream } from 'react-dom/server';
+import * as Sentry from '@sentry/react-router/cloudflare';
+import { isbot } from 'isbot';
+import { renderToReadableStream } from 'react-dom/server';
 import type { ActionFunctionArgs, EntryContext, LoaderFunctionArgs } from 'react-router';
 import { ServerRouter } from 'react-router';
 
-export default function handleRequest(
+// workerd has no `renderToPipeableStream`, so render to a web stream instead.
+async function handleRequest(
 	request: Request,
 	responseStatusCode: number,
 	responseHeaders: Headers,
 	routerContext: EntryContext,
-) {
-	return new Promise((resolve, reject) => {
-		const { pipe } = renderToPipeableStream(<ServerRouter context={routerContext} url={request.url} />, {
-			onShellReady() {
-				responseHeaders.set('Content-Type', 'text/html');
+): Promise<Response> {
+	let shellRendered = false;
 
-				const body = new PassThrough();
-				const stream = createReadableStreamFromReadable(body);
+	const body = await renderToReadableStream(<ServerRouter context={routerContext} url={request.url} />, {
+		signal: request.signal,
+		onError(err) {
+			responseStatusCode = 500;
+			// Errors thrown once the shell has flushed can no longer change the
+			// status code, so surface them here. Shell errors reject the promise
+			// above and are reported by `handleError` instead.
+			if (shellRendered) {
+				console.error(err);
+			}
+		},
+	});
+	shellRendered = true;
 
-				resolve(
-					new Response(stream, {
-						headers: responseHeaders,
-						status: responseStatusCode,
-					}),
-				);
+	// Crawlers need the complete markup rather than a streamed shell.
+	const userAgent = request.headers.get('user-agent');
+	if ((userAgent && isbot(userAgent)) || routerContext.isSpaMode) {
+		await body.allReady;
+	}
 
-				pipe(body);
-			},
-			onShellError(error) {
-				reject(error);
-			},
-		});
+	responseHeaders.set('Content-Type', 'text/html');
+
+	return new Response(Sentry.injectTraceMetaTags(body), {
+		headers: responseHeaders,
+		status: responseStatusCode,
 	});
 }
+
+export default Sentry.wrapSentryHandleRequest(handleRequest);
 
 export function handleError(error: unknown, { request }: LoaderFunctionArgs | ActionFunctionArgs): void {
 	// Skip capturing if the request is aborted as Remix docs suggest

@@ -2,10 +2,10 @@
 .DS_Store
 .env
 .eslintcache
-.netlify
 .next
 .react-router/
 .turbo
+.wrangler
 *.log
 dist
 node_modules
