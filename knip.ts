@@ -2,12 +2,7 @@ import type { KnipConfig } from 'knip';
 
 export default {
 	ignoreBinaries: ['react-router-serve'],
-	ignoreDependencies: [
-		'@tanstack/query-core',
-		'@tanstack/react-query-devtools',
-		'isbot',
-		'react-router-dom',
-	],
+	ignoreDependencies: ['@tanstack/query-core', '@tanstack/react-query-devtools', 'isbot', 'react-router-dom'],
 	ignoreExportsUsedInFile: {
 		interface: true,
 		type: true,
@@ -18,10 +13,7 @@ export default {
 			project: ['**/*.ts', '!dist/**', '!.sanity/**'],
 		},
 		'apps/web': {
-			entry: [
-				'app/routes/**/*.{ts,tsx}',
-				'vitest.*.config.ts',
-			],
+			entry: ['app/routes/**/*.{ts,tsx}', 'vitest.*.config.ts'],
 			project: [
 				'app/**/*.{ts,tsx}',
 				'vitest.*.config.ts',
