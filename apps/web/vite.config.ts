@@ -17,13 +17,17 @@ const sentryConfig: SentryReactRouterBuildOptions = {
 
 	unstable_sentryVitePluginOptions: {
 		release: {
-			name: process.env.COMMIT_REF,
+			name: process.env.WORKERS_CI_COMMIT_SHA,
 			setCommits: {
 				auto: true,
 			},
 		},
 		sourcemaps: {
-			filesToDeleteAfterUpload: ['./build/**/*.map'],
+			// Client maps are deleted so they aren't publicly served from the assets
+			// directory. Server maps are kept: they're inside the Worker bundle (never
+			// public), and `upload_source_maps` in wrangler.jsonc needs them present or
+			// `wrangler deploy` fails on the dangling sourceMappingURL reference.
+			filesToDeleteAfterUpload: ['./build/client/**/*.map'],
 		},
 	},
 };
