@@ -21,7 +21,7 @@
 				"SENTRY_PROJECT",
 				"TURNSTILE_SECRET_KEY"
 			],
-			"outputs": [".cache/**", ".netlify/**", "build/**", "public/build/**"]
+			"outputs": [".cache/**", ".wrangler/**", "build/**", "public/build/**"]
 		},
 		"check:lint": {
 			"env": ["DEV", "MODE", "PROD"]

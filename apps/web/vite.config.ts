@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 
-import netlifyReactRouter from '@netlify/vite-plugin-react-router';
+import { cloudflare } from '@cloudflare/vite-plugin';
 import { reactRouter } from '@react-router/dev/vite';
 import type { SentryReactRouterBuildOptions } from '@sentry/react-router';
 import { sentryReactRouter } from '@sentry/react-router';
@@ -28,8 +28,33 @@ const sentryConfig: SentryReactRouterBuildOptions = {
 	},
 };
 
+/**
+ * `@sentry/react-router`'s exports map lists its `browser` condition before its
+ * `worker` one, so the Cloudflare plugin's condition set resolves the bare
+ * specifier to `index.client.js` — which React Router then strips out of the
+ * server build because of the `.client` suffix. Point the Worker build at the
+ * cloudflare entry point instead.
+ */
+function sentryCloudflareResolver(): PluginOption {
+	return {
+		name: 'glf:sentry-react-router-cloudflare',
+		enforce: 'pre',
+		applyToEnvironment: (environment) => environment.name === 'ssr',
+		async resolveId(source, importer, options) {
+			if (source !== '@sentry/react-router') return null;
+
+			return await this.resolve('@sentry/react-router/cloudflare', importer, options);
+		},
+	};
+}
+
 export default defineConfig(async (config) => {
-	const plugins: Array<PluginOption> = [reactRouter(), tailwindcss(), netlifyReactRouter()];
+	const plugins: Array<PluginOption> = [
+		cloudflare({ viteEnvironment: { name: 'ssr' } }),
+		reactRouter(),
+		tailwindcss(),
+		sentryCloudflareResolver(),
+	];
 
 	if (config.mode === 'production' && process.env.SENTRY_AUTH_TOKEN) {
 		const sentryPlugin = await sentryReactRouter(sentryConfig, config);

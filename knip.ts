@@ -1,7 +1,6 @@
 import type { KnipConfig } from 'knip';
 
 export default {
-	ignoreBinaries: ['react-router-serve'],
 	ignoreDependencies: ['@tanstack/query-core', '@tanstack/react-query-devtools', 'isbot', 'react-router-dom'],
 	ignoreExportsUsedInFile: {
 		interface: true,
@@ -16,12 +15,14 @@ export default {
 			entry: ['app/routes/**/*.{ts,tsx}', 'vitest.*.config.ts'],
 			project: [
 				'app/**/*.{ts,tsx}',
+				'workers/**/*.ts',
 				'vitest.*.config.ts',
 				'!**/*.test.{ts,tsx}',
 				'!**/*.spec.{ts,tsx}',
 				'!build/**',
 				'!.cache/**',
 				'!.turbo/**',
+				'!.wrangler/**',
 			],
 			ignoreDependencies: ['@tailwindcss/forms', '@tailwindcss/typography', 'tailwindcss', 'tailwindcss-animate'],
 		},
