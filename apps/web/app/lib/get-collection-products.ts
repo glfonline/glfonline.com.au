@@ -71,7 +71,7 @@ export async function getProductsFromCollectionByTag({
 	return {
 		image: {
 			altText: collection.image?.altText ?? undefined,
-			url: (collection.image?.url as string) ?? undefined,
+			url: collection.image?.url ?? undefined,
 		},
 		pageInfo: collection.products.pageInfo,
 		products: collection.products.edges,

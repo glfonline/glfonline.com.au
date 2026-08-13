@@ -40,6 +40,6 @@ export function processCollectionData({
 	// Return with products explicitly marked as non-undefined array
 	return {
 		...collection,
-		products: collection.products as NonNullable<typeof collection.products>,
+		products: collection.products,
 	};
 }

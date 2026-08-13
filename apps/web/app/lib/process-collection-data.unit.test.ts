@@ -9,6 +9,57 @@ import { captureException } from '@sentry/react-router';
 import { getProductsFromCollectionByTag } from './get-collection-products';
 import { processCollectionData } from './process-collection-data';
 
+type CollectionPromiseResult = PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
+type Collection = NonNullable<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
+type ProductEdge = Collection['products'][number];
+
+function createProductEdge(overrides: Partial<ProductEdge['node']> = {}): ProductEdge {
+	return {
+		node: {
+			availableForSale: true,
+			compareAtPriceRange: {
+				maxVariantPrice: { amount: 60, currencyCode: 'AUD' },
+				minVariantPrice: { amount: 60, currencyCode: 'AUD' },
+			},
+			featuredImage: null,
+			handle: 'daily-sports-tee',
+			id: 'gid://shopify/Product/1',
+			priceRange: {
+				maxVariantPrice: { amount: 50, currencyCode: 'AUD' },
+				minVariantPrice: { amount: 50, currencyCode: 'AUD' },
+			},
+			tags: [],
+			title: 'Daily Sports Tee',
+			variants: { edges: [] },
+			...overrides,
+		},
+	};
+}
+
+function createCollection(overrides: Partial<Collection> = {}): Collection {
+	return {
+		image: { altText: 'alt text', url: 'https://cdn.shopify.com/image.jpg' },
+		pageInfo: { endCursor: 'abc', hasNextPage: false, hasPreviousPage: false },
+		products: [createProductEdge()],
+		title: 'Daily Sports',
+		...overrides,
+	};
+}
+
+function createStorefront(request: Storefront['request']): Storefront {
+	return { request };
+}
+
+function catchResponse(fn: () => unknown): Response {
+	try {
+		fn();
+	} catch (error) {
+		if (error instanceof Response) return error;
+		throw error;
+	}
+	throw new Error('Expected the call to throw a Response');
+}
+
 describe('processCollectionData', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -16,103 +67,89 @@ describe('processCollectionData', () => {
 	});
 
 	it('throws a 404 when the collection promise fulfills with null (unknown handle)', () => {
-		const collectionPromise: PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>> = {
+		const collectionPromise: CollectionPromiseResult = {
 			status: 'fulfilled',
 			value: null,
 		};
 
-		try {
+		const response = catchResponse(() =>
 			processCollectionData({
 				collectionHandle: 'unknown-handle',
 				collectionPromise,
 				theme: 'ladies',
-			});
-			expect.unreachable('processCollectionData should have thrown');
-		} catch (error) {
-			expect(error).toBeInstanceOf(Response);
-			expect((error as Response).status).toBe(404);
-		}
+			}),
+		);
+
+		expect(response.status).toBe(404);
 	});
 
 	it('throws a 500 when the collection promise rejects with a genuine upstream error', () => {
-		const collectionPromise: PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>> = {
+		const collectionPromise: CollectionPromiseResult = {
 			reason: new Error('upstream failure'),
 			status: 'rejected',
 		};
 
-		try {
+		const response = catchResponse(() =>
 			processCollectionData({
 				collectionHandle: 'daily-sports',
 				collectionPromise,
 				theme: 'ladies',
-			});
-			expect.unreachable('processCollectionData should have thrown');
-		} catch (error) {
-			expect(error).toBeInstanceOf(Response);
-			expect((error as Response).status).toBe(500);
-		}
+			}),
+		);
 
+		expect(response.status).toBe(500);
 		expect(captureException).toHaveBeenCalledTimes(1);
 	});
 
 	it('produces a 404, not a 500, when the collection promise rejects with an AbortError', () => {
 		// An aborted request is not a server error - it falls through to the
 		// null-collection branch and resolves as a 404 rather than a 500.
-		const collectionPromise: PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>> = {
+		const collectionPromise: CollectionPromiseResult = {
 			reason: new DOMException('The operation was aborted', 'AbortError'),
 			status: 'rejected',
 		};
 
-		try {
+		const response = catchResponse(() =>
 			processCollectionData({
 				collectionHandle: 'daily-sports',
 				collectionPromise,
 				theme: 'ladies',
-			});
-			expect.unreachable('processCollectionData should have thrown');
-		} catch (error) {
-			expect(error).toBeInstanceOf(Response);
-			expect((error as Response).status).toBe(404);
-		}
+			}),
+		);
 
+		expect(response.status).toBe(404);
 		expect(captureException).not.toHaveBeenCalled();
 	});
 
 	it('throws a 500 when the collection fulfills but products is not an array', () => {
-		const collectionPromise = {
+		const collectionPromise: CollectionPromiseResult = {
 			status: 'fulfilled',
 			value: {
-				image: { altText: undefined, url: undefined },
-				pageInfo: undefined,
-				products: undefined,
-				title: 'Daily Sports',
+				...createCollection(),
+				// Intentionally invalid: the generated types claim `products` is
+				// always an array, but this test exercises the runtime guard that
+				// catches Shopify's response lying about that.
+				products: undefined as unknown as Collection['products'],
 			},
-		} as unknown as PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
+		};
 
-		try {
+		const response = catchResponse(() =>
 			processCollectionData({
 				collectionHandle: 'daily-sports',
 				collectionPromise,
 				theme: 'ladies',
-			});
-			expect.unreachable('processCollectionData should have thrown');
-		} catch (error) {
-			expect(error).toBeInstanceOf(Response);
-			expect((error as Response).status).toBe(500);
-		}
+			}),
+		);
+
+		expect(response.status).toBe(500);
 	});
 
 	it('returns the collection data with products intact on success', () => {
-		const products = [{ node: { id: 'gid://shopify/Product/1' } }];
-		const collectionPromise = {
+		const products = [createProductEdge()];
+		const collectionPromise: CollectionPromiseResult = {
 			status: 'fulfilled',
-			value: {
-				image: { altText: 'alt text', url: 'https://cdn.shopify.com/image.jpg' },
-				pageInfo: { endCursor: 'abc', hasNextPage: false },
-				products,
-				title: 'Daily Sports',
-			},
-		} as unknown as PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
+			value: createCollection({ products }),
+		};
 
 		const result = processCollectionData({
 			collectionHandle: 'daily-sports',
@@ -131,9 +168,7 @@ describe('getProductsFromCollectionByTag', () => {
 	});
 
 	it('returns null when the storefront resolves an unknown handle to a null collection', async () => {
-		const storefront = {
-			request: vi.fn().mockResolvedValue({ collection: null }),
-		} as unknown as Storefront;
+		const storefront = createStorefront(vi.fn().mockResolvedValue({ collection: null }));
 
 		const result = await getProductsFromCollectionByTag({
 			handle: 'unknown-handle',
@@ -145,9 +180,7 @@ describe('getProductsFromCollectionByTag', () => {
 	});
 
 	it('rejects (does not swallow) when the storefront request throws', async () => {
-		const storefront = {
-			request: vi.fn().mockRejectedValue(new Error('network error')),
-		} as unknown as Storefront;
+		const storefront = createStorefront(vi.fn().mockRejectedValue(new Error('network error')));
 
 		await expect(
 			getProductsFromCollectionByTag({
