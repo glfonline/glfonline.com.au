@@ -8,7 +8,7 @@ import { Filters, MobileFilters } from '../components/collection-filters';
 import { ButtonLink } from '../components/design-system/button-link';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
-import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { CACHE_COLLECTION, routeHeaders } from '../lib/cache';
 import { badRequest, notFound, serverError } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
@@ -157,7 +157,7 @@ export async function loader({ context, params, url }: LoaderFunctionArgs) {
 		},
 		{
 			headers: {
-				'Cache-Control': CACHE_SHORT,
+				'Cache-Control': CACHE_COLLECTION,
 			},
 		},
 	);

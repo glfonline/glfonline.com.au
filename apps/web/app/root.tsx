@@ -81,11 +81,11 @@ export const links: LinksFunction = () => {
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
-	const session = await getSession(request);
-	const cart = createCart({ session, storefront });
+	const session = request.headers.get('Cookie') ? await getSession(request) : undefined;
+	const cart = session ? createCart({ session, storefront }) : undefined;
 
 	const [view, { shop }, mainNavigation] = await Promise.all([
-		cart.read(),
+		cart ? cart.read() : Promise.resolve({ type: 'empty' } as const),
 		storefront.request(SHOP_QUERY),
 		getMainNavigation(),
 	]);
@@ -110,9 +110,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 			shop,
 		},
 		{
-			headers: {
-				'Set-Cookie': await session.commitSession(),
-			},
+			headers: session ? { 'Set-Cookie': await session.commitSession() } : undefined,
 		},
 	);
 }
