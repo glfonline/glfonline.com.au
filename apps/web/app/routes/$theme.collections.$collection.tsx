@@ -156,6 +156,9 @@ export async function loader({ context, params, url }: LoaderFunctionArgs) {
 			title: collection.title,
 		},
 		{
+			// The edge lifetime for anonymous requests is set by the `CachedApp`
+			// entrypoint in `workers/app.ts`, so this header is only what
+			// browsers see.
 			headers: {
 				'Cache-Control': CACHE_SHORT,
 			},

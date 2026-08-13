@@ -29,9 +29,10 @@ import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
-import { createCart } from './lib/cart-model';
+import { createCart, EMPTY_CART_VIEW } from './lib/cart-model';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
+import { hasSessionCookie } from './lib/session-cookie';
 import { getSeoMeta, seoConfig } from './seo';
 import tailwindCssUrl from './tailwind.css?url';
 
@@ -81,11 +82,12 @@ export const links: LinksFunction = () => {
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
-	const session = await getSession(request);
-	const cart = createCart({ session, storefront });
+	// Only load an existing session; `Set-Cookie` prevents anonymous caching.
+	const session = hasSessionCookie(request.headers.get('Cookie')) ? await getSession(request) : null;
+	const cart = session ? createCart({ session, storefront }) : null;
 
 	const [view, { shop }, mainNavigation] = await Promise.all([
-		cart.read(),
+		cart ? cart.read() : EMPTY_CART_VIEW,
 		storefront.request(SHOP_QUERY),
 		getMainNavigation(),
 	]);
@@ -102,6 +104,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 		}
 	}
 
+	const responseInit = session ? { headers: { 'Set-Cookie': await session.commitSession() } } : undefined;
+
 	return data(
 		{
 			cartCount,
@@ -109,11 +113,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 			mainNavigation,
 			shop,
 		},
-		{
-			headers: {
-				'Set-Cookie': await session.commitSession(),
-			},
-		},
+		responseInit,
 	);
 }
 

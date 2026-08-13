@@ -61,6 +61,9 @@ function generateCacheControlHeader(cacheOptions: CachingStrategy): string {
 	return cacheControl.join(', ');
 }
 
+/** Cloudflare's edge-only cache header. */
+export const CDN_CACHE_CONTROL_HEADER = 'Cloudflare-CDN-Cache-Control';
+
 export function routeHeaders({ loaderHeaders }: { loaderHeaders: Headers }) {
 	// Keep the same cache-control headers when loading the page directly
 	// versus when transitioning to the page from other areas in the app
@@ -94,6 +97,17 @@ function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
 	};
 }
 
+// `s-maxage` implies `proxy-revalidate`, preventing stale-while-revalidate (RFC 9111 §4.2.4).
+function CacheCollectionEdge(overrideOptions?: CachingStrategy): AllCacheOptions {
+	guardExpirableModeType(overrideOptions);
+	return {
+		mode: PUBLIC,
+		maxAge: 300, // 5 minutes
+		staleWhileRevalidate: 3600, // 1 hour
+		...overrideOptions,
+	};
+}
+
 function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
@@ -115,6 +129,7 @@ function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 }
 
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
+export const CACHE_COLLECTION_EDGE = generateCacheControlHeader(CacheCollectionEdge());
 export const CACHE_MEDIUM = generateCacheControlHeader(CacheMedium());
 export const CACHE_LONG = generateCacheControlHeader(CacheLong());
 export const CACHE_NONE = generateCacheControlHeader(CacheNone());
