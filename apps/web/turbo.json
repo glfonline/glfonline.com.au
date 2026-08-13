@@ -6,7 +6,6 @@
 			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"],
 			"env": [
 				"AKISMET_API_KEY",
-				"COMMIT_REF",
 				"DEV",
 				"ENABLE_EXPERIMENTAL_COREPACK",
 				"ENCRYPTION_KEY",
@@ -19,7 +18,8 @@
 				"SENTRY_DSN",
 				"SENTRY_ORG",
 				"SENTRY_PROJECT",
-				"TURNSTILE_SECRET_KEY"
+				"TURNSTILE_SECRET_KEY",
+				"WORKERS_CI_COMMIT_SHA"
 			],
 			"outputs": [".cache/**", ".wrangler/**", "build/**", "public/build/**"]
 		},
