@@ -209,7 +209,7 @@ catalogs:
       version: 4.4.3
 
 overrides:
-  groq: 3.88.1
+  groq: 3.99.0
   js-yaml: ^4.3.1
   semver: '>=7.8.5'
 
@@ -5336,8 +5336,8 @@ packages:
     resolution: {integrity: sha512-kj56ZjnOFbgDt91zYwQ10jsVUtVGJqAKfRbAir0EvTK84O5ZsSyc0rDEm2P3jmAJkxs4X1DOG8vtaYJQIA/XCA==}
     engines: {node: '>=22.12'}
 
-  groq@3.88.1:
-    resolution: {integrity: sha512-nTYqmIJ3bWA9rRZr2Cgh+7wUM8fkxFYnqLBJuf03IaCWyB5KExBzfb7mP5eWcnQUqOII/Ygd8BfGCVZeb+gaMA==}
+  groq@3.99.0:
+    resolution: {integrity: sha512-ZwKAWzvVCw51yjmIf5484KgsAzZAlGTM4uy9lki4PjAYxcEME2Xf93d31LhHzgUAr2JI79H+cNKoRjDHdv1BXQ==}
     engines: {node: '>=18'}
 
   gunzip-maybe@1.4.2:
@@ -11161,7 +11161,7 @@ snapshots:
       chokidar: 3.6.0
       debug: 4.4.3(supports-color@8.1.1)
       globby: 11.1.0
-      groq: 3.88.1
+      groq: 3.99.0
       groq-js: 1.30.3(supports-color@8.1.1)
       json5: 2.2.3
       lodash-es: 4.18.1
@@ -11427,7 +11427,7 @@ snapshots:
       '@sanity/mutate': 0.18.1(xstate@5.32.5)
       '@sanity/telemetry': 1.1.0(react@19.2.8)
       '@sanity/types': 6.9.0(@types/react@19.2.18)
-      groq: 3.88.1
+      groq: 3.99.0
       groq-js: 2.0.0
       reselect: 5.2.0
       rxjs: 7.8.2
@@ -13433,7 +13433,7 @@ snapshots:
     dependencies:
       obug: 2.1.4
 
-  groq@3.88.1: {}
+  groq@3.99.0: {}
 
   gunzip-maybe@1.4.2:
     dependencies:
