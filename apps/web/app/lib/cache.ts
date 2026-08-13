@@ -61,11 +61,7 @@ function generateCacheControlHeader(cacheOptions: CachingStrategy): string {
 	return cacheControl.join(', ');
 }
 
-/**
- * Cloudflare's edge-only cache directive. It takes precedence over
- * `CDN-Cache-Control` and `Cache-Control`, and Cloudflare consumes it — the
- * response that reaches the client no longer carries it.
- */
+/** Cloudflare's edge-only cache header. */
 export const CDN_CACHE_CONTROL_HEADER = 'Cloudflare-CDN-Cache-Control';
 
 export function routeHeaders({ loaderHeaders }: { loaderHeaders: Headers }) {
@@ -101,15 +97,7 @@ function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
 	};
 }
 
-/**
- * The edge lifetime of a collection page: five minutes fresh, then up to an hour
- * served stale while Cloudflare refreshes it in the background.
- *
- * `max-age` rather than `s-maxage` because `s-maxage` implies `proxy-revalidate`,
- * which disables `stale-while-revalidate` (RFC 9111 §4.2.4). Sent as
- * `Cloudflare-CDN-Cache-Control` so the edge lifetime is independent of what
- * browsers cache.
- */
+// `s-maxage` implies `proxy-revalidate`, preventing stale-while-revalidate (RFC 9111 §4.2.4).
 function CacheCollectionEdge(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {

@@ -7,15 +7,11 @@ const COLLECTION_PATH = '/ladies/collections/apparel';
 const PRODUCT_PATH = '/ladies/products/nivo-belt-idna-white';
 const CART_PATH = '/cart';
 
-const SKIP_REASON = 'Workers Caching is not emulated locally — run against a deployed preview (BASE_URL).';
+const SKIP_REASON = 'Workers Caching is not emulated locally. Run against a deployed preview (BASE_URL).';
 
-/**
- * The Workers Caching key includes the query string, so a unique param
- * guarantees the first request for a URL is a miss rather than a hit left behind
- * by an earlier test run or a real visitor.
- */
+/** Uses a unique, unknown sort value that falls back to the collection default. */
 function uniqueUrl(baseURL: string, path: string): string {
-	return `${baseURL}${path}?cache-probe=${randomUUID()}`;
+	return `${baseURL}${path}?sort=cache-probe-${randomUUID()}`;
 }
 
 async function getCacheStatus(
@@ -28,20 +24,13 @@ async function getCacheStatus(
 	return response.headers()['cf-cache-status'];
 }
 
-/** Requests a URL until Cloudflare reports it as cached. */
 async function primeCache(request: APIRequestContext, url: string): Promise<void> {
-	// Filling the cache is not instant, so the hit is polled for rather than
-	// asserted on the second request.
+	// Cache fills are asynchronous, so poll for the hit.
 	await expect.poll(() => getCacheStatus(request, url)).toBe('HIT');
 }
 
 test.describe('Anonymous collection page cache status', () => {
-	/**
-	 * Local `wrangler dev`/miniflare does not emulate Workers Caching: the
-	 * entrypoint runs on every request and no `Cf-Cache-Status` header comes back.
-	 * These assertions only mean anything against a deployed preview, so they are
-	 * skipped when the probe shows no cache in front of the Worker.
-	 */
+	// Skip locally because miniflare does not emulate Workers Caching.
 	test.beforeEach(async ({ baseURL, request }) => {
 		invariant(baseURL, 'Base URL must be defined');
 		const status = await getCacheStatus(request, uniqueUrl(baseURL, COLLECTION_PATH));
@@ -86,10 +75,7 @@ test.describe('Anonymous collection page cache status', () => {
 	});
 });
 
-/**
- * No skip guard here: a `Set-Cookie` would make the response uncacheable
- * everywhere, and that is worth catching locally too.
- */
+// `Set-Cookie` is testable locally and would make the response uncacheable.
 test.describe('Anonymous collection page cookies', () => {
 	test('an anonymous collection page request sets no cookie', async ({ baseURL, request }) => {
 		invariant(baseURL, 'Base URL must be defined');

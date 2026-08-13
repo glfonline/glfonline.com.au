@@ -82,10 +82,7 @@ export const links: LinksFunction = () => {
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
-	// Visitors without a session have no cart to read, and must not be given one
-	// here: a `Set-Cookie` on an otherwise anonymous page would make the response
-	// uncacheable. Adding the first item to a cart still creates the session
-	// normally, in the product and cart route actions.
+	// Only load an existing session; `Set-Cookie` prevents anonymous caching.
 	const session = hasSessionCookie(request.headers.get('Cookie')) ? await getSession(request) : null;
 	const cart = session ? createCart({ session, storefront }) : null;
 

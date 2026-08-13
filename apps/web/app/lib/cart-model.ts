@@ -18,7 +18,7 @@ export type CartView =
 	| { type: 'error'; error: string }
 	| { type: 'success'; cart: Cart; linesDisplay: Array<LineDisplay> };
 
-/** The cart a visitor without a session sees — and no session is created to say so. */
+/** Empty cart state used without creating a session. */
 export const EMPTY_CART_VIEW: CartView = { type: 'empty' };
 
 export type CartModel = {

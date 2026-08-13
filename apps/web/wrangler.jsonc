@@ -6,10 +6,7 @@
 	// 2025-04-01 onwards, Cloudflare populates `process.env` from bindings.
 	"compatibility_date": "2026-08-01",
 	"compatibility_flags": ["nodejs_compat"],
-	// Workers Caching sits in front of `CachedApp` only — the entrypoint the
-	// gateway in `workers/app.ts` routes anonymous collection page requests to.
-	// The default export (the gateway) and every other response stay uncached,
-	// so nothing else can be cached, including by RFC 9111 heuristic freshness.
+	// Cache only `CachedApp`. The default gateway and other responses stay uncached.
 	"exports": {
 		"CachedApp": { "type": "worker", "cache": { "enabled": true } }
 	},

@@ -31,8 +31,7 @@ test.describe('Search and checkout flow', () => {
 	});
 
 	test('Add to cart 3 times shows 1 line with quantity 3 on cart page', async ({ context, page }) => {
-		// Browsing without a cart must not create a session: the `Set-Cookie` would
-		// make otherwise anonymous pages uncacheable at the edge.
+		// Browsing must not set a session cookie and disable anonymous caching.
 		expect(await getSessionCookie(context)).toBeUndefined();
 
 		await page.getByRole('button', { name: 'Search' }).first().click();
@@ -44,7 +43,7 @@ test.describe('Search and checkout flow', () => {
 		await addToCart(page);
 		await addToCart(page);
 
-		// Adding the first item still creates the session, in the route action.
+		// Adding an item creates the session in the route action.
 		expect(await getSessionCookie(context)).toBeDefined();
 
 		await page.getByRole('link', { name: CART_LINK_REGEX }).click();
