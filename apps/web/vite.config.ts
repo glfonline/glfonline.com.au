@@ -18,9 +18,6 @@ const sentryConfig: SentryReactRouterBuildOptions = {
 	unstable_sentryVitePluginOptions: {
 		release: {
 			name: process.env.WORKERS_CI_COMMIT_SHA,
-			setCommits: {
-				auto: true,
-			},
 		},
 		sourcemaps: {
 			// Client maps are deleted so they aren't publicly served from the assets
