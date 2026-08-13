@@ -1,4 +1,5 @@
 import { createCookieSessionStorage } from 'react-router';
+import { SESSION_COOKIE_NAME } from './session-cookie';
 
 export type CartItem = {
 	variantId: string;
@@ -18,7 +19,7 @@ if (!process.env.ENCRYPTION_KEY) {
 const sessionStorage = createCookieSessionStorage({
 	cookie: {
 		httpOnly: true,
-		name: 'session',
+		name: SESSION_COOKIE_NAME,
 		path: '/',
 		sameSite: 'lax',
 		secrets: [process.env.ENCRYPTION_KEY],

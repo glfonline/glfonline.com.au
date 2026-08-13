@@ -1,10 +1,15 @@
-import type { Page } from '@playwright/test';
+import type { BrowserContext, Page } from '@playwright/test';
 import { expect, test } from '@playwright/test';
 import invariant from 'tiny-invariant';
 
 const CHECKOUT_URL_REGEX = /^https:\/\/golfladiesfirst\.myshopify\.com\/checkouts\//;
 const CART_LINK_REGEX = /items in cart, view bag/;
 const ADD_TO_CART_BUTTON_REGEX = /add to cart|adding/i;
+
+async function getSessionCookie(context: BrowserContext) {
+	const cookies = await context.cookies();
+	return cookies.find((cookie) => cookie.name === 'session');
+}
 
 async function addToCart(page: Page) {
 	await page.getByRole('button', { name: ADD_TO_CART_BUTTON_REGEX }).click();
@@ -25,7 +30,11 @@ test.describe('Search and checkout flow', () => {
 		await page.goto(baseURL);
 	});
 
-	test('Add to cart 3 times shows 1 line with quantity 3 on cart page', async ({ page }) => {
+	test('Add to cart 3 times shows 1 line with quantity 3 on cart page', async ({ context, page }) => {
+		// Browsing without a cart must not create a session: the `Set-Cookie` would
+		// make otherwise anonymous pages uncacheable at the edge.
+		expect(await getSessionCookie(context)).toBeUndefined();
+
 		await page.getByRole('button', { name: 'Search' }).first().click();
 		await expect(page.getByTestId('search-input')).toBeVisible();
 		await page.getByTestId('search-input').fill('select height');
@@ -34,6 +43,9 @@ test.describe('Search and checkout flow', () => {
 		await addToCart(page);
 		await addToCart(page);
 		await addToCart(page);
+
+		// Adding the first item still creates the session, in the route action.
+		expect(await getSessionCookie(context)).toBeDefined();
 
 		await page.getByRole('link', { name: CART_LINK_REGEX }).click();
 		await expect(page.getByTestId('quantity-display').first()).toBeVisible();

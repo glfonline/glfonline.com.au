@@ -61,6 +61,13 @@ function generateCacheControlHeader(cacheOptions: CachingStrategy): string {
 	return cacheControl.join(', ');
 }
 
+/**
+ * Cloudflare's edge-only cache directive. It takes precedence over
+ * `CDN-Cache-Control` and `Cache-Control`, and Cloudflare consumes it — the
+ * response that reaches the client no longer carries it.
+ */
+export const CDN_CACHE_CONTROL_HEADER = 'Cloudflare-CDN-Cache-Control';
+
 export function routeHeaders({ loaderHeaders }: { loaderHeaders: Headers }) {
 	// Keep the same cache-control headers when loading the page directly
 	// versus when transitioning to the page from other areas in the app
@@ -94,12 +101,20 @@ function CacheShort(overrideOptions?: CachingStrategy): AllCacheOptions {
 	};
 }
 
-function CacheCollection(overrideOptions?: CachingStrategy): AllCacheOptions {
+/**
+ * The edge lifetime of a collection page: five minutes fresh, then up to an hour
+ * served stale while Cloudflare refreshes it in the background.
+ *
+ * `max-age` rather than `s-maxage` because `s-maxage` implies `proxy-revalidate`,
+ * which disables `stale-while-revalidate` (RFC 9111 §4.2.4). Sent as
+ * `Cloudflare-CDN-Cache-Control` so the edge lifetime is independent of what
+ * browsers cache.
+ */
+function CacheCollectionEdge(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
 		mode: PUBLIC,
-		maxAge: 1,
-		sMaxAge: 300, // 5 minutes
+		maxAge: 300, // 5 minutes
 		staleWhileRevalidate: 3600, // 1 hour
 		...overrideOptions,
 	};
@@ -126,7 +141,7 @@ function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 }
 
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
-export const CACHE_COLLECTION = generateCacheControlHeader(CacheCollection());
+export const CACHE_COLLECTION_EDGE = generateCacheControlHeader(CacheCollectionEdge());
 export const CACHE_MEDIUM = generateCacheControlHeader(CacheMedium());
 export const CACHE_LONG = generateCacheControlHeader(CacheLong());
 export const CACHE_NONE = generateCacheControlHeader(CacheNone());

@@ -18,6 +18,9 @@ export type CartView =
 	| { type: 'error'; error: string }
 	| { type: 'success'; cart: Cart; linesDisplay: Array<LineDisplay> };
 
+/** The cart a visitor without a session sees — and no session is created to say so. */
+export const EMPTY_CART_VIEW: CartView = { type: 'empty' };
+
 export type CartModel = {
 	read(): Promise<CartView>;
 	add(variantId: string, quantity: number): Promise<void>;

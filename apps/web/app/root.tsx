@@ -29,9 +29,10 @@ import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import fontCssUrl from './font.css?url';
 import { getSession } from './lib/cart';
-import { createCart } from './lib/cart-model';
+import { createCart, EMPTY_CART_VIEW } from './lib/cart-model';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
+import { hasSessionCookie } from './lib/session-cookie';
 import { getSeoMeta, seoConfig } from './seo';
 import tailwindCssUrl from './tailwind.css?url';
 
@@ -81,11 +82,15 @@ export const links: LinksFunction = () => {
 
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
-	const session = request.headers.get('Cookie') ? await getSession(request) : undefined;
-	const cart = session ? createCart({ session, storefront }) : undefined;
+	// Visitors without a session have no cart to read, and must not be given one
+	// here: a `Set-Cookie` on an otherwise anonymous page would make the response
+	// uncacheable. Adding the first item to a cart still creates the session
+	// normally, in the product and cart route actions.
+	const session = hasSessionCookie(request.headers.get('Cookie')) ? await getSession(request) : null;
+	const cart = session ? createCart({ session, storefront }) : null;
 
 	const [view, { shop }, mainNavigation] = await Promise.all([
-		cart ? cart.read() : Promise.resolve({ type: 'empty' } as const),
+		cart ? cart.read() : EMPTY_CART_VIEW,
 		storefront.request(SHOP_QUERY),
 		getMainNavigation(),
 	]);
@@ -102,6 +107,8 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 		}
 	}
 
+	const responseInit = session ? { headers: { 'Set-Cookie': await session.commitSession() } } : undefined;
+
 	return data(
 		{
 			cartCount,
@@ -109,9 +116,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 			mainNavigation,
 			shop,
 		},
-		{
-			headers: session ? { 'Set-Cookie': await session.commitSession() } : undefined,
-		},
+		responseInit,
 	);
 }
 
