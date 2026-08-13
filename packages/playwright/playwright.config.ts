@@ -115,6 +115,8 @@ export default defineConfig({
 			command: 'pnpm -w dev:web',
 			reuseExistingServer: !process.env.CI,
 			url: baseURL,
+			/** Default (60s) isn't enough to boot the dev server on a cold CI runner; give it more headroom. */
+			timeout: 180_000,
 		};
 	})(),
 

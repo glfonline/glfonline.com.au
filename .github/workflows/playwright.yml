@@ -50,6 +50,13 @@ jobs:
       - name: 📥 Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
+      # The dev server the tests run against imports the built workspace
+      # packages. Building them here rather than letting `dev:web` race its own
+      # `tsdown --watch` tasks keeps the server's startup within Playwright's
+      # `webServer` timeout on a cold runner.
+      - name: 🏗️ Build workspace packages
+        run: pnpm run build:packages
+
       - name: 🎭 Run Playwright tests
         run: pnpm run test:e2e
 
