@@ -10,12 +10,13 @@ import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
 import { WEB_ADDRESS } from '../lib/constants';
-import { badRequest, notFound, serverError } from '../lib/errors.server';
+import { badRequest } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { getProductFilterOptions } from '../lib/get-product-filter-options';
 import { buildNextCursorUrl, buildPrevUrl } from '../lib/pagination-urls';
 import { PRODUCT_TYPE } from '../lib/product-filter-constants';
+import { processCollectionData } from '../lib/process-collection-data';
 import { storefrontContext } from '../root';
 import { getSeoMeta } from '../seo';
 
@@ -33,49 +34,6 @@ const SortSchema = z.looseObject({
 const recordSchema = z.record(z.string().min(1), z.string());
 
 const ITEMS_PER_PAGE = 32;
-
-type ProcessCollectionDataParams = {
-	collectionHandle: string;
-	collectionPromise: PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
-	filterOptions?: Record<string, string>;
-	sort?: string;
-	theme: string;
-};
-
-// Helper function to handle collection data processing
-function processCollectionData({
-	collectionHandle,
-	collectionPromise,
-	filterOptions,
-	sort,
-	theme,
-}: ProcessCollectionDataParams) {
-	if (collectionPromise.status === 'rejected') {
-		if (!(collectionPromise.reason instanceof DOMException && collectionPromise.reason.name === 'AbortError')) {
-			serverError(`Failed to fetch collection data for ${theme}/${collectionHandle}`, collectionPromise.reason);
-		}
-	}
-
-	const collection = collectionPromise.status === 'fulfilled' ? collectionPromise.value : null;
-	if (!collection) {
-		notFound(
-			`[404] Collection not found: ${theme}/${collectionHandle} (sort: ${sort}, filters: ${JSON.stringify(filterOptions)})`,
-		);
-	}
-
-	if (!Array.isArray(collection.products)) {
-		serverError(`Collection ${theme}/${collectionHandle} returned invalid products data format`, {
-			products: collection.products,
-			title: collection.title,
-		});
-	}
-
-	// Return with products explicitly marked as non-undefined array
-	return {
-		...collection,
-		products: collection.products as NonNullable<typeof collection.products>,
-	};
-}
 
 // Parse and validate URL parameters
 function parseRequestParameters(params: unknown, url: URL) {
