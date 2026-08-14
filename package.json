@@ -32,6 +32,7 @@
 		"sort:packages": "pnpm dlx sort-package-json 'package.json' './apps/*/package.json' './packages/*/package.json'",
 		"test": "turbo run test:browser test:e2e test:unit",
 		"test:browser": "turbo run test:browser",
+		"test:ci": "pnpm test:unit && pnpm test:browser && cp apps/web/.env.example apps/web/.env && pnpm test:e2e -- --grep \"SEO Meta Tags\"",
 		"test:e2e": "turbo run test:e2e",
 		"test:unit": "turbo run test:unit"
 	},
@@ -45,7 +46,7 @@
 		"typescript": "catalog:"
 	},
 	"engines": {
-		"node": ">=22",
+		"node": "24.x",
 		"pnpm": ">=9"
 	},
 	"packageManager": "pnpm@11.20.0+sha512.9a6f330a95b66446ea088faf1521405a8a01f07fde7124cc9958dfed52d4bb436737e65b08f85f37b46fcba375092558ac51262b816844b22f63406ed166bfee",

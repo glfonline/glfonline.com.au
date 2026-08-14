@@ -49,17 +49,8 @@ jobs:
       - name: 📥 Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 
-      - name: 🧪 Run Unit Tests
-        run: pnpm test:unit
-
-      - name: 🌐 Run Browser Tests
-        run: pnpm test:browser
-
-      - name: 🧪 Copy test env vars
-        run: cp apps/web/.env.example apps/web/.env
-
-      - name: 🎭 Run Basic E2E Tests (PR validation)
-        run: pnpm test:e2e -- --grep "SEO Meta Tags"
+      - name: 🧪 Run CI tests
+        run: pnpm test:ci
         timeout-minutes: 15
 
       - name: 📊 Upload test results
