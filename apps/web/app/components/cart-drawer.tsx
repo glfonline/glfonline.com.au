@@ -1,4 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import type { ReactNode } from 'react';
 import { Button } from 'react-aria-components/Button';
 import { Dialog } from 'react-aria-components/Dialog';
 import { Heading } from 'react-aria-components/Heading';
@@ -6,6 +7,7 @@ import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
 import { useCart } from '../lib/use-cart';
+import type { CartApiData } from '../routes/api.cart';
 import { CartContent } from './cart-content';
 
 export function CartDrawer() {
@@ -57,26 +59,43 @@ export function CartDrawer() {
 						</Button>
 					</div>
 
-					{isPending ? (
-						<div
-							aria-busy="true"
-							aria-live="polite"
-							className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
-						>
-							<p className="text-gray-600">Loading cart…</p>
-						</div>
-					) : isError ? (
-						<div
-							aria-live="polite"
-							className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
-						>
-							<p className="text-gray-600">Unable to load your cart. Please try again.</p>
-						</div>
-					) : cart ? (
-						<CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />
-					) : null}
+					<CartDrawerPanel cart={cart} isError={isError} isPending={isPending} />
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
+	);
+}
+
+function CartDrawerPanel({
+	cart,
+	isError,
+	isPending,
+}: {
+	cart: CartApiData | undefined;
+	isError: boolean;
+	isPending: boolean;
+}) {
+	if (isPending) {
+		return <CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>;
+	}
+
+	if (isError) {
+		return <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>;
+	}
+
+	if (!cart) return null;
+
+	return <CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />;
+}
+
+function CartDrawerStatus({ children, isBusy = false }: { children: ReactNode; isBusy?: boolean }) {
+	return (
+		<div
+			aria-busy={isBusy || undefined}
+			aria-live="polite"
+			className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
+		>
+			<p className="text-gray-600">{children}</p>
+		</div>
 	);
 }
