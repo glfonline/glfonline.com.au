@@ -1,4 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import type { ReactNode } from 'react';
 import { Button } from 'react-aria-components/Button';
 import { Dialog } from 'react-aria-components/Dialog';
 import { Heading } from 'react-aria-components/Heading';
@@ -7,6 +8,7 @@ import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
 import { useCart } from '../lib/use-cart';
 import { CartContent } from './cart-content';
+import { QueryContent } from './query-content';
 
 export function CartDrawer() {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -15,7 +17,7 @@ export function CartDrawer() {
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
 	const isOpen = searchParams.has(CART_DRAWER_PARAM);
-	const { data: cart } = useCart(isOpen);
+	const query = useCart(isOpen);
 
 	function close() {
 		setSearchParams(
@@ -56,10 +58,27 @@ export function CartDrawer() {
 							<XMarkIcon aria-hidden="true" className="h-6 w-6" />
 						</Button>
 					</div>
-
-					<CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />
+					<QueryContent
+						error={() => <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>}
+						pending={<CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>}
+						query={query}
+					>
+						{(data) => <CartContent result={data.cartResult} showHeading={false} summaryPlacement="footer" />}
+					</QueryContent>
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
+	);
+}
+
+function CartDrawerStatus({ children, isBusy = false }: { children: ReactNode; isBusy?: boolean }) {
+	return (
+		<div
+			aria-busy={isBusy || undefined}
+			aria-live="polite"
+			className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
+		>
+			<p className="text-gray-600">{children}</p>
+		</div>
 	);
 }
