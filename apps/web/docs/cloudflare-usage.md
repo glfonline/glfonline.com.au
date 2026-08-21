@@ -57,6 +57,7 @@ The nine configured paths are `/about`, `/faq`, `/privacy-policy`, `/refund-poli
 - Cloudflare serves prerendered files without running route `headers()` functions. Configure any required static-asset headers outside those route functions.
 - `ENCRYPTION_KEY` is checked on first cart use instead of at module load because the eager check prevented unrelated routes from prerendering. A deployment without the variable can start successfully and then fail when a cart route is used. Add a deployment check if early failure is required.
 - The count cookie records the quantities in the session cart. It can briefly overstate the count if Shopify removes or caps a line, but opening the drawer or cart page reconciles the session and corrects the cookie.
+- **Accepted migration limitation:** existing sessions may already have the httpOnly `session` cookie but no readable `cart_count` cookie. After deploy, the header badge can show zero until the visitor opens the drawer or visits `/cart`, which reconciles Shopify and writes `cart_count`. Avoiding a root-loader or eager `/api/cart` backfill preserves the Worker-request optimisation; no separate migration job is planned.
 
 ## Changes that do not reduce request count
 
@@ -72,4 +73,5 @@ After deploying to a preview environment:
 2. Confirm closed cart drawers do not request `/api/cart`, including for visitors with `cart_count` set.
 3. Add and remove the last cart item, then confirm the badge, drawer, `session` cookie and `cart_count` stay in sync.
 4. Confirm opening the drawer and visiting the cart page correct a stale `cart_count`, and `/api/cart` clears the cookie when no session exists.
-5. Compare Worker requests by path before and after the deployment. Repeat the comparison after each security rule change.
+5. Spot-check a pre-deploy session that has `session` but no `cart_count`: badge may show 0 until the drawer or cart page is opened, then should correct.
+6. Compare Worker requests by path before and after the deployment. Repeat the comparison after each security rule change.

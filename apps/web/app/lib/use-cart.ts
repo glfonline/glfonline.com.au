@@ -11,7 +11,6 @@ export function useCart(isOpen: boolean) {
 	const query = useQuery({
 		// A count cookie is enough for the header, so only the open drawer needs cart details.
 		enabled: isOpen,
-		initialData: EMPTY_CART,
 		queryFn: async (): Promise<CartApiData> => {
 			const response = await fetch('/api/cart');
 			if (!response.ok) {
@@ -38,6 +37,25 @@ export function useCartCount() {
 	return useSyncExternalStore(subscribeToCartCount, getCartCountSnapshot, getServerCartCountSnapshot);
 }
 
+/** Refresh the header badge after a mutation changes the readable cart_count cookie. */
+export function useNotifyCartCountOnSettle(state: 'idle' | 'loading' | 'submitting') {
+	const previousState = useRef(state);
+
+	useEffect(() => {
+		const didSettle = previousState.current !== 'idle' && state === 'idle';
+		previousState.current = state;
+		if (!didSettle) return;
+
+		notifyCartCountListeners();
+	}, [state]);
+}
+
+/**
+ * After drawer mutations (increment/decrement/remove), refresh the badge and
+ * invalidate cart details so the open drawer refetches. Do not use this on the
+ * product-page add-to-cart path: that redirects to `?cart=open`, which already
+ * enables useCart and would race a redundant /api/cart request.
+ */
 export function useInvalidateCartOnSettle(state: 'idle' | 'loading' | 'submitting') {
 	const queryClient = useQueryClient();
 	const previousState = useRef(state);

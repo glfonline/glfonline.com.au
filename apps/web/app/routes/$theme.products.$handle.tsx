@@ -33,7 +33,7 @@ import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
-import { useInvalidateCartOnSettle } from '../lib/use-cart';
+import { useNotifyCartCountOnSettle } from '../lib/use-cart';
 import { storefrontContext } from '../root';
 import { getSeoMeta, seoConfig } from '../seo';
 
@@ -224,7 +224,9 @@ export default function ProductPage() {
 	const { product, quantityInCartByVariantId, theme } = useLoaderData<typeof loader>();
 	const actionData = useActionData<ProductActionResult>();
 	const fetcher = useFetcher<ProductActionResult>();
-	useInvalidateCartOnSettle(fetcher.state);
+	// Badge only: opening `?cart=open` already enables useCart; invalidating here
+	// would race a second /api/cart request.
+	useNotifyCartCountOnSettle(fetcher.state);
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 

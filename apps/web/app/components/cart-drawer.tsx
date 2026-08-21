@@ -15,7 +15,7 @@ export function CartDrawer() {
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
 	const isOpen = searchParams.has(CART_DRAWER_PARAM);
-	const { data: cart } = useCart(isOpen);
+	const { data: cart, isError, isPending } = useCart(isOpen);
 
 	function close() {
 		setSearchParams(
@@ -57,7 +57,24 @@ export function CartDrawer() {
 						</Button>
 					</div>
 
-					<CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />
+					{isPending ? (
+						<div
+							aria-busy="true"
+							aria-live="polite"
+							className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
+						>
+							<p className="text-gray-600">Loading cart…</p>
+						</div>
+					) : isError ? (
+						<div
+							aria-live="polite"
+							className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
+						>
+							<p className="text-gray-600">Unable to load your cart. Please try again.</p>
+						</div>
+					) : cart ? (
+						<CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />
+					) : null}
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
