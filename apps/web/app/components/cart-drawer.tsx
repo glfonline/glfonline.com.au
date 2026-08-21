@@ -1,5 +1,4 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
-import type { UseQueryResult } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { Button } from 'react-aria-components/Button';
 import { Dialog } from 'react-aria-components/Dialog';
@@ -8,8 +7,8 @@ import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
 import { useCart } from '../lib/use-cart';
-import type { CartApiData } from '../routes/api.cart';
 import { CartContent } from './cart-content';
+import { QueryContent } from './query-content';
 
 export function CartDrawer() {
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -18,7 +17,7 @@ export function CartDrawer() {
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
 	const isOpen = searchParams.has(CART_DRAWER_PARAM);
-	const { data: cart, status } = useCart(isOpen);
+	const query = useCart(isOpen);
 
 	function close() {
 		setSearchParams(
@@ -59,24 +58,17 @@ export function CartDrawer() {
 							<XMarkIcon aria-hidden="true" className="h-6 w-6" />
 						</Button>
 					</div>
-
-					<CartDrawerPanel cart={cart} status={status} />
+					<QueryContent
+						error={() => <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>}
+						pending={<CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>}
+						query={query}
+					>
+						{(data) => <CartContent result={data.cartResult} showHeading={false} summaryPlacement="footer" />}
+					</QueryContent>
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
 	);
-}
-
-function CartDrawerPanel({ cart, status }: { cart: CartApiData | undefined; status: UseQueryResult['status'] }) {
-	switch (status) {
-		case 'pending':
-			return <CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>;
-		case 'error':
-			return <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>;
-		case 'success':
-			if (!cart) return null;
-			return <CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />;
-	}
 }
 
 function CartDrawerStatus({ children, isBusy = false }: { children: ReactNode; isBusy?: boolean }) {
