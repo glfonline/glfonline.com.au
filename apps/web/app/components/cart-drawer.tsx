@@ -1,4 +1,5 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import type { UseQueryResult } from '@tanstack/react-query';
 import type { ReactNode } from 'react';
 import { Button } from 'react-aria-components/Button';
 import { Dialog } from 'react-aria-components/Dialog';
@@ -17,7 +18,7 @@ export function CartDrawer() {
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
 	const isOpen = searchParams.has(CART_DRAWER_PARAM);
-	const { data: cart, isError, isPending } = useCart(isOpen);
+	const { data: cart, status } = useCart(isOpen);
 
 	function close() {
 		setSearchParams(
@@ -59,33 +60,23 @@ export function CartDrawer() {
 						</Button>
 					</div>
 
-					<CartDrawerPanel cart={cart} isError={isError} isPending={isPending} />
+					<CartDrawerPanel cart={cart} status={status} />
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
 	);
 }
 
-function CartDrawerPanel({
-	cart,
-	isError,
-	isPending,
-}: {
-	cart: CartApiData | undefined;
-	isError: boolean;
-	isPending: boolean;
-}) {
-	if (isPending) {
-		return <CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>;
+function CartDrawerPanel({ cart, status }: { cart: CartApiData | undefined; status: UseQueryResult['status'] }) {
+	switch (status) {
+		case 'pending':
+			return <CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>;
+		case 'error':
+			return <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>;
+		case 'success':
+			if (!cart) return null;
+			return <CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />;
 	}
-
-	if (isError) {
-		return <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>;
-	}
-
-	if (!cart) return null;
-
-	return <CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />;
 }
 
 function CartDrawerStatus({ children, isBusy = false }: { children: ReactNode; isBusy?: boolean }) {
