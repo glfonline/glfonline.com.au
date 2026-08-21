@@ -6,7 +6,7 @@ import { Heading } from 'react-aria-components/Heading';
 import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
-import { useCart } from '../lib/use-cart';
+import { useCart, useCartCount } from '../lib/use-cart';
 import { CartContent } from './cart-content';
 import { QueryContent } from './query-content';
 
@@ -17,7 +17,6 @@ export function CartDrawer() {
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
 	const isOpen = searchParams.has(CART_DRAWER_PARAM);
-	const query = useCart(isOpen);
 
 	function close() {
 		setSearchParams(
@@ -58,16 +57,36 @@ export function CartDrawer() {
 							<XMarkIcon aria-hidden="true" className="h-6 w-6" />
 						</Button>
 					</div>
-					<QueryContent
-						error={() => <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>}
-						pending={<CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>}
-						query={query}
-					>
-						{(data) => <CartContent result={data.cartResult} showHeading={false} summaryPlacement="footer" />}
-					</QueryContent>
+					<CartDrawerBody isOpen={isOpen} />
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
+	);
+}
+
+function CartDrawerBody({ isOpen }: { isOpen: boolean }) {
+	const query = useCart(isOpen);
+	const cartCount = useCartCount();
+
+	// Right after add-to-cart, the drawer reopens with a cached empty cart from
+	// the last time it was closed while `/api/cart` refetches in the
+	// background. `cart_count` already reflects the new item, so the cached
+	// emptiness is known to be stale — show the loading state instead of
+	// flashing "Your cart is currently empty." A cached cart that already has
+	// items is still valid while it refetches, so this only applies when the
+	// cached data is empty.
+	if (query.isFetching && cartCount > 0 && query.data?.cartCount === 0) {
+		return <CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>;
+	}
+
+	return (
+		<QueryContent
+			error={() => <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>}
+			pending={<CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>}
+			query={query}
+		>
+			{(data) => <CartContent result={data.cartResult} showHeading={false} summaryPlacement="footer" />}
+		</QueryContent>
 	);
 }
 
