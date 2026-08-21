@@ -8,7 +8,7 @@ export const CART_QUERY_KEY = ['cart'] as const;
 export const EMPTY_CART: CartApiData = { cartCount: 0, cartResult: { type: 'empty' } };
 
 export function useCart(isOpen: boolean) {
-	const query = useQuery({
+	return useQuery({
 		// A count cookie is enough for the header, so only the open drawer needs cart details.
 		enabled: isOpen,
 		queryFn: async (): Promise<CartApiData> => {
@@ -16,20 +16,13 @@ export function useCart(isOpen: boolean) {
 			if (!response.ok) {
 				throw new Error(`Failed to load cart: ${response.status}`);
 			}
-			return await response.json();
+			const data = await response.json();
+			// Set-Cookie is applied; ping the badge store at the real settlement event.
+			notifyCartCountListeners();
+			return data;
 		},
 		queryKey: CART_QUERY_KEY,
 	});
-	const { dataUpdatedAt, isFetchedAfterMount, isSuccess } = query;
-
-	useEffect(() => {
-		if (!isFetchedAfterMount || !isSuccess || dataUpdatedAt === 0) return;
-
-		// TanStack Query v5 removed query callbacks, so successful settlements notify this store here.
-		notifyCartCountListeners();
-	}, [dataUpdatedAt, isFetchedAfterMount, isSuccess]);
-
-	return query;
 }
 
 export function useCartCount() {
