@@ -66,13 +66,7 @@ function filledCartResponse(): CartApiData {
 	};
 }
 
-function renderDrawer({
-	open,
-	seedEmpty = true,
-}: {
-	open: boolean;
-	seedEmpty?: boolean;
-}) {
+function renderDrawer({ open, seedEmpty = true }: { open: boolean; seedEmpty?: boolean }) {
 	// Seed the query rather than letting it fetch: the drawer's data now comes
 	// from `/api/cart`, which has no server to answer it in a browser test.
 	const queryClient = new QueryClient({
