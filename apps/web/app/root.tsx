@@ -135,8 +135,9 @@ function App() {
 							// came from, so it would resurface as a stale badge on a later
 							// visit. Everything else is safe to restore.
 							dehydrateOptions: {
-								shouldDehydrateQuery: (query) =>
-									query.queryKey[0] !== CART_QUERY_KEY[0] && defaultShouldDehydrateQuery(query),
+								shouldDehydrateQuery: (query) => {
+									return query.queryKey[0] !== CART_QUERY_KEY[0] && defaultShouldDehydrateQuery(query);
+								},
 							},
 							persister,
 						}}
