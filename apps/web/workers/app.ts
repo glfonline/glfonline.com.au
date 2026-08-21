@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/cloudflare';
 import { WorkerEntrypoint } from 'cloudflare:workers';
+import * as Sentry from '@sentry/cloudflare';
 import { createRequestHandler } from 'react-router';
 import { isAnonymousCollectionRequest, toAnonymousRequest } from '../app/lib/anonymous-cache';
 import { CACHE_COLLECTION_EDGE, CDN_CACHE_CONTROL_HEADER } from '../app/lib/cache';

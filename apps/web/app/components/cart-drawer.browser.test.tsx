@@ -3,8 +3,8 @@ import { createRoutesStub } from 'react-router';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
-import type { CartApiData } from '../routes/api.cart';
 import { CART_QUERY_KEY, EMPTY_CART } from '../lib/use-cart';
+import type { CartApiData } from '../routes/api.cart';
 import { CartDrawer } from './cart-drawer';
 
 afterEach(() => {

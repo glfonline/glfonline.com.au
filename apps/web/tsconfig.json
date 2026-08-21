@@ -1,6 +1,6 @@
 {
 	"extends": "@glfonline/tsconfig/react-app",
-	"include": ["remix.env.d.ts", "**/*.ts", "**/*.tsx", ".react-router/types/**/*"],
+	"include": ["**/*.ts", "**/*.tsx", ".react-router/types/**/*"],
 	"exclude": ["node_modules"],
 	"compilerOptions": {
 		"types": ["node", "vite/client"],
