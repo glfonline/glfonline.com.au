@@ -5,17 +5,17 @@ import { Heading } from 'react-aria-components/Heading';
 import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
-import { EMPTY_CART, useCart } from '../lib/use-cart';
+import { useCart } from '../lib/use-cart';
 import { CartContent } from './cart-content';
 
 export function CartDrawer() {
-	const { data: cart } = useCart();
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	// The URL is the single source of truth for whether the drawer is open: the
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
-	const open = searchParams.has(CART_DRAWER_PARAM);
+	const isOpen = searchParams.has(CART_DRAWER_PARAM);
+	const { data: cart } = useCart(isOpen);
 
 	function close() {
 		setSearchParams(
@@ -31,7 +31,7 @@ export function CartDrawer() {
 		<ModalOverlay
 			className="fixed inset-0 z-40 flex justify-end bg-black/25 transition-opacity duration-300 ease-linear data-entering:opacity-0 data-exiting:opacity-0 motion-reduce:transition-none"
 			isDismissable
-			isOpen={open}
+			isOpen={isOpen}
 			onOpenChange={(isOpen) => {
 				if (!isOpen) close();
 			}}
@@ -57,7 +57,7 @@ export function CartDrawer() {
 						</Button>
 					</div>
 
-					<CartContent result={(cart ?? EMPTY_CART).cartResult} showHeading={false} summaryPlacement="footer" />
+					<CartContent result={cart.cartResult} showHeading={false} summaryPlacement="footer" />
 				</Dialog>
 			</Modal>
 		</ModalOverlay>

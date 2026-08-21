@@ -1,6 +1,6 @@
 import type { SessionData, SessionStorage } from 'react-router';
 import { createCookieSessionStorage } from 'react-router';
-import { cartPresentCookieFor, SESSION_COOKIE_NAME } from './session-cookie';
+import { cartCountCookieFor, SESSION_COOKIE_NAME } from './session-cookie';
 
 export type CartItem = {
 	variantId: string;
@@ -35,12 +35,15 @@ function getSessionStorage() {
 
 const cartSessionKey = 'cart';
 
-/** Commits the session and its readable cart marker together. */
+/** Commits the session and its readable cart count together. */
 export async function commitCartSession(session: CartSession): Promise<Headers> {
 	const [sessionCookie, cart] = await Promise.all([session.commitSession(), session.getCart()]);
+	let cartCount = 0;
+	for (const item of cart) cartCount += item.quantity;
+
 	const headers = new Headers();
 	headers.append('Set-Cookie', sessionCookie);
-	headers.append('Set-Cookie', cartPresentCookieFor(cart.length > 0));
+	headers.append('Set-Cookie', cartCountCookieFor(cartCount));
 	return headers;
 }
 

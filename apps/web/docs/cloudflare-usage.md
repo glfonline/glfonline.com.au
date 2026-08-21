@@ -45,8 +45,8 @@ The root loader previously read and committed the cart session on document reque
 
 The branch makes three changes:
 
-1. The client fetches the personalised cart from `/api/cart`. The root loader now returns only shared navigation and shop data.
-2. The client requests `/api/cart` only when the readable `cart_present=1` marker exists. The httpOnly session cookie still stores the cart.
+1. The header reads its badge from a readable `cart_count=N` cookie. The root loader now returns only shared navigation and shop data.
+2. The client fetches the personalised cart from `/api/cart` only when the cart drawer opens. The httpOnly session cookie still stores the cart.
 3. React Router prerenders nine configured content routes plus the blog slugs discovered from Sanity during the build. The number of blog pages changes with the content.
 
 The nine configured paths are `/about`, `/faq`, `/privacy-policy`, `/refund-policy`, `/terms-and-conditions`, `/testimonials`, `/contact`, `/robots.txt` and `/blog`.
@@ -56,7 +56,7 @@ The nine configured paths are `/about`, `/faq`, `/privacy-policy`, `/refund-poli
 - Prerendered navigation, shop data and blog pages update on deployment. A Sanity change alone does not rebuild the static files.
 - Cloudflare serves prerendered files without running route `headers()` functions. Configure any required static-asset headers outside those route functions.
 - `ENCRYPTION_KEY` is checked on first cart use instead of at module load because the eager check prevented unrelated routes from prerendering. A deployment without the variable can start successfully and then fail when a cart route is used. Add a deployment check if early failure is required.
-- A returning visitor sees a cart count of `0` until the `/api/cart` query resolves.
+- The count cookie records the quantities in the session cart. It can briefly overstate the count if Shopify removes or caps a line, but opening the drawer or cart page reconciles the session and corrects the cookie.
 
 ## Changes that do not reduce request count
 
@@ -69,7 +69,7 @@ The nine configured paths are `/about`, `/faq`, `/privacy-policy`, `/refund-poli
 After deploying to a preview environment:
 
 1. Confirm the nine configured routes and discovered blog routes are served as static assets.
-2. Check that a visitor without `cart_present=1` does not request `/api/cart`.
-3. Add and remove the last cart item, then confirm the badge, drawer, `session` cookie and `cart_present` marker stay in sync.
-4. Confirm a stale `cart_present=1` marker is cleared when no session cookie exists.
+2. Confirm closed cart drawers do not request `/api/cart`, including for visitors with `cart_count` set.
+3. Add and remove the last cart item, then confirm the badge, drawer, `session` cookie and `cart_count` stay in sync.
+4. Confirm opening the drawer and visiting the cart page correct a stale `cart_count`, and `/api/cart` clears the cookie when no session exists.
 5. Compare Worker requests by path before and after the deployment. Repeat the comparison after each security rule change.

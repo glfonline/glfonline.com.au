@@ -2,7 +2,7 @@ import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/rea
 import { useState } from 'react';
 import { NavLink } from 'react-router';
 import { CHANTALE_PHONE, socialLinks } from '../lib/constants';
-import { useCart } from '../lib/use-cart';
+import { useCartCount } from '../lib/use-cart';
 import { useSearchHotkey } from '../lib/use-search-hotkey';
 import { ButtonLink } from './design-system/button-link';
 import { MegaMenu } from './mega-menu';
@@ -57,7 +57,7 @@ function TopNav() {
 }
 
 function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
-	const { data: cart } = useCart();
+	const cartCount = useCartCount();
 	const [isSearchOpen, setSearchOpen] = useState(false);
 	const toggleSearch = () => {
 		setSearchOpen((prev) => !prev);
@@ -121,7 +121,7 @@ function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
 										aria-hidden="true"
 										className="h-6 w-6 shrink-0 text-gray-600 group-hover:text-gray-800"
 									/>
-									<span className="text-gray-700 text-sm group-hover:text-gray-800">{cart.cartCount}</span>
+									<span className="text-gray-700 text-sm group-hover:text-gray-800">{cartCount}</span>
 									<span className="sr-only">items in cart, view bag</span>
 								</NavLink>
 							</div>

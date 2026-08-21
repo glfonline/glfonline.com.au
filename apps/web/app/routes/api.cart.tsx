@@ -3,7 +3,7 @@ import { CACHE_NONE } from '../lib/cache';
 import { commitCartSession, getSession } from '../lib/cart';
 import type { CartView } from '../lib/cart-model';
 import { createCart, EMPTY_CART_VIEW } from '../lib/cart-model';
-import { cartPresentCookieFor, hasSessionCookie } from '../lib/session-cookie';
+import { cartCountCookieFor, hasSessionCookie } from '../lib/session-cookie';
 import { storefrontContext } from '../root';
 
 type CartSuccess = Extract<CartView, { type: 'success' }>;
@@ -16,7 +16,7 @@ export type CartApiData = {
 export async function loader({ context, request }: LoaderFunctionArgs) {
 	if (!hasSessionCookie(request.headers.get('Cookie'))) {
 		const headers = new Headers({ 'Cache-Control': CACHE_NONE });
-		headers.append('Set-Cookie', cartPresentCookieFor(false));
+		headers.append('Set-Cookie', cartCountCookieFor(0));
 
 		return Response.json({ cartCount: 0, cartResult: EMPTY_CART_VIEW } satisfies CartApiData, {
 			headers,

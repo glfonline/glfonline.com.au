@@ -1,21 +1,19 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef, useSyncExternalStore } from 'react';
 import type { CartApiData } from '../routes/api.cart';
-import { hasCartPresentCookie } from './session-cookie';
+import { getCartCountCookie } from './session-cookie';
 
 export const CART_QUERY_KEY = ['cart'] as const;
 
 export const EMPTY_CART: CartApiData = { cartCount: 0, cartResult: { type: 'empty' } };
 
-export function useCart() {
-	const cartPresent = useSyncExternalStore(subscribeToCartMarker, getCartMarkerSnapshot, getServerCartMarkerSnapshot);
-
-	return useQuery({
-		enabled: cartPresent,
+export function useCart(isOpen: boolean) {
+	const query = useQuery({
+		// A count cookie is enough for the header, so only the open drawer needs cart details.
+		enabled: isOpen,
 		initialData: EMPTY_CART,
 		queryFn: async (): Promise<CartApiData> => {
 			const response = await fetch('/api/cart');
-			notifyCartMarkerListeners();
 			if (!response.ok) {
 				throw new Error(`Failed to load cart: ${response.status}`);
 			}
@@ -23,6 +21,21 @@ export function useCart() {
 		},
 		queryKey: CART_QUERY_KEY,
 	});
+	const { dataUpdatedAt, isFetchedAfterMount, isSuccess } = query;
+
+	useEffect(() => {
+		if (!isFetchedAfterMount || !isSuccess || dataUpdatedAt === 0) return;
+
+		// TanStack Query v5 removed query callbacks, so successful settlements notify this store here.
+		notifyCartCountListeners();
+	}, [dataUpdatedAt, isFetchedAfterMount, isSuccess]);
+
+	return query;
+}
+
+export function useCartCount() {
+	// Cookie changes do not emit browser events, so mutation and query settlements notify this store.
+	return useSyncExternalStore(subscribeToCartCount, getCartCountSnapshot, getServerCartCountSnapshot);
 }
 
 export function useInvalidateCartOnSettle(state: 'idle' | 'loading' | 'submitting') {
@@ -34,32 +47,32 @@ export function useInvalidateCartOnSettle(state: 'idle' | 'loading' | 'submittin
 		previousState.current = state;
 		if (!didSettle) return;
 
-		notifyCartMarkerListeners();
-		if (!hasCartPresentCookie(document.cookie)) {
+		notifyCartCountListeners();
+		if (getCartCountCookie(document.cookie) === 0) {
 			queryClient.setQueryData(CART_QUERY_KEY, EMPTY_CART);
-			return;
 		}
+		// Disabled drawer queries remain stale without fetching until the drawer opens.
 		void queryClient.invalidateQueries({ queryKey: CART_QUERY_KEY });
 	}, [queryClient, state]);
 }
 
-const cartMarkerListeners = new Set<() => void>();
+const cartCountListeners = new Set<() => void>();
 
-function subscribeToCartMarker(onStoreChange: () => void) {
-	cartMarkerListeners.add(onStoreChange);
+function subscribeToCartCount(onStoreChange: () => void) {
+	cartCountListeners.add(onStoreChange);
 	return () => {
-		cartMarkerListeners.delete(onStoreChange);
+		cartCountListeners.delete(onStoreChange);
 	};
 }
 
-function getCartMarkerSnapshot(): boolean {
-	return hasCartPresentCookie(document.cookie);
+function getCartCountSnapshot(): number {
+	return getCartCountCookie(document.cookie);
 }
 
-function getServerCartMarkerSnapshot(): boolean {
-	return false;
+function getServerCartCountSnapshot(): number {
+	return 0;
 }
 
-function notifyCartMarkerListeners() {
-	for (const listener of cartMarkerListeners) listener();
+function notifyCartCountListeners() {
+	for (const listener of cartCountListeners) listener();
 }

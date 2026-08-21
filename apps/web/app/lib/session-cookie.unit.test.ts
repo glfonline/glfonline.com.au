@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
-	CART_PRESENT_COOKIE_NAME,
-	cartPresentCookieFor,
-	hasCartPresentCookie,
+	CART_COUNT_COOKIE_NAME,
+	cartCountCookieFor,
+	getCartCountCookie,
 	hasSessionCookie,
 	SESSION_COOKIE_NAME,
 } from './session-cookie';
@@ -47,45 +47,52 @@ describe('hasSessionCookie', () => {
 		expect(hasSessionCookie('_ga=1; not_session=abc; sessionid=def')).toBe(false);
 	});
 
-	it('does not match the readable cart_present marker cookie', () => {
+	it('does not match the readable cart_count cookie', () => {
 		// hasSessionCookie() gates anonymous edge caching.
-		expect(hasSessionCookie('cart_present=1')).toBe(false);
+		expect(hasSessionCookie('cart_count=3')).toBe(false);
 	});
 });
 
-describe('CART_PRESENT_COOKIE_NAME', () => {
+describe('CART_COUNT_COOKIE_NAME', () => {
 	it('is a distinct name from the session cookie', () => {
-		expect(CART_PRESENT_COOKIE_NAME).toBe('cart_present');
-		expect(CART_PRESENT_COOKIE_NAME).not.toBe(SESSION_COOKIE_NAME);
+		expect(CART_COUNT_COOKIE_NAME).toBe('cart_count');
+		expect(CART_COUNT_COOKIE_NAME).not.toBe(SESSION_COOKIE_NAME);
 	});
 });
 
-describe('cartPresentCookieFor', () => {
-	it('sets the marker when the cart has items', () => {
-		expect(cartPresentCookieFor(true)).toBe('cart_present=1; Path=/; SameSite=Lax');
+describe('cartCountCookieFor', () => {
+	it('sets the cart count', () => {
+		expect(cartCountCookieFor(3)).toBe('cart_count=3; Path=/; SameSite=Lax');
 	});
 
-	it('clears the marker when the cart is empty', () => {
-		expect(cartPresentCookieFor(false)).toBe('cart_present=; Path=/; SameSite=Lax; Max-Age=0');
+	it('clears the cookie unless the count is a positive safe integer', () => {
+		expect(cartCountCookieFor(0)).toBe('cart_count=; Path=/; SameSite=Lax; Max-Age=0');
+		expect(cartCountCookieFor(-1)).toBe('cart_count=; Path=/; SameSite=Lax; Max-Age=0');
+		expect(cartCountCookieFor(1.5)).toBe('cart_count=; Path=/; SameSite=Lax; Max-Age=0');
+		expect(cartCountCookieFor(Number.NaN)).toBe('cart_count=; Path=/; SameSite=Lax; Max-Age=0');
+		expect(cartCountCookieFor(Number.POSITIVE_INFINITY)).toBe('cart_count=; Path=/; SameSite=Lax; Max-Age=0');
+		expect(cartCountCookieFor(Number.MAX_SAFE_INTEGER + 1)).toBe('cart_count=; Path=/; SameSite=Lax; Max-Age=0');
 	});
 });
 
-describe('hasCartPresentCookie', () => {
-	it('returns false when the marker is absent', () => {
-		expect(hasCartPresentCookie('')).toBe(false);
-		expect(hasCartPresentCookie('_ga=1')).toBe(false);
+describe('getCartCountCookie', () => {
+	it('returns 0 when the cookie is absent', () => {
+		expect(getCartCountCookie('')).toBe(0);
+		expect(getCartCountCookie('_ga=1')).toBe(0);
 	});
 
-	it('returns true when the marker is present', () => {
-		expect(hasCartPresentCookie('cart_present=1')).toBe(true);
-		expect(hasCartPresentCookie('_ga=1; cart_present=1')).toBe(true);
-		expect(hasCartPresentCookie('cart_present=1; _ga=1')).toBe(true);
+	it('reads a complete non-negative integer value', () => {
+		expect(getCartCountCookie('cart_count=0')).toBe(0);
+		expect(getCartCountCookie('cart_count=12')).toBe(12);
+		expect(getCartCountCookie('_ga=1; cart_count=3')).toBe(3);
+		expect(getCartCountCookie('cart_count=4; _ga=1')).toBe(4);
 	});
 
-	it('returns false when the marker value is not exactly 1', () => {
-		expect(hasCartPresentCookie('cart_present=')).toBe(false);
-		expect(hasCartPresentCookie('cart_present=0')).toBe(false);
-		expect(hasCartPresentCookie('cart_present=10')).toBe(false);
-		expect(hasCartPresentCookie('cart_present=1x')).toBe(false);
+	it('returns 0 for invalid values', () => {
+		expect(getCartCountCookie('cart_count=')).toBe(0);
+		expect(getCartCountCookie('cart_count=-1')).toBe(0);
+		expect(getCartCountCookie('cart_count=1.5')).toBe(0);
+		expect(getCartCountCookie('cart_count=1x')).toBe(0);
+		expect(getCartCountCookie('cart_count=9007199254740992')).toBe(0);
 	});
 });

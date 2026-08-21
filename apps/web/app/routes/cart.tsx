@@ -23,8 +23,7 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 			? { cart: view.cart, linesDisplay: view.linesDisplay, type: view.type }
 			: { type: view.type };
 
-	// Reconciling against Shopify can shrink or empty the cart (e.g. a line went
-	// out of stock), so re-derive the marker here too rather than only on write.
+	// Shopify can shrink or empty the cart, so correct the readable count after reconciliation.
 	const headers = await commitCartSession(session);
 	headers.set('Cache-Control', CACHE_NONE);
 

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import type { CartItem, CartSession } from './cart';
+import { commitCartSession } from './cart';
 import type { CartStorefront } from './cart-model';
 import { createCart } from './cart-model';
 
@@ -119,6 +120,20 @@ describe('createCart', () => {
 		expect(view.cart.checkoutUrl).toBe('https://example.com/checkout');
 		expect(view.linesDisplay).toEqual([{ compareAt: null, discountLabels: [], pricePerUnit: 40, showWasNow: false }]);
 		expect(session.items).toEqual([{ variantId: VARIANT_1, quantity: 3 }]);
+	});
+
+	it('corrects the count cookie after Shopify caps a session quantity', async () => {
+		const session = createSessionStub([{ variantId: VARIANT_1, quantity: 5 }]);
+		const storefront = createStorefrontStub(() => {
+			return cartCreateSuccess([lineEdge(VARIANT_1, 2, 80)]);
+		});
+
+		const cart = createCart({ session, storefront });
+		await cart.read();
+		const headers = await commitCartSession(session);
+
+		expect(session.items).toEqual([{ variantId: VARIANT_1, quantity: 2 }]);
+		expect(headers.get('Set-Cookie')).toContain('cart_count=2; Path=/; SameSite=Lax');
 	});
 
 	it('add() reconciles the session to Shopify lines', async () => {
