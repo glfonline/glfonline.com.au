@@ -1,10 +1,10 @@
 import dedent from 'dedent';
-import type { LoaderFunctionArgs } from 'react-router';
 import { CACHE_LONG } from '../lib/cache';
+import { WEB_ADDRESS } from '../lib/constants';
 
-export function loader({ url }: LoaderFunctionArgs) {
+export function loader() {
 	const body = robotsTxtData({
-		url: url.origin,
+		url: WEB_ADDRESS,
 	});
 
 	return new Response(body, {

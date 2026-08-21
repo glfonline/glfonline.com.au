@@ -1,15 +1,29 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoutesStub } from 'react-router';
 import { describe, expect, it } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
+import { CART_QUERY_KEY, EMPTY_CART } from '../lib/use-cart';
 import { CartDrawer } from './cart-drawer';
 
 function renderDrawer({ open }: { open: boolean }) {
+	// Seed the query rather than letting it fetch: the drawer's data now comes
+	// from `/api/cart`, which has no server to answer it in a browser test.
+	const queryClient = new QueryClient({
+		defaultOptions: {
+			queries: { retry: false },
+		},
+	});
+	queryClient.setQueryData(CART_QUERY_KEY, EMPTY_CART);
+
 	const Stub = createRoutesStub([
 		{
 			path: '/',
-			loader: () => ({ cartResult: { type: 'empty' } }),
-			Component: () => <CartDrawer />,
+			Component: () => (
+				<QueryClientProvider client={queryClient}>
+					<CartDrawer />
+				</QueryClientProvider>
+			),
 		},
 	]);
 	return render(<Stub initialEntries={[open ? '/?cart=open' : '/']} />);

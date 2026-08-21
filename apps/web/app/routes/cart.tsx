@@ -6,7 +6,7 @@ import { data, redirect, useLoaderData } from 'react-router';
 import { z } from 'zod';
 import { CartContent } from '../components/cart-content';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
-import { getSession } from '../lib/cart';
+import { commitCartSession, getSession } from '../lib/cart';
 import { CART_ACTIONS, CART_INTENT } from '../lib/cart-actions';
 import { createCart } from '../lib/cart-model';
 import { storefrontContext } from '../root';
@@ -23,12 +23,12 @@ export async function loader({ context, request }: LoaderFunctionArgs) {
 			? { cart: view.cart, linesDisplay: view.linesDisplay, type: view.type }
 			: { type: view.type };
 
-	return data(loaderData, {
-		headers: {
-			'Cache-Control': CACHE_NONE,
-			'Set-Cookie': await session.commitSession(),
-		},
-	});
+	// Reconciling against Shopify can shrink or empty the cart (e.g. a line went
+	// out of stock), so re-derive the marker here too rather than only on write.
+	const headers = await commitCartSession(session);
+	headers.set('Cache-Control', CACHE_NONE);
+
+	return data(loaderData, { headers });
 }
 
 const checkoutScheme = z.object({
@@ -160,9 +160,7 @@ export async function action({
 						type: 'success',
 					},
 					{
-						headers: {
-							'Set-Cookie': await session.commitSession(),
-						},
+						headers: await commitCartSession(session),
 					},
 				);
 			}
@@ -175,9 +173,7 @@ export async function action({
 						type: 'success',
 					},
 					{
-						headers: {
-							'Set-Cookie': await session.commitSession(),
-						},
+						headers: await commitCartSession(session),
 					},
 				);
 			}
@@ -194,9 +190,7 @@ export async function action({
 					formState: err.formState,
 				},
 				{
-					headers: {
-						'Set-Cookie': await session.commitSession(),
-					},
+					headers: await commitCartSession(session),
 				},
 			);
 		}
@@ -219,9 +213,7 @@ export async function action({
 					formState: errorFormState,
 				},
 				{
-					headers: {
-						'Set-Cookie': await session.commitSession(),
-					},
+					headers: await commitCartSession(session),
 				},
 			);
 		}

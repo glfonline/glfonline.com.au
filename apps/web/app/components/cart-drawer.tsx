@@ -3,13 +3,13 @@ import { Button } from 'react-aria-components/Button';
 import { Dialog } from 'react-aria-components/Dialog';
 import { Heading } from 'react-aria-components/Heading';
 import { Modal, ModalOverlay } from 'react-aria-components/Modal';
-import { useLoaderData, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
-import type { loader } from '../root';
+import { EMPTY_CART, useCart } from '../lib/use-cart';
 import { CartContent } from './cart-content';
 
 export function CartDrawer() {
-	const { cartResult } = useLoaderData<typeof loader>();
+	const { data: cart } = useCart();
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	// The URL is the single source of truth for whether the drawer is open: the
@@ -57,7 +57,7 @@ export function CartDrawer() {
 						</Button>
 					</div>
 
-					<CartContent result={cartResult} showHeading={false} summaryPlacement="footer" />
+					<CartContent result={(cart ?? EMPTY_CART).cartResult} showHeading={false} summaryPlacement="footer" />
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
