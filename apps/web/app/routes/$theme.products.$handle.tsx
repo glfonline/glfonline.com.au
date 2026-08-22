@@ -25,7 +25,7 @@ import { PayPalMessages } from '../components/paypal';
 import { ImageGallery } from '../components/product-gallery';
 import { CACHE_NONE, routeHeaders } from '../lib/cache';
 import type { CartItem } from '../lib/cart';
-import { getSession } from '../lib/cart';
+import { commitCartSession, getSession } from '../lib/cart';
 import { productCartOpenHref } from '../lib/cart-actions';
 import { createCart } from '../lib/cart-model';
 import { notFound } from '../lib/errors.server';
@@ -33,6 +33,7 @@ import { focusFirstInvalidField } from '../lib/focus-first-invalid-field';
 import { useAppForm } from '../lib/form-context';
 import { formatMoney } from '../lib/format-money';
 import { getSizingChart } from '../lib/get-sizing-chart';
+import { useNotifyCartCountOnSettle } from '../lib/use-cart';
 import { storefrontContext } from '../root';
 import { getSeoMeta, seoConfig } from '../seo';
 
@@ -174,9 +175,7 @@ export async function action({ context, params, request }: ActionFunctionArgs): 
 		// Open the cart drawer by putting the state in the URL. The fetcher follows
 		// this redirect, so `?cart=open` becomes the source of truth for the drawer.
 		throw redirect(productCartOpenHref(theme, handle), {
-			headers: {
-				'Set-Cookie': await session.commitSession(),
-			},
+			headers: await commitCartSession(session),
 		});
 	} catch (err) {
 		// Intentional thrown Responses (e.g. the `?cart=open` redirect above) must
@@ -184,10 +183,7 @@ export async function action({ context, params, request }: ActionFunctionArgs): 
 		if (err instanceof Response) throw err;
 
 		if (err instanceof ServerValidateError) {
-			return json(
-				{ type: 'error', formState: err.formState },
-				{ headers: { 'Set-Cookie': await session.commitSession() } },
-			);
+			return json({ type: 'error', formState: err.formState }, { headers: await commitCartSession(session) });
 		}
 
 		// For other errors, create a form state with the error message
@@ -198,10 +194,7 @@ export async function action({ context, params, request }: ActionFunctionArgs): 
 					errors: [{ message: err.message }],
 				},
 			};
-			return json(
-				{ type: 'error', formState: errorFormState },
-				{ headers: { 'Set-Cookie': await session.commitSession() } },
-			);
+			return json({ type: 'error', formState: errorFormState }, { headers: await commitCartSession(session) });
 		}
 
 		// Some other error occurred - let it bubble up to React Router's error boundary
@@ -231,6 +224,9 @@ export default function ProductPage() {
 	const { product, quantityInCartByVariantId, theme } = useLoaderData<typeof loader>();
 	const actionData = useActionData<ProductActionResult>();
 	const fetcher = useFetcher<ProductActionResult>();
+	// Badge only: opening `?cart=open` already enables useCart; invalidating here
+	// would race a second /api/cart request.
+	useNotifyCartCountOnSettle(fetcher.state);
 
 	const [variant, setVariant] = useState(product.variants.edges.find((edge) => edge.node.availableForSale));
 
@@ -269,6 +265,7 @@ export default function ProductPage() {
 			[errorFormState],
 		),
 		onSubmit: async ({ value }) => {
+			// biome-ignore lint/nursery/noFloatingPromises: no need to block by awaiting a fetcher
 			fetcher.submit(value, {
 				method: 'post',
 			});

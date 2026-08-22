@@ -2,7 +2,7 @@ import type { Storefront } from '@glfonline/shopify-client';
 import { createStorefront, SHOP_QUERY } from '@glfonline/shopify-client';
 import { captureException } from '@sentry/react-router';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { QueryClient } from '@tanstack/react-query';
+import { defaultShouldDehydrateQuery, QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { useEffect } from 'react';
 import { RouterProvider } from 'react-aria-components';
@@ -28,11 +28,9 @@ import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import fontCssUrl from './font.css?url';
-import { getSession } from './lib/cart';
-import { createCart, EMPTY_CART_VIEW } from './lib/cart-model';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
-import { hasSessionCookie } from './lib/session-cookie';
+import { CART_QUERY_KEY } from './lib/use-cart';
 import { getSeoMeta, seoConfig } from './seo';
 import tailwindCssUrl from './tailwind.css?url';
 
@@ -80,41 +78,16 @@ export const links: LinksFunction = () => {
 	];
 };
 
-export async function loader({ context, request }: LoaderFunctionArgs) {
+export async function loader({ context }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
-	// Only load an existing session; `Set-Cookie` prevents anonymous caching.
-	const session = hasSessionCookie(request.headers.get('Cookie')) ? await getSession(request) : null;
-	const cart = session ? createCart({ session, storefront }) : null;
 
-	const [view, { shop }, mainNavigation] = await Promise.all([
-		cart ? cart.read() : EMPTY_CART_VIEW,
-		storefront.request(SHOP_QUERY),
-		getMainNavigation(),
-	]);
-	const cartResult =
-		view.type === 'success'
-			? { cart: view.cart, linesDisplay: view.linesDisplay, type: view.type }
-			: { type: view.type };
+	// Keep per-visitor cart data out of the root loader.
+	const [{ shop }, mainNavigation] = await Promise.all([storefront.request(SHOP_QUERY), getMainNavigation()]);
 
-	// Calculate total quantity by summing all reconciled line quantities.
-	let cartCount = 0;
-	if (view.type === 'success' && view.cart) {
-		for (const { node } of view.cart.lines.edges) {
-			cartCount += node.quantity;
-		}
-	}
-
-	const responseInit = session ? { headers: { 'Set-Cookie': await session.commitSession() } } : undefined;
-
-	return data(
-		{
-			cartCount,
-			cartResult,
-			mainNavigation,
-			shop,
-		},
-		responseInit,
-	);
+	return data({
+		mainNavigation,
+		shop,
+	});
 }
 
 export const meta: MetaFunction<typeof loader> = () => {
@@ -158,6 +131,14 @@ function App() {
 					<PersistQueryClientProvider
 						client={queryClient}
 						persistOptions={{
+							// A cart persisted to localStorage outlives the server session it
+							// came from, so it would resurface as a stale badge on a later
+							// visit. Everything else is safe to restore.
+							dehydrateOptions: {
+								shouldDehydrateQuery: (query) => {
+									return query.queryKey[0] !== CART_QUERY_KEY[0] && defaultShouldDehydrateQuery(query);
+								},
+							},
 							persister,
 						}}
 					>

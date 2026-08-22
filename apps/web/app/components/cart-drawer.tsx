@@ -1,21 +1,22 @@
 import { XMarkIcon } from '@heroicons/react/20/solid';
+import type { ReactNode } from 'react';
 import { Button } from 'react-aria-components/Button';
 import { Dialog } from 'react-aria-components/Dialog';
 import { Heading } from 'react-aria-components/Heading';
 import { Modal, ModalOverlay } from 'react-aria-components/Modal';
-import { useLoaderData, useSearchParams } from 'react-router';
+import { useSearchParams } from 'react-router';
 import { CART_DRAWER_PARAM } from '../lib/cart-actions';
-import type { loader } from '../root';
+import { useCart, useCartCount } from '../lib/use-cart';
 import { CartContent } from './cart-content';
+import { QueryContent } from './query-content';
 
 export function CartDrawer() {
-	const { cartResult } = useLoaderData<typeof loader>();
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	// The URL is the single source of truth for whether the drawer is open: the
 	// add-to-cart action redirects to `?cart=open`, and closing simply drops the
 	// param. No local state to keep in sync with the server.
-	const open = searchParams.has(CART_DRAWER_PARAM);
+	const isOpen = searchParams.has(CART_DRAWER_PARAM);
 
 	function close() {
 		setSearchParams(
@@ -31,7 +32,7 @@ export function CartDrawer() {
 		<ModalOverlay
 			className="fixed inset-0 z-40 flex justify-end bg-black/25 transition-opacity duration-300 ease-linear data-entering:opacity-0 data-exiting:opacity-0 motion-reduce:transition-none"
 			isDismissable
-			isOpen={open}
+			isOpen={isOpen}
 			onOpenChange={(isOpen) => {
 				if (!isOpen) close();
 			}}
@@ -56,10 +57,47 @@ export function CartDrawer() {
 							<XMarkIcon aria-hidden="true" className="h-6 w-6" />
 						</Button>
 					</div>
-
-					<CartContent result={cartResult} showHeading={false} summaryPlacement="footer" />
+					<CartDrawerBody isOpen={isOpen} />
 				</Dialog>
 			</Modal>
 		</ModalOverlay>
+	);
+}
+
+function CartDrawerBody({ isOpen }: { isOpen: boolean }) {
+	const query = useCart(isOpen);
+	const cartCount = useCartCount();
+
+	// Right after add-to-cart, the drawer reopens with a cached empty cart from
+	// the last time it was closed while `/api/cart` refetches in the
+	// background. `cart_count` already reflects the new item, so the cached
+	// emptiness is known to be stale — show the loading state instead of
+	// flashing "Your cart is currently empty." A cached cart that already has
+	// items is still valid while it refetches, so this only applies when the
+	// cached data is empty.
+	if (query.isFetching && cartCount > 0 && query.data?.cartCount === 0) {
+		return <CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>;
+	}
+
+	return (
+		<QueryContent
+			error={() => <CartDrawerStatus>Unable to load your cart. Please try again.</CartDrawerStatus>}
+			pending={<CartDrawerStatus isBusy>Loading cart…</CartDrawerStatus>}
+			query={query}
+		>
+			{(data) => <CartContent result={data.cartResult} showHeading={false} summaryPlacement="footer" />}
+		</QueryContent>
+	);
+}
+
+function CartDrawerStatus({ children, isBusy = false }: { children: ReactNode; isBusy?: boolean }) {
+	return (
+		<div
+			aria-busy={isBusy || undefined}
+			aria-live="polite"
+			className="flex min-h-0 flex-1 flex-col items-center justify-center gap-2 px-4 text-center"
+		>
+			<p className="text-gray-600">{children}</p>
+		</div>
 	);
 }

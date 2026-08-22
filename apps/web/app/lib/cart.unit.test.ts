@@ -1,6 +1,21 @@
 import { describe, expect, it } from 'vitest';
 import type { CartItem } from './cart';
-import { addToCart, removeCartItem, updateCartItem } from './cart';
+import { addToCart, commitCartSession, removeCartItem, updateCartItem } from './cart';
+
+describe('commitCartSession', () => {
+	it('writes the sum of line quantities to the readable cookie', async () => {
+		const headers = await commitCartSession({
+			commitSession: async () => 'session=encrypted; Path=/; HttpOnly',
+			getCart: async () => [
+				{ quantity: 2, variantId: 'gid://shopify/ProductVariant/1' },
+				{ quantity: 3, variantId: 'gid://shopify/ProductVariant/2' },
+			],
+			setCart() {},
+		});
+
+		expect(headers.get('Set-Cookie')).toContain('cart_count=5; Path=/; SameSite=Lax');
+	});
+});
 
 describe('addToCart', () => {
 	it('adds one line with quantity 1 to empty cart', () => {

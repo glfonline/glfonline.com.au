@@ -1,9 +1,9 @@
 import { Bars3Icon, MagnifyingGlassIcon, ShoppingCartIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
-import { NavLink, useLoaderData } from 'react-router';
+import { NavLink } from 'react-router';
 import { CHANTALE_PHONE, socialLinks } from '../lib/constants';
+import { useCartCount } from '../lib/use-cart';
 import { useSearchHotkey } from '../lib/use-search-hotkey';
-import type { loader } from '../root';
 import { ButtonLink } from './design-system/button-link';
 import { MegaMenu } from './mega-menu';
 import { MobileMenu } from './mobile-menu';
@@ -57,7 +57,7 @@ function TopNav() {
 }
 
 function MainNav({ setOpen }: { setOpen: (open: boolean) => void }) {
-	const { cartCount } = useLoaderData<typeof loader>();
+	const cartCount = useCartCount();
 	const [isSearchOpen, setSearchOpen] = useState(false);
 	const toggleSearch = () => {
 		setSearchOpen((prev) => !prev);

@@ -1,5 +1,6 @@
+import type { SessionData, SessionStorage } from 'react-router';
 import { createCookieSessionStorage } from 'react-router';
-import { SESSION_COOKIE_NAME } from './session-cookie';
+import { cartCountCookieFor, SESSION_COOKIE_NAME } from './session-cookie';
 
 export type CartItem = {
 	variantId: string;
@@ -12,29 +13,47 @@ export type CartSession = {
 	setCart(cart: Array<CartItem>): void;
 };
 
-if (!process.env.ENCRYPTION_KEY) {
-	throw new Error('ENCRYPTION_KEY environment variable is not set');
+// Delay session storage creation so unrelated routes can prerender.
+let sessionStorage: SessionStorage<SessionData, SessionData> | undefined;
+function getSessionStorage() {
+	if (!sessionStorage) {
+		if (!process.env.ENCRYPTION_KEY) {
+			throw new Error('ENCRYPTION_KEY environment variable is not set');
+		}
+		sessionStorage = createCookieSessionStorage({
+			cookie: {
+				httpOnly: true,
+				name: SESSION_COOKIE_NAME,
+				path: '/',
+				sameSite: 'lax',
+				secrets: [process.env.ENCRYPTION_KEY],
+			},
+		});
+	}
+	return sessionStorage;
 }
-
-const sessionStorage = createCookieSessionStorage({
-	cookie: {
-		httpOnly: true,
-		name: SESSION_COOKIE_NAME,
-		path: '/',
-		sameSite: 'lax',
-		secrets: [process.env.ENCRYPTION_KEY],
-	},
-});
 
 const cartSessionKey = 'cart';
 
+/** Commits the session and its readable cart count together. */
+export async function commitCartSession(session: CartSession): Promise<Headers> {
+	const [sessionCookie, cart] = await Promise.all([session.commitSession(), session.getCart()]);
+	let cartCount = 0;
+	for (const item of cart) cartCount += item.quantity;
+
+	const headers = new Headers();
+	headers.append('Set-Cookie', sessionCookie);
+	headers.append('Set-Cookie', cartCountCookieFor(cartCount));
+	return headers;
+}
+
 export async function getSession(input: Request | string | null | undefined): Promise<CartSession> {
 	const cookieHeader = !input || typeof input === 'string' ? input : input.headers.get('Cookie');
-	const session = await sessionStorage.getSession(cookieHeader);
+	const session = await getSessionStorage().getSession(cookieHeader);
 
 	return {
 		async commitSession() {
-			return await sessionStorage.commitSession(session);
+			return await getSessionStorage().commitSession(session);
 		},
 
 		// TODO: Get and set cart from Redis or something if user is logged in (could probably use a storage abstraction)

@@ -49,6 +49,7 @@ export function NewsletterSignup() {
 			[fetcher.data],
 		),
 		onSubmit: ({ value }) => {
+			// biome-ignore lint/nursery/noFloatingPromises: no need to block by awaiting a fetcher
 			fetcher.submit(value, {
 				action: '/api/newsletter',
 				encType: 'application/json',

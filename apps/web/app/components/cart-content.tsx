@@ -6,6 +6,7 @@ import { CART_ACTIONS, CART_INTENT } from '../lib/cart-actions';
 import type { CartView } from '../lib/cart-model';
 import { formatMoney } from '../lib/format-money';
 import type { LineDisplay } from '../lib/line-display';
+import { useInvalidateCartOnSettle } from '../lib/use-cart';
 import { Button } from './design-system/button';
 import { ButtonLink } from './design-system/button-link';
 import { Heading } from './design-system/heading';
@@ -278,6 +279,7 @@ function QuantityPicker({
 	quantityAvailable: number;
 }) {
 	const fetcher = useFetcher();
+	useInvalidateCartOnSettle(fetcher.state);
 	const isPending = fetcher.state !== 'idle';
 
 	return (
@@ -340,6 +342,7 @@ function QuantityPicker({
 
 function RemoveFromCart({ variantId }: { variantId: string }) {
 	const fetcher = useFetcher();
+	useInvalidateCartOnSettle(fetcher.state);
 
 	return (
 		<fetcher.Form action="/cart" className="absolute top-0 right-0" method="post">
