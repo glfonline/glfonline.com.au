@@ -141,4 +141,25 @@ describe('getSeoMeta', () => {
 		expect(descriptionMeta).toBeDefined();
 		expect(descriptionMeta).toHaveProperty('content', '');
 	});
+
+	it('should emit a canonical link tag when canonical is provided', () => {
+		const canonical = 'https://www.glfonline.com.au/ladies/collections/new-arrivals';
+		const result = getSeoMeta({
+			canonical,
+		});
+
+		const canonicalLink = result.find((meta) => meta.tagName === 'link');
+		expect(canonicalLink).toBeDefined();
+		expect(canonicalLink).toHaveProperty('rel', 'canonical');
+		expect(canonicalLink).toHaveProperty('href', canonical);
+	});
+
+	it('should not emit a canonical link tag when canonical is omitted', () => {
+		const result = getSeoMeta({
+			title: 'Custom Title',
+		});
+
+		const canonicalLink = result.find((meta) => meta.tagName === 'link');
+		expect(canonicalLink).toBeUndefined();
+	});
 });
