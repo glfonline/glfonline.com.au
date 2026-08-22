@@ -2,6 +2,7 @@ export type SeoConfig = {
 	title?: string;
 	titleTemplate?: string;
 	description?: string;
+	canonical?: string;
 };
 
 export const seoConfig: SeoConfig = {
@@ -36,6 +37,9 @@ export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>) {
 		name?: string;
 		property?: string;
 		content?: string;
+		tagName?: string;
+		rel?: string;
+		href?: string;
 	}> = [];
 
 	// Add title tag if we have a title
@@ -69,6 +73,15 @@ export function getSeoMeta(...seoInputs: Array<SeoConfig | null | undefined>) {
 		property: 'og:title',
 		content: finalTitle || seoConfig.title || '',
 	});
+
+	// Add canonical link, when provided, so paginated/sorted collection URLs point crawlers back at the base page
+	if (mergedConfig.canonical) {
+		metaTags.push({
+			tagName: 'link',
+			rel: 'canonical',
+			href: mergedConfig.canonical,
+		});
+	}
 
 	return metaTags;
 }

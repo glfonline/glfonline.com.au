@@ -22,6 +22,12 @@ function robotsTxtData({ url }: { url?: string }) {
 	return dedent`
 		User-agent: *
 		Disallow: /cart
+		# Cursor pagination and sorting on collection pages produce an unbounded
+		# URL space; the sitemap already covers product discovery.
+		Disallow: /*?after=
+		Disallow: /*&after=
+		Disallow: /*?sort=
+		Disallow: /*&sort=
 		${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}
 
 		# Google adsbot ignores robots.txt unless specifically named!

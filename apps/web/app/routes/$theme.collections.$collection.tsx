@@ -9,6 +9,7 @@ import { ButtonLink } from '../components/design-system/button-link';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { WEB_ADDRESS } from '../lib/constants';
 import { badRequest, notFound, serverError } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
@@ -170,6 +171,9 @@ export const meta: MetaFunction<typeof loader> = ({ loaderData }) => {
 	invariant(loaderData, 'Expected data for meta function');
 	return getSeoMeta({
 		title: `Shop ${loaderData.title}`,
+		// Points crawlers at the parameter-free collection URL, since `after`/sort
+		// pagination is disallowed in robots.txt but still linked from the page.
+		canonical: `${WEB_ADDRESS}/${loaderData.theme}/collections/${loaderData.collectionHandle}`,
 	});
 };
 

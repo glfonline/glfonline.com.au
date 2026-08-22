@@ -52,8 +52,10 @@ function sentryOptions(env: Env): Sentry.CloudflareOptions {
 		enabled: import.meta.env.PROD,
 		environment: import.meta.env.MODE,
 		// `denyUrls` can match Worker stack frames and hide server errors.
+		// The sample rate is kept low deliberately: every trace is an outbound
+		// subrequest to Sentry, costing CPU and wall time on each invocation.
 		tracesSampler() {
-			return import.meta.env.MODE === 'production' ? 1 : 0;
+			return import.meta.env.MODE === 'production' ? 0.01 : 0;
 		},
 		beforeSendTransaction(event) {
 			// Header names are case-sensitive here.
