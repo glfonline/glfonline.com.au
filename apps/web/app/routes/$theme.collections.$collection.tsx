@@ -64,14 +64,9 @@ export async function loader({ context, params, url }: LoaderFunctionArgs) {
 	} = parseRequestParameters(params, url);
 	const { collection: collectionHandle, theme } = validatedParams;
 
-	// A non-canonical query string (an unknown key, a bad value) would otherwise
-	// mint its own Cloudflare cache key and billed Worker invocation, so redirect
-	// before spending any Shopify subrequests on it.
-	//
-	// 301 is chosen so crawlers stop re-requesting the junk variant, but browsers
-	// cache 301s aggressively: adding a name to `FILTERABLE_OPTION_NAMES` later
-	// means URLs that redirected before that change may stay redirected in clients
-	// that cached this response, even though the param would now be canonical.
+	// A non-canonical query string would otherwise mint its own cache key and billed Worker invocation, so redirect
+	// before the Shopify fetches. 301s are cached aggressively by browsers, so widening the canonical set later may
+	// not un-redirect clients that already cached this response.
 	if (!isCanonical) {
 		throw redirect(`${url.pathname}${canonicalSearch ? `?${canonicalSearch}` : ''}`, 301);
 	}
