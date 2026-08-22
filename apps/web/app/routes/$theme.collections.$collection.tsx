@@ -16,7 +16,7 @@ import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { getProductFilterOptions } from '../lib/get-product-filter-options';
 import { buildNextCursorUrl, buildPrevUrl } from '../lib/pagination-urls';
 import { PRODUCT_TYPE } from '../lib/product-filter-constants';
-import { processCollectionData } from '../lib/process-collection-data';
+import { processCollectionData } from '../lib/process-collection-data.server';
 import { storefrontContext } from '../root';
 import { getSeoMeta } from '../seo';
 

@@ -7,40 +7,16 @@ vi.mock('@sentry/react-router', () => ({
 
 import { captureException } from '@sentry/react-router';
 import { getProductsFromCollectionByTag } from './get-collection-products';
-import { processCollectionData } from './process-collection-data';
+import { processCollectionData } from './process-collection-data.server';
 
 type CollectionPromiseResult = PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
 type Collection = NonNullable<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
-type ProductEdge = Collection['products'][number];
-
-function createProductEdge(overrides: Partial<ProductEdge['node']> = {}): ProductEdge {
-	return {
-		node: {
-			availableForSale: true,
-			compareAtPriceRange: {
-				maxVariantPrice: { amount: 60, currencyCode: 'AUD' },
-				minVariantPrice: { amount: 60, currencyCode: 'AUD' },
-			},
-			featuredImage: null,
-			handle: 'daily-sports-tee',
-			id: 'gid://shopify/Product/1',
-			priceRange: {
-				maxVariantPrice: { amount: 50, currencyCode: 'AUD' },
-				minVariantPrice: { amount: 50, currencyCode: 'AUD' },
-			},
-			tags: [],
-			title: 'Daily Sports Tee',
-			variants: { edges: [] },
-			...overrides,
-		},
-	};
-}
 
 function createCollection(overrides: Partial<Collection> = {}): Collection {
 	return {
 		image: { altText: 'alt text', url: 'https://cdn.shopify.com/image.jpg' },
 		pageInfo: { endCursor: 'abc', hasNextPage: false, hasPreviousPage: false },
-		products: [createProductEdge()],
+		products: [],
 		title: 'Daily Sports',
 		...overrides,
 	};
@@ -145,7 +121,7 @@ describe('processCollectionData', () => {
 	});
 
 	it('returns the collection data with products intact on success', () => {
-		const products = [createProductEdge()];
+		const products = [{ id: 'gid://shopify/Product/1' }] as unknown as Collection['products'];
 		const collectionPromise: CollectionPromiseResult = {
 			status: 'fulfilled',
 			value: createCollection({ products }),

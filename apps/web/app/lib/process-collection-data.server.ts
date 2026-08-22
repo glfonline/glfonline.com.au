@@ -1,7 +1,7 @@
 import { notFound, serverError } from './errors.server';
 import type { getProductsFromCollectionByTag } from './get-collection-products';
 
-export type ProcessCollectionDataParams = {
+type ProcessCollectionDataParams = {
 	collectionHandle: string;
 	collectionPromise: PromiseSettledResult<Awaited<ReturnType<typeof getProductsFromCollectionByTag>>>;
 	filterOptions?: Record<string, string>;
@@ -9,7 +9,6 @@ export type ProcessCollectionDataParams = {
 	theme: string;
 };
 
-// Helper function to handle collection data processing
 export function processCollectionData({
 	collectionHandle,
 	collectionPromise,
@@ -37,7 +36,6 @@ export function processCollectionData({
 		});
 	}
 
-	// Return with products explicitly marked as non-undefined array
 	return {
 		...collection,
 		products: collection.products,
