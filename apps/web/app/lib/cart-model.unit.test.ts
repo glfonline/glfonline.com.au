@@ -169,7 +169,7 @@ describe('createCart', () => {
 		expect(session.items).toEqual([]);
 	});
 
-	it('returns a "Failed to create cart" error and clears the session when the request throws', async () => {
+	it('returns a "Failed to create cart" error and keeps the session when the request throws', async () => {
 		const session = createSessionStub([{ variantId: VARIANT_1, quantity: 1 }]);
 		const storefront = createStorefrontStub(() => {
 			throw new Error('network down');
@@ -178,7 +178,9 @@ describe('createCart', () => {
 		const cart = createCart({ session, storefront });
 		await expect(cart.add(VARIANT_1, 1)).rejects.toThrow('Failed to create cart: network down');
 
-		expect(session.items).toEqual([]);
+		// A transient failure (e.g. Shopify unreachable) must not discard the
+		// cart, so a retry can still succeed.
+		expect(session.items).toEqual([{ variantId: VARIANT_1, quantity: 1 }]);
 	});
 
 	it('remove() runs the list op then reconciles the session to the remaining Shopify line', async () => {

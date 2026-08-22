@@ -1,6 +1,7 @@
 import { CheckIcon, ChevronLeftIcon, ChevronRightIcon, ClockIcon, XMarkIcon } from '@heroicons/react/20/solid';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
+import type { ReactNode } from 'react';
 import { Form, Link, useFetcher, useNavigation } from 'react-router';
 import { CART_ACTIONS, CART_INTENT } from '../lib/cart-actions';
 import type { CartView } from '../lib/cart-model';
@@ -22,20 +23,42 @@ type CartContentProps = {
 };
 
 export function CartContent({ result, showHeading = true, summaryPlacement = 'inline' }: CartContentProps) {
+	// A cart the server could not load is not an empty cart — saying "empty"
+	// here would tell the user their items are gone.
+	if (result.type === 'error') {
+		return (
+			<CartMessage placement={summaryPlacement} showHeading={showHeading}>
+				Unable to load your cart. Please try again.
+			</CartMessage>
+		);
+	}
+
 	if (result.type !== 'success' || result.cart.lines.edges.length === 0) {
-		return <EmptyCart placement={summaryPlacement} showHeading={showHeading} />;
+		return (
+			<CartMessage placement={summaryPlacement} showHeading={showHeading}>
+				Your cart is currently empty.
+			</CartMessage>
+		);
 	}
 
 	return <FilledCart result={result} showHeading={showHeading} summaryPlacement={summaryPlacement} />;
 }
 
-function EmptyCart({ showHeading, placement }: { showHeading: boolean; placement: 'inline' | 'footer' }) {
+function CartMessage({
+	children,
+	placement,
+	showHeading,
+}: {
+	children: ReactNode;
+	placement: 'inline' | 'footer';
+	showHeading: boolean;
+}) {
 	// In the drawer (footer placement) fill the panel and centre the message so it
 	// doesn't cling to the top with a tall empty void beneath it.
 	if (placement === 'footer') {
 		return (
 			<div className="flex min-h-0 flex-1 flex-col items-center justify-center gap-6 px-4 text-center">
-				<p className="text-gray-600">Your cart is currently empty.</p>
+				<p className="text-gray-600">{children}</p>
 				<ButtonLink href="/" variant="neutral">
 					Continue shopping
 				</ButtonLink>
@@ -50,7 +73,7 @@ function EmptyCart({ showHeading, placement }: { showHeading: boolean; placement
 					Shopping Cart
 				</Heading>
 			)}
-			<p>Your cart is currently empty.</p>
+			<p>{children}</p>
 			<span>
 				<ButtonLink href="/" variant="neutral">
 					Continue shopping

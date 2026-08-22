@@ -171,6 +171,23 @@ describe('CartDrawer (browser)', () => {
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 	});
 
+	it('shows an error state when /api/cart returns an error result instead of an empty cart', async () => {
+		const errorCartResponse: CartApiData = { cartCount: 0, cartResult: { type: 'error' } };
+		const fetchSpy = vi.fn(
+			async () =>
+				new Response(JSON.stringify(errorCartResponse), {
+					headers: { 'Content-Type': 'application/json' },
+				}),
+		);
+		vi.stubGlobal('fetch', fetchSpy);
+
+		const screen = await renderDrawer({ open: true, seedEmpty: false });
+
+		await expect.element(screen.getByText('Unable to load your cart. Please try again.')).toBeVisible();
+		expect(screen.baseElement.textContent).not.toContain('Your cart is currently empty.');
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+	});
+
 	it('does not flash an empty cart while reconciling after the first item is added', async () => {
 		let releaseSecondFetch!: () => void;
 		const gate = new Promise<void>((resolve) => {

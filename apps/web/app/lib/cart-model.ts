@@ -45,8 +45,10 @@ export function createCart(opts: { storefront: CartStorefront; session: CartSess
 	/**
 	 * Calls Shopify to create a cart from `items`, then reconciles the session to
 	 * Shopify's returned lines (source of truth) so the session never holds more
-	 * than inventory. On error/empty the session is cleared. The route remains
-	 * responsible for committing the session and setting the Set-Cookie header.
+	 * than inventory. Empty carts and Shopify-rejected or invalid responses clear
+	 * the session; transient failures (thrown errors) preserve it. The route
+	 * remains responsible for committing the session and setting the Set-Cookie
+	 * header.
 	 */
 	async function sync(items: Array<CartItem>): Promise<CartView> {
 		try {
@@ -101,7 +103,12 @@ export function createCart(opts: { storefront: CartStorefront; session: CartSess
 				type: 'error',
 			};
 		} catch (err) {
-			session.setCart([]);
+			// We never reached Shopify (or it returned something unusable at the
+			// transport level), so the items are still presumed valid — clearing
+			// here would destroy the user's cart on a transient failure. The
+			// `userErrors` and invalid-response branches above keep clearing
+			// because Shopify actively rejected the items, which is the
+			// poisoned-cart case the clearing exists for.
 			return {
 				error: `Failed to create cart: ${err instanceof Error ? err.message : String(err)}`,
 				type: 'error',
