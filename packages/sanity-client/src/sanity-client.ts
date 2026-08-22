@@ -1,7 +1,7 @@
 import type { TadaDocumentNode } from 'gql.tada';
 import { print } from 'graphql';
 
-const API_URL = 'https://zah69run.api.sanity.io/v1/graphql/production/default';
+const API_URL = 'https://zah69run.apicdn.sanity.io/v1/graphql/production/default';
 
 type GraphQLResponse<TData> = {
 	data?: TData;
