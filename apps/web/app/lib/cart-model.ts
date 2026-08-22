@@ -101,7 +101,12 @@ export function createCart(opts: { storefront: CartStorefront; session: CartSess
 				type: 'error',
 			};
 		} catch (err) {
-			session.setCart([]);
+			// We never reached Shopify (or it returned something unusable at the
+			// transport level), so the items are still presumed valid — clearing
+			// here would destroy the user's cart on a transient failure. The
+			// `userErrors` and invalid-response branches above keep clearing
+			// because Shopify actively rejected the items, which is the
+			// poisoned-cart case the clearing exists for.
 			return {
 				error: `Failed to create cart: ${err instanceof Error ? err.message : String(err)}`,
 				type: 'error',
