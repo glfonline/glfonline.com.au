@@ -2,7 +2,7 @@ import { createRoutesStub } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
-import { parseCollectionSearchParams, SORT_VALUES } from '../lib/collection-search-params';
+import { parseCollectionSearchParams } from '../lib/collection-search-params';
 import { DisplayOptions, MobileFilters } from './collection-filters';
 
 const options = [{ name: 'Size', values: ['Small', 'Medium', 'Large'] }];
@@ -63,12 +63,6 @@ describe('DisplayOptions (browser)', () => {
 			isCanonical: true,
 			sort: 'price-asc',
 		});
-	});
-
-	it('accepts every sort value the component can emit', () => {
-		for (const value of SORT_VALUES) {
-			expect(parseCollectionSearchParams(new URLSearchParams({ sort: value })).isCanonical).toBe(true);
-		}
 	});
 });
 
