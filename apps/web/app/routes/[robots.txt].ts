@@ -23,11 +23,13 @@ function robotsTxtData({ url }: { url?: string }) {
 		User-agent: *
 		Disallow: /cart
 		# Cursor pagination and sorting on collection pages produce an unbounded
-		# URL space; the sitemap already covers product discovery.
-		Disallow: /*?after=
-		Disallow: /*&after=
-		Disallow: /*?sort=
-		Disallow: /*&sort=
+		# URL space; the sitemap already covers product discovery. Scoped to
+		# /collections/ only: blog pagination also uses ?after= and must stay
+		# crawlable, since the sitemap does not list blog posts.
+		Disallow: /*/collections/*?after=
+		Disallow: /*/collections/*&after=
+		Disallow: /*/collections/*?sort=
+		Disallow: /*/collections/*&sort=
 		${sitemapUrl ? `Sitemap: ${sitemapUrl}` : ''}
 
 		# Google adsbot ignores robots.txt unless specifically named!
