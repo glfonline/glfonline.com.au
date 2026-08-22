@@ -1,7 +1,7 @@
 import { Image } from '@unpic/react';
 import { useState } from 'react';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
-import { data as json, Link, useLoaderData, useLocation } from 'react-router';
+import { data as json, Link, redirect, useLoaderData, useLocation } from 'react-router';
 import invariant from 'tiny-invariant';
 import { z } from 'zod';
 import { Filters, MobileFilters } from '../components/collection-filters';
@@ -9,13 +9,13 @@ import { ButtonLink } from '../components/design-system/button-link';
 import { DiagonalBanner } from '../components/diagonal-banner';
 import { Hero } from '../components/hero';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { parseCollectionSearchParams } from '../lib/collection-search-params';
 import { WEB_ADDRESS } from '../lib/constants';
 import { badRequest } from '../lib/errors.server';
 import { formatMoney } from '../lib/format-money';
 import { getProductsFromCollectionByTag } from '../lib/get-collection-products';
 import { getProductFilterOptions } from '../lib/get-product-filter-options';
 import { buildNextCursorUrl, buildPrevUrl } from '../lib/pagination-urls';
-import { PRODUCT_TYPE } from '../lib/product-filter-constants';
 import { processCollectionData } from '../lib/process-collection-data.server';
 import { storefrontContext } from '../root';
 import { getSeoMeta } from '../seo';
@@ -24,14 +24,6 @@ const collectionSchema = z.object({
 	collection: z.string().min(1),
 	theme: z.enum(['ladies', 'mens']),
 });
-
-const SortSchema = z.looseObject({
-	after: z.string().optional(),
-	[PRODUCT_TYPE]: z.string().optional(),
-	sort: z.string().optional(),
-});
-
-const recordSchema = z.record(z.string().min(1), z.string());
 
 const ITEMS_PER_PAGE = 32;
 
@@ -42,22 +34,15 @@ function parseRequestParameters(params: unknown, url: URL) {
 		badRequest('Invalid collection parameters', params);
 	}
 
-	const parseResult = SortSchema.safeParse(Object.fromEntries(url.searchParams.entries()));
-
-	const { after, sort, productType, ...remainingFilterOptions } = parseResult.success
-		? parseResult.data
-		: {
-				after: undefined,
-				sort: undefined,
-				productType: undefined,
-			};
-
-	const filterOptionsResult = recordSchema.safeParse(remainingFilterOptions);
-	const filterOptions = filterOptionsResult.success ? filterOptionsResult.data : {};
+	const { after, canonicalSearch, filterOptions, isCanonical, productType, sort } = parseCollectionSearchParams(
+		url.searchParams,
+	);
 
 	return {
 		after,
+		canonicalSearch,
 		filterOptions,
+		isCanonical,
 		params: paramsResult.data,
 		productType,
 		sort,
@@ -68,8 +53,23 @@ export async function loader({ context, params, url }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
 
 	// Parse request parameters
-	const { params: validatedParams, after, sort, productType, filterOptions } = parseRequestParameters(params, url);
+	const {
+		params: validatedParams,
+		after,
+		canonicalSearch,
+		sort,
+		productType,
+		filterOptions,
+		isCanonical,
+	} = parseRequestParameters(params, url);
 	const { collection: collectionHandle, theme } = validatedParams;
+
+	// A non-canonical query string would otherwise mint its own cache key and billed Worker invocation, so redirect
+	// before the Shopify fetches. 301s are cached aggressively by browsers, so widening the canonical set later may
+	// not un-redirect clients that already cached this response.
+	if (!isCanonical) {
+		throw redirect(`${url.pathname}${canonicalSearch ? `?${canonicalSearch}` : ''}`, 301);
+	}
 
 	// Fetch collection data and options
 	const [collectionPromise, optionsPromise] = await Promise.allSettled([

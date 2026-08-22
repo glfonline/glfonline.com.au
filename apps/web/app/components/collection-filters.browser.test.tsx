@@ -2,6 +2,7 @@ import { createRoutesStub } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
+import { parseCollectionSearchParams } from '../lib/collection-search-params';
 import { DisplayOptions, MobileFilters } from './collection-filters';
 
 const options = [{ name: 'Size', values: ['Small', 'Medium', 'Large'] }];
@@ -39,6 +40,29 @@ describe('DisplayOptions (browser)', () => {
 		const screen = await renderDisplayOptions('/?Size=Medium');
 
 		await expect.element(screen.getByRole('heading', { name: 'Clear Filters' })).toBeVisible();
+	});
+
+	it('generates filter and sort URLs that the loader accepts as canonical', async () => {
+		const screen = await renderDisplayOptions('/?Size=Medium');
+
+		const sizeTrigger = screen.getByRole('button', { name: 'Size' });
+		await userEvent.click(sizeTrigger.element());
+		const mediumLink = screen.getByRole('link', { name: 'Medium', exact: true });
+		await expect.element(mediumLink).toHaveAttribute('href', expect.stringContaining('Size=Medium'));
+
+		const sortTrigger = screen.getByRole('button', { name: 'Sort' });
+		await userEvent.click(sortTrigger.element());
+		const priceAscLink = screen.getByRole('link', { name: 'Price: Low to High' });
+		const href = priceAscLink.element().getAttribute('href');
+
+		const search = new URL(href ?? '', 'https://example.com').searchParams;
+		const parsed = parseCollectionSearchParams(search);
+
+		expect(parsed).toMatchObject({
+			filterOptions: { Size: 'Medium' },
+			isCanonical: true,
+			sort: 'price-asc',
+		});
 	});
 });
 
