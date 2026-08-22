@@ -121,7 +121,7 @@ describe('processCollectionData', () => {
 	});
 
 	it('returns the collection data with products intact on success', () => {
-		const products = [{ id: 'gid://shopify/Product/1' }] as unknown as Collection['products'];
+		const products = createCollection().products;
 		const collectionPromise: CollectionPromiseResult = {
 			status: 'fulfilled',
 			value: createCollection({ products }),
