@@ -1,16 +1,37 @@
-import { createRoutesStub } from 'react-router';
+import { createRoutesStub, useLocation } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
 import { userEvent } from 'vitest/browser';
 import { render } from 'vitest-browser-react';
+import { parseCollectionSearchParams } from '../lib/collection-search-params';
 import { DisplayOptions, MobileFilters } from './collection-filters';
 
 const options = [{ name: 'Size', values: ['Small', 'Medium', 'Large'] }];
+
+const MEDIUM_HREF_PATTERN = /\?Size=Medium$/;
 
 function renderDisplayOptions(initialEntry = '/') {
 	const Stub = createRoutesStub([
 		{
 			path: '/',
 			Component: () => <DisplayOptions options={options} />,
+		},
+	]);
+	return render(<Stub initialEntries={[initialEntry]} />);
+}
+
+function renderDisplayOptionsWithSearchProbe(initialEntry = '/') {
+	const Stub = createRoutesStub([
+		{
+			path: '/',
+			Component: () => {
+				const location = useLocation();
+				return (
+					<>
+						<DisplayOptions options={options} />
+						<span data-testid="search">{location.search}</span>
+					</>
+				);
+			},
 		},
 	]);
 	return render(<Stub initialEntries={[initialEntry]} />);
@@ -39,6 +60,38 @@ describe('DisplayOptions (browser)', () => {
 		const screen = await renderDisplayOptions('/?Size=Medium');
 
 		await expect.element(screen.getByRole('heading', { name: 'Clear Filters' })).toBeVisible();
+	});
+
+	it('generates filter and sort URLs that the loader accepts as canonical', async () => {
+		const screen = await renderDisplayOptionsWithSearchProbe();
+
+		const sizeTrigger = screen.getByRole('button', { name: 'Size' });
+		await userEvent.click(sizeTrigger.element());
+
+		const mediumLink = screen.getByRole('link', { name: 'Medium' });
+		await expect.element(mediumLink).toHaveAttribute('href', expect.stringMatching(MEDIUM_HREF_PATTERN));
+
+		await userEvent.click(mediumLink.element());
+		await expect.element(screen.getByTestId('search')).toHaveTextContent('?Size=Medium');
+
+		const sortTrigger = screen.getByRole('button', { name: 'Sort' });
+		await userEvent.click(sortTrigger.element());
+
+		const priceAscLink = screen.getByRole('link', { name: 'Price: Low to High' });
+		await userEvent.click(priceAscLink.element());
+
+		const search = screen.getByTestId('search').element().textContent ?? '';
+		expect(search).toBe('?Size=Medium&sort=price-asc');
+		const parsed = parseCollectionSearchParams(new URLSearchParams(search));
+
+		// The key assertion: proves the UI can never generate a URL that the
+		// loader would 301-redirect. If someone narrows
+		// `FILTERABLE_OPTION_NAMES` or `SORT_VALUES`, or changes how this
+		// component builds URLs, this fails instead of the site silently
+		// starting to redirect real filter clicks.
+		expect(parsed.isCanonical).toBe(true);
+		expect(parsed.filterOptions).toEqual({ Size: 'Medium' });
+		expect(parsed.sort).toBe('price-asc');
 	});
 });
 
