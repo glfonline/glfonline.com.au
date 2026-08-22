@@ -45,8 +45,10 @@ export function createCart(opts: { storefront: CartStorefront; session: CartSess
 	/**
 	 * Calls Shopify to create a cart from `items`, then reconciles the session to
 	 * Shopify's returned lines (source of truth) so the session never holds more
-	 * than inventory. On error/empty the session is cleared. The route remains
-	 * responsible for committing the session and setting the Set-Cookie header.
+	 * than inventory. Empty carts and Shopify-rejected or invalid responses clear
+	 * the session; transient failures (thrown errors) preserve it. The route
+	 * remains responsible for committing the session and setting the Set-Cookie
+	 * header.
 	 */
 	async function sync(items: Array<CartItem>): Promise<CartView> {
 		try {
