@@ -15,8 +15,8 @@ test.describe('Cache Headers', () => {
 		const cacheControl = response?.headers()['cache-control'];
 		expect(cacheControl).toBeTruthy();
 
-		// Should have short cache (1 second) for home page
-		expect(cacheControl).toContain('max-age=1');
+		// Should have medium cache (1 hour) for home page
+		expect(cacheControl).toContain('max-age=3600');
 	});
 
 	test('should have correct cache headers on about page', async ({ page, baseURL }) => {
@@ -133,5 +133,19 @@ test.describe('Cache Headers', () => {
 
 		// Should have long cache (24 hours) for blog posts
 		expect(cacheControl).toContain('max-age=86400');
+	});
+
+	test('should not cache the cart page', async ({ page, baseURL }) => {
+		invariant(baseURL, 'Base URL must be defined');
+
+		const response = await page.goto(`${baseURL}/cart`);
+		expect(response).toBeTruthy();
+		expect(response?.status()).toBe(200);
+
+		// The cart is per-visitor. Root sets a one-hour lifetime for the CMS
+		// navigation, so this guards the leaf route's `headers` export still
+		// overriding it rather than inheriting a cacheable value.
+		const cacheControl = response?.headers()['cache-control'];
+		expect(cacheControl).toContain('no-store');
 	});
 });

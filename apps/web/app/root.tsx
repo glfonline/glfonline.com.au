@@ -28,6 +28,7 @@ import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
 import fontCssUrl from './font.css?url';
+import { CACHE_MEDIUM, routeHeaders } from './lib/cache';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
 import { CART_QUERY_KEY } from './lib/use-cart';
@@ -84,15 +85,24 @@ export async function loader({ context }: LoaderFunctionArgs) {
 	// Keep per-visitor cart data out of the root loader.
 	const [{ shop }, mainNavigation] = await Promise.all([storefront.request(SHOP_QUERY), getMainNavigation()]);
 
-	return data({
-		mainNavigation,
-		shop,
-	});
+	return data(
+		{
+			mainNavigation,
+			shop,
+		},
+		{
+			headers: {
+				'Cache-Control': CACHE_MEDIUM,
+			},
+		},
+	);
 }
 
 export const meta: MetaFunction<typeof loader> = () => {
 	return getSeoMeta(seoConfig);
 };
+
+export const headers = routeHeaders;
 
 const queryClient = new QueryClient();
 const persister = createAsyncStoragePersister({
