@@ -79,7 +79,12 @@ describe('DisplayOptions (browser)', () => {
 
 		const priceAscLink = screen.getByRole('link', { name: 'Price: Low to High' });
 		await userEvent.click(priceAscLink.element());
+		await expect.element(screen.getByTestId('search')).toHaveTextContent('?Size=Medium&sort=price-asc');
 
+		// Read only after the awaited assertion above has let the navigation
+		// commit; a bare `textContent` read races the router on slower machines.
+		// The exact-equality check still matters, because `toHaveTextContent`
+		// matches a substring and would accept an extra stray parameter.
 		const search = screen.getByTestId('search').element().textContent ?? '';
 		expect(search).toBe('?Size=Medium&sort=price-asc');
 		const parsed = parseCollectionSearchParams(new URLSearchParams(search));
