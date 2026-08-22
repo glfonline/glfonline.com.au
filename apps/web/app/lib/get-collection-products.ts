@@ -34,49 +34,49 @@ export async function getProductsFromCollectionByTag({
 	productType,
 	storefront,
 }: GetProductsFromCollectionByTag) {
-	try {
-		const { collection } = await storefront.request(COLLECTION_QUERY, {
-			...getSortOptions(sortBy),
-			after,
-			filters: [
-				{
-					available: true,
-				},
-				{
-					tag: capitalise(theme),
-				},
-				...(productType
-					? [
-							{
-								productType,
-							},
-						]
-					: []),
-				...(filterOptions
-					? Object.entries(filterOptions).map(([key, value]) => ({
-							variantOption: {
-								name: key,
-								value,
-							},
-						}))
-					: []),
-			],
-			first: itemsPerPage,
-			handle,
-		});
-
-		return {
-			image: {
-				altText: collection?.image?.altText ?? undefined,
-				url: (collection?.image?.url as string) ?? undefined,
+	const { collection } = await storefront.request(COLLECTION_QUERY, {
+		...getSortOptions(sortBy),
+		after,
+		filters: [
+			{
+				available: true,
 			},
-			pageInfo: collection?.products.pageInfo,
-			products: collection?.products.edges,
-			title: collection?.title,
-		};
-	} catch (err) {
-		console.error(err);
-	}
+			{
+				tag: capitalise(theme),
+			},
+			...(productType
+				? [
+						{
+							productType,
+						},
+					]
+				: []),
+			...(filterOptions
+				? Object.entries(filterOptions).map(([key, value]) => ({
+						variantOption: {
+							name: key,
+							value,
+						},
+					}))
+				: []),
+		],
+		first: itemsPerPage,
+		handle,
+	});
+
+	// An unknown handle resolves to a null collection. Returning null keeps this
+	// distinct from a rejected request, so the caller can 404 rather than 500.
+	if (!collection) return null;
+
+	return {
+		image: {
+			altText: collection.image?.altText ?? undefined,
+			url: collection.image?.url ?? undefined,
+		},
+		pageInfo: collection.products.pageInfo,
+		products: collection.products.edges,
+		title: collection.title,
+	};
 }
 
 export type SortBy =
