@@ -7,8 +7,14 @@ import { Modal, ModalOverlay } from 'react-aria-components/Modal';
 import type { Location } from 'react-router';
 import { Link, useLocation } from 'react-router';
 import { capitalise } from '../lib/capitalise';
+import { FILTERABLE_OPTION_NAMES, SORT_VALUES } from '../lib/collection-search-params';
 import type { SortBy } from '../lib/get-collection-products';
 import { PRODUCT_TYPE } from '../lib/product-filter-constants';
+
+// The Shopify option names this component ever links to. Kept in sync with
+// the collection route's loader via `FILTERABLE_OPTION_NAMES`, so the two
+// can't drift apart.
+const linkedOptionNames = [...FILTERABLE_OPTION_NAMES, PRODUCT_TYPE];
 
 export type FilterOption = {
 	name: string;
@@ -52,7 +58,7 @@ export function DisplayOptions({ options }: { options: Array<FilterOption> }) {
 				</div>
 			)}
 			{options.map((option) => {
-				if (!['Size', PRODUCT_TYPE].includes(option.name)) {
+				if (!linkedOptionNames.includes(option.name)) {
 					return null;
 				}
 				if (option.name === PRODUCT_TYPE && option.values.length <= 1) {
@@ -174,43 +180,21 @@ export function MobileFilters({
 	);
 }
 
-const sortOptions = [
-	{
-		label: 'Default',
-		value: 'collection-default',
-	},
-	{
-		label: 'Newest',
-		value: 'latest-desc',
-	},
-	{
-		label: 'Price: Low to High',
-		value: 'price-asc',
-	},
-	{
-		label: 'Price: High to Low',
-		value: 'price-desc',
-	},
-	{
-		label: 'Relevance',
-		value: 'relevance',
-	},
-	{
-		label: 'Title: A-Z',
-		value: 'title-asc',
-	},
-	{
-		label: 'Title: Z-A',
-		value: 'title-desc',
-	},
-	{
-		label: 'Trending',
-		value: 'trending-desc',
-	},
-] satisfies Array<{
-	label: string;
-	value: SortBy;
-}>;
+// A label for every value in `SORT_VALUES`. `Record<SortBy, string>` forces
+// this map to stay complete and in step with `SORT_VALUES` — adding or
+// removing a sort value without updating this map is a type error.
+const sortLabels: Record<SortBy, string> = {
+	'collection-default': 'Default',
+	'latest-desc': 'Newest',
+	'price-asc': 'Price: Low to High',
+	'price-desc': 'Price: High to Low',
+	relevance: 'Relevance',
+	'title-asc': 'Title: A-Z',
+	'title-desc': 'Title: Z-A',
+	'trending-desc': 'Trending',
+};
+
+const sortOptions = SORT_VALUES.map((value) => ({ label: sortLabels[value], value }));
 
 function getSearchUrl({ location, value, key }: { location: Location; value: string; key: string }) {
 	const params = new URLSearchParams(location.search);
