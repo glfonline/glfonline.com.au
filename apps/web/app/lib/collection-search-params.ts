@@ -16,7 +16,10 @@ export const SORT_VALUES = [
 	'trending-desc',
 ] as const satisfies ReadonlyArray<SortBy>;
 
-// A Shopify `after` cursor is an opaque base64(-url) string.
+// An `after` cursor is base64 of `{"last_value":...,"last_id":...,"offset":...}`.
+// When sorting by title, `last_value` is a product title, so length tracks the
+// title: 100 characters encodes to ~204, and Shopify's 255-character maximum
+// exceeds 400. 512 covers that with headroom while keeping the cursor bounded.
 const AFTER_PATTERN = /^[A-Za-z0-9+/=_-]{1,512}$/;
 
 // Bounds shape, not validity — a short but invalid value still passes.
