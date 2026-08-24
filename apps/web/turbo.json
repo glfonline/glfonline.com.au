@@ -4,29 +4,10 @@
 	"tasks": {
 		"build": {
 			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"],
-			"env": [
-				"AKISMET_API_KEY",
-				"DEV",
-				"ENABLE_EXPERIMENTAL_COREPACK",
-				"ENCRYPTION_KEY",
-				"MODE",
-				"NODE_ENV",
-				"PROD",
-				"RESEND_API_KEY",
-				"SENDGRID_API_KEY",
-				"SENTRY_AUTH_TOKEN",
-				"SENTRY_DSN",
-				"SENTRY_ORG",
-				"SENTRY_PROJECT",
-				"SENTRY_UPLOAD",
-				"TURNSTILE_SECRET_KEY",
-				"WORKERS_CI_COMMIT_SHA"
-			],
+			"env": ["NODE_ENV", "SENTRY_AUTH_TOKEN", "SENTRY_UPLOAD", "WORKERS_CI_COMMIT_SHA"],
 			"outputs": [".cache/**", ".wrangler/**", "build/**", "public/build/**"]
 		},
-		"check:lint": {
-			"env": ["DEV", "MODE", "PROD"]
-		},
+		"check:lint": {},
 		"check:types": {
 			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"]
 		},
