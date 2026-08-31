@@ -31,7 +31,7 @@ catalog:
   '@graphql-codegen/schema-ast': ^6.1.0
   '@heroicons/react': ^2.2.0
   '@manypkg/cli': ^0.25.1
-  '@paypal/react-paypal-js': ^9.3.0
+  '@paypal/react-paypal-js': ^10.0.0
   '@playwright/test': ^1.62.1
   '@portabletext/react': ^6.2.0
   '@react-router/dev': ^8.3.0
