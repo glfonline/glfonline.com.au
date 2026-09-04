@@ -28,8 +28,8 @@ catalogs:
       specifier: ^0.25.1
       version: 0.25.1
     '@paypal/react-paypal-js':
-      specifier: ^9.3.0
-      version: 9.3.0
+      specifier: ^10.0.0
+      version: 10.4.0
     '@playwright/test':
       specifier: ^1.62.1
       version: 1.62.1
@@ -283,7 +283,7 @@ importers:
         version: 2.2.0(react@19.2.8)
       '@paypal/react-paypal-js':
         specifier: 'catalog:'
-        version: 9.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 10.4.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@portabletext/react':
         specifier: 'catalog:'
         version: 6.2.0(react@19.2.8)
@@ -2875,11 +2875,11 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@paypal/paypal-js@9.8.0':
-    resolution: {integrity: sha512-qZ+jq36Y10MA2E28lnCh4nCNX3uH9s4TKUw6UkjenRkGYJD94z4vkZ2uUKzIYqgCIRZTDlacdU4274API5WzjA==}
+  '@paypal/paypal-js@11.0.0':
+    resolution: {integrity: sha512-V1xjR8oTPRU55V11OzsUd2wXE9QUTqs8ybPcgtkp4rVN+XB05taMFzn5nfhsK+LlTCehs07IfHSdXJdjXXgXYQ==}
 
-  '@paypal/react-paypal-js@9.3.0':
-    resolution: {integrity: sha512-QSLGVFoymBy0wSjRKLCH8xu829vcLhh1wmmdJ8FYMEHNO05xlCOLWdeWCm6r5PPVRpE0zJfLqxbAxhrN3C2g6g==}
+  '@paypal/react-paypal-js@10.4.0':
+    resolution: {integrity: sha512-kwdp4pr2/rC8OaaiZHCf/aA+UgyktMJZz1qa+jhtnRTzxTqMhMSgqg2fqlkQpTrEWKWf9D/7Qz+cqhHgbDSoeA==}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
       react-dom: ^16.8.0 || ^17 || ^18 || ^19
@@ -10576,13 +10576,13 @@ snapshots:
   '@oxc-resolver/binding-win32-x64-msvc@11.24.2':
     optional: true
 
-  '@paypal/paypal-js@9.8.0':
+  '@paypal/paypal-js@11.0.0':
     dependencies:
       promise-polyfill: 8.3.0
 
-  '@paypal/react-paypal-js@9.3.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@paypal/react-paypal-js@10.4.0(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@paypal/paypal-js': 9.8.0
+      '@paypal/paypal-js': 11.0.0
       '@paypal/sdk-constants': 1.0.158
       react: 19.2.8
       react-dom: 19.2.8(react@19.2.8)
