@@ -7,7 +7,9 @@
 			"env": ["NODE_ENV", "SENTRY_AUTH_TOKEN", "SENTRY_UPLOAD", "WORKERS_CI_COMMIT_SHA"],
 			"outputs": [".cache/**", ".wrangler/**", "build/**", "public/build/**"]
 		},
-		"check:lint": {},
+		"check:lint": {
+			"env": ["ENCRYPTION_KEY", "RESEND_API_KEY", "TURNSTILE_SECRET_KEY"]
+		},
 		"check:types": {
 			"dependsOn": ["@glfonline/sanity-client#build", "@glfonline/shopify-client#build"]
 		},

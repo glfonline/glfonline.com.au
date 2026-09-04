@@ -136,7 +136,14 @@
 				"noConsole": "off",
 				"noExplicitAny": "off",
 				"noFocusedTests": "off",
-				"noImportCycles": "on"
+				"noImportCycles": "on",
+				// DEV/PROD/MODE are Vite compile-time constants (import.meta.env), not Turborepo env vars
+				"noUndeclaredEnvVars": {
+					"level": "warn",
+					"options": {
+						"allowedEnvVars": ["DEV", "PROD", "MODE"]
+					}
+				}
 			}
 		}
 	},
