@@ -92,7 +92,7 @@ export function ContactForm() {
 					onSubmit={(event) => {
 						event.preventDefault();
 						event.stopPropagation();
-						form.handleSubmit();
+						void form.handleSubmit();
 					}}
 					ref={formRef}
 				>
