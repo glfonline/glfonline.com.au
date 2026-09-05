@@ -33,7 +33,7 @@ catalog:
   '@manypkg/cli': ^0.25.1
   '@paypal/react-paypal-js': ^10.0.0
   '@playwright/test': ^1.62.1
-  '@portabletext/react': ^6.2.0
+  '@portabletext/react': ^8.0.0
   '@react-router/dev': ^8.3.0
   '@react-router/fs-routes': ^8.3.0
   '@sanity/asset-utils': ^2.3.0
