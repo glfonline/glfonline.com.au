@@ -137,7 +137,7 @@ function PostList() {
 						/>
 					))}
 				</ul>
-				<Pagination hasNextPage={after + POSTS_LIMIT <= count} hasPrevPage={after > 0} />
+				<Pagination hasNextPage={after + POSTS_LIMIT < count} hasPrevPage={after > 0} />
 			</section>
 		</div>
 	);
