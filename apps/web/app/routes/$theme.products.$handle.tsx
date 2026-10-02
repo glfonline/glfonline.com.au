@@ -378,7 +378,7 @@ export default function ProductPage() {
 																		'inline-flex h-12 min-w-12 items-center justify-center border px-3 font-bold text-gray-900 text-sm uppercase',
 																		'border-gray-200 bg-white hover:bg-gray-50',
 																		'group-data-focused:ring-2 group-data-focused:ring-brand-500 group-data-focused:ring-offset-2',
-																		'group-data-selected:border-transparent group-data-selected:bg-brand-primary group-data-selected:text-white group-data-selected:hover:bg-brand-light',
+																		'group-data-selected:border-transparent group-data-selected:bg-brand-primary group-data-selected:text-white group-data-selected:hover:bg-brand-primary-light',
 																		'group-data-disabled:opacity-25',
 																	)}
 																>

@@ -62,7 +62,7 @@ export function RadioGroup({
 					return (
 						<RadioField key={value} value={value}>
 							<RadioButton className="group flex items-center gap-3 font-medium text-gray-700 text-sm data-disabled:text-gray-400">
-								<span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 bg-white transition group-data-invalid:border-red-500 group-data-selected:border-brand-primary group-data-selected:bg-brand-primary group-data-focused:ring group-data-focused:ring-brand-light group-data-focused:ring-offset-2">
+								<span className="flex h-5 w-5 items-center justify-center rounded-full border border-gray-300 bg-white transition group-data-invalid:border-red-500 group-data-selected:border-brand-primary group-data-selected:bg-brand-primary group-data-focused:ring group-data-focused:ring-brand-primary-light group-data-focused:ring-offset-2">
 									<span className="h-1.5 w-1.5 rounded-full bg-white opacity-0 group-data-selected:opacity-100" />
 								</span>
 								{label}
