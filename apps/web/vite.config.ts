@@ -85,6 +85,31 @@ export default defineConfig(async (config) => {
 		build: {
 			sourcemap: true,
 		},
+		// Pre-bundle client deps up front. Discovering them mid-session triggers a
+		// re-optimise that regenerates shared chunk hashes and breaks the page.
+		optimizeDeps: {
+			include: [
+				'@paypal/react-paypal-js',
+				'react-aria-components',
+				'react-aria-components/Autocomplete',
+				'react-aria-components/Button',
+				'react-aria-components/Checkbox',
+				'react-aria-components/Dialog',
+				'react-aria-components/Disclosure',
+				'react-aria-components/Heading',
+				'react-aria-components/Input',
+				'react-aria-components/Label',
+				'react-aria-components/ListBox',
+				'react-aria-components/Modal',
+				'react-aria-components/Popover',
+				'react-aria-components/RadioGroup',
+				'react-aria-components/SearchField',
+				'react-aria-components/Tabs',
+				'react-aria-components/TextArea',
+				'react-aria-components/TextField',
+				'tiny-invariant',
+			],
+		},
 		plugins,
 		server: {
 			port: 3000,
