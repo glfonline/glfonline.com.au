@@ -104,6 +104,8 @@ describe('isAnonymousCacheableRequest for the homepage', () => {
 	});
 
 	it('rejects homepage single-fetch data URLs', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/_.data'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/_.data?_routes=routes%2F_index'))).toBe(false);
 		expect(isAnonymousCacheableRequest(createRequest('/_root.data'))).toBe(false);
 		expect(isAnonymousCacheableRequest(createRequest('/_root.data?_routes=routes%2F_index'))).toBe(false);
 		expect(isAnonymousCacheableRequest(createRequest('/index.data'))).toBe(false);
