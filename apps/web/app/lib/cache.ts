@@ -108,6 +108,18 @@ function CacheCollectionEdge(overrideOptions?: CachingStrategy): AllCacheOptions
 	};
 }
 
+// `s-maxage` implies `proxy-revalidate`, preventing stale-while-revalidate (RFC 9111 §4.2.4).
+function CacheHomepageEdge(overrideOptions?: CachingStrategy): AllCacheOptions {
+	guardExpirableModeType(overrideOptions);
+	return {
+		mode: PUBLIC,
+		maxAge: 300, // 5 minutes
+		staleWhileRevalidate: 60, // 1 minute
+		staleIfError: 3600, // 1 hour
+		...overrideOptions,
+	};
+}
+
 function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
@@ -130,6 +142,7 @@ function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
 export const CACHE_COLLECTION_EDGE = generateCacheControlHeader(CacheCollectionEdge());
+export const CACHE_HOMEPAGE_EDGE = generateCacheControlHeader(CacheHomepageEdge());
 export const CACHE_MEDIUM = generateCacheControlHeader(CacheMedium());
 export const CACHE_LONG = generateCacheControlHeader(CacheLong());
 export const CACHE_NONE = generateCacheControlHeader(CacheNone());

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
-import { isAnonymousCollectionRequest, toAnonymousRequest } from './anonymous-cache';
+import { edgeCacheControlFor, isAnonymousCacheableRequest, toAnonymousRequest } from './anonymous-cache';
+import { CACHE_COLLECTION_EDGE, CACHE_HOMEPAGE_EDGE } from './cache';
 
 const ORIGIN = 'https://www.glfonline.com.au';
 
@@ -7,35 +8,35 @@ function createRequest(path: string, init?: RequestInit): Request {
 	return new Request(`${ORIGIN}${path}`, init);
 }
 
-describe('isAnonymousCollectionRequest', () => {
+describe('isAnonymousCacheableRequest', () => {
 	it('accepts an anonymous GET for a collection page', () => {
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel'))).toBe(true);
-		expect(isAnonymousCollectionRequest(createRequest('/mens/collections/apparel'))).toBe(true);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel'))).toBe(true);
+		expect(isAnonymousCacheableRequest(createRequest('/mens/collections/apparel'))).toBe(true);
 	});
 
 	it('accepts an anonymous HEAD for a collection page', () => {
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel', { method: 'HEAD' }))).toBe(true);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel', { method: 'HEAD' }))).toBe(true);
 	});
 
 	it('accepts a trailing slash', () => {
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel/'))).toBe(true);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel/'))).toBe(true);
 	});
 
 	it('accepts filter, sort and pagination query params', () => {
 		expect(
-			isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel?sort=price-asc&productType=shirt')),
+			isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel?sort=price-asc&productType=shirt')),
 		).toBe(true);
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel?after=cursor123'))).toBe(true);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel?after=cursor123'))).toBe(true);
 	});
 
 	it('accepts requests carrying unrelated cookies', () => {
 		expect(
-			isAnonymousCollectionRequest(
+			isAnonymousCacheableRequest(
 				createRequest('/ladies/collections/apparel', { headers: { Cookie: '_ga=GA1.1.1.1' } }),
 			),
 		).toBe(true);
 		expect(
-			isAnonymousCollectionRequest(
+			isAnonymousCacheableRequest(
 				createRequest('/ladies/collections/apparel', {
 					headers: { Cookie: 'cookie_consent=accepted; _ga=GA1.1.1.1' },
 				}),
@@ -45,33 +46,80 @@ describe('isAnonymousCollectionRequest', () => {
 
 	it('rejects requests carrying a session cookie', () => {
 		expect(
-			isAnonymousCollectionRequest(
-				createRequest('/ladies/collections/apparel', { headers: { Cookie: 'session=abc' } }),
-			),
+			isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel', { headers: { Cookie: 'session=abc' } })),
 		).toBe(false);
 		expect(
-			isAnonymousCollectionRequest(
+			isAnonymousCacheableRequest(
 				createRequest('/ladies/collections/apparel', { headers: { Cookie: '_ga=GA1.1.1.1; session=abc' } }),
 			),
 		).toBe(false);
 	});
 
 	it('rejects non-GET/HEAD methods', () => {
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel', { method: 'POST' }))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel', { method: 'POST' }))).toBe(false);
 	});
 
 	it('rejects single-fetch data URLs', () => {
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/apparel.data'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/apparel.data'))).toBe(false);
 	});
 
-	it('rejects paths that are not collection pages', () => {
-		expect(isAnonymousCollectionRequest(createRequest('/cart'))).toBe(false);
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/products/foo'))).toBe(false);
-		expect(isAnonymousCollectionRequest(createRequest('/api/contact'))).toBe(false);
-		expect(isAnonymousCollectionRequest(createRequest('/'))).toBe(false);
-		expect(isAnonymousCollectionRequest(createRequest('/about'))).toBe(false);
-		expect(isAnonymousCollectionRequest(createRequest('/blog/x'))).toBe(false);
-		expect(isAnonymousCollectionRequest(createRequest('/ladies/collections/'))).toBe(false);
+	it('rejects paths that are not cacheable', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/cart'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/products/foo'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/api/contact'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/about'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/blog/x'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/ladies/collections/'))).toBe(false);
+	});
+});
+
+describe('isAnonymousCacheableRequest for the homepage', () => {
+	it('accepts an anonymous GET for the homepage', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/'))).toBe(true);
+	});
+
+	it('accepts an anonymous HEAD for the homepage', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/', { method: 'HEAD' }))).toBe(true);
+	});
+
+	it('accepts the homepage with unrelated cookies', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/', { headers: { Cookie: '_ga=GA1.1.1.1' } }))).toBe(true);
+	});
+
+	it('rejects the homepage with a session cookie', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/', { headers: { Cookie: 'session=abc' } }))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/', { headers: { Cookie: '_ga=GA1.1.1.1; session=abc' } }))).toBe(
+			false,
+		);
+	});
+
+	it.each(['GET', 'HEAD'])('rejects a %s for the homepage with a query string', (method) => {
+		expect(isAnonymousCacheableRequest(createRequest('/?utm_source=x', { method }))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/?foo=bar', { method }))).toBe(false);
+	});
+
+	it('rejects non-GET/HEAD methods', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/', { method: 'POST' }))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/', { method: 'PUT' }))).toBe(false);
+	});
+
+	it('rejects homepage single-fetch data URLs', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/_.data'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/_.data?_routes=routes%2F_index'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/_root.data'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/_root.data?_routes=routes%2F_index'))).toBe(false);
+		expect(isAnonymousCacheableRequest(createRequest('/index.data'))).toBe(false);
+	});
+});
+
+describe('edgeCacheControlFor', () => {
+	it('uses the homepage lifetime for the homepage', () => {
+		expect(edgeCacheControlFor('/')).toBe(CACHE_HOMEPAGE_EDGE);
+	});
+
+	it('uses the collection lifetime for collection pages', () => {
+		expect(edgeCacheControlFor('/ladies/collections/apparel')).toBe(CACHE_COLLECTION_EDGE);
+		expect(edgeCacheControlFor('/mens/collections/apparel/')).toBe(CACHE_COLLECTION_EDGE);
 	});
 });
 
