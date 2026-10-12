@@ -1,8 +1,8 @@
 import { WorkerEntrypoint } from 'cloudflare:workers';
 import * as Sentry from '@sentry/cloudflare';
 import { createRequestHandler } from 'react-router';
-import { isAnonymousCollectionRequest, toAnonymousRequest } from '../app/lib/anonymous-cache';
-import { CACHE_COLLECTION_EDGE, CDN_CACHE_CONTROL_HEADER } from '../app/lib/cache';
+import { edgeCacheControlFor, isAnonymousCacheableRequest, toAnonymousRequest } from '../app/lib/anonymous-cache';
+import { CDN_CACHE_CONTROL_HEADER } from '../app/lib/cache';
 
 type Env = {
 	SENTRY_DSN?: string;
@@ -15,15 +15,15 @@ type GatewayContext = {
 
 const requestHandler = createRequestHandler(() => import('virtual:react-router/server-build'), import.meta.env.MODE);
 
-/** Cached entrypoint for anonymous collection documents. */
+/** Cached entrypoint for anonymous homepage and collection documents. */
 export const CachedApp = Sentry.withSentry(
 	sentryOptions,
 	class extends WorkerEntrypoint<Env> {
 		async fetch(request: Request): Promise<Response> {
 			const response = await requestHandler(request);
-			// Only successful document responses get the five-minute edge lifetime.
+			// Only successful document responses get an edge lifetime.
 			if (response.ok) {
-				response.headers.set(CDN_CACHE_CONTROL_HEADER, CACHE_COLLECTION_EDGE);
+				response.headers.set(CDN_CACHE_CONTROL_HEADER, edgeCacheControlFor(new URL(request.url).pathname));
 			}
 			return response;
 		}
@@ -35,7 +35,7 @@ export default Sentry.withSentry(sentryOptions, {
 	// `{ cloudflare }` object, and nothing here reads bindings from a loader.
 	fetch(request: Request, _env: Env, ctx: GatewayContext) {
 		// Workers Caching runs before React Router, so select cacheable requests here.
-		if (isAnonymousCollectionRequest(request)) {
+		if (isAnonymousCacheableRequest(request)) {
 			return ctx.exports.CachedApp.fetch(toAnonymousRequest(request));
 		}
 		return requestHandler(request);

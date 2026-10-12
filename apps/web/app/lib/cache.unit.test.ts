@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CACHE_COLLECTION_EDGE, CACHE_SHORT, routeHeaders } from './cache';
+import { CACHE_COLLECTION_EDGE, CACHE_HOMEPAGE_EDGE, CACHE_SHORT, routeHeaders } from './cache';
 
 describe('CACHE_COLLECTION_EDGE', () => {
 	it('is five minutes fresh with an hour of stale-while-revalidate', () => {
@@ -13,6 +13,21 @@ describe('CACHE_COLLECTION_EDGE', () => {
 		'does not contain %s',
 		(directive) => {
 			expect(CACHE_COLLECTION_EDGE).not.toContain(directive);
+		},
+	);
+});
+
+describe('CACHE_HOMEPAGE_EDGE', () => {
+	it('is five minutes fresh with short stale-while-revalidate and an hour of stale-if-error', () => {
+		expect(CACHE_HOMEPAGE_EDGE).toBe('public, max-age=300, stale-while-revalidate=60, stale-if-error=3600');
+	});
+
+	it.each(['s-maxage', 'must-revalidate', 'proxy-revalidate'])(
+		// Each of these directives silently disables `stale-while-revalidate`
+		// (RFC 9111 §4.2.4).
+		'does not contain %s',
+		(directive) => {
+			expect(CACHE_HOMEPAGE_EDGE).not.toContain(directive);
 		},
 	);
 });
