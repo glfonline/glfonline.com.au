@@ -561,6 +561,8 @@ export function defineCoordinator(Base) {
 					if (out.result.status !== 200) return out.result;
 					return { status: 200, body: { ...out.result.body, alarm: await this.schedulerStatus() } };
 				}
+				case 'POST /admin/cancel-job':
+					return (await this.run({ type: 'cancelJob', jobId: b.jobId, reason: b.reason })).result;
 				case 'POST /admin/check-github': {
 					const out = await this.adapters.dispatcher.checkToken();
 					return { status: 200, body: out };
@@ -668,6 +670,8 @@ export function defineCoordinator(Base) {
 			return {
 				now: this.clock(),
 				state: { ...state, job: redact(state.job) },
+				// The last job that ended (completed, failed, superseded or cancelled) and why.
+				lastJob: state.lastJob,
 				scheduler: await this.schedulerStatus(state),
 				detection: { manifestId, manifestKnown: Boolean(manifestId && this.getManifest(manifestId)) },
 				manifests: this.sql.exec('SELECT id, createdAt, touchedAt FROM manifests ORDER BY touchedAt DESC').toArray(),

@@ -94,7 +94,11 @@ activating past deadline / lease expired / fail reported --> reconcile against l
 ```
 
 - **Same change**: deduplicated against the active job. **Newer change**: runs after the active job
-  finishes. The next job always targets the latest code, with the latest content for that code's manifest.
+  finishes, *if that job has been claimed*. A job nobody has claimed yet (queued, dispatched or backing
+  off, no lease) that targets older code, or older content for its manifest, is superseded straight away
+  (`lastJob: {status: superseded, reason: newer-code|newer-content}`; its dispatch branch is deleted). A job
+  for the latest state is then created. A job whose dispatch call is still in flight is replaced on the next
+  event, so a job is never dispatched twice. The next job always targets the latest code, with the latest content for that code's manifest.
 - **Code deploys**: CI calls `POST /code/enqueue {codeSha}` on push instead of deploying. A code job may start
   with `manifestId`/`contentHash` set to `null`. The manifest handshake binds them.
 - **Retries**: there are 3 attempts. Each attempt is a new workflow run. When all 3 fail, the job becomes a
@@ -163,6 +167,7 @@ treats every 409 as "stop, deploy nothing".
 | `POST /admin/retry` | | Clears a terminal failure and resets a stalled dispatch | |
 | `POST /admin/tick` | `{force?: "verify"\|"live"}` | Runs one detector tick now (debugging; not slot-deduplicated, no Healthchecks ping) | |
 | `POST /admin/scheduler` | `{alarmTicks: boolean}` | `{scheduler, alarm}`: alarm-driven ticks on/off (persisted) | |
+| `POST /admin/cancel-job` | `{jobId, reason}` | `{cancelled, next, job}`: ends the active job (`lastJob.status: cancelled`). A claimed job loses its lease, so CI's next call gets 409. Scheduling then creates the next job | `no-active-job`, `job-mismatch`, `activating` |
 | `POST /admin/check-github` | | Token check: statuses, permission and expiry headers, `contentsWrite`; never the token | |
 | `PUT /admin/bootstrap` | `{deployed}` or `{fromLive: true}`, plus optional `manifest` | `{deployed, next, manifestKnown}` | `job-active` |
 

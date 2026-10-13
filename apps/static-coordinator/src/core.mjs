@@ -110,6 +110,8 @@ export function initialState(now) {
 			corrective: 0,
 			refsDeleted: 0,
 			refDeleteErrors: 0,
+			superseded: 0,
+			cancelled: 0,
 		},
 	};
 }
@@ -139,6 +141,8 @@ export function upgradeState(state) {
 	state.dispatchRefs ??= initialDispatchRefs();
 	state.counters.refsDeleted ??= 0;
 	state.counters.refDeleteErrors ??= 0;
+	state.counters.superseded ??= 0;
+	state.counters.cancelled ??= 0;
 	if (state.version < 3) state.version = 3;
 	return state;
 }
@@ -356,10 +360,32 @@ const HANDLERS = {
 		const job = state.job;
 		if (job) {
 			if (job.codeSha === codeSha) return ok({ action: 'already-active', jobId: job.jobId });
+			// An unclaimed job for older code is superseded here (housekeep); a claimed one finishes
+			// first and the new code is built next.
 			const next = housekeep(t);
+			if (t.superseded) return ok({ action: next, superseded: t.superseded, jobId: state.job?.jobId ?? null });
 			return ok({ action: 'pending', jobId: job.jobId, next });
 		}
 		return ok({ action: housekeep(t) });
+	},
+
+	// POST /admin/cancel-job: the escape hatch for a stuck job. Refused mid-activation (the live
+	// origin decides that one). A claimed job loses its lease, so the runner's next call gets 409 and
+	// nothing deploys. Normal scheduling then creates the next job.
+	cancelJob(t, { jobId, reason }) {
+		const { state } = t;
+		const job = state.job;
+		if (typeof jobId !== 'string' || !jobId) return bad('jobId required');
+		if (!job) return { status: 409, body: { error: 'no-active-job' } };
+		if (job.jobId !== jobId) return { status: 409, body: { error: 'job-mismatch', activeJobId: job.jobId } };
+		if (job.status === 'activating') return { status: 409, body: { error: 'activating', jobId } };
+		const why = truncate(reason ?? 'admin', 300) || 'admin';
+		const previousStatus = job.status;
+		if (LEASED.includes(job.status)) log(t, 'lease-revoked', { jobId, status: job.status, by: 'cancel' });
+		endJob(t, 'cancelled', why, { previousStatus, attempt: job.attempt });
+		state.counters.cancelled++;
+		const next = housekeep(t);
+		return ok({ cancelled: state.lastJob, next, job: state.job && publicJob(state.job) });
 	},
 
 	// PUT /admin/bootstrap: record what is deployed today (e.g. read from the live __content.json).
@@ -980,7 +1006,10 @@ function closeDrift(t) {
 function openStall(t, job, reason) {
 	const { state } = t;
 	if (state.incidents.dispatchStalledJobId === job.jobId) return;
+	const alreadyOpen = Boolean(state.incidents.dispatchStalledJobId);
 	state.incidents.dispatchStalledJobId = job.jobId;
+	// The same incident carried over to a replacement job: no second email.
+	if (alreadyOpen) return;
 	alert(t, 'dispatch-stalled', 'incident', {
 		jobId: job.jobId,
 		reason,
@@ -999,6 +1028,7 @@ function closeStall(t) {
 function housekeep(t) {
 	expireLeases(t);
 	watchdog(t);
+	replaceStaleUnclaimed(t);
 	const next = dispatchNext(t, 'housekeeping');
 	dispatchDue(t);
 	return next;
@@ -1119,7 +1149,7 @@ function failJob(t, stage, error, retryable) {
 	return 'terminal';
 }
 
-function endJob(t, status, why) {
+function endJob(t, status, why, extra = {}) {
 	const { state, now } = t;
 	const job = state.job;
 	state.lastJob = {
@@ -1129,6 +1159,8 @@ function endJob(t, status, why) {
 		versionId: job.activation?.versionId ?? null,
 		at: now,
 		via: why,
+		reason: why,
+		...extra,
 	};
 	state.job = null;
 	queueRefDelete(t, job.jobId, status);
@@ -1199,6 +1231,36 @@ function isDeployed(d, target) {
 	if (target.manifestId && d.manifestId !== target.manifestId) return false;
 	if (target.contentHash && d.contentHash !== target.contentHash) return false;
 	return true;
+}
+
+// A job nobody has claimed yet (queued, dispatched or backing off; no lease) that targets older
+// code, or older content for its own manifest, is superseded so the latest state is built now
+// instead of after it. Skipped while its dispatch call is in flight, so a job is never dispatched
+// twice; the next event retries. A claimed job always finishes (newer changes wait for it).
+function replaceStaleUnclaimed(t) {
+	const { state, now, cfg } = t;
+	const job = state.job;
+	if (!job || !UNCLAIMED.includes(job.status)) return;
+	const d = job.dispatch;
+	if (d.inFlightAt != null && now - d.inFlightAt < cfg.dispatchInFlightTimeoutMs) return;
+	let reason = null;
+	if (state.currentCodeSha && job.codeSha !== state.currentCodeSha) reason = 'newer-code';
+	else {
+		const L = state.latest;
+		if (job.contentHash && L && L.manifestId === job.manifestId && L.contentHash !== job.contentHash) {
+			reason = 'newer-content';
+		}
+	}
+	if (!reason) return;
+	t.superseded = job.jobId;
+	state.counters.superseded++;
+	endJob(t, 'superseded', reason, {
+		previousStatus: job.status,
+		codeSha: job.codeSha,
+		contentHash: job.contentHash,
+		latestCodeSha: state.currentCodeSha,
+		latestContentHash: state.latest?.contentHash ?? null,
+	});
 }
 
 // With no active job, create exactly one job if the desired state differs from what is deployed

@@ -70,8 +70,10 @@ describe('a. observe', () => {
 	});
 
 	test('different hash while a job is active: coalesced, no new job; reverting clears it', () => {
+		// The job is claimed first: an unclaimed job for stale content is replaced instead (section t).
 		const h = bootstrapped();
 		h.observe('B');
+		h.claimJob();
 		assert.equal(h.observe('C').body.action, 'coalesced');
 		h.observe('D');
 		assert.equal(h.state.coalescedHash, 'D');
@@ -413,8 +415,10 @@ describe('f. code deployments', () => {
 	});
 
 	test('during an active job: latest code wins, no extra job, the active job keeps its code', () => {
+		// Claimed first: an unclaimed job for older code is superseded instead (section t).
 		const h = bootstrapped();
 		h.observe('B');
+		h.claimJob();
 		assert.equal(h.send({ type: 'codeEnqueue', codeSha: REV2 }).body.action, 'pending');
 		h.send({ type: 'codeEnqueue', codeSha: REV3 });
 		assert.equal(h.dispatches().length, 1);
@@ -471,8 +475,11 @@ describe('f. code deployments', () => {
 		assert.equal(h.state.job, null);
 		assert.equal(h.state.deployed.contentHash, 'E');
 		assert.equal(h.state.deployed.codeSha, REV3);
-		// B (REV1, retried once) -> code job (D, REV3) -> content job (E, REV3)
-		assert.equal(h.dispatches().length, 3);
+		// B (REV1) fails and is requeued unclaimed, so it is superseded by a REV2 code job, which is
+		// superseded by REV3 before anyone claims it. Then (C, REV3) -> (D, REV3) -> (E, REV3).
+		assert.equal(h.dispatches().length, 5);
+		assert.equal(h.state.counters.superseded, 2);
+		assert.equal(h.state.counters.claims, 4, 'B once, then one claim per deployed job');
 	});
 
 	test('randomised interleavings always converge without a second concurrent job', () => {

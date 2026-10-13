@@ -24,7 +24,7 @@ export async function startFakeServices() {
 		cdn: {}, // operationName -> response body override (CDN lag); falls back to api
 		upstreamMode: 'ok', // 'ok' | 'fail'
 		githubMode: 'ok',
-		refsMode: 'ok', // 'ok' | 'fail' (git refs API returns 500)
+		refsMode: 'ok', // 'ok' | 'fail' (git refs API returns 500) | 'forbidden' (creating a ref returns 403)
 		refs: new Map(), // 'refs/heads/<name>' -> sha
 		resendMode: 'ok', // 'ok' | 'fail' | 'echo' (500 whose body echoes the recipients and auth header)
 		live: null, // __content.json object, or null for 404
@@ -91,6 +91,9 @@ export async function startFakeServices() {
 				return send(status, payload);
 			};
 			if (state.refsMode === 'fail') return reply(500, { message: 'GitHub refs API is having a moment' });
+			if (state.refsMode === 'forbidden' && req.method === 'POST') {
+				return reply(403, { message: 'Resource not accessible by personal access token' });
+			}
 			if (GIT_REFS.test(path) && req.method === 'POST') {
 				const { ref, sha } = entry.body;
 				if (state.refs.has(ref)) return reply(422, { message: 'Reference already exists' });

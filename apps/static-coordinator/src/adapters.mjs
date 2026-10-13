@@ -14,6 +14,9 @@ const SAFE_JOB_ID = /^[A-Za-z0-9._-]{1,100}$/;
 const FULL_SHA = /^[0-9a-f]{40}$/i;
 const ALREADY_EXISTS = /already exists/i;
 const DOES_NOT_EXIST = /does not exist|not found/i;
+// Shown first so it survives truncation in the dispatch-failed event and dispatch-stalled alert.
+const FORBIDDEN_HINT =
+	'Forbidden creating the dispatch branch: the token likely lacks Workflows: write (the commit adds or changes .github/workflows files; Contents: write alone is not enough).';
 
 /**
  * Starts the CI run for a job. Two modes (`DISPATCH_MODE`):
@@ -138,12 +141,14 @@ export function createDispatcher(env, fetchImpl = fetch) {
 		const body = { ref: `refs/heads/${DISPATCH_REF_PREFIX}${jobId}`, sha: codeSha };
 		let r = await call('POST', url, body);
 		if (r.status === 201) return { ok: true, status: 201 };
+		if (r.status === 403) return { ...failure(r), error: `${FORBIDDEN_HINT} GitHub: ${failure(r).error}` };
 		if (r.status !== 422 || !ALREADY_EXISTS.test(r.text)) return failure(r);
 		// Re-dispatch of the same job: delete and recreate so GitHub sees a new push.
 		const del = await deleteRef(jobId);
 		if (!del.ok) return { ...del, error: `recreate: delete failed: ${del.error}` };
 		r = await call('POST', url, body);
 		if (r.status === 201) return { ok: true, status: 201, recreated: true };
+		if (r.status === 403) return { ...failure(r), error: `${FORBIDDEN_HINT} GitHub: ${failure(r).error}` };
 		return failure(r);
 	}
 

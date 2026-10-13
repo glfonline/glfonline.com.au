@@ -135,6 +135,16 @@ For production, run the same workflow from `main` with `target=production`. It l
 
 `build-failed-exhausted` means three attempts failed. Read the failing stage in the alert and the workflow run summary (stage timings). Fix the cause (a failed `manifest` or `build` stage with exit 4 means the code's manifest and the snapshot disagree). Then `POST /admin/retry`. A different later content hash also starts a fresh job.
 
+### Stuck or obsolete job
+
+A job that was never claimed is replaced automatically when newer code is enqueued or newer content is seen. To end any other job by hand (for example one whose CI cannot run), use the escape hatch. It is refused while the job is activating, because the live origin decides that one:
+
+```sh
+curl -X POST "$URL/admin/cancel-job" -H "Authorization: Bearer $ADMIN" -H 'content-type: application/json' -d '{"jobId":"<jobId>","reason":"why"}'
+```
+
+A claimed job's lease is revoked, so the running CI job gets 409 on its next call and deploys nothing. The cancel is recorded as a `job-cancelled` event and in `lastJob` in `/admin/status`, and the next job is created by normal scheduling.
+
 ### Deployment drift
 
 `deployment-drift` means the live `__content.json` is neither the deployed state nor the job in flight. Typical causes: someone deployed by hand or via Workers Builds, or a stale runner. Check `GET /admin/events` and `GET /admin/status`, and the live marker:
@@ -162,7 +172,7 @@ To prove the external alert and recovery on staging:
 
 ### Dispatch branches and the GitHub token (staging)
 
-Staging runs `DISPATCH_MODE=ref-push`: each job is started by creating `static-homepage-dispatch/<jobId>` at the job's `codeSha`, and a re-dispatch of the same job deletes and recreates it. The coordinator deletes the branch when the job completes, fails terminally, is superseded or has its lease revoked, and sweeps every hour for branches that do not belong to the active job (`dispatchRefs` in `/admin/status`). Cleanup failures are retried with backoff and recorded as events, but never hold up jobs. `ref-push` is refused unless `TARGET=staging`. In this mode the coordinator's `GITHUB_DISPATCH_TOKEN` needs **Contents: read and write** on this repository (production's `workflow_dispatch` needs Actions: read and write). If creating a branch is rejected for touching workflow files, the token also needs Workflows: write.
+Staging runs `DISPATCH_MODE=ref-push`: each job is started by creating `static-homepage-dispatch/<jobId>` at the job's `codeSha`, and a re-dispatch of the same job deletes and recreates it. The coordinator deletes the branch when the job completes, fails terminally, is superseded or has its lease revoked, and sweeps every hour for branches that do not belong to the active job (`dispatchRefs` in `/admin/status`). Cleanup failures are retried with backoff and recorded as events, but never hold up jobs. `ref-push` is refused unless `TARGET=staging`. In this mode the coordinator's `GITHUB_DISPATCH_TOKEN` needs **Contents: read and write** on this repository (production's `workflow_dispatch` needs Actions: read and write). Branches at commits that add or change `.github/workflows` files also need **Workflows: read and write**. Without it GitHub answers 403 "Resource not accessible by personal access token", and the `dispatch-failed` event and `dispatch-stalled` alert say so.
 
 `POST /admin/check-github` checks the stored token without returning it. It reports the HTTP statuses of `GET /repos/{repo}` and the dispatch-branch listing, GitHub's `x-accepted-github-permissions` and `github-authentication-token-expiration` headers, and `contentsWrite` (the repository's `permissions.push`).
 
