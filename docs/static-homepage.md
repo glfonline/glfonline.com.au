@@ -145,6 +145,10 @@ curl -X POST "$URL/admin/cancel-job" -H "Authorization: Bearer $ADMIN" -H 'conte
 
 A claimed job's lease is revoked, so the running CI job gets 409 on its next call and deploys nothing. The cancel is recorded as a `job-cancelled` event and in `lastJob` in `/admin/status`, and the next job is created by normal scheduling.
 
+### Testing reconciliation (staging only)
+
+To rehearse an interrupted completion, `POST /admin/inject-fault {"fault":"exit-after-deploy"}` arms a one-shot fault (`DELETE /admin/inject-fault` disarms it; both are refused with 409 unless the coordinator's `TARGET` is `staging`). The next job claimed gets `job.fault`, and the runner then exits non-zero right after `wrangler versions deploy`, without calling `/runner/complete` or `/runner/fail`. Once the activation deadline passes, the coordinator reads the live `__content.json`, sees the job and marks it completed `via: reconciled` with the deployed version id. The events are `fault-armed` and `fault-attached`, and `/admin/status` shows an armed fault under `state.fault`. A runner ignores the field on any other target.
+
 ### Deployment drift
 
 `deployment-drift` means the live `__content.json` is neither the deployed state nor the job in flight. Typical causes: someone deployed by hand or via Workers Builds, or a stale runner. Check `GET /admin/events` and `GET /admin/status`, and the live marker:

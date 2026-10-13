@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { describe, test } from 'node:test';
 import { DEFAULT_CONFIG, reduce } from '../src/core.mjs';
-import { home, SHA1, START, world } from './do-harness.mjs';
+import { home, M1, SHA1, START, world } from './do-harness.mjs';
 import { bootstrapped, MIN, REV1, REV2, REV3 } from './harness.mjs';
 
 const REF = { dispatchMode: 'ref-push' };
@@ -239,6 +239,94 @@ describe('v. Durable Object: replacing a stuck job, cancel-job, 403 hint', () =>
 			);
 			assert.notEqual(status.state.job.jobId, job.jobId);
 			assert.equal(status.state.job.codeSha, SHA1);
+		} finally {
+			await w.close();
+		}
+	});
+});
+
+describe('w. staging-only fault injection (exit-after-deploy)', () => {
+	test('arming records an event, the next claim attaches the fault once, a later job gets none', () => {
+		const h = bootstrapped();
+		assert.equal(h.send({ type: 'injectFault', fault: 'nope' }).status, 400);
+		const armed = h.send({ type: 'injectFault', fault: 'exit-after-deploy' });
+		assert.equal(armed.status, 200);
+		assert.equal(h.state.fault.fault, 'exit-after-deploy');
+		assert.equal(h.events('fault-armed').length, 1);
+		h.observe('B');
+		assert.equal(h.state.fault.fault, 'exit-after-deploy', 'creating a job does not consume it');
+		const claim = h.claim();
+		assert.equal(claim.body.job.fault, 'exit-after-deploy');
+		assert.equal(h.state.fault, null, 'consumed on attach');
+		assert.equal(h.events('fault-attached').length, 1);
+		// The retry of that job (after a failure) is a clean run.
+		h.fail({ jobId: h.state.job.jobId, leaseToken: claim.body.leaseToken }, { retryable: true });
+		h.advance(DEFAULT_CONFIG.claimTimeoutMs);
+		assert.equal(h.state.job.fault ?? null, null);
+	});
+
+	test('DELETE disarms; arming is refused (409) unless the target is staging', () => {
+		const h = bootstrapped();
+		h.send({ type: 'injectFault', fault: 'exit-after-deploy' });
+		const cleared = h.send({ type: 'clearFault' });
+		assert.equal(cleared.body.disarmed, true);
+		assert.equal(h.state.fault, null);
+		h.observe('B');
+		assert.equal(h.claim().body.job.fault, undefined);
+		const prod = bootstrapped({ target: 'production' });
+		const r = prod.send({ type: 'injectFault', fault: 'exit-after-deploy' });
+		assert.deepEqual([r.status, r.body.error], [409, 'not-staging']);
+		assert.equal(prod.state.fault, null);
+	});
+
+	test('interrupted completion over HTTP: the runner never completes, the coordinator reconciles from live', async () => {
+		const w = await world();
+		try {
+			await w.bootstrap();
+			assert.equal((await w.api('POST', '/admin/inject-fault', { fault: 'exit-after-deploy' })).status, 200);
+			assert.equal((await w.api('GET', '/admin/status')).body.state.fault.fault, 'exit-after-deploy');
+			w.fake.state.api.HOME_PAGE_QUERY = home('v2');
+			await w.runUntil(START + MIN);
+			const { job } = await w.state();
+			const claim = await w.api('POST', '/runner/claim', { jobId: job.jobId, runId: 'r', runUrl: 'u' });
+			assert.equal(claim.body.job.fault, 'exit-after-deploy');
+			assert.equal((await w.api('GET', '/admin/status')).body.state.fault, null);
+			const lease = { jobId: job.jobId, leaseToken: claim.body.leaseToken };
+			const bound = await w.api('POST', '/runner/manifest', { ...lease, codeSha: job.codeSha, manifest: M1 });
+			assert.equal(bound.status, 200, JSON.stringify(bound.body));
+			assert.equal((await w.api('POST', '/runner/activate', { ...lease, versionId: 'v-faulted' })).status, 200);
+			// The runner "dies" here: the new version is live, but /runner/complete is never called.
+			const { snapshot } = bound.body;
+			w.fake.state.live = {
+				mode: 'static',
+				contentHash: snapshot.contentHash,
+				manifestId: snapshot.manifestId,
+				codeSha: job.codeSha,
+				jobId: job.jobId,
+			};
+			await w.runUntil(w.now + DEFAULT_CONFIG.activationMs + 2 * MIN);
+			const status = (await w.api('GET', '/admin/status')).body;
+			assert.equal(status.state.job?.jobId === job.jobId, false, 'the job is no longer active');
+			assert.equal(status.state.deployed.jobId, job.jobId);
+			assert.equal(status.state.deployed.via, 'reconciled');
+			assert.equal(status.state.deployed.versionId, 'v-faulted');
+			assert.equal(status.lastJob.status, 'completed');
+			assert.equal(status.lastJob.via, 'reconciled');
+			const names = (await w.api('GET', '/admin/events', null, { limit: '5000' })).body.events.map((e) => e.name);
+			for (const name of ['fault-armed', 'fault-attached']) assert.ok(names.includes(name), name);
+			assert.equal((await w.api('DELETE', '/admin/inject-fault')).body.disarmed, false);
+		} finally {
+			await w.close();
+		}
+	});
+
+	test('arming is refused over HTTP when the target is production', async () => {
+		const w = await world({ TARGET: 'production' });
+		try {
+			await w.bootstrap();
+			const r = await w.api('POST', '/admin/inject-fault', { fault: 'exit-after-deploy' });
+			assert.equal(r.status, 409);
+			assert.equal((await w.api('GET', '/admin/status')).body.state.fault, null);
 		} finally {
 			await w.close();
 		}

@@ -546,6 +546,10 @@ export function defineCoordinator(Base) {
 						.map(parseRow);
 					return { status: 200, body: { alerts: rows } };
 				}
+				case 'POST /admin/inject-fault':
+					return (await this.run({ type: 'injectFault', fault: b.fault })).result;
+				case 'DELETE /admin/inject-fault':
+					return (await this.run({ type: 'clearFault' })).result;
 				case 'POST /admin/pause':
 					return (await this.run({ type: 'pause', reason: b.reason })).result;
 				case 'POST /admin/resume': {

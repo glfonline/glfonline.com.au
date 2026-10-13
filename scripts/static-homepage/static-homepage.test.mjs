@@ -214,6 +214,108 @@ describe('ci-runner', () => {
 		assert.ok(!f.calls.includes('/runner/manifest'));
 	});
 
+	describe('fault injection', () => {
+		const VERSION_ID = '11111111-2222-3333-4444-555555555555';
+		// A repo whose helper scripts and fake pnpm let a job run from claim to `wrangler versions deploy`.
+		function deployFixture(fault) {
+			const dir = mkdtempSync(path.join(tmpdir(), 'ci-runner-fault-'));
+			const git = (...args) => execFileSync('git', args, { cwd: dir, encoding: 'utf8' });
+			git('init', '-q');
+			const scripts = path.join(dir, 'scripts/static-homepage');
+			mkdirSync(scripts, { recursive: true });
+			const manifest = { entries: [{ source: 'sanity', operationName: 'Op', requestBody: '{"q":1}' }] };
+			writeFileSync(path.join(scripts, 'build.mjs'), '');
+			writeFileSync(path.join(scripts, 'deploy-config.mjs'), '');
+			writeFileSync(
+				path.join(scripts, 'manifest.mjs'),
+				`console.log(JSON.stringify({ manifest: ${JSON.stringify(manifest)}, manifestId: 'm1' }));\n`,
+			);
+			git('add', '.');
+			git('-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '-m', 'init');
+			const sha = git('rev-parse', 'HEAD').trim();
+			const bin = path.join(dir, 'bin');
+			mkdirSync(bin);
+			writeFileSync(
+				path.join(bin, 'pnpm'),
+				`#!/bin/sh\necho "$@" >> "${dir}/pnpm.log"\ncase "$*" in *"versions upload"*) echo "Worker Version ID: ${VERSION_ID}";; esac\n`,
+			);
+			chmodSync(path.join(bin, 'pnpm'), 0o755);
+			const body = '{"data":1}';
+			const snapshot = {
+				manifestId: 'm1',
+				entries: [
+					{
+						source: 'sanity',
+						operationName: 'Op',
+						requestBody: '{"q":1}',
+						requestBodySha256: sha256('{"q":1}'),
+						response: { body },
+					},
+				],
+			};
+			snapshot.contentHash = contentHashOf(snapshot.entries);
+			const calls = [];
+			const server = createServer(async (req, res) => {
+				for await (const _ of req);
+				calls.push(req.url);
+				const reply = (status, out) => {
+					res.writeHead(status, { 'content-type': 'application/json' });
+					res.end(JSON.stringify(out));
+				};
+				if (req.url === '/runner/claim')
+					return reply(200, {
+						job: { kind: 'content', codeSha: sha, ...(fault ? { fault } : {}) },
+						leaseToken: 'tok',
+						leaseExpiresAt: Date.now() + 9e5,
+					});
+				if (req.url === '/runner/manifest') return reply(200, { snapshot });
+				reply(200, {});
+			});
+			return { dir, sha, calls, server };
+		}
+		async function run(f, extraEnv = {}) {
+			await new Promise((resolve) => f.server.listen(0, '127.0.0.1', resolve));
+			const summary = path.join(f.dir, 'summary.md');
+			const env = { ...baseEnv(f.dir, f.server.address().port, f.sha), GITHUB_STEP_SUMMARY: summary, ...extraEnv };
+			const code = await runJob(env, f.dir);
+			f.server.close();
+			return { code, summary: existsSync(summary) ? readFileSync(summary, 'utf8') : '' };
+		}
+		const deployed = (f) => /versions deploy/.test(readFileSync(path.join(f.dir, 'pnpm.log'), 'utf8'));
+
+		it('exits after the deploy without /runner/complete or /runner/fail on staging', async () => {
+			const f = deployFixture('exit-after-deploy');
+			const { code, summary } = await run(f);
+			assert.equal(code, 1);
+			assert.ok(deployed(f), 'the deploy ran');
+			assert.ok(f.calls.includes('/runner/activate'));
+			assert.ok(!f.calls.includes('/runner/complete'));
+			assert.ok(!f.calls.includes('/runner/fail'));
+			assert.match(summary, /FAULT INJECTED: exiting after deploy, before \/runner\/complete/);
+		});
+
+		it('ignores the fault for a non-staging target', async () => {
+			const f = deployFixture('exit-after-deploy');
+			// The run carries on past the deploy to verification (which fails against the fake origin).
+			const { summary } = await run(f, {
+				TARGET: 'production',
+				GITHUB_REF: 'refs/heads/main',
+				VERIFY_TIMEOUT_MS: '1',
+			});
+			assert.ok(deployed(f), 'the deploy ran');
+			assert.doesNotMatch(summary, /FAULT INJECTED/);
+			assert.match(summary, /verify/, 'it went on to the verify stage');
+		});
+
+		it('does nothing special without a fault: runs on to verification', async () => {
+			const f = deployFixture(undefined);
+			const { summary } = await run(f, { VERIFY_TIMEOUT_MS: '1' });
+			assert.ok(deployed(f));
+			assert.doesNotMatch(summary, /FAULT INJECTED/);
+			assert.ok(!f.calls.includes('/runner/complete'), 'verification of the fake origin fails first');
+		});
+	});
+
 	it('scopes secrets out of install/build children and into wrangler only', () => {
 		const env = {
 			PATH: '/bin',

@@ -4,6 +4,8 @@
 //   claim -> checkout + verify the claimed SHA -> install -> manifest (from this checkout)
 //   -> /runner/manifest handshake -> snapshot -> static build -> `wrangler versions upload`
 //   -> /runner/activate -> `wrangler versions deploy` -> verify live -> /runner/complete
+//   (staging only: a claimed job may carry `fault: 'exit-after-deploy'`, which exits right after the
+//   deploy without calling /runner/complete, to test the coordinator's reconciliation)
 //
 // The lease is renewed every 60 s in-process. Any 409 from the coordinator (lease expired or
 // revoked, job not active, paused, activation refused) aborts the run without deploying anything
@@ -266,6 +268,13 @@ export async function runJob(env = process.env, repoRoot = REPO_ROOT) {
 		const job = claim.body.job;
 		const codeSha = job.codeSha;
 		log(`claimed ${jobId}: kind=${job.kind} codeSha=${codeSha} target=${env.TARGET}`);
+		// Staging-only fault injection (armed via the coordinator's /admin/inject-fault): ignored elsewhere.
+		let exitAfterDeploy = false;
+		if (job.fault) {
+			exitAfterDeploy = job.fault === 'exit-after-deploy' && target.name === 'staging';
+			if (!exitAfterDeploy)
+				console.log(`::warning::ignoring fault "${job.fault}" (only exit-after-deploy on staging is supported)`);
+		}
 
 		renewTimer = setInterval(async () => {
 			try {
@@ -464,6 +473,17 @@ export async function runJob(env = process.env, repoRoot = REPO_ROOT) {
 				),
 			);
 		});
+
+		// 8b. Fault injection (staging only): die here, as a killed runner would, without telling the
+		// coordinator. It must reconcile from the live origin once the activation deadline passes.
+		if (exitAfterDeploy) {
+			const message = 'FAULT INJECTED: exiting after deploy, before /runner/complete';
+			log(message);
+			console.log(`::warning::${message}`);
+			outcome = 'fault-injected';
+			detail = message;
+			return 1;
+		}
 
 		// 9. Verify the live origin serves this job's build.
 		await stage('verify', async () => {

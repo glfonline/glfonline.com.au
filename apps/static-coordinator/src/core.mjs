@@ -60,12 +60,14 @@ export const DEFAULT_CONFIG = {
 const HOUR = 60 * 60_000;
 const LEASED = ['claimed', 'bound', 'activating'];
 const UNCLAIMED = ['queued', 'dispatched'];
+const FAULTS = ['exit-after-deploy'];
 
 export function initialState(now) {
 	return {
 		version: 3,
 		createdAt: now,
 		paused: null, // { reason, at }
+		fault: null, // staging-only one-shot fault armed for the next claimed job: { fault, armedAt }
 		// What the coordinator last deployed (or was bootstrapped with).
 		deployed: null, // { mode, contentHash, manifestId, codeSha, jobId, versionId, generation, deployedAt, via }
 		currentCodeSha: null, // latest code revision (from /code/enqueue or bootstrap)
@@ -240,6 +242,12 @@ const HANDLERS = {
 		state.counters.claims++;
 		closeStall(t);
 		log(t, 'claimed', { jobId, runId: job.runId, runUrl: job.runUrl, attempt: job.attempt, kind: job.kind });
+		// One-shot fault injection (staging only): attach the armed fault to this job and consume it.
+		if (state.fault && cfg.target === 'staging') {
+			job.fault = state.fault.fault;
+			log(t, 'fault-attached', { jobId, fault: job.fault, armedAt: state.fault.armedAt });
+			state.fault = null;
+		}
 		return ok({ job: publicJob(job), leaseToken: job.leaseToken, leaseExpiresAt: job.leaseExpiresAt });
 	},
 
@@ -419,6 +427,25 @@ const HANDLERS = {
 		state.live.checkDueAt = now;
 		log(t, 'deployed-bootstrapped', { deployed: state.deployed });
 		return ok({ deployed: state.deployed, next: housekeep(t) });
+	},
+
+	// POST /admin/inject-fault: arm a one-shot fault for the next claimed job. Staging only.
+	injectFault(t, { fault }) {
+		const { state, now, cfg } = t;
+		if (cfg.target !== 'staging') return reject(t, 'inject-fault', null, 'not-staging');
+		if (!FAULTS.includes(fault)) return bad(`fault must be one of: ${FAULTS.join(', ')}`);
+		state.fault = { fault, armedAt: now };
+		log(t, 'fault-armed', { fault });
+		return ok({ fault: state.fault });
+	},
+
+	// DELETE /admin/inject-fault
+	clearFault(t) {
+		const { state } = t;
+		const was = state.fault;
+		state.fault = null;
+		if (was) log(t, 'fault-disarmed', { fault: was.fault });
+		return ok({ disarmed: Boolean(was), was });
 	},
 
 	pause(t, { reason }) {
@@ -1109,6 +1136,7 @@ function requeue(job, now, notBefore) {
 	job.leaseToken = null;
 	job.leaseExpiresAt = null;
 	job.activation = null;
+	job.fault = null;
 	job.failReport = null;
 	job.dispatch = freshDispatch(Math.max(now, notBefore));
 }
