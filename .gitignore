@@ -9,3 +9,4 @@
 *.log
 dist
 node_modules
+.static-homepage

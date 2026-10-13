@@ -1,0 +1,68 @@
+name: 🧊 Static homepage deploy
+
+# Dispatched by the static-homepage coordinator Worker (never by hand, except to debug) with a job id.
+# The job claims a lease, builds the homepage from the coordinator's content snapshot, uploads an
+# inactive Worker version, asks the coordinator to activate it, deploys it and verifies it is live.
+# All logic lives in scripts/static-homepage/ci-runner.mjs.
+on:
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Coordinator job id
+        required: true
+        type: string
+      target:
+        description: Deployment target (production only from main)
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+# Deploys are serialised by the coordinator; never cancel one mid-flight.
+concurrency:
+  group: static-homepage-${{ inputs.target }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: 🚀 Build and deploy (${{ inputs.target }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 🛡️ Guard target
+        if: inputs.target == 'production' && github.ref != 'refs/heads/main'
+        run: |
+          echo "::error::target=production is only allowed from main (ref: ${{ github.ref }})"
+          exit 1
+
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v7
+        with:
+          # Full history so the runner can prove the claimed SHA is an ancestor of this dispatched ref.
+          fetch-depth: 0
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: 🛠️ Setup node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      # Checks out the claimed SHA, installs, builds and deploys.
+      - name: 🧊 Run job
+        run: node scripts/static-homepage/ci-runner.mjs
+        env:
+          JOB_ID: ${{ inputs.job_id }}
+          TARGET: ${{ inputs.target }}
+          STATIC_COORD_URL: ${{ vars.STATIC_COORD_URL }}
+          STATIC_COORD_RUNNER_TOKEN: ${{ secrets.STATIC_COORD_RUNNER_TOKEN }}
+          STATIC_PUBLIC_ORIGIN: ${{ vars.STATIC_PUBLIC_ORIGIN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

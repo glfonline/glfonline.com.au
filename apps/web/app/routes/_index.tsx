@@ -1,4 +1,4 @@
-import { HOME_PAGE_QUERY, sanityClient } from '@glfonline/sanity-client';
+import { sanityClient } from '@glfonline/sanity-client';
 import { Image } from '@unpic/react';
 import { clsx } from 'clsx';
 import { Fragment, useId } from 'react';
@@ -16,6 +16,7 @@ import { NewsletterSignup } from '../components/newsletter/form';
 import { VerticalLogo } from '../components/vectors/vertical-logo';
 import { brandsWeLove } from '../lib/brands-we-love';
 import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { HOME_PAGE_REQUEST } from '../lib/homepage-requests';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
@@ -40,9 +41,7 @@ const homePageSchema = z.object({
 });
 
 export async function loader() {
-	const { HomePage } = await sanityClient(HOME_PAGE_QUERY, {
-		id: 'home',
-	});
+	const { HomePage } = await sanityClient(HOME_PAGE_REQUEST.operation, HOME_PAGE_REQUEST.variables);
 	return data(homePageSchema.parse(HomePage), {
 		headers: {
 			'Cache-Control': CACHE_SHORT,
