@@ -1112,12 +1112,21 @@ describe('m. budget', () => {
 		}
 	});
 
-	test('the alarm is only the heartbeat watchdog while ticks arrive', () => {
+	test('with alarm ticks disabled, the alarm is the heartbeat watchdog while ticks arrive', () => {
+		// Was "the alarm is only the heartbeat watchdog": alarm ticks are now the primary scheduler,
+		// so this holds only once they are switched off (POST /admin/scheduler).
 		const h = bootstrapped();
+		h.send({ type: 'scheduler', alarmTicks: false });
+		h.send({ type: 'alarm', live: h.live({ jobId: 'boot' }) });
 		assert.equal(nextAlarmAt(h.state, h.now), h.now + DEFAULT_CONFIG.heartbeatMaxMs + 1000);
 		h.advance(DEFAULT_CONFIG.heartbeatMaxMs + 1);
 		h.send({ type: 'alarm' });
-		assert.equal(nextAlarmAt(h.state, h.now), h.now + 60_000, 'every minute during an outage');
+		assert.equal(h.alerts('detector-heartbeat-missed').length, 1);
+		assert.equal(
+			nextAlarmAt(h.state, h.now),
+			T0 + DEFAULT_CONFIG.driftCheckMs,
+			'after the watchdog fired, only the drift check remains',
+		);
 	});
 
 	test('configFromEnv parses numeric overrides and ignores junk', () => {

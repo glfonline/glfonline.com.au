@@ -12,6 +12,8 @@
 // Env: JOB_ID, TARGET (staging|production), STATIC_COORD_URL, STATIC_COORD_RUNNER_TOKEN,
 //      STATIC_PUBLIC_ORIGIN (required for staging), CLOUDFLARE_API_TOKEN, CLOUDFLARE_ACCOUNT_ID,
 //      GITHUB_REF (target guard), GITHUB_SHA (the dispatched ref's head; the claimed SHA must be its ancestor), GITHUB_RUN_ID, GITHUB_SERVER_URL, GITHUB_REPOSITORY,
+//      GITHUB_EVENT_NAME. On `push` (staging branch trigger) GITHUB_SHA is the claimed SHA itself, so
+//      PROVENANCE_REF (branch name) is required and the claimed SHA must be an ancestor of origin/<PROVENANCE_REF>.
 //      GITHUB_STEP_SUMMARY. Optional: RENEW_MS (60000), VERIFY_TIMEOUT_MS (300000).
 import { spawn } from 'node:child_process';
 import { appendFileSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -20,7 +22,13 @@ import { fileURLToPath } from 'node:url';
 import { EXIT as BUILD_EXIT } from './build.mjs';
 import { contentHashOf, validateSnapshot } from './content-hash.mjs';
 import { REPO_ROOT } from './manifest.mjs';
-import { assertTargetAllowed, resolveTarget } from './targets.mjs';
+import {
+	assertEventTarget,
+	assertStagingWorker,
+	assertTargetAllowed,
+	parseDispatchJobId,
+	resolveTarget,
+} from './targets.mjs';
 import { pollUntilOk, verifyStatic } from './verify-live.mjs';
 
 const NON_RETRYABLE_BUILD_EXITS = new Set([BUILD_EXIT.INVALID_SNAPSHOT, BUILD_EXIT.MANIFEST_MISMATCH]);
@@ -112,7 +120,20 @@ export async function runJob(env = process.env, repoRoot = REPO_ROOT) {
 		console.error(`ci-runner: ${error.message}`);
 		return 64;
 	}
-	const target = resolveTarget(env.TARGET, env);
+	let target;
+	try {
+		if (env.GITHUB_EVENT_NAME === 'push') {
+			// Branch trigger: staging only, job id comes from the ref, and a provenance branch is mandatory.
+			assertEventTarget('push', env.TARGET);
+			if (parseDispatchJobId(env.GITHUB_REF) !== jobId) throw new Error('JOB_ID does not match the pushed ref');
+			if (!env.PROVENANCE_REF) throw new Error('PROVENANCE_REF is required for push-triggered runs');
+		}
+		target = resolveTarget(env.TARGET, env);
+		assertStagingWorker(target);
+	} catch (error) {
+		console.error(`ci-runner: ${error.message}`);
+		return 64;
+	}
 	if (!target.origin) {
 		console.error('ci-runner: STATIC_PUBLIC_ORIGIN is required for this target');
 		return 64;
@@ -273,6 +294,21 @@ export async function runJob(env = process.env, repoRoot = REPO_ROOT) {
 			}
 			const ancestor = await exec('git', ['merge-base', '--is-ancestor', codeSha, dispatched]);
 			if (ancestor.code !== 0) throw new StageFailure('checkout', 'claimed sha is not on the dispatched ref', false);
+			if (env.GITHUB_EVENT_NAME === 'push') {
+				// GITHUB_SHA is the claimed SHA here, so the check above proves nothing: require the SHA to be on
+				// the trusted provenance branch instead.
+				const ref = env.PROVENANCE_REF;
+				const fetchedRef = await exec('git', [
+					'fetch',
+					'--no-tags',
+					'origin',
+					`+refs/heads/${ref}:refs/remotes/origin/${ref}`,
+				]);
+				if (fetchedRef.code !== 0) throw new StageFailure('checkout', `could not fetch provenance ref ${ref}`, false);
+				const onBranch = await exec('git', ['merge-base', '--is-ancestor', codeSha, `refs/remotes/origin/${ref}`]);
+				if (onBranch.code !== 0)
+					throw new StageFailure('checkout', `claimed sha is not on provenance ref ${ref}`, false);
+			}
 			const head = await exec('git', ['rev-parse', 'HEAD'], { capture: true });
 			if (head.output.trim() !== codeSha) {
 				const fetched = await exec('git', ['fetch', '--no-tags', '--depth=1', 'origin', codeSha]);

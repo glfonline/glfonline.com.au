@@ -6,7 +6,9 @@ import {
 	createHealthcheck,
 	createLiveReader,
 	emailDecision,
+	emailRecord,
 	formatAlertEmail,
+	maskEmail,
 	requiredRole,
 	runScheduledTick,
 	secretsEqual,
@@ -30,6 +32,9 @@ const RE_NON_EMPTY = /non-empty/;
 const RE_UNKNOWN_SOURCE = /unknown source/;
 const RE_DUPLICATE = /duplicate/;
 const RE_REQUESTBODY = /requestBody/;
+const RE_RECREATE_DELETE_FAILED = /^recreate: delete failed/;
+const RE_STAGING_ONLY = /staging only/;
+const RE_FULL_SHA = /full 40-character codeSha/;
 
 /** A fetch double that records calls and answers from `handler(url, init)`. */
 function fakeFetch(handler) {
@@ -348,5 +353,262 @@ describe('upstream manifest fetch', () => {
 		assert.match(normaliseManifest({ entries: [{ ...manifest[0], source: 'x' }] }).error, RE_UNKNOWN_SOURCE);
 		assert.match(normaliseManifest({ entries: [manifest[0], manifest[0]] }).error, RE_DUPLICATE);
 		assert.match(normaliseManifest({ entries: [{ ...manifest[0], requestBody: '' }] }).error, RE_REQUESTBODY);
+	});
+});
+
+describe('GitHub dispatcher: ref-push (staging)', () => {
+	const SHA = 'c'.repeat(40);
+	const env = {
+		GITHUB_DISPATCH_TOKEN: 'ghp_test',
+		DISPATCH_MODE: 'ref-push',
+		TARGET: 'staging',
+		GITHUB_API_URL: 'https://gh.test',
+		GITHUB_REPOSITORY: 'o/r',
+	};
+	/** A fake git refs API over a Map, like smoke/fake-services.mjs. */
+	function refsApi(refs = new Map(), { failDelete = false } = {}) {
+		return fakeFetch((url, init) => {
+			const path = new URL(url).pathname;
+			if (init.method === 'POST' && path === '/repos/o/r/git/refs') {
+				const { ref, sha } = JSON.parse(init.body);
+				if (refs.has(ref)) return { status: 422, body: '{"message":"Reference already exists"}' };
+				refs.set(ref, sha);
+				return { status: 201, body: JSON.stringify({ ref }) };
+			}
+			if (init.method === 'DELETE') {
+				if (failDelete) return { status: 500, body: '{"message":"oops"}' };
+				const ref = `refs/${path.replace('/repos/o/r/git/refs/', '')}`;
+				return refs.delete(ref) ? { status: 204 } : { status: 422, body: '{"message":"Reference does not exist"}' };
+			}
+			if (init.method === 'GET' && path.startsWith('/repos/o/r/git/matching-refs/heads/static-homepage-dispatch/')) {
+				return { status: 200, body: JSON.stringify([...refs.keys()].map((ref) => ({ ref, object: { sha: SHA } }))) };
+			}
+			return { status: 404, body: '{}' };
+		});
+	}
+
+	test('creates refs/heads/static-homepage-dispatch/<jobId> at the job codeSha', async () => {
+		const refs = new Map();
+		const f = refsApi(refs);
+		const d = createDispatcher(env, f);
+		assert.equal(d.mode, 'ref-push');
+		assert.deepEqual(await d.dispatch({ jobId: 'job-1', target: 'staging', codeSha: SHA }), { ok: true, status: 201 });
+		assert.equal(f.calls[0].url, 'https://gh.test/repos/o/r/git/refs');
+		assert.deepEqual(JSON.parse(f.calls[0].init.body), { ref: 'refs/heads/static-homepage-dispatch/job-1', sha: SHA });
+		assert.equal(f.calls[0].init.headers.authorization, 'Bearer ghp_test');
+		assert.equal(refs.get('refs/heads/static-homepage-dispatch/job-1'), SHA);
+		assert.ok(!f.calls.some((c) => c.url.includes('/actions/workflows/')), 'no workflow_dispatch');
+	});
+
+	test('re-dispatch of the same job deletes and recreates the branch (422 already exists)', async () => {
+		const refs = new Map([['refs/heads/static-homepage-dispatch/job-1', SHA]]);
+		const f = refsApi(refs);
+		const r = await createDispatcher(env, f).dispatch({ jobId: 'job-1', target: 'staging', codeSha: SHA });
+		assert.deepEqual(r, { ok: true, status: 201, recreated: true });
+		assert.deepEqual(
+			f.calls.map((c) => `${c.init.method} ${new URL(c.url).pathname}`),
+			[
+				'POST /repos/o/r/git/refs',
+				'DELETE /repos/o/r/git/refs/heads/static-homepage-dispatch/job-1',
+				'POST /repos/o/r/git/refs',
+			],
+		);
+		const failing = await createDispatcher(env, refsApi(refs, { failDelete: true })).dispatch({
+			jobId: 'job-1',
+			codeSha: SHA,
+		});
+		assert.equal(failing.ok, false);
+		assert.match(failing.error, RE_RECREATE_DELETE_FAILED);
+	});
+
+	test('deleteRef: 204 deleted, "does not exist" counts as deleted, other errors reported', async () => {
+		const refs = new Map([['refs/heads/static-homepage-dispatch/job-1', SHA]]);
+		const d = createDispatcher(env, refsApi(refs));
+		assert.deepEqual(await d.deleteRef('job-1'), { ok: true, status: 204 });
+		assert.deepEqual(await d.deleteRef('job-1'), { ok: true, status: 422, alreadyGone: true });
+		const broken = await createDispatcher(env, refsApi(new Map(), { failDelete: true })).deleteRef('job-1');
+		assert.equal(broken.ok, false);
+		assert.equal(broken.status, 500);
+		const traversal = await d.deleteRef('../../main');
+		assert.equal(traversal.ok, false, 'never builds a path from an unsafe name');
+	});
+
+	test('listRefs returns jobIds under the prefix and sets unsafe names aside', async () => {
+		const refs = new Map([
+			['refs/heads/static-homepage-dispatch/job-1', SHA],
+			['refs/heads/static-homepage-dispatch/a/b', SHA],
+		]);
+		const r = await createDispatcher(env, refsApi(refs)).listRefs();
+		assert.deepEqual(r, { ok: true, jobIds: ['job-1'], unsafe: ['a/b'] });
+	});
+
+	test('refused outside staging and for unknown modes: no GitHub call at all', async () => {
+		for (const bad of [
+			{ ...env, TARGET: 'production' },
+			{ ...env, TARGET: undefined },
+			{ ...env, DISPATCH_MODE: 'push' },
+		]) {
+			const f = fakeFetch(() => ({ status: 201 }));
+			const d = createDispatcher(bad, f);
+			assert.equal(d.configured, false);
+			assert.ok(d.configError);
+			for (const r of [await d.dispatch({ jobId: 'j', codeSha: SHA }), await d.deleteRef('j'), await d.listRefs()]) {
+				assert.equal(r.ok, false);
+				assert.equal(r.error, d.configError);
+			}
+			assert.equal(f.calls.length, 0);
+			assert.equal(d.describe().configError, d.configError);
+		}
+		assert.match(createDispatcher({ ...env, TARGET: 'production' }).configError, RE_STAGING_ONLY);
+	});
+
+	test('needs a full 40-character codeSha', async () => {
+		const f = fakeFetch(() => ({ status: 201 }));
+		const r = await createDispatcher(env, f).dispatch({ jobId: 'j', codeSha: 'abc1234' });
+		assert.equal(r.ok, false);
+		assert.match(r.error, RE_FULL_SHA);
+		assert.equal(f.calls.length, 0);
+	});
+
+	test('workflow_dispatch mode has no ref operations', async () => {
+		const d = createDispatcher(
+			{ GITHUB_DISPATCH_TOKEN: 't', WORKFLOW_FILE: 'w.yml', DISPATCH_REF: 'main' },
+			fakeFetch(() => ({})),
+		);
+		assert.equal(d.mode, 'workflow_dispatch');
+		assert.equal((await d.deleteRef('j')).ok, false);
+		assert.equal((await d.listRefs()).ok, false);
+	});
+});
+
+describe('GitHub token check (POST /admin/check-github)', () => {
+	const env = { GITHUB_DISPATCH_TOKEN: 'ghp_secret_token', DISPATCH_MODE: 'ref-push', TARGET: 'staging' };
+	const headers = {
+		'x-accepted-github-permissions': 'contents=read',
+		'github-authentication-token-expiration': '2026-12-31 00:00:00 UTC',
+	};
+
+	test('reports statuses, permission headers and implied Contents: write, never the token', async () => {
+		const f = fakeFetch((url) =>
+			url.endsWith('/repos/glfonline/glfonline.com.au')
+				? {
+						status: 200,
+						headers,
+						body: JSON.stringify({ permissions: { admin: false, push: true, pull: true }, secret: 'x' }),
+					}
+				: { status: 200, headers, body: '[]' },
+		);
+		const r = await createDispatcher(env, f).checkToken();
+		assert.equal(r.ok, true);
+		assert.equal(r.contentsWrite, true);
+		assert.deepEqual(r.repo, {
+			status: 200,
+			acceptedPermissions: 'contents=read',
+			tokenExpiration: '2026-12-31 00:00:00 UTC',
+			permissions: { admin: false, push: true, pull: true },
+		});
+		assert.equal(r.dispatchRefs.status, 200);
+		assert.deepEqual(
+			f.calls.map((c) => c.url),
+			[
+				'https://api.github.com/repos/glfonline/glfonline.com.au',
+				'https://api.github.com/repos/glfonline/glfonline.com.au/git/matching-refs/heads/static-homepage-dispatch/?per_page=1',
+			],
+		);
+		assert.equal(f.calls[0].init.headers.authorization, 'Bearer ghp_secret_token');
+		assert.ok(!JSON.stringify(r).includes('ghp_secret_token'));
+	});
+
+	test('a read-only or rejected token is not ok in ref-push mode', async () => {
+		const readOnly = fakeFetch(() => ({
+			status: 200,
+			body: JSON.stringify({ permissions: { push: false, pull: true } }),
+		}));
+		const r = await createDispatcher(env, readOnly).checkToken();
+		assert.equal(r.ok, false);
+		assert.equal(r.contentsWrite, false);
+		const rejected = fakeFetch(() => ({ status: 401, body: '{"message":"Bad credentials"}' }));
+		const bad = await createDispatcher(env, rejected).checkToken();
+		assert.deepEqual([bad.ok, bad.repo.status, bad.contentsWrite, bad.repo.permissions], [false, 401, null, null]);
+		const down = await createDispatcher(
+			env,
+			fakeFetch(() => new Error('connect ECONNREFUSED ghp_secret_token')),
+		).checkToken();
+		assert.equal(down.repo.status, null);
+		assert.ok(!JSON.stringify(down).includes('ghp_secret_token'), 'errors are redacted too');
+		const none = await createDispatcher({ DISPATCH_MODE: 'ref-push', TARGET: 'staging' }).checkToken();
+		assert.deepEqual([none.ok, none.tokenSet], [false, false]);
+	});
+});
+
+describe('alert email delivery records', () => {
+	const env = {
+		RESEND_API_KEY: 're_secret_key',
+		ALERT_EMAIL_TO: 'ops@example.test, Owner.Name@glf.test',
+		ALERT_EMAIL_FROM: 'c@example.test',
+	};
+
+	test('success keeps the Resend message id and status; recipients are masked', async () => {
+		const f = fakeFetch(() => ({ status: 200, body: '{"id":"4ef9a417-02e9-4d39-ad75-9611e0fcc33c"}' }));
+		const emailer = createEmailer(env, f);
+		assert.deepEqual(emailer.recipients, ['o***@example.test', 'O***@glf.test']);
+		const r = await emailer.send({ subject: 's', text: 't' });
+		assert.deepEqual(r, { ok: true, status: 200, id: '4ef9a417-02e9-4d39-ad75-9611e0fcc33c' });
+		assert.deepEqual(emailRecord(r, { at: 5, to: emailer.recipients, attempt: 1 }), {
+			status: 'sent',
+			httpStatus: 200,
+			id: '4ef9a417-02e9-4d39-ad75-9611e0fcc33c',
+			error: null,
+			to: ['o***@example.test', 'O***@glf.test'],
+			attempt: 1,
+			at: 5,
+		});
+	});
+
+	test('failure keeps status and a truncated error without the API key or full addresses', async () => {
+		const echo = fakeFetch((_url, init) => ({
+			status: 422,
+			body: `${'x'.repeat(10)} bad recipient ${JSON.parse(init.body).to.join(',')} key ${init.headers.authorization} ${'y'.repeat(500)}`,
+		}));
+		const emailer = createEmailer(env, echo);
+		const r = await emailer.send({ subject: 's', text: 't' });
+		assert.equal(r.ok, false);
+		assert.equal(r.status, 422);
+		assert.ok(!r.error.includes('re_secret_key'));
+		assert.ok(!r.error.includes('ops@example.test'));
+		assert.ok(r.error.includes('o***@example.test'));
+		assert.ok(r.error.length <= 300);
+		const rec = emailRecord(r, { at: 1, to: emailer.recipients, attempt: 2 });
+		assert.deepEqual([rec.status, rec.httpStatus, rec.id, rec.attempt], ['failed', 422, null, 2]);
+		const net = await createEmailer(
+			env,
+			fakeFetch(() => new Error('socket hang up')),
+		).send({ subject: 's', text: 't' });
+		assert.equal(emailRecord(net, { at: 1 }).httpStatus, null);
+		assert.equal(
+			emailRecord({ ok: false, disabled: true, error: 'RESEND_API_KEY not set' }, { at: 1 }).status,
+			'disabled',
+		);
+	});
+
+	test('maskEmail', () => {
+		assert.equal(maskEmail('ops@example.test'), 'o***@example.test');
+		assert.equal(maskEmail('nobody'), '***');
+		assert.equal(maskEmail('@x.test'), '***');
+	});
+});
+
+describe('scheduled tick pings once per slot', () => {
+	test('a duplicate slot pings nothing', async () => {
+		const f = fakeFetch(() => ({ status: 200 }));
+		const healthcheck = createHealthcheck({ HC_PING_URL: 'https://hc-ping.com/uuid' }, f);
+		const out = await runScheduledTick({
+			healthcheck,
+			tick: async () => ({ duplicate: true, action: 'duplicate-slot' }),
+		});
+		assert.deepEqual([out.recorded, out.duplicate, out.ping], [true, true, null]);
+		assert.equal(f.calls.length, 0);
+		await runScheduledTick({ healthcheck, tick: async () => ({ action: 'up-to-date', slot: 9, source: 'alarm' }) });
+		assert.deepEqual(JSON.parse(f.calls[0].init.body), { action: 'up-to-date', slot: 9, source: 'alarm' });
 	});
 });

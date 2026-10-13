@@ -8,7 +8,13 @@ import { describe, it } from 'node:test';
 import { buildChildEnv, runJob, wranglerChildEnv } from './ci-runner.mjs';
 import { contentHashOf, entryHash, manifestIdOf, sha256, validateSnapshot } from './content-hash.mjs';
 import { loadManifest } from './manifest.mjs';
-import { assertTargetAllowed } from './targets.mjs';
+import {
+	assertEventTarget,
+	assertStagingWorker,
+	assertTargetAllowed,
+	parseDispatchJobId,
+	resolveTarget,
+} from './targets.mjs';
 
 const entry = (operationName, body, requestBody = `{"query":"query ${operationName} {x}"}`) => ({
 	source: 'sanity',
@@ -69,6 +75,39 @@ describe('target guard', () => {
 		assert.throws(() => assertTargetAllowed('production', 'refs/heads/luke/x'));
 		assert.doesNotThrow(() => assertTargetAllowed('production', 'refs/heads/main'));
 		assert.doesNotThrow(() => assertTargetAllowed('staging', 'refs/heads/luke/x'));
+	});
+});
+
+describe('branch trigger', () => {
+	const id = '20261013T120000-0a1b2c3d';
+	it('parses and validates the job id from the dispatch ref', () => {
+		assert.equal(parseDispatchJobId(`static-homepage-dispatch/${id}`), id);
+		assert.equal(parseDispatchJobId(`refs/heads/static-homepage-dispatch/${id}`), id);
+		for (const bad of [
+			'main',
+			'static-homepage-dispatch/',
+			'static-homepage-dispatch/job-1',
+			`static-homepage-dispatch/${id}/x`,
+			`static-homepage-dispatch/${id};rm`,
+			`static-homepage-dispatch/${id.toUpperCase()}`,
+			`other/${id}`,
+			undefined,
+		])
+			assert.throws(() => parseDispatchJobId(bad), undefined, String(bad));
+	});
+
+	it('forces staging for push events', () => {
+		assert.doesNotThrow(() => assertEventTarget('push', 'staging'));
+		assert.throws(() => assertEventTarget('push', 'production'), /staging only/);
+		assert.doesNotThrow(() => assertEventTarget('workflow_dispatch', 'production'));
+	});
+
+	it('only deploys staging to the staging Worker', () => {
+		assert.doesNotThrow(() => assertStagingWorker(resolveTarget('staging')));
+		assert.throws(
+			() => assertStagingWorker({ ...resolveTarget('staging'), worker: 'glfonline-web' }),
+			/glfonline-web-staging/,
+		);
 	});
 });
 
@@ -216,5 +255,83 @@ describe('ci-runner', () => {
 			'/tmp',
 		);
 		assert.equal(code, 64);
+	});
+	describe('push provenance', () => {
+		const jobId = '20261013T120000-0a1b2c3d';
+		const pushEnv = (f, extra = {}) => ({
+			...baseEnv(f.dir, f.server.address().port, f.sha),
+			GITHUB_EVENT_NAME: 'push',
+			GITHUB_REF: `refs/heads/static-homepage-dispatch/${jobId}`,
+			JOB_ID: jobId,
+			PROVENANCE_REF: 'trusted',
+			...extra,
+		});
+		/** Gives the fixture repo an `origin` whose `trusted` branch is at `trustedSha` (an unrelated commit if null). */
+		function withOrigin(f, { includeClaimed }) {
+			const git = (cwd, ...args) => execFileSync('git', args, { cwd, encoding: 'utf8' });
+			const origin = mkdtempSync(path.join(tmpdir(), 'ci-origin-'));
+			git(origin, 'init', '-q', '--bare');
+			const work = mkdtempSync(path.join(tmpdir(), 'ci-work-'));
+			git(work, 'init', '-q');
+			if (includeClaimed) {
+				git(work, 'fetch', '-q', f.dir, 'HEAD:refs/heads/seed');
+				git(work, 'checkout', '-q', 'seed');
+			}
+			git(work, '-c', 'user.email=t@t', '-c', 'user.name=t', 'commit', '-q', '--allow-empty', '-m', 'tip');
+			git(work, 'push', '-q', origin, 'HEAD:refs/heads/trusted');
+			git(f.dir, 'remote', 'add', 'origin', origin);
+		}
+		const run = async (f, extra) => {
+			await new Promise((resolve) => f.server.listen(0, '127.0.0.1', resolve));
+			const code = await runJob(pushEnv(f, extra), f.dir);
+			f.server.close();
+			return code;
+		};
+
+		it('proceeds past checkout when the claimed sha is on the provenance ref', async () => {
+			const f = fixture();
+			withOrigin(f, { includeClaimed: true });
+			await run(f);
+			assert.ok(existsSync(path.join(f.dir, 'pnpm.log')), 'checkout passed and install started');
+		});
+
+		it('fails non-retryably when the claimed sha is not on the provenance ref', async () => {
+			const f = fixture();
+			withOrigin(f, { includeClaimed: false });
+			const bodies = [];
+			f.server.removeAllListeners('request');
+			f.server.on('request', async (req, res) => {
+				const chunks = [];
+				for await (const chunk of req) chunks.push(chunk);
+				f.calls.push(req.url);
+				bodies.push(Buffer.concat(chunks).toString());
+				res.writeHead(200, { 'content-type': 'application/json' });
+				res.end(
+					JSON.stringify(
+						req.url === '/runner/claim'
+							? { job: { kind: 'content', codeSha: f.sha }, leaseToken: 'tok', leaseExpiresAt: Date.now() + 9e5 }
+							: {},
+					),
+				);
+			});
+			const code = await run(f);
+			assert.equal(code, 1);
+			const failBody = JSON.parse(bodies[f.calls.indexOf('/runner/fail')]);
+			assert.equal(failBody.stage, 'checkout');
+			assert.equal(failBody.retryable, false);
+			assert.match(failBody.error, /not on provenance ref trusted/);
+			assert.ok(!existsSync(path.join(f.dir, 'pnpm.log')), 'nothing installed');
+		});
+
+		it('rejects push runs that target production, lack a provenance ref or mismatch the ref job id', async () => {
+			const f = fixture();
+			f.server.listen(0, '127.0.0.1');
+			await new Promise((resolve) => f.server.once('listening', resolve));
+			assert.equal(await runJob(pushEnv(f, { TARGET: 'production' }), f.dir), 64);
+			assert.equal(await runJob(pushEnv(f, { PROVENANCE_REF: '' }), f.dir), 64);
+			assert.equal(await runJob(pushEnv(f, { JOB_ID: '20261013T120000-ffffffff' }), f.dir), 64);
+			f.server.close();
+			assert.deepEqual(f.calls, [], 'nothing contacted the coordinator');
+		});
 	});
 });

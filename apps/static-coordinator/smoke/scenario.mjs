@@ -17,13 +17,19 @@ export const SMOKE_TIMINGS = {
 	LIVE_RETRY_MS: '1000',
 	VERIFY_INTERVAL_MS: '3600000',
 	EMAIL_MAX_PER_HOUR: '100',
+	// 3 s scheduling slots, so alarm ticks and separate cron nudges fit in the run.
+	TICK_INTERVAL_MS: '3000',
+	REF_CLEANUP_RETRY_MS: '1000',
 };
 
 const BUILD_SIDE = fileURLToPath(new URL('../../../scripts/static-homepage/content-hash.mjs', import.meta.url));
 const SHA1 = 'a1'.repeat(20);
 const SHA2 = 'b2'.repeat(20);
 const SHA_SSR = 'c3'.repeat(20);
-const DISPATCH_PATH = /\/repos\/glfonline\/glfonline\.com\.au\/actions\/workflows\/static-homepage\.yml\/dispatches$/;
+// wrangler.jsonc (staging) runs DISPATCH_MODE=ref-push: a job is started by creating its branch.
+const REFS_PATH = /\/repos\/glfonline\/glfonline\.com\.au\/git\/refs$/;
+const REF_PREFIX = 'refs/heads/static-homepage-dispatch/';
+const LEASE_GONE = new Set(['lease-expired', 'lease-mismatch']);
 const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 const homeQuery = (extra = '') =>
@@ -79,7 +85,13 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	const events = async (name) =>
 		(await admin('GET', '/admin/events?limit=5000')).body.events.filter((e) => e.name === name);
 	const emails = (name) => fake.state.log.resend.filter((m) => m.subject.endsWith(`: ${name}`));
-	const dispatchesFor = (jobId) => fake.state.log.github.filter((d) => d.body.inputs.job_id === jobId);
+	// Successful branch creations for a job (each one starts a CI run).
+	const dispatchesFor = (jobId) =>
+		fake.state.log.refs.filter(
+			(c) => c.method === 'POST' && c.status === 201 && c.body.ref === `${REF_PREFIX}${jobId}`,
+		);
+	const refPosts = () => fake.state.log.refs.filter((c) => c.method === 'POST').length;
+	const dispatchBranches = () => [...fake.state.refs.keys()].filter((ref) => ref.startsWith(REF_PREFIX));
 	async function waitFor(fn, label, timeoutMs = 10_000) {
 		const end = Date.now() + timeoutMs;
 		for (;;) {
@@ -127,6 +139,12 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 		return versionId;
 	}
 
+	step('scheduler: alarm ticks off for the deterministic steps (the alarm still keeps deadlines)');
+	let r = await admin('POST', '/admin/scheduler', { alarmTicks: false });
+	assert.equal(r.status, 200, JSON.stringify(r.body));
+	assert.equal(r.body.scheduler.alarmTicks, false);
+	ok('alarm ticks disabled');
+
 	step('auth: every endpoint needs the right token');
 	assert.equal((await fetch(`${coordUrl}/admin/status`)).status, 401);
 	assert.equal((await call(tokens.runner, 'GET', '/admin/status')).status, 401, 'runner token is not admin');
@@ -143,27 +161,25 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 		SHOP_QUERY: JSON.stringify({ data: { shop: { name: 'GLF' } } }),
 	};
 	fake.state.live = { mode: 'ssr', contentHash: null, manifestId: null, codeSha: SHA_SSR, jobId: null };
-	let r = await tick();
+	r = await tick();
 	assert.equal(r.skipped, 'no-manifest');
 	const scheduled = await fetch(`${coordUrl}/__scheduled?cron=*+*+*+*+*`);
 	assert.equal(scheduled.status, 200);
 	await waitFor(() => fake.state.log.hc.some((p) => p.path === '/hc/smoke-check'), 'healthchecks success ping');
 	ok('tick recorded without a manifest; cron path pinged Healthchecks after recording');
 
-	step('code enqueue -> code job -> GitHub workflow_dispatch');
+	step('code enqueue -> code job -> dispatch branch at the code SHA (ref-push)');
 	r = await runner('/code/enqueue', { codeSha: SHA1 });
 	assert.equal(r.body.action, 'dispatched');
 	let s = await state();
 	assert.equal(s.job.kind, 'code');
 	assert.equal(s.job.manifestId, null);
 	const [firstDispatch] = dispatchesFor(s.job.jobId);
-	assert.deepEqual(firstDispatch.body, {
-		ref: 'luke/static-homepage-pipeline',
-		inputs: { job_id: s.job.jobId, target: 'staging' },
-	});
+	assert.deepEqual(firstDispatch.body, { ref: `${REF_PREFIX}${s.job.jobId}`, sha: SHA1 });
 	assert.equal(firstDispatch.auth, 'Bearer ghp_smoke');
-	assert.match(firstDispatch.path, DISPATCH_PATH);
-	ok(`job ${s.job.jobId} dispatched to ${firstDispatch.path}`);
+	assert.match(firstDispatch.path, REFS_PATH);
+	assert.deepEqual(fake.state.log.github, [], 'no workflow_dispatch in ref-push mode');
+	ok(`job ${s.job.jobId} dispatched as ${firstDispatch.body.ref}`);
 
 	step('claim -> manifest handshake (uncached fetch) -> activate -> complete needs live');
 	const apiCallsBefore = fake.state.log.upstream.filter((u) => u.host === 'sanity-api').length;
@@ -213,9 +229,10 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	await sleep(Number(SMOKE_TIMINGS.LEASE_MS) + 500);
 	r = await runner('/runner/renew', run.lease);
 	assert.equal(r.status, 409);
-	assert.equal(r.body.error, 'lease-expired');
+	// 'lease-mismatch' when the alarm already expired the lease (it keeps that deadline).
+	assert.ok(LEASE_GONE.has(r.body.error), r.body.error);
 	s = await state();
-	assert.equal(s.job.status, 'queued');
+	assert.ok(['queued', 'dispatched'].includes(s.job.status), s.job.status);
 	assert.equal(s.job.attempt, 2);
 	await sleep(Number(SMOKE_TIMINGS.BACKOFF_BASE_MS) + 200);
 	await tick();
@@ -230,10 +247,11 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	step('interrupted completion: deployed but never completed -> reconciled from the live origin');
 	const vInterrupted = await deploy(run, { complete: false });
 	await sleep(Number(SMOKE_TIMINGS.ACTIVATION_MS) + 500);
-	r = await tick();
-	assert.equal(r.liveReason, 'reconcile');
-	s = await state();
-	assert.equal(s.job, null);
+	s = await waitFor(async () => {
+		await tick(); // reconciles, unless the alarm (activation deadline) already did
+		const now = await state();
+		return now.job === null && now;
+	}, 'reconciliation');
 	assert.equal(s.deployed.jobId, run.job.jobId);
 	assert.equal(s.deployed.via, 'reconciled');
 	assert.equal(s.deployed.versionId, vInterrupted);
@@ -245,10 +263,11 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	step('drift: live origin replaced behind our back -> alert + corrective job -> recovery');
 	fake.state.live = { mode: 'ssr', contentHash: null, manifestId: null, codeSha: SHA_SSR, jobId: null };
 	await sleep(Number(SMOKE_TIMINGS.DRIFT_CHECK_MS) + 200);
-	r = await tick();
-	assert.equal(r.liveReason, 'drift-check');
-	s = await state();
-	assert.equal(s.job?.kind, 'corrective');
+	s = await waitFor(async () => {
+		await tick(); // drift check, unless the alarm's drift check already ran
+		const now = await state();
+		return now.job?.kind === 'corrective' && now;
+	}, 'corrective job');
 	assert.equal((await alerts('deployment-drift')).length, 1);
 	assert.equal(dispatchesFor(s.job.jobId).length, 1);
 	await deploy(await claimAndBind(M1));
@@ -292,10 +311,10 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 		assert.equal(res.status, 409, pathname);
 		assert.equal(res.body.error, 'paused', pathname);
 	}
-	const ghCount = fake.state.log.github.length;
+	const postsWhilePaused = refPosts();
 	r = await tick();
 	assert.equal(r.action, 'paused');
-	assert.equal(fake.state.log.github.length, ghCount, 'no dispatch while paused');
+	assert.equal(refPosts(), postsWhilePaused, 'no dispatch while paused');
 	await admin('POST', '/admin/resume');
 	assert.equal(dispatchesFor(run.job.jobId).length, 2, 'revoked job re-dispatched on resume');
 	await deploy(await claimAndBind(M2));
@@ -305,13 +324,15 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	await admin('POST', '/admin/pause', { reason: 'smoke: rollback rehearsal' });
 	fake.state.live = { mode: 'ssr', contentHash: null, manifestId: null, codeSha: SHA2, jobId: null };
 	await sleep(Number(SMOKE_TIMINGS.DRIFT_CHECK_MS) + 200);
-	const ghBefore = fake.state.log.github.length;
-	r = await tick();
-	assert.equal(r.liveReason, 'drift-check');
+	const postsBefore = refPosts();
+	await tick();
+	const driftAlerts = await waitFor(async () => {
+		const found = await alerts('deployment-drift');
+		return found.at(-1)?.data.paused === true && found;
+	}, 'drift recorded while paused');
 	s = await state();
 	assert.equal(s.job, null, 'no corrective job while paused');
-	assert.equal(fake.state.log.github.length, ghBefore);
-	const driftAlerts = await alerts('deployment-drift');
+	assert.equal(refPosts(), postsBefore);
 	assert.equal(driftAlerts.at(-1).data.paused, true);
 	r = await admin('POST', '/admin/resume');
 	assert.equal(r.body.next, 'job-active');
@@ -340,8 +361,8 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	assert.ok(fake.state.log.resend.every((m) => m.subject.startsWith('[STAGING] GLF static homepage: ')));
 	ok(`${fake.state.log.resend.length} emails so far, all deduplicated per incident`);
 
-	step('GitHub dispatch API errors back off, alert dispatch-stalled once, recover on claim');
-	fake.state.githubMode = 'fail';
+	step('GitHub API errors back off, alert dispatch-stalled once, recover on claim');
+	fake.state.refsMode = 'fail';
 	fake.state.api.HOME_PAGE_QUERY = home('v4');
 	r = await tick();
 	assert.equal(r.action, 'dispatched');
@@ -354,7 +375,7 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 		'dispatch-stalled after 3 API errors',
 		15_000,
 	);
-	fake.state.githubMode = 'ok';
+	fake.state.refsMode = 'ok';
 	await waitFor(
 		async () => {
 			await tick();
@@ -369,7 +390,38 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	assert.equal(emails('dispatch-stalled').length, 1);
 	ok(`job ${failingJob.jobId}: ${(await events('dispatch-failed')).length} API errors, one stall alert, recovered`);
 
-	step('heartbeat missed: no ticks -> DO alarm alerts once -> recovered on the next tick');
+	step('dispatch branches: every finished job deleted; token check reports permissions only');
+	await waitFor(() => dispatchBranches().length === 0, 'no dispatch branches left', 15_000);
+	assert.ok(fake.state.log.refs.some((c) => c.method === 'DELETE' && c.status === 204));
+	r = await admin('POST', '/admin/check-github');
+	assert.equal(r.status, 200);
+	assert.deepEqual([r.body.ok, r.body.contentsWrite, r.body.repo.status], [true, true, 200]);
+	assert.ok(!JSON.stringify(r.body).includes('ghp_smoke'));
+	ok(`${fake.state.log.refs.filter((c) => c.method === 'DELETE').length} branch deletes; token check ok`);
+
+	step('alarm-primary scheduling: alarm ticks without any cron, Healthchecks pinged from the DO');
+	const before = (await admin('GET', '/admin/status')).body.scheduler;
+	const hcAlarmBefore = fake.state.log.hc.length;
+	await admin('POST', '/admin/scheduler', { alarmTicks: true });
+	const after = await waitFor(
+		async () => {
+			const now = (await admin('GET', '/admin/status')).body.scheduler;
+			return now.ticks.alarm >= before.ticks.alarm + 3 && now;
+		},
+		'three alarm-driven ticks',
+		20_000,
+	);
+	assert.equal(after.ticks.cron, before.ticks.cron, 'no cron involved');
+	const alarmPings = fake.state.log.hc.slice(hcAlarmBefore).filter((p) => p.path === '/hc/smoke-check');
+	assert.ok(alarmPings.length >= 3 && alarmPings.every((p) => JSON.parse(p.body).source === 'alarm'));
+	assert.ok(after.alarmAt > Date.now() - 5000, 'armed at the next slot');
+	await admin('POST', '/admin/scheduler', { alarmTicks: false });
+	const emailed = (await admin('GET', '/admin/alerts')).body.alerts.filter((a) => a.emailStatus === 'sent');
+	assert.ok(emailed.length > 0 && emailed.every((a) => a.email?.status === 'sent' && a.email.id));
+	assert.ok(emailed.every((a) => a.email.to.every((to) => to === 'o***@example.test')));
+	ok(`${after.ticks.alarm - before.ticks.alarm} alarm ticks, ${alarmPings.length} pings; email ids recorded`);
+
+	step('both scheduling paths off (alarm ticks disabled, no cron): DO watchdog alerts once -> recovered');
 	await sleep(Number(SMOKE_TIMINGS.HEARTBEAT_MAX_MS) + 3000);
 	await waitFor(async () => (await alerts('detector-heartbeat-missed')).length === 1, 'heartbeat-missed alert', 5000);
 	await tick();
@@ -384,7 +436,7 @@ export async function runScenario({ coordUrl, tokens, fake }) {
 	assert.equal(st.counts.pendingEmails, 0);
 	console.log(
 		`  deployed generation ${s.deployed.generation}; counters ${JSON.stringify(s.counters)}; emails ${fake.state.log.resend.length}; ` +
-			`github dispatches ${fake.state.log.github.length}; hc pings ${fake.state.log.hc.length}; live reads ${fake.state.log.live}`,
+			`ref pushes ${refPosts()}; hc pings ${fake.state.log.hc.length}; live reads ${fake.state.log.live}`,
 	);
 	console.log(`  email subjects: ${[...new Set(fake.state.log.resend.map((m) => m.subject))].join(' | ')}`);
 }

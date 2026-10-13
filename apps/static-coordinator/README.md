@@ -1,10 +1,11 @@
 # @glfonline/static-coordinator
 
-The coordinator for the static homepage pipeline (issue #379). A Worker cron (`* * * * *`) watches the
-homepage's upstream content. A single SQLite-backed Durable Object (`Coordinator`) owns every
-build and deploy decision. CI (`.github/workflows/static-homepage.yml` running
-`scripts/static-homepage/ci-runner.mjs`) does the builds and deploys. Each one is started by a GitHub
-`workflow_dispatch` from this coordinator and fenced by its leases.
+The coordinator for the static homepage pipeline (issue #379). A single SQLite-backed Durable Object
+(`Coordinator`) watches the homepage's upstream content once a minute, driven by its own alarm (the
+Worker cron `* * * * *` is a backup nudge), and owns every build and deploy decision. CI
+(`.github/workflows/static-homepage.yml` running `scripts/static-homepage/ci-runner.mjs`) does the builds
+and deploys. Each one is started by this coordinator (a GitHub `workflow_dispatch` in production, a
+dispatch branch on staging) and fenced by its leases.
 
 Design, quotas and operator runbooks (pause/resume, rollback, retry, drift, cleanup):
 [`docs/static-homepage.md`](../../docs/static-homepage.md).
@@ -12,11 +13,12 @@ Design, quotas and operator runbooks (pause/resume, rollback, retry, drift, clea
 | Path | What it is |
 |---|---|
 | `src/core.mjs` | Pure reducer `reduce(state, event, ctx) -> { state, effects, result }`. Every decision lives here. |
-| `src/worker.mjs` | The Durable Object (I/O, SQLite, effects, alarm) and the Worker entry (auth, HTTP, cron). |
+| `src/coordinator.mjs` | The Durable Object (I/O, SQLite, effects, alarm scheduling, HTTP routes), as a class factory so tests can run it. |
+| `src/worker.mjs` | The Worker entry (auth, HTTP, cron nudge) and `class Coordinator extends defineCoordinator(DurableObject)`. |
 | `src/upstream.mjs` | Fetches a request manifest from Sanity (apicdn or uncached api) and Shopify, then hashes it. |
-| `src/adapters.mjs` | GitHub dispatch, Resend email, Healthchecks ping and live `__content.json` reader. Each takes an injectable `fetch`. |
+| `src/adapters.mjs` | GitHub dispatch (both modes, branch cleanup, token check), Resend email, Healthchecks ping and live `__content.json` reader. Each takes an injectable `fetch`. |
 | `src/content-hash.mjs` | The canonical hashing. Its output is identical to `scripts/static-homepage/content-hash.mjs` (a test checks this). |
-| `test/` | `node:test` suites: the reducer, hashing and adapters. |
+| `test/` | `node:test` suites: the reducer, scheduling, hashing, adapters, and the Durable Object itself (`do-harness.mjs`: node:sqlite storage, a fake clock and a Cloudflare-like alarm). |
 | `smoke/` | Local end-to-end run under `wrangler dev` against fake Sanity, Shopify, GitHub, Resend, Healthchecks and live origin. |
 
 ## Hashes and manifests
@@ -32,12 +34,35 @@ Design, quotas and operator runbooks (pause/resume, rollback, retry, drift, clea
   manifests can produce the same content hash: a query change that leaves every response unchanged does this.
   Each manifest still gets its own snapshot, so the request bodies always match the code being built.
 
-## Detector (one Durable Object RPC per tick)
+## Scheduling
 
-The cron's only work is `stub.tick()`. After the Durable Object has recorded the tick, the Worker pings
-`HC_PING_URL`. A tick where upstream failed still pings success, because upstream failures alert
-separately. If the tick could not be recorded, it pings `HC_PING_URL/fail`. Inside the Durable Object, a
-tick does the following:
+- **The alarm is the primary scheduler.** Time is cut into slots of `TICK_INTERVAL_MS` (one minute):
+  `slot = floor(scheduledTime / 60 s)`. When the alarm fires and the current slot has not been processed,
+  it runs the detector tick for that slot.
+- **The cron is a backup nudge.** It calls the same tick (`cronTick`, one RPC) with its `scheduledTime`.
+  A slot that was already processed is a no-op: no upstream fetch, no state write, no ping. Concurrent
+  alarm and cron calls for one slot share a single run.
+- **One alarm, multiplexed.** `core.alarmSchedule` picks the earliest of: the next slot, the heartbeat
+  watchdog, lease expiry, the activation deadline, the next dispatch or re-dispatch, the drift check, the
+  freshness alert and ref-push cleanup. While alarm ticks are on, the slot tick covers all of these within
+  a minute, so only lease and activation deadlines can pull the alarm earlier.
+- **Recovery.** Every entry (alarm, cron RPC, runner or admin call) makes sure the alarm is set no later
+  than needed. The alarm handler catches its own errors: a failed tick pings `/fail` and is retried after
+  30 s rather than burning Cloudflare's alarm retries. If even re-arming fails, the handler throws.
+  Cloudflare then retries, and once its retries are exhausted the next cron, runner or admin call re-arms it.
+- **Healthchecks** is pinged by the Durable Object, once per processed slot, after the tick is recorded. A
+  tick where upstream failed still pings success, because upstream failures alert separately. A tick that
+  could not be recorded pings `HC_PING_URL/fail`. The Worker pings `/fail` itself only if the cron cannot
+  reach the Durable Object.
+- **Test switch.** `POST /admin/scheduler {alarmTicks: false|true}` turns alarm-driven ticks off and on.
+  The setting is persisted and shown in `/admin/status` under `scheduler`. The alarm keeps running as the
+  watchdog and deadline backstop. With the cron trigger removed as well, nothing ticks and Healthchecks
+  alerts. The internal `detector-heartbeat-missed` watchdog shares the alarm, so it cannot detect a dead
+  alarm: **Healthchecks is the independent monitor**.
+
+## Detector
+
+A tick does the following:
 
 1. It picks the **detection manifest**: the manifest of the latest code (`currentCodeSha`) if the coordinator
    knows it, otherwise the deployed one. With no manifest yet, the tick is recorded as a heartbeat only.
@@ -132,11 +157,13 @@ treats every 409 as "stop, deploy nothing".
 | `POST /code/enqueue` | `{codeSha}` | `{action}` | |
 | `GET /admin/status` | | State (lease tokens redacted), manifests, snapshots, alarm, config, adapter config | |
 | `GET /admin/events?since=<ms>&limit=` | | `{events}` (written only on changes) | |
-| `GET /admin/alerts` | | `{alerts}` with email status | |
+| `GET /admin/alerts` | | `{alerts}` with email status and `email` (last delivery attempt) | |
 | `POST /admin/pause` | `{reason}` | `{paused, revoked}` | |
 | `POST /admin/resume` | | `{resumed, next, live}` | |
 | `POST /admin/retry` | | Clears a terminal failure and resets a stalled dispatch | |
-| `POST /admin/tick` | `{force?: "verify"\|"live"}` | Runs one detector tick now (for debugging) | |
+| `POST /admin/tick` | `{force?: "verify"\|"live"}` | Runs one detector tick now (debugging; not slot-deduplicated, no Healthchecks ping) | |
+| `POST /admin/scheduler` | `{alarmTicks: boolean}` | `{scheduler, alarm}`: alarm-driven ticks on/off (persisted) | |
+| `POST /admin/check-github` | | Token check: statuses, permission and expiry headers, `contentsWrite`; never the token | |
 | `PUT /admin/bootstrap` | `{deployed}` or `{fromLive: true}`, plus optional `manifest` | `{deployed, next, manifestKnown}` | `job-active` |
 
 ## Alerts
@@ -149,6 +176,10 @@ Alerts are emailed through Resend. Each one is recorded first in the `alerts` ta
 - given a subject that starts with `ALERT_SUBJECT_PREFIX`.
 
 Alerts are still recorded when sending is disabled, which happens while `ALERT_EMAIL_FROM` starts with `PLACEHOLDER`.
+
+Each send attempt is recorded on the alert row as `email: {status: sent|failed|disabled, httpStatus, id, error,
+to, attempt, at}` and logged as `GLF_EMAIL`. On success `id` is the Resend message id. Recipients are masked
+(`o***@domain`) and errors are truncated, with the API key removed.
 
 | Alert | Opens when | Recovery alert |
 |---|---|---|
@@ -164,9 +195,9 @@ Alerts are still recorded when sending is disabled, which happens while `ALERT_E
 
 | Resource | Usage | Free allowance |
 |---|---|---|
-| Worker invocations | 1,440 cron + about 20 per CI job | 100,000 requests/day |
-| Durable Object requests | 1,440 (one `tick` RPC each) + API calls; the alarm fires only if ticks stop | 100,000/day |
-| SQLite rows written | About 1,440 (one state row per tick) + about 10–20 event rows per job; idle ticks write no events | 100,000/day |
+| Worker invocations | 1,440 cron (when Cloudflare runs it) + about 20 per CI job | 100,000 requests/day |
+| Durable Object requests | 1,440 alarm invocations + 1,440 `cronTick` RPCs (a no-op when the alarm already ran the slot) + API calls, so about 2,900 + 20 per job | 100,000/day |
+| SQLite rows written | One state row per processed slot (about 1,440) + one alarm write per slot (about 1,440; counted as a row write) + about 10–20 event rows per job + one ref delete event per job on staging. Idle ticks write no events, and a deduplicated slot writes nothing | 100,000/day |
 | SQLite rows read | About 3–5 per tick, so about 7,000 | 5,000,000/day |
 | Durable Object duration | About 1 s × 128 MB per tick, so about 180 GB-s | 13,000 GB-s/day |
 | Sanity apicdn | 2 per tick = 2,880/day, about 87k/month (shared with the site's own apicdn traffic) | 500k/month |
@@ -181,13 +212,23 @@ Alerts are still recorded when sending is disabled, which happens while `ALERT_E
 **Secrets** (set with `wrangler secret put`):
 - `COORD_RUNNER_TOKEN`, `COORD_ADMIN_TOKEN`: the GitHub secrets `STATIC_COORD_RUNNER_TOKEN` and
   `STATIC_COORD_ADMIN_TOKEN` must hold the same values.
-- `GITHUB_DISPATCH_TOKEN`: a fine-grained PAT for this repository only, with Actions read/write.
+- `GITHUB_DISPATCH_TOKEN`: a fine-grained PAT for this repository only. `workflow_dispatch` mode (production)
+  needs Actions read/write. `ref-push` mode (staging) needs **Contents read/write**, and Workflows write if
+  GitHub refuses a branch because it touches workflow files. Check it with `POST /admin/check-github`.
 - `RESEND_API_KEY`, `ALERT_EMAIL_TO` (comma-separated), `HC_PING_URL`.
 - `SHOPIFY_STOREFRONT_ACCESS_TOKEN`: the public Storefront token the web app uses. Detection needs it for the
   `X-Shopify-Storefront-Access-Token` header.
 
 **Vars** (`wrangler.jsonc`):
 - `TARGET`, `HOMEPAGE_MODE` (`static`; any other value turns off dispatching), `PUBLIC_ORIGIN`, `DISPATCH_REF`.
+- `DISPATCH_MODE`: `workflow_dispatch` (default, production) or `ref-push` (staging only, refused unless
+  `TARGET=staging`). In `ref-push` mode a job is started by creating `refs/heads/static-homepage-dispatch/<jobId>`
+  at its `codeSha` (`POST /git/refs`), which triggers a push run of the same workflow. A repeated dispatch
+  deletes and recreates the branch. The coordinator deletes the branch when the job completes, fails
+  terminally, is superseded or has its lease revoked. It also sweeps every hour (`REF_SWEEP_INTERVAL_MS`)
+  for branches that do not belong to the active job. Cleanup runs from ticks and alarms, never inside a
+  runner call. Failures are retried with backoff and recorded (`dispatchRefs` in state,
+  `dispatch-ref-delete-failed` events) and never block jobs.
 - `WORKFLOW_FILE`, `ALERT_EMAIL_FROM`, `ALERT_SUBJECT_PREFIX`.
 - `SANITY_CDN_GRAPHQL_URL`, `SANITY_API_GRAPHQL_URL`, `SHOPIFY_STOREFRONT_API_URL`.
 
@@ -218,7 +259,8 @@ The first job comes from `POST /code/enqueue` (sent by the enqueue workflow on p
 Production would use a separate config, for example `wrangler.production.jsonc`, deployed with
 `wrangler deploy -c` and never from this file. It differs from staging in these ways:
 - Name `glf-static-coordinator`, with its own Durable Object, tokens and secrets.
-- `TARGET=production`, `DISPATCH_REF=main`, `ALERT_SUBJECT_PREFIX` empty (or `[PROD]`).
+- `TARGET=production`, `DISPATCH_REF=main`, no `DISPATCH_MODE` (so `workflow_dispatch`; `ref-push` is refused
+  outside staging), `ALERT_SUBJECT_PREFIX` empty (or `[PROD]`).
 - `PUBLIC_ORIGIN` set to the production origin.
 - The Sanity URLs on the `production` dataset (`…/graphql/production/default`, `apicdn` and `api`).
 - A confirmed `ALERT_EMAIL_FROM`.
@@ -229,7 +271,7 @@ The CI target guard only allows `target=production` from `main`.
 ## Local development and tests
 
 ```sh
-pnpm test            # node --test: reducer, hashing (incl. build-side equivalence), adapters
+pnpm test            # node --test: reducer, scheduling, hashing (incl. build-side equivalence), adapters, the DO
 pnpm smoke:local     # wrangler dev + fake services; full scenario, then stops everything
 pnpm dev             # wrangler dev --test-scheduled (put secrets/overrides in .dev.vars)
 ```
@@ -245,5 +287,11 @@ The smoke script covers these scenarios:
 - pause revoking a lease, and the rollback rehearsal (pause → SSR live → resume dispatches);
 - alert email deduplication and recovery;
 - GitHub API errors → `dispatch-stalled` → recovery;
-- a missed heartbeat caught by the Durable Object alarm;
-- Healthchecks pings from the cron path.
+- ref-push dispatch branches against the fake GitHub: creation at the code SHA, recreation on re-dispatch,
+  deletion after every job, and the token check;
+- alarm-driven ticks with no cron, and Healthchecks pings from the Durable Object (alarm and cron paths);
+- both scheduling paths off: the watchdog alarm alerts once, then recovers;
+- Resend message ids recorded on alert rows.
+
+`wrangler.jsonc` is the staging config, so the smoke runs with `DISPATCH_MODE=ref-push`. It switches alarm
+ticks off for its deterministic steps and uses 3-second slots (`TICK_INTERVAL_MS`).

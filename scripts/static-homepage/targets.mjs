@@ -32,6 +32,32 @@ export function assertTargetAllowed(targetName, ref) {
 	}
 }
 
+export const STAGING_WORKER = 'glfonline-web-staging';
+export const DISPATCH_BRANCH_PREFIX = 'static-homepage-dispatch/';
+const DISPATCH_JOB_ID = /^[0-9]{8}T[0-9]{6}-[0-9a-f]{8}$/;
+
+/** The job id carried by a `static-homepage-dispatch/<jobId>` ref (refs/heads/ prefix optional), or throws. */
+export function parseDispatchJobId(ref) {
+	const branch = String(ref ?? '').replace(/^refs\/heads\//, '');
+	if (!branch.startsWith(DISPATCH_BRANCH_PREFIX))
+		throw new Error(`ref "${ref}" is not a ${DISPATCH_BRANCH_PREFIX}* branch`);
+	const jobId = branch.slice(DISPATCH_BRANCH_PREFIX.length);
+	if (!DISPATCH_JOB_ID.test(jobId)) throw new Error(`invalid job id "${jobId}" in ref "${ref}"`);
+	return jobId;
+}
+
+/** Push-triggered (branch trigger) runs are staging only. */
+export function assertEventTarget(eventName, targetName) {
+	if (eventName === 'push' && targetName !== 'staging')
+		throw new Error(`push-triggered runs are staging only (target: ${targetName || 'unknown'})`);
+}
+
+/** Staging deploys must go to the staging Worker, whatever else is configured. */
+export function assertStagingWorker(target) {
+	if (target.name === 'staging' && target.worker !== STAGING_WORKER)
+		throw new Error(`target staging must deploy to ${STAGING_WORKER} (got ${target.worker})`);
+}
+
 // CLI for workflows: node targets.mjs <staging|production> <worker|origin>
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
 	const [name, field] = process.argv.slice(2);

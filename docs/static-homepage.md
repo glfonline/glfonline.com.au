@@ -22,10 +22,11 @@ SSR builds write `mode: "ssr"` with `contentHash`, `manifestId` and `jobId` set 
 ```
 Sanity (CDN + uncached API)  Shopify storefront
           |                          |
-   [coordinator Worker: cron every minute + SQLite Durable Object]
+   [coordinator: SQLite Durable Object, its alarm ticks every minute; Worker cron = backup nudge]
           |   change detected / hourly verification / new code SHA
           v
-   GitHub workflow_dispatch(job_id, target) -> static-homepage.yml
+   production: GitHub workflow_dispatch(job_id, target) -> static-homepage.yml
+   staging:    branch static-homepage-dispatch/<jobId> at codeSha -> push run of static-homepage.yml
           |
    ci-runner.mjs: claim -> checkout SHA -> manifest handshake -> static build
                   -> wrangler versions upload -> /runner/activate -> wrangler versions deploy
@@ -88,6 +89,8 @@ Tests: `pnpm test:static-homepage` (Node test runner) and `pnpm --filter @glfonl
 
 The enqueue branch list lives in one place: `on.push.branches` in `static-homepage-enqueue.yml`. It is `luke/static-homepage-pipeline` for staging validation. Change it to `main` for production.
 
+Staging branch trigger: while `static-homepage.yml` exists only on the PR branch it cannot be dispatched (404), so `static-homepage.yml` also runs on a push to `static-homepage-dispatch/<jobId>`. The coordinator creates that branch at the job's `codeSha` and deletes it afterwards (the delete event does not start a run). Push runs are always `target=staging`, the job id is parsed from the branch name (`YYYYMMDDTHHMMSS-xxxxxxxx`), and the runner requires `codeSha` to be an ancestor of `origin/<PROVENANCE_REF>`. `PROVENANCE_REF` is set in one place, the job `env` in `static-homepage.yml`, and must match the enqueue branch list. Production keeps `workflow_dispatch` from `main`.
+
 Repository secrets: `CLOUDFLARE_API_TOKEN`, `STATIC_COORD_RUNNER_TOKEN`, `STATIC_COORD_ADMIN_TOKEN` (rollback only), `SENTRY_AUTH_TOKEN` (existing). Repository variables: `CLOUDFLARE_ACCOUNT_ID`, `STATIC_COORD_URL`, `STATIC_PUBLIC_ORIGIN` (the workers.dev URL for staging; production defaults to `https://www.glfonline.com.au`).
 
 Stale runners and cancellation: the runner renews its lease every 60 seconds. Any 409 from the coordinator (expired or revoked lease, paused, activation refused) kills running children and starts no further stage, so nothing deploys after a 409. A claim that is rejected with 409 exits successfully as a no-op.
@@ -97,8 +100,8 @@ Stale runners and cancellation: the runner renews its lease every 60 seconds. An
 | Service | Plan | Limit that matters | Where it bites |
 | --- | --- | --- | --- |
 | Sanity | Free (legacy) | CDN 500k requests/month; uncached API 100k requests/month with billable overage; 2 datasets; 10k documents | Detection polls the **CDN** (apicdn) host every minute with two Sanity requests per tick (`HOME_PAGE_QUERY`, `MAIN_NAVIGATION_QUERY`), about 86k/month. The **uncached** host is used only for authoritative snapshots, so keep it rare. Staging is the second dataset |
-| Cloudflare | Free | 100k Worker requests/day; 5 cron triggers; Durable Objects 100k requests/day and 100k rows written/day | The cron runs 1,440 times/day. Keep to at most one DO call per tick and write rows only on change |
-| Healthchecks | Free | Basic ping checks | One ping per tick, after the tick is recorded |
+| Cloudflare | Free | 100k Worker requests/day; 5 cron triggers; Durable Objects 100k requests/day and 100k rows written/day | The DO alarm fires about 1,440 times/day and the backup cron (when Cloudflare runs it) another 1,440, each one DO request: about 2,900 DO requests/day plus CI and admin calls. A slot already ticked is a no-op, so the steady state writes one state row and one alarm per minute (about 2,900 rows/day); event rows only on change |
+| Healthchecks | Free | Basic ping checks | One ping per minute slot, sent by the DO after the tick is recorded (from the alarm or the cron, whichever ran the slot) |
 | Resend | Free | 100 emails/day | Alerts are deduplicated and rate-limited |
 
 If the Sanity CDN count approaches 500k/month, slow the cron or poll fewer operations.
@@ -144,7 +147,28 @@ Unless paused, the coordinator creates a corrective job to redeploy the desired 
 
 ### Detector heartbeat missed
 
-No tick for more than 180 seconds. The cron or DO has stopped. Check the Cloudflare dashboard (cron triggers, Worker errors) and the Healthchecks page. The last good static page stays live meanwhile (outage policy A).
+No tick for more than 180 seconds. The Durable Object alarm is the primary scheduler and the cron a backup nudge for the same minute slot, so both have stopped (or alarm ticks were switched off). Check `GET /admin/status` (`scheduler`: `alarmTicks`, `lastSlot`, `lastSource`, `alarmAt`, `nextAlarm`), the Cloudflare dashboard (Worker and Durable Object errors, cron triggers) and the Healthchecks page. Any runner or admin call re-arms a dropped alarm, so `GET /admin/status` is also the first recovery step. The last good static page stays live meanwhile (outage policy A).
+
+The internal `detector-heartbeat-missed` alert comes from the same alarm, so it cannot report a dead alarm. **Healthchecks is the independent monitor**: the DO pings it once per processed slot, so a silent Healthchecks check is the alert that covers "the alarm itself is gone".
+
+### Scheduler rehearsal (both paths off)
+
+To prove the external alert and recovery on staging:
+
+1. `POST /admin/scheduler {"alarmTicks": false}` (persisted; reported in `/admin/status`). The alarm keeps running as the watchdog and deadline backstop but no longer ticks.
+2. Remove the cron trigger (`triggers.crons: []` in `apps/static-coordinator/wrangler.jsonc`, deploy).
+3. Within the Healthchecks grace period the check goes down and emails. The internal `detector-heartbeat-missed` alert also fires (the alarm still runs).
+4. `POST /admin/scheduler {"alarmTicks": true}`: the current slot ticks within about a second, Healthchecks recovers and `detector-heartbeat-recovered` is sent. Restore the cron trigger.
+
+### Dispatch branches and the GitHub token (staging)
+
+Staging runs `DISPATCH_MODE=ref-push`: each job is started by creating `static-homepage-dispatch/<jobId>` at the job's `codeSha`, and a re-dispatch of the same job deletes and recreates it. The coordinator deletes the branch when the job completes, fails terminally, is superseded or has its lease revoked, and sweeps every hour for branches that do not belong to the active job (`dispatchRefs` in `/admin/status`). Cleanup failures are retried with backoff and recorded as events, but never hold up jobs. `ref-push` is refused unless `TARGET=staging`. In this mode the coordinator's `GITHUB_DISPATCH_TOKEN` needs **Contents: read and write** on this repository (production's `workflow_dispatch` needs Actions: read and write). If creating a branch is rejected for touching workflow files, the token also needs Workflows: write.
+
+`POST /admin/check-github` checks the stored token without returning it. It reports the HTTP statuses of `GET /repos/{repo}` and the dispatch-branch listing, GitHub's `x-accepted-github-permissions` and `github-authentication-token-expiration` headers, and `contentsWrite` (the repository's `permissions.push`).
+
+### Alert email delivery
+
+Each email attempt is recorded on its alert (`GET /admin/alerts` → `email: {status, httpStatus, id, error, to, attempt, at}`) and logged as `GLF_EMAIL`, with the Resend message id on success. Recipients are masked (`o***@domain`) and errors never contain the API key.
 
 ## Release gates
 
@@ -155,7 +179,7 @@ Before enabling `GLF_STATIC_HOMEPAGE` for production:
 3. **Disable Workers Builds auto-deploy for `glfonline-web` first.** Deploys must be serialised by the coordinator. A Workers Builds deploy of `main` would build in SSR mode without the flag and overwrite the static page mid-run. The coordinator would see it as drift, but the window is avoidable.
 4. Code deploys are now CI-driven: a push to `main` calls `/code/enqueue`. Confirm the enqueue workflow's branch list is `main`, and that a code job deploys and uploads source maps to Sentry.
 5. Alert emails and the Healthchecks check have been received once, and `STATIC_COORD_ADMIN_TOKEN` is tested with `/admin/status`.
-6. Coordinator `DISPATCH_REF` is `main`, `HOMEPAGE_MODE=static`, and `/admin/bootstrap` has recorded the currently deployed state.
+6. Coordinator `DISPATCH_REF` is `main`, `DISPATCH_MODE` is unset or `workflow_dispatch`, `HOMEPAGE_MODE=static`, and `/admin/bootstrap` has recorded the currently deployed state.
 
 To go back: run the rollback workflow, then re-enable Workers Builds auto-deploy.
 
@@ -171,3 +195,4 @@ The staging Worker is `glfonline-web-staging` on `workers.dev`, using the `stagi
 2. Delete `glfonline-web-staging` (`wrangler delete --name glfonline-web-staging`).
 3. Remove the staging dataset if it is no longer needed (frees the second dataset slot).
 4. Remove the staging branch from `static-homepage-enqueue.yml`, and delete the `STATIC_PUBLIC_ORIGIN` variable and the dispatch token for staging.
+5. Delete any `static-homepage-dispatch/*` branches the coordinator left behind (normally none: it deletes them and sweeps hourly).

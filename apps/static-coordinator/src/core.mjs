@@ -9,8 +9,13 @@
 // - `effects` are applied by the Durable Object after it has persisted `state`:
 //     { type: 'event', name, data }                   append to the events log (changes only)
 //     { type: 'alert', name, severity, data }         append to alerts; emailed via the outbox
-//     { type: 'dispatch', jobId, target, ... }        call GitHub workflow_dispatch, then report
-//                                                     the outcome as a `dispatchResult` event
+//     { type: 'dispatch', jobId, target, codeSha, ... } start a CI run (workflow_dispatch, or a
+//                                                     dispatch branch in ref-push mode), then
+//                                                     report the outcome as a `dispatchResult` event
+//     { type: 'deleteDispatchRef', jobId }            ref-push only: delete the job's dispatch
+//                                                     branch, then report `refDeleteResult`
+//     { type: 'sweepDispatchRefs', keep }             ref-push only: delete every dispatch branch
+//                                                     not in `keep`, then report `refSweepResult`
 // - `result` is { status, body } for the HTTP/RPC caller.
 //
 // Invariants: at most one active job (state.job). Jobs are only created by createJob(), which is
@@ -39,6 +44,17 @@ export const DEFAULT_CONFIG = {
 	driftCheckMs: 5 * 60_000,
 	liveRetryMs: 60_000,
 	manifestsKept: 20,
+	// Scheduling: the DO alarm ticks once per slot (the cron is a backup nudge for the same slot).
+	tickIntervalMs: 60_000,
+	tickErrorRetryMs: 30_000,
+	alarmMinGapMs: 1000,
+	// 'workflow_dispatch' (production) or 'ref-push' (staging only: a branch per job).
+	dispatchMode: 'workflow_dispatch',
+	refCleanupRetryMs: 60_000,
+	refCleanupRetryMaxMs: 60 * 60_000,
+	refInFlightTimeoutMs: 2 * 60_000,
+	refSweepIntervalMs: 60 * 60_000,
+	refSweepRetryMs: 10 * 60_000,
 };
 
 const HOUR = 60 * 60_000;
@@ -47,7 +63,7 @@ const UNCLAIMED = ['queued', 'dispatched'];
 
 export function initialState(now) {
 	return {
-		version: 2,
+		version: 3,
 		createdAt: now,
 		paused: null, // { reason, at }
 		// What the coordinator last deployed (or was bootstrapped with).
@@ -72,6 +88,8 @@ export function initialState(now) {
 		},
 		waiting: null, // last "waiting for X" note, so it is logged once
 		coalescedHash: null,
+		scheduler: initialScheduler(),
+		dispatchRefs: initialDispatchRefs(),
 		counters: {
 			ticks: 0,
 			jobs: 0,
@@ -90,8 +108,39 @@ export function initialState(now) {
 			upstreamFailures: 0,
 			authFetches: 0,
 			corrective: 0,
+			refsDeleted: 0,
+			refDeleteErrors: 0,
 		},
 	};
+}
+
+function initialScheduler() {
+	// lastSlot: the last scheduled slot (floor(scheduledTime / tickIntervalMs)) whose tick was recorded.
+	return {
+		alarmTicks: true,
+		changedAt: null,
+		lastSlot: null,
+		lastSlotAt: null,
+		lastSource: null,
+		ticks: { alarm: 0, cron: 0 },
+	};
+}
+
+function initialDispatchRefs() {
+	// pending: jobId -> { why, since, attempts, nextAt, inFlightAt, lastError }
+	return { pending: {}, sweep: { dueAt: null, inFlightAt: null, last: null } };
+}
+
+/** Fills in fields added after a state was first persisted (v2 -> v3). Mutates and returns `state`. */
+export function upgradeState(state) {
+	if (!state || typeof state !== 'object') return state;
+	state.scheduler ??= initialScheduler();
+	state.scheduler.ticks ??= { alarm: 0, cron: 0 };
+	state.dispatchRefs ??= initialDispatchRefs();
+	state.counters.refsDeleted ??= 0;
+	state.counters.refDeleteErrors ??= 0;
+	if (state.version < 3) state.version = 3;
+	return state;
 }
 
 const ok = (body = {}) => ({ status: 200, body });
@@ -100,7 +149,7 @@ const bad = (error) => ({ status: 400, body: { error } });
 export function reduce(prevState, event, ctx) {
 	const handler = HANDLERS[event?.type];
 	if (!handler) return { state: prevState, effects: [], result: bad(`unknown event ${event?.type}`) };
-	const state = structuredClone(prevState);
+	const state = upgradeState(structuredClone(prevState));
 	const t = { state, now: ctx.now, cfg: { ...DEFAULT_CONFIG, ...ctx.config }, ctx, effects: [], jobCreated: false };
 	const result = handler(t, event);
 	return { state, effects: t.effects, result };
@@ -110,8 +159,19 @@ const HANDLERS = {
 	// One detector cycle. `cdn`/`auth`/`live` are the outcomes of fetches the DO made, or absent.
 	//   { manifestId, skipped?, cdn?: {hash}|{error}, auth?: {manifestId, contentHash, reason}|{manifestId, error, reason},
 	//     authDeferred?: bool, live?: {ok, content}|{ok:false, error} }
+	//   `slot`/`source` are set for scheduled ticks (alarm or cron); a slot already recorded is a
+	//   no-op so overlapping alarm and cron ticks for the same minute count once.
 	tick(t, ev) {
-		const { state } = t;
+		const { state, now } = t;
+		if (ev.slot != null) {
+			const s = state.scheduler;
+			if (!Number.isInteger(ev.slot)) return bad('slot must be an integer');
+			if (s.lastSlot != null && ev.slot <= s.lastSlot) return ok({ action: 'duplicate-slot', slot: ev.slot });
+			s.lastSlot = ev.slot;
+			s.lastSlotAt = now;
+			s.lastSource = ev.source ?? null;
+			if (ev.source === 'alarm' || ev.source === 'cron') s.ticks[ev.source]++;
+		}
 		const upstreamError = ev.cdn?.error ?? ev.auth?.error ?? null;
 		markTick(t, ev.skipped ? null : !upstreamError);
 		if (ev.skipped) noteWaiting(t, `tick-skipped:${ev.skipped}`);
@@ -129,12 +189,29 @@ const HANDLERS = {
 		if (ev.auth?.contentHash) applyAuthoritative(t, ev.auth.manifestId, ev.auth.contentHash);
 		if (ev.live) applyLive(t, ev.live);
 		const next = housekeep(t);
+		housekeepRefs(t);
 		return ok({ action: describeJob(t, next) });
 	},
 
 	alarm(t, ev) {
 		if (ev.live) applyLive(t, ev.live);
-		return ok({ action: 'alarm', next: housekeep(t) });
+		const next = housekeep(t);
+		housekeepRefs(t);
+		return ok({ action: 'alarm', next });
+	},
+
+	// POST /admin/scheduler: turn alarm-driven ticks off/on (testing). The alarm keeps running as
+	// the watchdog and deadline backstop either way.
+	scheduler(t, { alarmTicks }) {
+		const { state, now } = t;
+		if (typeof alarmTicks !== 'boolean') return bad('alarmTicks must be a boolean');
+		const s = state.scheduler;
+		if (s.alarmTicks !== alarmTicks) {
+			log(t, 'scheduler-changed', { alarmTicks, was: s.alarmTicks });
+			s.alarmTicks = alarmTicks;
+			s.changedAt = now;
+		}
+		return ok({ scheduler: s });
 	},
 
 	claim(t, { jobId, runId, runUrl }) {
@@ -329,6 +406,7 @@ const HANDLERS = {
 			if (job.activation) job.revokedActivation = { ...job.activation, revokedAt: now };
 			requeue(job, now, now);
 			log(t, 'lease-revoked', revoked);
+			queueRefDelete(t, job.jobId, 'lease-revoked');
 		}
 		alert(t, 'coordination-paused', 'info', { reason: state.paused.reason, revoked });
 		return ok({ paused: state.paused, revoked });
@@ -392,6 +470,63 @@ const HANDLERS = {
 		if (d.errors >= cfg.dispatchErrorAlertThreshold) openStall(t, job, 'dispatch API errors');
 		return ok({ dispatched: false, retryAt: d.nextAt });
 	},
+
+	// Outcome of a `deleteDispatchRef` effect. Failures back off and retry; they never touch jobs.
+	refDeleteResult(t, { jobId, ok: succeeded, error, status }) {
+		const { state, now, cfg } = t;
+		const p = state.dispatchRefs.pending[jobId];
+		if (!p) return ok({ ignored: true });
+		p.inFlightAt = null;
+		if (succeeded) {
+			delete state.dispatchRefs.pending[jobId];
+			state.counters.refsDeleted++;
+			log(t, 'dispatch-ref-deleted', { jobId, why: p.why, attempts: p.attempts + 1 });
+			return ok({ deleted: true });
+		}
+		p.attempts++;
+		const message = truncate(`${status ?? ''} ${error ?? 'delete failed'}`.trim(), 300);
+		const changed = p.lastError !== message;
+		p.lastError = message;
+		p.nextAt = now + Math.min(cfg.refCleanupRetryMs * 2 ** (p.attempts - 1), cfg.refCleanupRetryMaxMs);
+		state.counters.refDeleteErrors++;
+		if (p.attempts === 1 || changed) {
+			log(t, 'dispatch-ref-delete-failed', { jobId, attempts: p.attempts, error: message, retryAt: p.nextAt });
+		}
+		return ok({ deleted: false, retryAt: p.nextAt });
+	},
+
+	// Outcome of a `sweepDispatchRefs` effect: { ok, found, deleted: [jobId], failed: [{jobId, error}], error }.
+	refSweepResult(t, { ok: succeeded, found, deleted = [], failed = [], error }) {
+		const { state, now, cfg } = t;
+		const refs = state.dispatchRefs;
+		refs.sweep.inFlightAt = null;
+		for (const jobId of deleted) {
+			if (refs.pending[jobId]) delete refs.pending[jobId];
+		}
+		const clean = Boolean(succeeded) && failed.length === 0;
+		refs.sweep.last = {
+			at: now,
+			ok: clean,
+			found: Number(found) || 0,
+			deleted: deleted.length,
+			failed: failed.length,
+			error: error ? truncate(error, 300) : (failed[0]?.error ?? null),
+		};
+		refs.sweep.dueAt = now + (clean ? cfg.refSweepIntervalMs : cfg.refSweepRetryMs);
+		state.counters.refsDeleted += deleted.length;
+		state.counters.refDeleteErrors += failed.length + (succeeded ? 0 : 1);
+		if (deleted.length || failed.length || !succeeded) {
+			log(t, 'dispatch-refs-swept', {
+				ok: clean,
+				found: refs.sweep.last.found,
+				deleted,
+				failed: failed.map((f) => ({ jobId: f.jobId, error: truncate(f.error, 200) })),
+				error: refs.sweep.last.error,
+				nextAt: refs.sweep.dueAt,
+			});
+		}
+		return ok({ sweep: refs.sweep });
+	},
 };
 
 // ---------------------------------------------------------------------------
@@ -452,15 +587,105 @@ export function completeFailure(state, jobId, leaseToken, versionId) {
 	return null;
 }
 
-/**
- * When the DO alarm should next fire. Ticks handle every deadline within a minute, so the alarm is
- * only the heartbeat watchdog: it fires when ticks stop, then every minute until they resume.
- */
-export function nextAlarmAt(state, now, config) {
+/** The scheduling slot a time falls in: floor(time / tickIntervalMs) (one-minute slots by default). */
+export function slotOf(time, config) {
 	const cfg = { ...DEFAULT_CONFIG, ...config };
-	if (state.incidents.heartbeatMissed) return now + 60_000;
-	const last = state.heartbeat.lastTickAt ?? state.createdAt;
-	return Math.max(now + 1000, last + cfg.heartbeatMaxMs + 1000);
+	return Math.floor(time / cfg.tickIntervalMs);
+}
+
+/** Whether a scheduled tick for `slot` still has to run (each slot is processed once). */
+export function scheduledSlotDue(state, slot) {
+	const last = state.scheduler?.lastSlot;
+	return last == null || slot > last;
+}
+
+/**
+ * The single DO alarm, multiplexed: the earliest of the next tick slot (when alarm ticks are on),
+ * the heartbeat watchdog, lease and activation deadlines, the next dispatch or re-dispatch, the
+ * live drift check, the freshness alert and ref-push cleanup. Every candidate is something the
+ * alarm acts on (and so moves forward) when it fires. While alarm ticks are on, the slot tick does
+ * all of these within a minute, so only lease/activation deadlines can pull the alarm earlier.
+ *
+ * `tickRetryAt` (from the DO) holds the tick candidate back after a tick failed unexpectedly.
+ * Returns { at, reason, candidates } with `at` never earlier than now + alarmMinGapMs, or
+ * at: null when nothing is scheduled.
+ */
+export function alarmSchedule(prevState, now, config, { tickRetryAt = null } = {}) {
+	const cfg = { ...DEFAULT_CONFIG, ...config };
+	const state = upgradeState(structuredClone(prevState));
+	const candidates = [];
+	const add = (reason, at) => {
+		if (Number.isFinite(at)) candidates.push({ reason, at });
+	};
+
+	const s = state.scheduler;
+	if (s.alarmTicks) {
+		const current = slotOf(now, cfg);
+		let at = scheduledSlotDue(state, current) ? now : (Math.max(s.lastSlot, current) + 1) * cfg.tickIntervalMs;
+		if (tickRetryAt != null) at = Math.max(at, tickRetryAt);
+		add('tick', at);
+	}
+
+	if (!state.incidents.heartbeatMissed) {
+		add('heartbeat-watchdog', (state.heartbeat.lastTickAt ?? state.createdAt) + cfg.heartbeatMaxMs + 1000);
+	}
+
+	const L = state.latest;
+	if (L && state.deployed?.contentHash !== L.contentHash && state.incidents.freshnessHash !== L.contentHash) {
+		add('freshness', L.firstSeenAt + cfg.freshnessAlertMs + 1);
+	}
+
+	const job = state.job;
+	if (job?.status === 'claimed' || job?.status === 'bound') add('lease-expiry', job.leaseExpiresAt + 1);
+	if (job?.status === 'activating') {
+		let at = Math.min(job.activation.deadline, job.leaseExpiresAt ?? Number.POSITIVE_INFINITY) + 1;
+		if (job.failReport) at = Math.min(at, now);
+		if (state.live.consecutiveErrors > 0 && state.live.lastCheckedAt != null) {
+			at = Math.max(at, state.live.lastCheckedAt + cfg.liveRetryMs);
+		}
+		add('reconcile', at);
+	} else {
+		add('live-check', state.live.checkDueAt);
+	}
+	if (job && UNCLAIMED.includes(job.status) && !state.paused && cfg.desiredMode === 'static') {
+		add('dispatch', dispatchDueAt(job, cfg));
+	}
+
+	if (cfg.dispatchMode === 'ref-push') {
+		const refs = state.dispatchRefs;
+		for (const [jobId, p] of Object.entries(refs.pending)) {
+			if (refDeleteBlocked(state, jobId)) continue;
+			add('ref-cleanup', p.inFlightAt != null ? p.inFlightAt + cfg.refInFlightTimeoutMs : p.nextAt);
+		}
+		const sw = refs.sweep;
+		add('ref-sweep', sw.inFlightAt != null ? sw.inFlightAt + cfg.refInFlightTimeoutMs : (sw.dueAt ?? now));
+	}
+
+	// With alarm ticks on, the slot tick runs every other check (watchdog, live, dispatch, cleanup)
+	// within a minute, so only lease and activation deadlines may pull the alarm earlier. This keeps
+	// the steady state at one alarm (and one state write) per slot.
+	if (s.alarmTicks) {
+		const kept = candidates.filter((c) => ['tick', 'lease-expiry', 'reconcile'].includes(c.reason));
+		candidates.length = 0;
+		candidates.push(...kept);
+	}
+	if (!candidates.length) return { at: null, reason: null, candidates };
+	const first = candidates.reduce((a, b) => (b.at < a.at ? b : a));
+	return { at: Math.max(first.at, now + cfg.alarmMinGapMs), reason: first.reason, candidates };
+}
+
+/** When the DO alarm should next fire (see alarmSchedule). */
+export function nextAlarmAt(state, now, config, options) {
+	return alarmSchedule(state, now, config, options).at;
+}
+
+function dispatchDueAt(job, cfg) {
+	const d = job.dispatch;
+	if (d.inFlightAt != null) return d.inFlightAt + cfg.dispatchInFlightTimeoutMs;
+	let at = Math.max(job.notBefore, d.nextAt);
+	if (job.status === 'dispatched')
+		at = Math.max(at, d.lastAt + (d.stalled ? cfg.stalledRedispatchMs : cfg.claimTimeoutMs));
+	return at;
 }
 
 /** Numeric overrides from Worker vars (all optional). */
@@ -482,6 +707,9 @@ export function configFromEnv(env) {
 		AUTH_MAX_PER_HOUR: 'authMaxPerHour',
 		DRIFT_CHECK_MS: 'driftCheckMs',
 		LIVE_RETRY_MS: 'liveRetryMs',
+		TICK_INTERVAL_MS: 'tickIntervalMs',
+		REF_SWEEP_INTERVAL_MS: 'refSweepIntervalMs',
+		REF_CLEANUP_RETRY_MS: 'refCleanupRetryMs',
 	};
 	for (const [name, key] of Object.entries(numeric)) {
 		const value = Number(env[name]);
@@ -489,6 +717,7 @@ export function configFromEnv(env) {
 	}
 	if (env.TARGET) cfg.target = env.TARGET;
 	if (env.HOMEPAGE_MODE) cfg.desiredMode = env.HOMEPAGE_MODE;
+	if (env.DISPATCH_MODE) cfg.dispatchMode = env.DISPATCH_MODE;
 	return cfg;
 }
 
@@ -883,6 +1112,7 @@ function failJob(t, stage, error, retryable) {
 	state.job = null;
 	state.counters.terminalFailures++;
 	state.incidents.buildFailedJobId = job.jobId;
+	queueRefDelete(t, job.jobId, 'failed');
 	log(t, 'job-failed-terminal', { jobId: job.jobId, stage, error: message, attempts: job.attempt, retryable });
 	alert(t, 'build-failed-exhausted', 'incident', state.terminalFailure);
 	dispatchNext(t, 'after-terminal-failure');
@@ -901,6 +1131,7 @@ function endJob(t, status, why) {
 		via: why,
 	};
 	state.job = null;
+	queueRefDelete(t, job.jobId, status);
 	log(t, `job-${status}`, { jobId: job.jobId, why });
 }
 
@@ -930,6 +1161,7 @@ function completeJob(t, { via, versionId, timings }) {
 	state.job = null;
 	state.coalescedHash = null;
 	state.counters.completes++;
+	queueRefDelete(t, job.jobId, 'completed');
 	if (via === 'reconciled') state.counters.reconciled++;
 	const visibleAt = Number(timings?.visibleAt) || now;
 	log(t, 'completed', {
@@ -1055,6 +1287,8 @@ function dispatchDue(t) {
 		}
 	}
 	d.inFlightAt = now;
+	// A (re-)dispatch recreates the job's branch itself; a queued delete would race it.
+	delete state.dispatchRefs.pending[job.jobId];
 	t.effects.push({
 		type: 'dispatch',
 		jobId: job.jobId,
@@ -1064,4 +1298,41 @@ function dispatchDue(t) {
 		attempt: job.attempt,
 		dispatchNo: d.count + 1,
 	});
+}
+
+// ---------------------------------------------------------------------------
+// ref-push dispatch branches (staging): one `static-homepage-dispatch/<jobId>` branch per job.
+// Deleted when the job ends or its lease is revoked, plus a periodic sweep. Cleanup is
+// best-effort: it is retried and recorded but never blocks or fails a job.
+
+function queueRefDelete(t, jobId, why) {
+	const { state, now, cfg } = t;
+	if (cfg.dispatchMode !== 'ref-push') return;
+	state.dispatchRefs.pending[jobId] = { why, since: now, attempts: 0, nextAt: now, inFlightAt: null, lastError: null };
+}
+
+// The active job's branch is never deleted while a run holds its lease or a dispatch is in flight.
+function refDeleteBlocked(state, jobId) {
+	const job = state.job;
+	return job?.jobId === jobId && (LEASED.includes(job.status) || job.dispatch?.inFlightAt != null);
+}
+
+// Emits due cleanup effects. Only ticks and alarms call this, so runner and admin calls never wait
+// on GitHub cleanup.
+function housekeepRefs(t) {
+	const { state, now, cfg } = t;
+	if (cfg.dispatchMode !== 'ref-push') return;
+	const refs = state.dispatchRefs;
+	for (const [jobId, p] of Object.entries(refs.pending)) {
+		if (refDeleteBlocked(state, jobId)) continue;
+		if (p.inFlightAt != null && now - p.inFlightAt < cfg.refInFlightTimeoutMs) continue;
+		if (p.inFlightAt == null && now < p.nextAt) continue;
+		p.inFlightAt = now;
+		t.effects.push({ type: 'deleteDispatchRef', jobId });
+	}
+	const sw = refs.sweep;
+	if (sw.inFlightAt != null && now - sw.inFlightAt < cfg.refInFlightTimeoutMs) return;
+	if (sw.inFlightAt == null && sw.dueAt != null && now < sw.dueAt) return;
+	sw.inFlightAt = now;
+	t.effects.push({ type: 'sweepDispatchRefs', keep: state.job ? [state.job.jobId] : [] });
 }
