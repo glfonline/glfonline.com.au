@@ -37,6 +37,17 @@ function parseGraphQLResponse<TData>(value: unknown): GraphQLResponse<TData> {
 	return value as GraphQLResponse<TData>;
 }
 
+/** The exact request body the storefront client sends. The static homepage manifest reuses this. */
+export function buildStorefrontRequestBody<TResult, TVariables, TExtensions>(
+	operation: TadaDocumentNode<TResult, TVariables, TExtensions>,
+	variables?: TVariables,
+): string {
+	return JSON.stringify({
+		query: print(operation),
+		variables,
+	});
+}
+
 export function createStorefront(config: StorefrontConfig): Storefront {
 	return {
 		request: async <TResult, TVariables, TExtensions>(
@@ -44,10 +55,7 @@ export function createStorefront(config: StorefrontConfig): Storefront {
 			variables?: TVariables,
 		): Promise<TResult> => {
 			const res = await fetch(config.apiUrl, {
-				body: JSON.stringify({
-					query: print(operation),
-					variables,
-				}),
+				body: buildStorefrontRequestBody(operation, variables),
 				headers: {
 					'Content-Type': 'application/json',
 					'X-Shopify-Storefront-Access-Token': config.accessToken,

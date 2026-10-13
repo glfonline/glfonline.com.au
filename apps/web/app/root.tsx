@@ -1,5 +1,5 @@
 import type { Storefront } from '@glfonline/shopify-client';
-import { createStorefront, SHOP_QUERY } from '@glfonline/shopify-client';
+import { createStorefront } from '@glfonline/shopify-client';
 import { captureException } from '@sentry/react-router';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { defaultShouldDehydrateQuery, QueryClient } from '@tanstack/react-query';
@@ -30,6 +30,7 @@ import { NotFound } from './components/not-found';
 import fontCssUrl from './font.css?url';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
+import { SHOP_REQUEST } from './lib/homepage-requests';
 import { CART_QUERY_KEY } from './lib/use-cart';
 import { getSeoMeta, seoConfig } from './seo';
 import tailwindCssUrl from './tailwind.css?url';
@@ -82,7 +83,10 @@ export async function loader({ context }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
 
 	// Keep per-visitor cart data out of the root loader.
-	const [{ shop }, mainNavigation] = await Promise.all([storefront.request(SHOP_QUERY), getMainNavigation()]);
+	const [{ shop }, mainNavigation] = await Promise.all([
+		storefront.request(SHOP_REQUEST.operation, SHOP_REQUEST.variables),
+		getMainNavigation(),
+	]);
 
 	return data({
 		mainNavigation,

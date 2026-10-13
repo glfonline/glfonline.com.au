@@ -16,6 +16,7 @@ export {
 	SINGLE_PRODUCT_QUERY,
 } from './graphql';
 export {
+	buildStorefrontRequestBody,
 	createStorefront,
 	type Storefront,
 	type StorefrontConfig,

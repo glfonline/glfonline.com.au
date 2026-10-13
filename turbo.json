@@ -70,6 +70,7 @@
 			"outputs": []
 		},
 		"test:unit": {
+			"dependsOn": ["^build"],
 			"outputs": []
 		}
 	}

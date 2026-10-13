@@ -1,6 +1,7 @@
-import { MAIN_NAVIGATION_QUERY, sanityClient } from '@glfonline/sanity-client';
+import { sanityClient } from '@glfonline/sanity-client';
 import { chunk } from 'remeda';
 import { z } from 'zod';
+import { MAIN_NAVIGATION_REQUEST } from './homepage-requests';
 import { imageWithAltSchema } from './image-with-alt-schema';
 
 const mainNavigationSchema = z.object({
@@ -43,6 +44,6 @@ const mainNavigationSchema = z.object({
 });
 
 export async function getMainNavigation() {
-	const { MainNavigation } = await sanityClient(MAIN_NAVIGATION_QUERY);
+	const { MainNavigation } = await sanityClient(MAIN_NAVIGATION_REQUEST.operation, MAIN_NAVIGATION_REQUEST.variables);
 	return mainNavigationSchema.parse(MainNavigation);
 }

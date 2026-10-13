@@ -1,0 +1,35 @@
+name: 🧊 Static homepage enqueue
+
+# A push to the branch below tells the coordinator about the new code SHA. The coordinator, not this
+# workflow, decides when to build and deploy it, so code and content deploys never overlap.
+# The branch list is the ONE place to change: the staging validation branch now, `main` for production.
+on:
+  push:
+    branches:
+      - luke/static-homepage-pipeline
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  enqueue:
+    name: 📬 Enqueue code deploy
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: 📬 POST /code/enqueue
+        env:
+          STATIC_COORD_URL: ${{ vars.STATIC_COORD_URL }}
+          STATIC_COORD_RUNNER_TOKEN: ${{ secrets.STATIC_COORD_RUNNER_TOKEN }}
+        run: |
+          curl --fail-with-body --silent --show-error --retry 3 --retry-all-errors --max-time 30 \
+            -X POST "${STATIC_COORD_URL%/}/code/enqueue" \
+            -H "Authorization: Bearer ${STATIC_COORD_RUNNER_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"codeSha\":\"${GITHUB_SHA}\"}"
+          echo
+          echo "Enqueued ${GITHUB_SHA} (${GITHUB_REF_NAME})" >> "$GITHUB_STEP_SUMMARY"

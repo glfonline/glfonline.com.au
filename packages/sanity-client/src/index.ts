@@ -11,4 +11,4 @@ export {
 	MAIN_NAVIGATION_QUERY,
 	TESTIMONIALS_PAGE_QUERY,
 } from './graphql';
-export { sanityClient } from './sanity-client';
+export { buildSanityRequestBody, sanityApiUrl, sanityClient } from './sanity-client';

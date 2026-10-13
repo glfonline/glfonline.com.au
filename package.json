@@ -32,8 +32,9 @@
 		"sort:packages": "pnpm dlx sort-package-json 'package.json' './apps/*/package.json' './packages/*/package.json'",
 		"test": "turbo run test:browser test:e2e test:unit",
 		"test:browser": "turbo run test:browser",
-		"test:ci": "pnpm test:unit && pnpm test:browser && cp apps/web/.env.example apps/web/.env && pnpm test:e2e -- --grep \"SEO Meta Tags\"",
+		"test:ci": "pnpm test:unit && pnpm test:static-homepage && pnpm test:browser && cp apps/web/.env.example apps/web/.env && pnpm test:e2e -- --grep \"SEO Meta Tags\"",
 		"test:e2e": "turbo run test:e2e",
+		"test:static-homepage": "node --test 'scripts/static-homepage/*.test.mjs'",
 		"test:unit": "turbo run test:unit"
 	},
 	"devDependencies": {
