@@ -58,13 +58,31 @@ async function fetchEntry(entry, host, config, fetchImpl) {
 		const message = String(parsed.errors[0]?.message ?? '').slice(0, 200);
 		throw new UpstreamError(`${entry.operationName} (${host}): GraphQL errors: ${message}`);
 	}
+	const invalid = invalidData(parsed.data);
+	if (invalid) throw new UpstreamError(`${entry.operationName} (${host}): ${invalid}`);
 	return { status: res.status, contentType: res.headers.get('content-type') ?? 'application/json', body };
+}
+
+/**
+ * A watched response is only content when `data` is an object whose root fields are all present and
+ * non-null. Sanity answers a private or missing dataset with HTTP 200 and `{"data":{"HomePage":null}}`
+ * (no `errors`). That must count as an upstream failure, never as a content change. The check is
+ * generic over the operation's root fields (HomePage, MainNavigation, shop, ...). Returns the reason,
+ * or null when the data is valid.
+ */
+function invalidData(data) {
+	if (data === null || typeof data !== 'object' || Array.isArray(data)) return 'no data object';
+	const roots = Object.keys(data);
+	if (!roots.length) return 'empty data';
+	const missing = roots.filter((key) => data[key] == null);
+	return missing.length ? `null root ${missing.join(', ')}` : null;
 }
 
 /**
  * Fetches every manifest entry and returns `{ contentHash, entries }` where entries are snapshot
  * entries `{ source, operationName, requestBody, requestBodySha256, response }` sorted by
- * operationName. Throws UpstreamError on any failure (never a partial snapshot).
+ * operationName. Throws UpstreamError on any failure, including a null root field (never a partial
+ * snapshot).
  */
 export async function fetchManifest(manifestEntries, host, config, fetchImpl = fetch) {
 	const sorted = [...manifestEntries].sort(byOperationName);

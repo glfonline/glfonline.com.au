@@ -79,6 +79,13 @@ A tick does the following:
 5. It applies a single `tick` event. A job is dispatched only when the authoritative content, the code or the
    mode differs from what is deployed.
 
+A watched response counts as content only when its `data` is an object whose root fields (`HomePage`,
+`MainNavigation`, `shop`, ...) are all present and non-null. Sanity answers a private or missing dataset
+with HTTP 200 and `{"data":{"HomePage":null}}` and no `errors`. The detector treats that, on the CDN or the
+uncached API, as an upstream failure (`lastError` such as `HOME_PAGE_QUERY (cdn): null root HomePage`). It
+counts toward `upstream-failing`, is never a content change or a job, and is never stored as a snapshot. A
+runner's manifest handshake gets a retryable 502 instead.
+
 ## Jobs and the state machine
 
 At most one job exists at a time:

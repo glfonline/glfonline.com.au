@@ -32,6 +32,9 @@ const RE_NON_EMPTY = /non-empty/;
 const RE_UNKNOWN_SOURCE = /unknown source/;
 const RE_DUPLICATE = /duplicate/;
 const RE_REQUESTBODY = /requestBody/;
+const RE_EMPTY_DATA = /HOME_PAGE_QUERY \(cdn\): empty data$/;
+const RE_NO_DATA = /HOME_PAGE_QUERY \(cdn\): no data object$/;
+const RE_NULL_ROOT_B = /null root b$/;
 const RE_RECREATE_DELETE_FAILED = /^recreate: delete failed/;
 const RE_STAGING_ONLY = /staging only/;
 const RE_FULL_SHA = /full 40-character codeSha/;
@@ -291,6 +294,26 @@ describe('upstream manifest fetch', () => {
 		assert.equal(api.entries[1].requestBodySha256, await sha256('{"query":"shop"}'));
 		assert.equal(api.entries[1].response.body, '{"data":{"b":1,"a":2}}', 'raw body kept');
 		assert.equal(api.contentHash, await contentHashOf(api.entries));
+	});
+
+	test('HTTP 200 with a null root field (private dataset) is an UpstreamError, not content', async () => {
+		const cfg = upstreamConfig(env);
+		const respond = (home) =>
+			fakeFetch((_url, init) => ({ body: init.body === '{"query":"home"}' ? home : bodies[init.body] }));
+		for (const host of ['cdn', 'api']) {
+			await assert.rejects(fetchManifest(manifest, host, cfg, respond('{"data":{"HomePage":null}}')), (err) => {
+				assert.ok(err instanceof UpstreamError);
+				assert.equal(err.message, `HOME_PAGE_QUERY (${host}): null root HomePage`);
+				return true;
+			});
+		}
+		await assert.rejects(fetchManifest(manifest, 'cdn', cfg, respond('{"data":{}}')), RE_EMPTY_DATA);
+		await assert.rejects(fetchManifest(manifest, 'cdn', cfg, respond('{"data":null}')), RE_NO_DATA);
+		await assert.rejects(fetchManifest(manifest, 'cdn', cfg, respond('{"other":1}')), RE_NO_DATA);
+		await assert.rejects(fetchManifest(manifest, 'cdn', cfg, respond('{"data":{"a":{},"b":null}}')), RE_NULL_ROOT_B);
+		// Falsy but present roots are content.
+		const ok = await fetchManifest(manifest, 'cdn', cfg, respond('{"data":{"HomePage":{"blocks":[]},"n":0}}'));
+		assert.equal(typeof ok.contentHash, 'string');
 	});
 
 	test('HTTP errors, GraphQL errors and invalid JSON are UpstreamErrors', async () => {

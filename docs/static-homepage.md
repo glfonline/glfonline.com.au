@@ -155,6 +155,10 @@ curl -s https://www.glfonline.com.au/__content.json
 
 Unless paused, the coordinator creates a corrective job to redeploy the desired state. If something keeps overwriting it, pause first and find the writer.
 
+### Upstream failing
+
+`upstream-failing` fires after 3 consecutive failed detector fetches and `upstream-recovered` when they succeed again. A response with HTTP 200 but a null root field (for example a private or missing Sanity dataset returning `{"data":{"HomePage":null}}`) counts as a failure, never as new content. The reason is in the alert and in `heartbeat.lastError`. Nothing is built during the outage and the last good page stays live.
+
 ### Detector heartbeat missed
 
 No tick for more than 180 seconds. The Durable Object alarm is the primary scheduler and the cron a backup nudge for the same minute slot, so both have stopped (or alarm ticks were switched off). Check `GET /admin/status` (`scheduler`: `alarmTicks`, `lastSlot`, `lastSource`, `alarmAt`, `nextAlarm`), the Cloudflare dashboard (Worker and Durable Object errors, cron triggers) and the Healthchecks page. Any runner or admin call re-arms a dropped alarm, so `GET /admin/status` is also the first recovery step. The last good static page stays live meanwhile (outage policy A).
