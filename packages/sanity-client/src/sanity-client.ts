@@ -1,7 +1,12 @@
 import type { TadaDocumentNode } from 'gql.tada';
 import { print } from 'graphql';
 
-const API_URL = 'https://zah69run.apicdn.sanity.io/v1/graphql/production/default';
+const DATASET =
+	(globalThis as { process?: { env?: { SANITY_DATASET?: string } } }).process?.env?.SANITY_DATASET === 'staging'
+		? 'staging'
+		: 'production';
+const API_HOST = DATASET === 'staging' ? 'api' : 'apicdn';
+const API_URL = `https://zah69run.${API_HOST}.sanity.io/v1/graphql/${DATASET}/default`;
 
 type GraphQLResponse<TData> = {
 	data?: TData;

@@ -1,7 +1,13 @@
 {
 	"$schema": "https://turbo.build/schema.json",
 	"globalDependencies": ["**/.env.*local"],
-	"globalEnv": ["SENTRY_AUTH_TOKEN", "SHOPIFY_STOREFRONT_API_URL", "SHOPIFY_STOREFRONT_ACCESS_TOKEN"],
+	"globalEnv": [
+		"SENTRY_AUTH_TOKEN",
+		"SHOPIFY_STOREFRONT_API_URL",
+		"SHOPIFY_STOREFRONT_ACCESS_TOKEN",
+		"PRERENDER_HOMEPAGE",
+		"SANITY_DATASET"
+	],
 	"globalPassThroughEnv": ["COREPACK_HOME"],
 	"tasks": {
 		"build": {
