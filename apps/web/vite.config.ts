@@ -85,6 +85,10 @@ export default defineConfig(async (config) => {
 		build: {
 			sourcemap: true,
 		},
+		// Bake into client + SSR so urlFor matches GraphQL dataset on staging builds.
+		define: {
+			'process.env.SANITY_DATASET': JSON.stringify(process.env.SANITY_DATASET ?? ''),
+		},
 		// Pre-bundle client deps up front. Discovering them mid-session triggers a
 		// re-optimise that regenerates shared chunk hashes and breaks the page.
 		optimizeDeps: {

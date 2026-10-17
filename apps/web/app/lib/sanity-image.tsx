@@ -1,8 +1,11 @@
 import type { SanityImageSource } from '@sanity/asset-utils';
 import { createImageUrlBuilder } from '@sanity/image-url';
 
+// Match @glfonline/sanity-client so staging GraphQL and CDN image URLs stay aligned.
+const dataset = process.env.SANITY_DATASET === 'staging' ? 'staging' : 'production';
+
 const imageUrlBuilder = createImageUrlBuilder({
-	dataset: 'production',
+	dataset,
 	projectId: 'zah69run',
 });
 
