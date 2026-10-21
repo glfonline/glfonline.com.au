@@ -4,6 +4,11 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
 	plugins: [react()],
+	// Match vite.config.ts so importing sanity-image in browser tests does not
+	// hit a bare `process` ReferenceError.
+	define: {
+		'process.env.SANITY_DATASET': JSON.stringify(process.env.SANITY_DATASET ?? ''),
+	},
 	test: {
 		globals: false,
 		include: ['app/**/*.browser.test.tsx'],

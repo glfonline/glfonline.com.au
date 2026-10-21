@@ -1,5 +1,5 @@
 import type { Storefront } from '@glfonline/shopify-client';
-import { createStorefront, SHOP_QUERY } from '@glfonline/shopify-client';
+import { SHOP_QUERY } from '@glfonline/shopify-client';
 import { captureException } from '@sentry/react-router';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { defaultShouldDehydrateQuery, QueryClient } from '@tanstack/react-query';
@@ -27,6 +27,7 @@ import { GenericError } from './components/generic-error';
 import { LoadingProgress } from './components/loading-progress';
 import { MainLayout } from './components/main-layout';
 import { NotFound } from './components/not-found';
+import { createShopifyStorefront } from './lib/shopify-storefront.server';
 import fontCssUrl from './font.css?url';
 import { getMainNavigation } from './lib/get-main-navigation';
 import * as gtag from './lib/gtag';
@@ -38,14 +39,7 @@ export const storefrontContext = createContext<Storefront>();
 
 export const middleware: Array<MiddlewareFunction> = [
 	async ({ context }, next) => {
-		context.set(
-			storefrontContext,
-			createStorefront({
-				apiUrl:
-					process.env.SHOPIFY_STOREFRONT_API_URL ?? 'https://golfladiesfirst.myshopify.com/api/2024-07/graphql.json',
-				accessToken: process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN ?? '2288cabae0640a8f47933d6ed4116607',
-			}),
-		);
+		context.set(storefrontContext, createShopifyStorefront());
 		return next();
 	},
 ];

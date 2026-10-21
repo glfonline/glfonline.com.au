@@ -2,6 +2,7 @@ __generated__
 .cache
 .env
 .env.sentry-build-plugin
+.dev.vars
 .output
 .sentryclirc
 .wrangler

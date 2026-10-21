@@ -5,6 +5,7 @@ import { sentryOnBuildEnd } from '@sentry/react-router';
 // Do not list query-string-driven/paginated routes here: prerendering bakes in a single
 // loader result that the CDN then serves for every query string (e.g. `/blog?after=5`).
 const STATIC_PRERENDER_PATHS = [
+	...(process.env.PRERENDER_HOMEPAGE === 'true' ? ['/'] : []),
 	'/about',
 	'/faq',
 	'/privacy-policy',

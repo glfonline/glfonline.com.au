@@ -1,8 +1,6 @@
 import type { TadaDocumentNode } from 'gql.tada';
 import { print } from 'graphql';
 
-const API_URL = 'https://zah69run.apicdn.sanity.io/v1/graphql/production/default';
-
 type GraphQLResponse<TData> = {
 	data?: TData;
 	errors?: Array<{
@@ -27,11 +25,22 @@ function parseGraphQLResponse<TData>(value: unknown): GraphQLResponse<TData> {
 	return value as GraphQLResponse<TData>;
 }
 
+// Read at call time with bracket access so the package build does not fold the URL.
+function getSanityApiUrl(): string {
+	const dataset =
+		(globalThis as { process?: { env?: Record<string, string | undefined> } }).process?.env?.['SANITY_DATASET'] ===
+		'staging'
+			? 'staging'
+			: 'production';
+	const apiHost = dataset === 'staging' ? 'api' : 'apicdn';
+	return `https://zah69run.${apiHost}.sanity.io/v1/graphql/${dataset}/default`;
+}
+
 export const sanityClient = async <TResult, TVariables, TExtensions>(
 	operation: TadaDocumentNode<TResult, TVariables, TExtensions>,
 	variables?: TVariables,
 ): Promise<TResult> => {
-	const res = await fetch(API_URL, {
+	const res = await fetch(getSanityApiUrl(), {
 		body: JSON.stringify({
 			query: print(operation),
 			variables,
