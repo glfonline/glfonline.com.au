@@ -1,19 +1,10 @@
+import { execFileSync } from 'node:child_process';
+import { mkdirSync, writeFileSync } from 'node:fs';
+import { join } from 'node:path';
 import type { Config } from '@react-router/dev/config';
 import { sentryOnBuildEnd } from '@sentry/react-router';
-
-// Emit shared content routes as static HTML and data files.
-// Do not list query-string-driven/paginated routes here: prerendering bakes in a single
-// loader result that the CDN then serves for every query string (e.g. `/blog?after=5`).
-const STATIC_PRERENDER_PATHS = [
-	'/about',
-	'/faq',
-	'/privacy-policy',
-	'/refund-policy',
-	'/terms-and-conditions',
-	'/testimonials',
-	'/contact',
-	'/robots.txt',
-];
+import { buildContentJson } from './app/lib/content-json';
+import { getPrerenderPaths } from './app/lib/prerender-paths';
 
 async function getBlogSlugs() {
 	const { BLOG_PAGE_QUERY, BLOG_POSTS_COUNT_QUERY, sanityClient } = await import('@glfonline/sanity-client');
@@ -35,9 +26,14 @@ export default {
 	splitRouteModules: true,
 	async prerender() {
 		const blogSlugs = await getBlogSlugs();
-		return [...STATIC_PRERENDER_PATHS, ...blogSlugs.map((slug) => `/blog/${slug}`)];
+		return getPrerenderPaths(blogSlugs, process.env);
 	},
 	buildEnd: async ({ buildManifest, reactRouterConfig, viteConfig }) => {
+		// Every build records what it contains so the live origin can be verified against it.
+		const clientDir = join(reactRouterConfig.buildDirectory, 'client');
+		mkdirSync(clientDir, { recursive: true });
+		writeFileSync(join(clientDir, '__content.json'), `${JSON.stringify(buildContentJson(process.env, gitHead()))}\n`);
+
 		// `sentryConfig` is injected by the plugin `vite.config.ts` only registers
 		// when `SENTRY_AUTH_TOKEN` is set. Checking for it rather than re-reading
 		// the env var keeps the two in step: Wrangler loads `.env` into
@@ -52,3 +48,11 @@ export default {
 		}
 	},
 } satisfies Config;
+
+function gitHead(): string | null {
+	try {
+		return execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+	} catch {
+		return null;
+	}
+}

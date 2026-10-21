@@ -1,0 +1,46 @@
+{
+	"$schema": "./node_modules/wrangler/config-schema.json",
+	// Staging coordinator for the static homepage pipeline (issue #379). Production would be a
+	// separate config (see README.md, "Production"), never this file.
+	"name": "glf-static-coordinator-staging",
+	"main": "./src/worker.mjs",
+	"compatibility_date": "2026-08-01",
+	// Route fetch() through the public Internet so the live check reads the web Worker's
+	// workers.dev origin like a visitor would (same-account workers.dev subrequests are otherwise refused).
+	"compatibility_flags": ["global_fetch_strictly_public"],
+	"workers_dev": true,
+	"preview_urls": false,
+	// Backup nudge only: the Durable Object alarm is the primary one-minute scheduler. Remove this
+	// (and switch alarm ticks off with POST /admin/scheduler) to rehearse "both paths down".
+	"triggers": { "crons": ["* * * * *"] },
+	"durable_objects": {
+		"bindings": [{ "name": "COORDINATOR", "class_name": "Coordinator" }]
+	},
+	"migrations": [{ "tag": "v1", "new_sqlite_classes": ["Coordinator"] }],
+	"vars": {
+		"TARGET": "staging",
+		"HOMEPAGE_MODE": "static",
+		"PUBLIC_ORIGIN": "https://glfonline-web-staging.throbbing-field-8c87.workers.dev",
+		// Staging starts CI runs by creating a `static-homepage-dispatch/<jobId>` branch at the job's
+		// codeSha (a push run), because workflow_dispatch only finds workflows on the default branch.
+		// Production keeps the default `workflow_dispatch` on main. ref-push is refused unless TARGET
+		// is staging, and the token needs Contents: read/write.
+		"DISPATCH_MODE": "ref-push",
+		"DISPATCH_REF": "luke/static-homepage-pipeline",
+		"WORKFLOW_FILE": "static-homepage.yml",
+		"ALERT_SUBJECT_PREFIX": "[STAGING]",
+		// Sender for alert email. glfonline.com.au is the verified Resend domain used by the web app's contact form.
+		"ALERT_EMAIL_FROM": "static-homepage-staging@glfonline.com.au",
+		"SANITY_CDN_GRAPHQL_URL": "https://zah69run.apicdn.sanity.io/v1/graphql/staging/default",
+		"SANITY_API_GRAPHQL_URL": "https://zah69run.api.sanity.io/v1/graphql/staging/default",
+		"SHOPIFY_STOREFRONT_API_URL": "https://golfladiesfirst.myshopify.com/api/2024-07/graphql.json"
+		// Optional overrides (defaults in src/core.mjs): LEASE_MS, ACTIVATION_MS, MAX_ATTEMPTS,
+		// BACKOFF_BASE_MS, CLAIM_TIMEOUT_MS, MAX_DISPATCHES, HEARTBEAT_MAX_MS, FRESHNESS_ALERT_MS,
+		// UPSTREAM_FAIL_THRESHOLD, VERIFY_INTERVAL_MS, AUTH_MAX_PER_HOUR, DRIFT_CHECK_MS,
+		// EMAIL_MAX_PER_HOUR, UPSTREAM_TIMEOUT_MS, TICK_INTERVAL_MS, REF_SWEEP_INTERVAL_MS,
+		// REF_CLEANUP_RETRY_MS, GITHUB_REPOSITORY, GITHUB_API_URL, RESEND_API_URL.
+		// Secrets (wrangler secret put): COORD_RUNNER_TOKEN, COORD_ADMIN_TOKEN, GITHUB_DISPATCH_TOKEN,
+		// RESEND_API_KEY, ALERT_EMAIL_TO, HC_PING_URL, SHOPIFY_STOREFRONT_ACCESS_TOKEN.
+	},
+	"observability": { "enabled": true }
+}

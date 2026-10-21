@@ -1,0 +1,25 @@
+{
+	"name": "@glfonline/static-coordinator",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"check:deps": "pnpm --dir ../.. exec knip --workspace apps/static-coordinator --no-exit-code --dependencies",
+		"check:exports": "pnpm --dir ../.. exec knip --workspace apps/static-coordinator --no-exit-code --exports",
+		"check:format": "pnpm biome format",
+		"check:lint": "pnpm biome lint",
+		"clean": "pnpm clean:outputs && rm -rf node_modules",
+		"clean:outputs": "rm -rf .turbo .wrangler",
+		"deploy:dry-run": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+		"deploy:staging": "wrangler deploy",
+		"dev": "wrangler dev --test-scheduled",
+		"smoke:local": "node smoke/run.mjs",
+		"test": "node --test test/*.test.mjs",
+		"test:unit": "node --test test/*.test.mjs"
+	},
+	"devDependencies": {
+		"@types/node": "catalog:",
+		"knip": "catalog:",
+		"wrangler": "catalog:"
+	}
+}

@@ -1,0 +1,101 @@
+name: 🧊 Static homepage deploy
+
+# Triggered by the static-homepage coordinator Worker (never by hand, except to debug) with a job id.
+# Two triggers:
+#   - workflow_dispatch (production, from main): inputs job_id and target.
+#   - push to static-homepage-dispatch/<jobId> (staging branch trigger, used while this workflow only exists
+#     on the PR branch and cannot be dispatched): the coordinator creates the branch at the job's codeSha and
+#     deletes it afterwards. Push runs are always target=staging; the job id is parsed from the branch name.
+# The job claims a lease, builds the homepage from the coordinator's content snapshot, uploads an
+# inactive Worker version, asks the coordinator to activate it, deploys it and verifies it is live.
+# All logic lives in scripts/static-homepage/ci-runner.mjs.
+on:
+  push:
+    branches:
+      - 'static-homepage-dispatch/**'
+  workflow_dispatch:
+    inputs:
+      job_id:
+        description: Coordinator job id
+        required: true
+        type: string
+      target:
+        description: Deployment target (production only from main)
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+
+# Deploys are serialised by the coordinator; never cancel one mid-flight. Push runs are always staging.
+concurrency:
+  group: static-homepage-${{ github.event_name == 'push' && 'staging' || inputs.target }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    name: 🚀 Build and deploy (${{ github.event_name == 'push' && 'staging' || inputs.target }})
+    # Deleting the dispatch branch also fires a push event; it must not start a run.
+    if: github.event.deleted != true
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      # Push runs cannot choose production; the job id comes from the branch name, never from user input.
+      TARGET: ${{ github.event_name == 'push' && 'staging' || inputs.target }}
+      # The ONLY place the staging provenance branch is named. Push runs require the claimed codeSha to be an
+      # ancestor of origin/<this branch>. Keep it equal to the branch list in static-homepage-enqueue.yml
+      # (on.push.branches) for staging validation.
+      PROVENANCE_REF: luke/static-homepage-pipeline
+    steps:
+      - name: 🛡️ Guard target
+        env:
+          REF: ${{ github.ref }}
+          REF_NAME: ${{ github.ref_name }}
+          EVENT: ${{ github.event_name }}
+          INPUT_JOB_ID: ${{ inputs.job_id }}
+        run: |
+          if [ "$EVENT" = "push" ]; then
+            prefix='static-homepage-dispatch/'
+            job_id="${REF_NAME#"$prefix"}"
+            if [ "$job_id" = "$REF_NAME" ] || ! printf '%s' "$job_id" | grep -Eq '^[0-9]{8}T[0-9]{6}-[0-9a-f]{8}$'; then
+              echo "::error::invalid dispatch branch name"
+              exit 1
+            fi
+            echo "JOB_ID=$job_id" >> "$GITHUB_ENV"
+            echo "TARGET=staging" >> "$GITHUB_ENV"
+          else
+            echo "JOB_ID=$INPUT_JOB_ID" >> "$GITHUB_ENV"
+            if [ "$TARGET" = "production" ] && [ "$REF" != "refs/heads/main" ]; then
+              echo "::error::target=production is only allowed from main (ref: $REF)"
+              exit 1
+            fi
+          fi
+
+      - name: 📥 Checkout repo
+        uses: actions/checkout@v7
+        with:
+          # Full history so the runner can prove the claimed SHA is an ancestor of this dispatched ref.
+          fetch-depth: 0
+
+      - name: 📦 Setup pnpm
+        uses: pnpm/action-setup@v6
+
+      - name: 🛠️ Setup node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version-file: package.json
+          cache: pnpm
+
+      # Checks out the claimed SHA, installs, builds and deploys.
+      - name: 🧊 Run job
+        run: node scripts/static-homepage/ci-runner.mjs
+        env:
+          STATIC_COORD_URL: ${{ vars.STATIC_COORD_URL }}
+          STATIC_COORD_RUNNER_TOKEN: ${{ secrets.STATIC_COORD_RUNNER_TOKEN }}
+          STATIC_PUBLIC_ORIGIN: ${{ vars.STATIC_PUBLIC_ORIGIN }}
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ vars.CLOUDFLARE_ACCOUNT_ID }}
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}

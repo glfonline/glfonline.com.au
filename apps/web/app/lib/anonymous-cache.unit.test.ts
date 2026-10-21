@@ -147,3 +147,9 @@ describe('toAnonymousRequest', () => {
 		expect(request.headers.get('Cookie')).toBe('_ga=GA1.1.1.1');
 	});
 });
+
+describe('homepage caching with a static build', () => {
+	it('keeps the homepage cacheable so an SSR build restores Phase 1 caching', () => {
+		expect(isAnonymousCacheableRequest(createRequest('/'))).toBe(true);
+	});
+});
