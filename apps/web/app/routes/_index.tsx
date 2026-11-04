@@ -15,7 +15,7 @@ import { StoreLocationMap } from '../components/map';
 import { NewsletterSignup } from '../components/newsletter/form';
 import { VerticalLogo } from '../components/vectors/vertical-logo';
 import { brandsWeLove } from '../lib/brands-we-love';
-import { CACHE_SHORT, routeHeaders } from '../lib/cache';
+import { CACHE_MEDIUM, routeHeaders } from '../lib/cache';
 import { imageWithAltSchema } from '../lib/image-with-alt-schema';
 import { PortableText } from '../lib/portable-text';
 import { urlFor } from '../lib/sanity-image';
@@ -45,7 +45,7 @@ export async function loader() {
 	});
 	return data(homePageSchema.parse(HomePage), {
 		headers: {
-			'Cache-Control': CACHE_SHORT,
+			'Cache-Control': CACHE_MEDIUM,
 		},
 	});
 }
