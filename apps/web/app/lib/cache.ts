@@ -120,6 +120,15 @@ function CacheHomepageEdge(overrideOptions?: CachingStrategy): AllCacheOptions {
 	};
 }
 
+function CacheContentEdge(overrideOptions?: CachingStrategy): AllCacheOptions {
+	guardExpirableModeType(overrideOptions);
+	return {
+		mode: PUBLIC,
+		maxAge: 300, // 5 minutes
+		...overrideOptions,
+	};
+}
+
 function CacheMedium(overrideOptions?: CachingStrategy): AllCacheOptions {
 	guardExpirableModeType(overrideOptions);
 	return {
@@ -143,6 +152,7 @@ function CacheLong(overrideOptions?: CachingStrategy): AllCacheOptions {
 export const CACHE_SHORT = generateCacheControlHeader(CacheShort());
 export const CACHE_COLLECTION_EDGE = generateCacheControlHeader(CacheCollectionEdge());
 export const CACHE_HOMEPAGE_EDGE = generateCacheControlHeader(CacheHomepageEdge());
+export const CACHE_CONTENT_EDGE = generateCacheControlHeader(CacheContentEdge());
 export const CACHE_MEDIUM = generateCacheControlHeader(CacheMedium());
 export const CACHE_LONG = generateCacheControlHeader(CacheLong());
 export const CACHE_NONE = generateCacheControlHeader(CacheNone());

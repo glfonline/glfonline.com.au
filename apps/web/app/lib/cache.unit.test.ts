@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { CACHE_COLLECTION_EDGE, CACHE_HOMEPAGE_EDGE, CACHE_SHORT, routeHeaders } from './cache';
+import { CACHE_COLLECTION_EDGE, CACHE_CONTENT_EDGE, CACHE_HOMEPAGE_EDGE, CACHE_SHORT, routeHeaders } from './cache';
 
 describe('CACHE_COLLECTION_EDGE', () => {
 	it('is five minutes fresh with an hour of stale-while-revalidate', () => {
@@ -30,6 +30,12 @@ describe('CACHE_HOMEPAGE_EDGE', () => {
 			expect(CACHE_HOMEPAGE_EDGE).not.toContain(directive);
 		},
 	);
+});
+
+describe('CACHE_CONTENT_EDGE', () => {
+	it('is five minutes fresh', () => {
+		expect(CACHE_CONTENT_EDGE).toBe('public, max-age=300');
+	});
 });
 
 describe('routeHeaders', () => {
