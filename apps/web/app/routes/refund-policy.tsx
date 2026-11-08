@@ -1,4 +1,4 @@
-import { LEGAL_PAGE_QUERY } from '@glfonline/shopify-client';
+import { LEGAL_POLICY_QUERY } from '@glfonline/shopify-client';
 import type { LoaderFunctionArgs, MetaFunction } from 'react-router';
 import { data as json, useLoaderData } from 'react-router';
 import invariant from 'tiny-invariant';
@@ -10,9 +10,8 @@ import { getSeoMeta } from '../seo';
 
 export async function loader({ context }: LoaderFunctionArgs) {
 	const storefront = context.get(storefrontContext);
-	const { page } = await storefront.request(LEGAL_PAGE_QUERY, {
-		handle: 'refund-policy',
-	});
+	const { shop } = await storefront.request(LEGAL_POLICY_QUERY);
+	const page = shop.refundPolicy;
 
 	if (!page) notFound();
 	return json(

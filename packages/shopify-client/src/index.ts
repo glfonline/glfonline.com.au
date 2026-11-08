@@ -5,7 +5,7 @@ export {
 	COLLECTION_QUERY,
 	CREATE_CART_MUTATION,
 	IMAGE_FRAGMENT,
-	LEGAL_PAGE_QUERY,
+	LEGAL_POLICY_QUERY,
 	MONEY_FRAGMENT,
 	type OperationData,
 	type OperationVariables,

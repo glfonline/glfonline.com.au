@@ -124,13 +124,21 @@ export const PRODUCT_VARIANT_FRAGMENT = graphql(`
 
 /** Queries */
 
-export const LEGAL_PAGE_QUERY = graphql(`
-	query LEGAL_PAGE_QUERY($handle: String) {
-		page(handle: $handle) {
-			id
-			body
-			bodySummary
-			title
+export const LEGAL_POLICY_QUERY = graphql(`
+	query LEGAL_POLICY_QUERY {
+		shop {
+			privacyPolicy {
+				title
+				body
+			}
+			refundPolicy {
+				title
+				body
+			}
+			termsOfService {
+				title
+				body
+			}
 		}
 	}
 `);
