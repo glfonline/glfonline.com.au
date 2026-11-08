@@ -4,16 +4,7 @@ import { sentryOnBuildEnd } from '@sentry/react-router';
 // Emit shared content routes as static HTML and data files.
 // Do not list query-string-driven/paginated routes here: prerendering bakes in a single
 // loader result that the CDN then serves for every query string (e.g. `/blog?after=5`).
-const STATIC_PRERENDER_PATHS = [
-	'/about',
-	'/faq',
-	'/privacy-policy',
-	'/refund-policy',
-	'/terms-and-conditions',
-	'/testimonials',
-	'/contact',
-	'/robots.txt',
-];
+const STATIC_PRERENDER_PATHS = ['/contact', '/robots.txt'];
 
 async function getBlogSlugs() {
 	const { BLOG_PAGE_QUERY, BLOG_POSTS_COUNT_QUERY, sanityClient } = await import('@glfonline/sanity-client');
