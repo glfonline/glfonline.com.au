@@ -205,7 +205,7 @@ function PrivacyPolicyLabel() {
 	return (
 		<>
 			By selecting this, you agree to the{' '}
-			<Link className="underline" prefetch="intent" to="/privacy-policy/">
+			<Link className="underline" prefetch="intent" to="/privacy-policy">
 				Privacy Policy
 			</Link>
 			.

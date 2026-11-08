@@ -11,7 +11,8 @@
 		"CachedApp": { "type": "worker", "cache": { "enabled": true } }
 	},
 	"assets": {
-		"directory": "./build/client"
+		"directory": "./build/client",
+		"html_handling": "drop-trailing-slash"
 	},
 	"observability": {
 		"enabled": true
